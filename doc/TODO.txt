@@ -1,0 +1,27 @@
+
+* - renommer Era.* par Core.* pour le coeur du système
+* - renommer Era.* par Ui.* pour les éléments d'interface
+    graphique
+* - Créer une classe ButtonBase dont hérite les bouttons
+    cette classe doit gérer l'évènement "pressed" et la gestion
+    du curseur souris
+* - Créer Button qui hérite de ButtonBase et fait un rendu
+    "classic" d'un bouton (Pressable)
+* - Dans scrollingarea permettre de desactiver la fonction
+    de scrolling en vertical ou en horizontal. Dans ce cas,
+    la scrolling area réclame l'espace nécessaire pour les
+    enfants en vertical ou horizontal.
+* - Virer le code de positionnement de Ui.Container ainsi
+    que la gestion du padding (à déplacer dans VBox, HBox, LBox)
+* - Créer LBox pour remplacer la logique de positionnement par
+    couche de Ui.Container
+* - Créer Ui.DropBox pour les destinations de Drag & Drop
+- Créer Ui.DragElement pour les sources de Drag & Drop
+* - Créer Ui.IconList et Ui.IconListItem pour le rendu des
+    listes en icone
+- Revoir "disconnect". Si on connect plusieurs callback
+  le disconnect ne permet pas de préciser celui que l'on enlève
+- Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
+- Proposer une option "autoscale" pour les App
+- Dans l'Accordeon, cacher les éléments (avec display: none) lorsqu'ils
+  ne sont plus du tout visible. Cela devrait permettre de gagner des ressources

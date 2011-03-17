@@ -1,0 +1,158 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<defs xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" encoding="UTF-8">
+	<!-- ui-app resources -->
+    <linearGradient id="ui-app-bg-grad-linear">
+      <stop offset="0" style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop offset="1" style="stop-color:#bbbbbb;stop-opacity:1;" />
+    </linearGradient>
+	<radialGradient xlink:href="#ui-app-bg-grad-linear" id="ui-app-bg-grad"
+		cx="0" cy="0" fx="0" fy="0" r="1.414" gradientUnits="objectBoundingBox" />
+	<!-- ui-button resources -->
+	<linearGradient  id='ui-button-fg-grad' gradientUnits='objectBoundingBox' x1='0' y1='0' x2='0' y2='1'>
+		<stop offset="0" style="stop-color:#ffffff;stop-opacity:0.8;"/>
+		<stop offset="1" style="stop-color:#ffffff;stop-opacity:0.2;" />
+	</linearGradient>
+	<!-- ui-toolbar resources -->
+	<linearGradient  id='ui-toolbar-bg-grad' gradientUnits='objectBoundingBox' x1='0' y1='0' x2='0' y2='1'>
+		<stop offset="0" style="stop-color:#cccccc;stop-opacity:0.5;"/>
+		<stop offset="0.3" style="stop-color:#ffffff;stop-opacity:0.8;"/>
+		<stop offset="0.6" style="stop-color:#ffffff;stop-opacity:0.6;"/>
+		<stop offset="1" style="stop-color:#cccccc;stop-opacity:0.2;" />
+	</linearGradient>
+<style><![CDATA[
+/*
+ * Application style
+ */
+
+.ui-app {
+}
+.ui-app-bg {
+	fill: url(#ui-app-bg-grad);
+}
+
+/*
+ * Label style
+ */
+
+.ui-label {
+	fill: black;
+	cursor: default;
+	font-size: 14px;
+	font-family: Ubuntu, Sans-serif;
+}
+
+/*
+ * Button style
+ */
+
+.ui-button {
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+.ui-button * {
+	cursor: pointer;
+}
+.ui-button .ui-label {
+	font-size: 16px;
+	font-weight: bold;
+	fill: rgb(20, 20, 20);
+}
+.ui-button-bg1 {
+	stroke-width: 2;
+	stroke: #b1b1b1;
+	fill: none;
+}
+.ui-button-bg2 {
+	stroke-width: 2;
+	stroke: #ffffff;
+	fill: none;
+}
+.ui-button:hover > g > .ui-button-bg1 {
+	fill: white;
+	opacity: 0.2;
+}
+.ui-button-fg {
+	fill: url(#ui-button-fg-grad);
+}
+.ui-button.ui-button-down > g > .ui-button-bg1 {
+	fill: black;
+}
+.ui-button.focus > g > .ui-button-bg1 {
+	stroke: orange;
+	stroke-width: 3;
+	opacity: 0.4;
+}
+
+
+/*
+ * Entry style
+ */
+.ui-entry {
+	cursor: text;
+}
+.ui-entry-bg1 {
+	stroke-width: 2;
+	stroke: #ffffff;
+	fill: none;
+}
+.ui-entry-bg2 {
+	stroke-width: 2;
+	stroke: #7d7d7d;
+	fill: none;
+}
+.ui-entry-bg3 {
+	fill: white;
+	opacity: 0.5;
+}
+.ui-entry-cursor {
+	fill: #8080d0;
+}
+.ui-entry.focus > g > .ui-entry-bg2 {
+	stroke: orange;
+	stroke-width: 3;
+	opacity: 0.4;
+}
+
+/*
+ * ToolBar style
+ */
+.ui-toolbar {
+	padding: 2px;
+}
+.ui-toolbar > g > .ui-children > * {
+	margin: 2px;
+}
+.ui-toolbar-bg {
+	fill: url(#ui-toolbar-bg-grad);
+}
+
+/*
+ * ScrollingArea style
+ */
+.ui-scrollingarea-vertical {
+	fill: #666;
+	opacity: 0.8;
+	stroke: #eee;
+	stroke-width: 1;
+}
+.ui-scrollingarea-horizontal {
+	fill: #666;
+	opacity: 0.8;
+	stroke: #eee;
+	stroke-width: 1;
+}
+.ui-scrollingarea-fg {
+	fill: none;
+	opacity: 0.8;
+}
+.ui-scrollingarea.focus > g > .ui-scrollingarea-fg {
+	stroke: orange;
+	stroke-width: 4;
+}
+
+
+
+]]></style>
+</defs>

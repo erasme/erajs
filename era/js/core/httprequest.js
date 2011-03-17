@@ -1,0 +1,100 @@
+
+
+Object.extend('Core.HttpRequest', {
+	url: undefined,
+	method: 'GET',
+	binary: false,
+
+	constructor: function(config) {
+		if(config.url != undefined)
+			this.url = config.url;
+		else
+			throw('url MUST be given for an HttpRequest');
+		if(config && (config.method != undefined))
+			this.method = config.method;
+		if(config.binary != undefined)
+			this.binary = config.binary;
+
+		this.request = new XMLHttpRequest();
+		if(this.binary)
+			this.request.overrideMimeType('text/plain; charset=x-user-defined');
+		this.request.open(this.method, this.url, true);
+
+		var wrapper = function() {
+			var httprequest = arguments.callee.httprequest;
+			if(httprequest.request.readyState == 4) {
+				if(httprequest.request.status == 200)
+					httprequest.fireEvent('done');
+				else
+					httprequest.fireEvent('error', httprequest.request.status);
+			}
+		}
+		wrapper.httprequest = this;
+		this.request.onreadystatechange = wrapper;
+
+		this.addEvents('error', 'done');
+	},
+
+	setRequestHeader: function(header, value) {
+		this.request.setRequestHeader(header, value);
+	},
+
+	abort: function() {
+		this.request.abort();
+	},
+
+	send: function() {
+		this.request.send.apply(this.request, arguments);
+	},
+
+	getResponseText: function() {
+		return this.request.responseText;
+	},
+
+	getResponseBase64: function() {
+		var value = this.request.responseText;
+		var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		var res = '';
+		var i = 0;
+		while(i + 2 < value.length) {
+			var val1 = value.charCodeAt(i++) & 0xff;
+			var val2 = value.charCodeAt(i++) & 0xff;
+			var val3 = value.charCodeAt(i++) & 0xff;
+			var enc1 = code[val1 >> 2];
+			var enc2 = code[((val1 & 3) << 4) | (val2 >> 4)];
+			var enc3 = code[((val2 & 15) << 2) | (val3 >> 6)];
+			var enc4 = code[val3 & 63];
+			res += enc1+enc2+enc3+enc4;
+		}
+		// 2 bytes
+		if(i + 1 < value.length) {
+			var val1 = value.charCodeAt(i++) & 0xff;
+			var val2 = value.charCodeAt(i++) & 0xff;
+			var enc1 = code[val1 >> 2];
+			var enc2 = code[((val1 & 3) << 4) | (val2 >> 4)];
+			var enc3 = code[(val2 & 15) << 2];
+			res += enc1+enc2+enc3+'=';
+		}
+		// 1 byte
+		else if(i < value.length) {
+			var val1 = value.charCodeAt(i++) & 0xff;
+			var enc1 = code[val1 >> 2];
+			var enc2 = code[(val1 & 3) << 4];
+			res += enc1+enc2+'==';
+		}
+		return res;
+	},
+
+	getResponseJSON: function() {
+		var res;
+		try {
+			res = eval('('+this.getResponseText()+')');
+		}
+		catch(err) {
+			res = undefined;
+		}
+		return res;
+	},
+
+});
+
