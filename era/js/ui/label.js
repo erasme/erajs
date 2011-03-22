@@ -2,6 +2,10 @@
 Ui.Element.extend('Ui.Label', {
 	text: '',
 	orientation: 'horizontal',
+	fontSize: 16,
+	fontFamily: 'Sans-serif',
+	fontWeight: 'normal',
+	color: 'black',
 
 	constructor: function(config) {
 		if(config.text != undefined)
@@ -31,42 +35,50 @@ Ui.Element.extend('Ui.Label', {
 	},
 
 	setFontSize: function(fontSize) {
-		this.setStyleProperty('font-size', fontSize+'px');
-		this.invalidateRender();
-		this.invalidateMeasure();
+		if(this.fontSize != fontSize) {
+			this.fontSize = fontSize;
+			this.invalidateRender();
+			this.invalidateMeasure();
+		}
 	},
 
 	getFontSize: function() {
-		return new Number(this.getComputedStyleProperty('font-size').replace(/px$/, ''));
+		return this.fontSize;
 	},
 
 	setFontFamily: function(fontFamily) {
-		this.setStyleProperty('font-family', fontFamily);
-		this.invalidateRender();
-		this.invalidateMeasure();
+		if(this.fontFamily != fontFamily) {
+			this.fontFamily = fontFamily;
+			this.invalidateRender();
+			this.invalidateMeasure();
+		}
 	},
 
 	getFontFamily: function() {
-		return this.getComputedStyleProperty('font-family');
+		return this.fontFamily;
 	},
 
 	setFontWeight: function(fontWeight) {
-		this.setStyleProperty('font-weight', fontWeight);
-		this.invalidateRender();
-		this.invalidateMeasure();
+		if(this.fontWeight != fontWeight) {
+			this.fontWeight = fontWeight;
+			this.invalidateRender();
+			this.invalidateMeasure();
+		}
 	},
 
 	getFontWeight: function() {
-		return this.getComputedStyleProperty('font-weight');
+		return this.fontWeight;
 	},
 
 	setColor: function(color) {
-		this.setStyleProperty('color', color);
-		this.labelDrawing.style.setProperty('color', color, null);
+		if(this.color != color) {
+			this.color = color;
+			this.invalidateRender();
+		}
 	},
 
 	getColor: function() {
-		return this.getComputedStyleProperty('color');
+		return this.color;
 	},
 
 	getOrientation: function() {
@@ -74,9 +86,11 @@ Ui.Element.extend('Ui.Label', {
 	},
 
 	setOrientation: function(orientation) {
-		this.orientation = orientation;
-		this.invalidateMeasure();
-		this.invalidateRender();
+		if(this.orientation != orientation) {
+			this.orientation = orientation;
+			this.invalidateMeasure();
+			this.invalidateRender();
+		}
 	},
 
 }, {
@@ -118,14 +132,22 @@ Ui.Element.extend('Ui.Label', {
 		else
 			matrix = new Ui.Matrix();
 
-		if(navigator.isIE)
-			this.labelDrawing.style.msTransform = matrix.toString();
-		else if(navigator.isGecko)
-			this.labelDrawing.style.setProperty('-moz-transform', 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)', 'important');
-		else if(navigator.isWebkit)
-			this.labelDrawing.style.webkitTransform = matrix.toString();
-		else if(navigator.isOpera)
-			this.labelDrawing.style.setProperty('-o-transform', matrix.toString());
+		if(navigator.isIE) {
+			this.drawing.style.msTransform = matrix.toString();
+			this.drawing.style.msTransformOrigin = '0% 0%';
+		}
+		else if(navigator.isGecko) {
+			this.drawing.style.setProperty('-moz-transform', 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)', null);
+			this.drawing.style.setProperty('-moz-transform-origin', '0% 0%', null);
+		}
+		else if(navigator.isWebkit) {
+			this.drawing.style.webkitTransform = matrix.toString();
+			this.drawing.style.webkitTransformOrigin = '0% 0%';
+		}
+		else if(navigator.isOpera) {
+			this.drawing.style.setProperty('-o-transform', matrix.toString(), null);
+			this.drawing.style.setProperty('-o-transform-origin', '0% 0%', null);
+		}
 	},
 
 	updateRenderCore: function() {
@@ -133,5 +155,6 @@ Ui.Element.extend('Ui.Label', {
 		this.labelDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
 		this.labelDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
 		this.labelDrawing.textContent = this.text;
+		this.labelDrawing.style.setProperty('color', this.getColor(), null);
 	},
 });

@@ -83,12 +83,12 @@ Ui.Element.extend('Ui.Entry', {
 		this.entryDrawing = document.createElementNS(htmlNS, 'input');
 		this.entryDrawing.setAttributeNS(null, 'type', 'text');
 		this.entryDrawing.style.setProperty('border', '0px', null);
-		this.entryDrawing.style.setProperty('-webkit-border-radius', '0px', null);
-		this.entryDrawing.style.setProperty('-webkit-box-shadow', 'none', null);
-		this.entryDrawing.style.setProperty('background', 'none', null);
-		this.entryDrawing.style.setProperty('background-image', 'none', null);
+		this.entryDrawing.style.setProperty('margin', '0px', null);
+		this.entryDrawing.style.setProperty('padding', '0px', null);
 		this.entryDrawing.style.setProperty('outline', 'none', null);
-
+		this.entryDrawing.style.setProperty('background', 'none', null);
+		if(navigator.isWebkit)
+			this.entryDrawing.style.setProperty('-webkit-appearance', 'none', null);
 		return this.entryDrawing;
 	},
 
@@ -102,9 +102,9 @@ Ui.Element.extend('Ui.Entry', {
 	},
 
 	updateRenderCore: function() {
-		this.entryDrawing.style.setProperty('font-size', this.fontSize+'px', null);
-		this.entryDrawing.style.setProperty('font-family', this.fontFamily, null);
-		this.entryDrawing.style.setProperty('font-weight', this.fontWeight, null);
-		this.entryDrawing.style.setProperty('color', this.fontColor, null);
+		this.entryDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
+		this.entryDrawing.style.setProperty('font-family', this.getFontFamily(), null);
+		this.entryDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
+		this.entryDrawing.style.setProperty('color', this.getColor(), null);
 	},
 });

@@ -211,14 +211,16 @@ Object.prototype.connect = function(obj, eventName, method, capture) {
 //
 // Disconnect the current object from the eventName event on obj.
 //
-Object.prototype.disconnect = function(obj, eventName) {
+Object.prototype.disconnect = function(obj, eventName, method) {
 	if(obj.removeEventListener != undefined) {
 		for(var i = 0; i < obj.events.length; i++) {
 			var wrapper = obj.events[i];
 			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
+				if((method != undefined) && (wrapper.callback != method))
+					continue;
 				obj.removeEventListener(wrapper.eventName, wrapper, wrapper.capture);
 				obj.events.splice(i, 1);
-				break;
+				i--;
 			}
 		}
 	}
@@ -226,8 +228,10 @@ Object.prototype.disconnect = function(obj, eventName) {
 		for(var i = 0; i < obj.events[eventName].length; i++) {
 			var signal = obj.events[eventName][i];
 			if(signal.scope == this) {
+				if((method != undefined) && (signal.method != method))
+					continue;
 				obj.events[eventName].splice(i, 1);
-				break;
+				i--;
 			}
 		}
 	}

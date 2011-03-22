@@ -6,11 +6,6 @@ Anim.Clock.extend('Anim.ClockGroup', {
 
 	constructor: function(config) {
 		this.children = [];
-		for(var i = 0; i < this.timeline.children.length; i++) {
-			var childTimeline = this.timeline.children[i];
-			var childClock = childTimeline.createClock();
-			this.appendChild(childClock);
-		}
 	},
 
 	appendChild: function(child) {

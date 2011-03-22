@@ -10,7 +10,7 @@ Ui.LBox.extend('Ui.Slider', {
 	constructor: function(config) {
 		if(config.value != undefined)
 			this.value = config.value;
-//		this.setFocusable(true);
+		this.setFocusable(true);
 
 		this.background = new Ui.Rectangle({ width: 100, height: 16, verticalAlign: 'center', margin: 14, marginLeft: 17, marginRight: 17, radius: 8 });
 		this.appendChild(this.background);

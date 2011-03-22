@@ -61,8 +61,8 @@ Ui.Container.extend('Ui.Accordeon', {
 		if(this.clock != undefined)
 			this.clock.stop();
 
-		var timeline = new Anim.Timeline({ duration: 2, target: this, callback: this.onClockTick });
-		this.clock = timeline.begin();
+		this.clock = new Anim.Clock({ duration: 2, target: this, callback: this.onClockTick });
+		this.clock.begin();
 	},
 
 	//
@@ -91,8 +91,8 @@ Ui.Container.extend('Ui.Accordeon', {
 			}
 		}
 		if(pos != -1) {
-			this.disconnect(page, 'select');
-			this.disconnect(page, 'close');
+			this.disconnect(page, 'select', this.onPageSelect);
+			this.disconnect(page, 'close', this.onPageClose);
 			this.removeChild(page);
 			if((this.current == pos) && (this.current == 0))
 				this.setCurrentPosition(0);

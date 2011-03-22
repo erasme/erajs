@@ -3,7 +3,6 @@
 //
 Object.extend('Anim.Clock', {
 	parent: undefined,
-	timeline: undefined,
 	time: undefined,
 	iteration: undefined,
 	progress: undefined,
@@ -19,25 +18,42 @@ Object.extend('Anim.Clock', {
 	// [none|active|paused|resumed|stopped|none]
 	pendingState: 'none',
 
+	autoReverse: false,
+	// [forever|count]
+	repeat: 1,
+	target: undefined,
+	scope: undefined,
+	callback: undefined,
+	ease: undefined,
+
+
 	constructor: function(config) {
-		if(config.timeline != undefined)
-			this.timeline = config.timeline;
-		else
-			throw('timeline MUST BE SET for a Clock');
 		if(config.parent != undefined)
 			this.parent = config.parent;
-
-		this.duration = this.timeline.duration;
+		if(config.beginTime != undefined)
+			this.beginTime = config.beginTime;
+		if(config.autoReverse != undefined)
+			this.autoReverse = config.autoReverse;
+		if(config.duration != undefined)
+			this.duration = config.duration;
+		if(config.repeat != undefined)
+			this.repeat = config.repeat;
+		if(config.speed != undefined)
+			this.speed = config.speed;
+		if(config.callback != undefined)
+			this.callback = config.callback;
+		if(config.target != undefined)
+			this.target = config.target;
+		if(config.scope != undefined)
+			this.scope = config.scope;
+		else
+			this.scope = this.target;
+		if(config.ease != undefined)
+			this.ease = config.ease;
 		if(this.duration == 'automatic')
 			this.duration = 'forever';
-		this.speed = this.timeline.speed;
-		this.beginTime = this.timeline.beginTime;
 
-		this.addEvents('complete');
-	},
-
-	getTimeline: function() {
-		return this.timeline;
+		this.addEvents('complete', 'timeupdate');
 	},
 
 	setParent: function(parent) {
@@ -72,7 +88,13 @@ Object.extend('Anim.Clock', {
 		// if this clock is the root clock, add to the TimeManager
 		if(this.parent == undefined)
 			Anim.TimeManager.current.add(this);
+		else if(this.scope == undefined)
+			this.scope = this.parent.scope;
+
 		this.pendingState = 'active';
+		// attach the clock to an element
+		if((this.target != undefined) && (this.target.setAnimClock != undefined))
+			this.target.setAnimClock(this);
 	},
 
 	pause: function() {
@@ -92,12 +114,15 @@ Object.extend('Anim.Clock', {
 		if(this.parent == undefined)
 			Anim.TimeManager.current.remove(this);
 		this.fireEvent('complete');
-		// signal to the timeline
-		this.timeline.fireEvent('complete', this);
 	},
 
 	onTimeUpdate: function(deltaTick) {
-		this.timeline.onTimeUpdate(this, deltaTick);
+		var progress = this.getProgress();
+		if(this.ease != undefined)
+			progress = this.ease.ease(progress);
+		if(this.callback != undefined)
+			this.callback.call(this.scope, this, progress, deltaTick);
+		this.fireEvent('timeupdate', this, progress, deltaTick);
 	},
 
 	update: function(parentGlobalTime) {
@@ -121,26 +146,26 @@ Object.extend('Anim.Clock', {
 							var iterationRounded = Math.floor(iteration+1);
 							var time = globalTime % this.duration;
 
-							if(this.timeline.autoReverse) {
+							if(this.autoReverse) {
 								if((iterationRounded & 1) == 0)
 									time = this.duration - time;
 								iteration /= 2;
 								iterationRounded = Math.floor(iteration+1);
 							}
-							if(this.timeline.repeat == 'forever') {
+							if(this.repeat == 'forever') {
 								this.iteration = iterationRounded;
 								this.time = time;
 								this.progress = time / this.duration;
 								this.onTimeUpdate(deltaTick);
 							}
 							else {
-								if(iteration >= this.timeline.repeat) {
+								if(iteration >= this.repeat) {
 									// goto to stopped state
 									this.pendingState = 'stopped';
 									// force last anim state
-									this.iteration = this.timeline.repeat;
+									this.iteration = this.repeat;
 									this.time = this.duration;
-									if(this.timeline.autoReverse)
+									if(this.autoReverse)
 										this.progress = 0;
 									else
 										this.progress = 1;

@@ -13,6 +13,12 @@ Ui.LBox.extend('Ui.App', {
 	hasFocus: false,
 	arguments: undefined,
 	autoscale: false,
+	ready: false,
+
+	renderList: undefined,
+	windowWidth: 0,
+	windowHeight: 0,
+	windowScale: 1,
 
 	constructor: function(config) {
 		Ui.App.current = this;
@@ -199,28 +205,65 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	update: function() {
-		this.updateRender();
+		// update rendering if needed
+		var current = this.renderList;
+		while(current != undefined) {
+			current.updateRender();
+			current = current.renderNext;
+		}
+		this.renderList = undefined;
 
+		// update measure
 		var innerWidth = window.innerWidth;
 		var innerHeight = window.innerHeight;
-
-		var size = this.measure(innerWidth, innerHeight);
-		if(size.width < innerWidth)
-			size.width = innerWidth;
-		if(size.height < innerHeight)
-			size.height = innerHeight;
-
-		var scale = 1;
+		var size;
 		if(this.autoscale) {
-			if((size.width > innerWidth) || (size.height > innerHeight)) {
-				scale = Math.max(size.width / innerWidth, size.height / innerHeight);
-				size = this.measure(innerWidth * scale, innerHeight * scale);
-				this.setTransform(Ui.Matrix.createScale(1/scale));
+			// if window size changed, try to find a new scale
+			if((this.windowWidth != innerWidth) || (this.windowHeight != innerHeight)) {
+				var size = this.measure(innerWidth, innerHeight);
+				if(size.width < innerWidth)
+					size.width = innerWidth;
+				if(size.height < innerHeight)
+					size.height = innerHeight;
+				this.windowScale = 1;
+				if((size.width > innerWidth) || (size.height > innerHeight))
+					this.windowScale = Math.max(size.width / innerWidth, size.height / innerHeight);
+				size = this.measure(innerWidth * this.windowScale, innerHeight * this.windowScale);
+				this.setTransform(Ui.Matrix.createScale(1/this.windowScale));
 			}
-			else
-				this.setTransform(undefined);
+			// try old scale
+			else {
+				size = this.measure(innerWidth * this.windowScale, innerHeight * this.windowScale);
+				if((size.width > innerWidth * this.windowScale) || (size.height > innerHeight * this.windowScale)) {
+					if(size.width < innerWidth)
+						size.width = innerWidth;
+					if(size.height < innerHeight)
+						size.height = innerHeight;
+					this.windowScale = 1;
+					if((size.width > innerWidth) || (size.height > innerHeight))
+						this.windowScale = Math.max(size.width / innerWidth, size.height / innerHeight);
+					size = this.measure(innerWidth * this.windowScale, innerHeight * this.windowScale);
+					this.setTransform(Ui.Matrix.createScale(1/scale));
+				}
+			}
 		}
-		this.arrange(0, 0, innerWidth * scale, innerHeight * scale);
+		else {
+			this.windowScale = 1;
+			size = this.measure(innerWidth, innerHeight);
+		}
+		this.windowWidth = innerWidth;
+		this.windowHeight = innerHeight;
+
+		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
+
+		// update rendering if needed
+		current = this.renderList;
+		while(current != undefined) {
+			current.updateRender();
+			current = current.renderNext;
+		}
+		this.renderList = undefined;
+
 		this.updateTask = undefined;
 	},
 
@@ -235,13 +278,20 @@ Ui.LBox.extend('Ui.App', {
 		return this.autoscale;
 	},
 
+	//
+	// Activate or not the autoscale. When
+	// autoscale is activated, if the content of the window
+	// is too big, downscale it to fill the window.
+	//
 	setAutoScale: function(autoscale) {
 		if(this.autoscale != autoscale) {
 			this.autoscale = autoscale;
+			if(!this.autoscale)
+				this.setTransform(undefined);
 			this.invalidateMeasure();
 		}
 	},
-
+/*
 	setStyle: function(style) {
 		if(this.stylerequest != undefined)
 			this.stylerequest.abort();
@@ -264,9 +314,11 @@ Ui.LBox.extend('Ui.App', {
 		this.styleloaded = true;
 		this.onReady();
 	},
-
+*/
 	onReady: function() {
 		if(this.loaded) { /* && this.styleloaded) {*/
+			this.ready = true;
+
 			if(document.body == undefined) {
 				this.htmlRoot = document.createElementNS(htmlNS, 'body');
 				document.body = this.htmlRoot;
@@ -285,8 +337,6 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	onMessage: function(event) {
-		console.log('onMessage');
-
 		if(parent === event.source) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -386,12 +436,23 @@ Ui.LBox.extend('Ui.App', {
 		}
 	},
 
+	enqueueRender: function(element) {
+		element.renderNext = this.renderList;
+		this.renderList = element;
+		if((this.updateTask == undefined) && this.ready)
+			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+	},
+
+	enqueueMeasure: function(element) {
+		// TODO
+	},
+
 }, {
 	invalidateMeasure: function() {
 		if(this.measureValid) {
 			this.invalidateArrange();
 			this.measureValid = false;
-			if(this.updateTask == undefined)
+			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 		}
 	},
@@ -399,15 +460,7 @@ Ui.LBox.extend('Ui.App', {
 	invalidateArrange: function() {
 		if(this.arrangeValid) {
 			this.arrangeValid = false;
-			if(this.updateTask == undefined)
-				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-		}
-	},
-
-	invalidateRender: function() {
-		if(this.renderValid) {
-			this.renderValid = false;
-			if(this.updateTask == undefined)
+			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 		}
 	},

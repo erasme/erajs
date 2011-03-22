@@ -1,9 +1,13 @@
 //
-// Define the Pressable class.
+// Define the Togglable class.
 //
-Ui.LBox.extend('Ui.Pressable', {
+Ui.LBox.extend('Ui.Togglable', {
 	isEnable: true,
 	isDown: false,
+
+//
+// TODO
+//
 
 	constructor: function(config) {
 		this.getDrawing().style.setProperty('cursor', 'pointer', null);

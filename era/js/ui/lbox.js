@@ -97,6 +97,20 @@ Ui.Container.extend('Ui.LBox', {
 		}
 	},
 
+	//
+	// Append a child on the top of all other layers
+	//
+	append: function(child) {
+		this.appendChild(child);
+	},
+
+	//
+	// Remove a child from the layers
+	//
+	remove: function(child) {
+		this.removeChild(child);
+	},
+
 }, {
 	//
 	// Return the required size for the current element

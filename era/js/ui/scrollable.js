@@ -205,8 +205,8 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(event.button != this.mouseButton)
 			return;
 
-		this.disconnect(window, 'mousemove');
-		this.disconnect(window, 'mouseup');
+		this.disconnect(window, 'mousemove', this.onMouseMove);
+		this.disconnect(window, 'mouseup', this.onMouseUp);
 
 		this.stopComputeInertia();
 		this.startInertia();
@@ -376,7 +376,7 @@ Ui.Container.extend('Ui.Scrollable', {
 
 	startInertia: function() {
 		if(this.inertiaClock == undefined) {
-			var timeline = new Anim.Timeline({ duration: 'forever', target: this,
+			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this,
 				callback: function(clock, progress, delta) {
 					if(delta == 0)
 						return;
@@ -402,7 +402,7 @@ Ui.Container.extend('Ui.Scrollable', {
 						this.stopInertia();
 				}
 			});
-			this.inertiaClock = timeline.begin();
+			this.inertiaClock.begin();
 		}
 	},
 
@@ -460,8 +460,8 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.measureSpeedTimer = undefined;
 		}
 
-		this.disconnect(window, 'mousemove');
-		this.disconnect(window, 'mouseup');
+		this.disconnect(window, 'mousemove', this.onMouseMove);
+		this.disconnect(window, 'mouseup', this.onMouseUp);
 		if(!this.speedComputed) {
 			// compute speed
 			var currentTime = (new Date().getTime())/1000;
@@ -521,8 +521,8 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.measureSpeedTimer = undefined;
 		}
 
-		this.disconnect(window, 'mousemove');
-		this.disconnect(window, 'mouseup');
+		this.disconnect(window, 'mousemove', this.onMouseMove);
+		this.disconnect(window, 'mouseup', this.onMouseUp);
 		if(!this.speedComputed) {
 			// compute speed
 			var currentTime = (new Date().getTime())/1000;

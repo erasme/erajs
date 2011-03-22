@@ -16,11 +16,14 @@ Object.extend('Ui.Element', {
 	height: undefined,
 
 	// rendering
-	renderValid: false,
+	renderNext: undefined,
+	renderValid: true,
 	drawing: undefined,
 
 	// measurement
 	measureValid: false,
+	measureConstraintWidth: 0,
+	measureConstraintHeight: 0,
 	measureWidth: 0,
 	measureHeight: 0,
 
@@ -49,6 +52,11 @@ Object.extend('Ui.Element', {
 	// is clipped to the layout size
 	clipToBounds: false,
 
+	clipX: undefined,
+	clipY: undefined,
+	clipWidth: undefined,
+	clipHeight: undefined,
+
 	// whether or not the current element can get focus
 	focusable: false,
 
@@ -58,8 +66,14 @@ Object.extend('Ui.Element', {
 	transformOriginAbsolute: false,
 
 	// if the current element is the target of
-	// an active timeline, the running clock
+	// an active clock
 	animClock: undefined,
+
+	opacity: 1,
+
+	style: undefined,
+	parentStyle: undefined,
+	mergeStyle: undefined,
 
 	constructor: function(config) {
 		// create the drawing container
@@ -182,6 +196,13 @@ Object.extend('Ui.Element', {
 	// the minimum required size
 	//
 	measure: function(width, height, force) {
+
+		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
+			return { width: this.measureWidth, height: this.measureHeight };
+
+		this.measureConstraintWidth = width;
+		this.measureConstraintHeight = height;
+
 		var marginLeft = this.getMarginLeft();
 		var marginRight = this.getMarginRight();
 		var marginTop = this.getMarginTop();
@@ -218,12 +239,20 @@ Object.extend('Ui.Element', {
 	// updated
 	//
 	invalidateMeasure: function() {
+//		console.log(this+'.invalidateMeasure start');
+
 		this.invalidateArrange();
 		if(this.measureValid) {
+//			console.log(this+'.invalidateMeasure');
+
 			this.measureValid = false;
 			if((this.parent != undefined) && (this.parent.measureValid))
-				this.parent.invalidateMeasure();
+				this.parent.onChildInvalidateMeasure(this);
 		}
+	},
+
+	onChildInvalidateMeasure: function(child) {
+		this.invalidateMeasure();
 	},
 
 	//
@@ -283,8 +312,13 @@ Object.extend('Ui.Element', {
 			this.drawing.style.setProperty('width', width+'px', null);
 			this.drawing.style.setProperty('height', height+'px', null);
 
-			if(this.clipToBounds)
-				this.setClipRectangle(0, 0, this.layoutWidth, this.layoutHeight);
+			if(this.clipToBounds) {
+				this.clipX = 0;
+				this.clipY = 0;
+				this.clipWidth = this.layoutWidth;
+				this.clipHeight = this.layoutHeight;
+				this.updateClipRectangle();
+			}
 
 			this.arrangeCore(width, height, force);
 		}
@@ -313,7 +347,7 @@ Object.extend('Ui.Element', {
 	//
 	// Override this method to provide a custom
 	// rendering of the current element.
-	// Return the SVGElement of the rendering
+	// Return the HTML element of the rendering
 	//
 	render: function() {
 		return undefined;
@@ -323,10 +357,14 @@ Object.extend('Ui.Element', {
 	// Called to synchronize the current element
 	// with its visual aspect (INTERNAL)
 	//
-	updateRender: function(force) {
-		if(((force != undefined) && force) ||  !this.renderValid)
-			this.updateRenderCore(force);
-		this.renderValid = true;
+	updateRender: function() {
+		if(!this.renderValid) {
+			this.drawing.style.opacity = this.opacity;
+			this.updateTransform();
+			this.updateClipRectangle();
+			this.updateRenderCore();
+			this.renderValid = true;
+		}
 	},
 
 	//
@@ -334,7 +372,7 @@ Object.extend('Ui.Element', {
 	// Override this method to synchronize the current element
 	// with its visual aspect
 	//
-	updateRenderCore: function(force) {
+	updateRenderCore: function() {
 	},
 
 	//
@@ -343,9 +381,10 @@ Object.extend('Ui.Element', {
 	//
 	invalidateRender: function() {
 		if(this.renderValid) {
+//			console.log(this+'.invalidateRender');
+
 			this.renderValid = false;
-			if(this.parent != undefined)
-				this.parent.invalidateRender();
+			Ui.App.current.enqueueRender(this);
 		}
 	},
 
@@ -361,8 +400,10 @@ Object.extend('Ui.Element', {
 	// Set the prefered width of the element
 	//
 	setWidth: function(width) {
-		this.width = width;
-		this.invalidateMeasure();
+		if(this.width != width) {
+			this.width = width;
+			this.invalidateMeasure();
+		}
 	},
 
 	//
@@ -377,8 +418,10 @@ Object.extend('Ui.Element', {
 	// Set the prefered height of the element
 	//
 	setHeight: function(height) {
-		this.height = height;
-		this.invalidateMeasure();
+		if(this.height != height) {
+			this.height = height;
+			this.invalidateMeasure();
+		}
 	},
 
 	//
@@ -420,19 +463,46 @@ Object.extend('Ui.Element', {
 	setClipToBounds: function(clip) {
 		if(this.clipToBounds != clip) {
 			this.clipToBounds = clip;
-			if(clip)
-				this.setClipRectangle(0, 0, this.layoutWidth, this.layoutHeight);
-			else
-				this.drawing.style.setProperty('clip', 'none', null);
+			if(clip) {
+				this.clipX = 0;
+				this.clipY = 0;
+				this.clipWidth = this.layoutWidth;
+				this.clipHeight = this.layoutHeight;
+			}
+			else {
+				this.clipX = undefined;
+				this.clipY = undefined;
+				this.clipWidth = undefined;
+				this.clipHeight = undefined;
+			}
+			this.invalidateRender();
 		}
 	},
 
 	setClipRectangle: function(x, y, width, height) {
-		x = Math.round(x);
-		y = Math.round(y);
-		width = Math.round(width);
-		height = Math.round(height);
-		this.drawing.style.setProperty('clip', 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)', null);
+		this.clipX = x;
+		this.clipY = y;
+		this.clipWidth = width;
+		this.clipHeight = height;
+		this.invalidateRender();
+//		x = Math.round(x);
+//		y = Math.round(y);
+//		width = Math.round(width);
+//		height = Math.round(height);
+//		this.drawing.style.setProperty('clip', 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)', null);
+	},
+
+	updateClipRectangle: function() {
+		if(this.clipX != undefined) {
+			x = Math.round(this.clipX);
+			y = Math.round(this.clipY);
+			width = Math.round(this.clipWidth);
+			height = Math.round(this.clipHeight);
+			this.drawing.style.setProperty('clip', 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)', null);
+		}
+		else
+			this.drawing.style.removeProperty('clip');
+//			this.drawing.style.setProperty('clip', 'none', null);
 	},
 
 	//
@@ -507,7 +577,7 @@ Object.extend('Ui.Element', {
 			this.drawing.setAttributeNS(null, 'class', tmp);
 		}
 	},
-
+/*
 	//
 	// Get the CSS computed value of a given property
 	//
@@ -521,7 +591,7 @@ Object.extend('Ui.Element', {
 	setStyleProperty: function(property, value) {
 		this.drawing.style.setProperty(property, value, 'important');
 	},
-
+*/
 	//
 	// Set the current element margin for all borders
 	//
@@ -604,14 +674,18 @@ Object.extend('Ui.Element', {
 	// Return the current element opacity
 	//
 	getOpacity: function() {
-		return new Number(this.getComputedStyleProperty('opacity'));
+		return this.opacity;
+//		return new Number(this.getComputedStyleProperty('opacity'));
 	},
 
 	//
 	// Set the current element opacity
 	//
 	setOpacity: function(opacity) {
-		this.drawing.style.opacity = opacity;
+		if(this.opacity != opacity) {
+			this.opacity = opacity;
+			this.invalidateRender();
+		}
 	},
 
 	//
@@ -643,8 +717,10 @@ Object.extend('Ui.Element', {
 	// This transformation is not taken in account for the arrangement
 	//
 	setTransform: function(transform) {
-		this.transform = transform;
-		this.updateTransform();
+		if(this.transform != transform) {
+			this.transform = transform;
+			this.invalidateRender();
+		}
 	},
 
 	//
@@ -654,13 +730,16 @@ Object.extend('Ui.Element', {
 	// width and height of the current element.
 	//
 	setTransformOrigin: function(x, y, absolute) {
-		this.transformOriginX = x;
-		this.transformOriginY = y;
-		if(absolute == undefined)
-			this.transformOriginAbsolute = false;
-		else
-			this.transformOriginAbsolute = absolute;
-		this.updateTransform();
+		if((this.transformOriginX != x) || (this.transformOriginY != y) || (this.transformOriginAbsolute != absolute)) {
+			this.transformOriginX = x;
+			this.transformOriginY = y;
+			if(absolute == undefined)
+				this.transformOriginAbsolute = false;
+			else
+				this.transformOriginAbsolute = absolute;
+//			this.invalidateRender();
+			this.updateTransform();
+		}
 	},
 
 	//
@@ -883,6 +962,49 @@ Object.extend('Ui.Element', {
 		this.drawing.style.display = 'none';
 	},
 
+	mergeStyles: function() {
+		if(this.parentStyle == undefined)
+			this.mergeStyle = this.style;
+		else {
+			if(this.style == undefined)
+				this.mergeStyle = this.parentStyle;
+			else {
+				this.mergeStyle = {};
+				for(var prop in this.parentStyle)
+					this.mergeStyle[prop] = this.parentStyle[prop];
+				for(var prop in this.style)
+					this.mergeStyle[prop] = this.style[prop];
+			}
+		}
+	},
+
+	setParentStyle: function(parentStyle) {
+		if(this.parentStyle != parentStyle) {
+			this.parentStyle = parentStyle;
+			this.mergeStyles();
+			this.onStyleChange();
+		}
+	},
+
+	setStyle: function(style) {
+		this.style = style;
+		this.mergeStyles();
+		this.onStyleChange();
+	},
+
+	getStyleProperty: function(property) {
+		if((this.mergeStyle != undefined) && (this.mergeStyle[property] != undefined))
+			return this.mergeStyle[property];
+		else
+			return undefined;
+	},
+
+	//
+	// Override this in classes that handle style
+	//
+	onStyleChange: function() {
+	},
+
 	//
 	// Private
 	//
@@ -938,6 +1060,8 @@ Object.extend('Ui.Element', {
 	},
 
 	onLoad: function() {
+		if(this.parent != undefined)
+			this.setParentStyle(this.parent.mergeStyle);
 		this.fireEvent('load');
 	},
 

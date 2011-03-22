@@ -56,8 +56,8 @@ Ui.LBox.extend('Ui.Selectable', {
 		if(delta > 10) {
 //			this.onUp();
 
-			this.disconnect(window, 'mousemove');
-			this.disconnect(window, 'mouseup');
+			this.disconnect(window, 'mousemove', this.onMouseMove);
+			this.disconnect(window, 'mouseup', this.onMouseUp);
 
 			this.isDown = false;
 
@@ -67,7 +67,7 @@ Ui.LBox.extend('Ui.Selectable', {
 				this.fireEvent('unselect', this);
 			}
 
-			this.disconnect(this.getDrawing(), 'mousedown');
+			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 			var mouseDownEvent = document.createEvent('MouseEvents');
 			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
@@ -89,8 +89,8 @@ Ui.LBox.extend('Ui.Selectable', {
 		event.preventDefault();
 		event.stopPropagation();
 		if(event.button == 0) {
-			this.disconnect(window, 'mousemove');
-			this.disconnect(window, 'mouseup');
+			this.disconnect(window, 'mousemove', this.onMouseMove);
+			this.disconnect(window, 'mouseup', this.onMouseUp);
 //			this.onUp();
 //			this.fireEvent('press', this);
 
@@ -159,7 +159,7 @@ Ui.LBox.extend('Ui.Selectable', {
 				this.fireEvent('unselect', this);
 			}
 
-			this.disconnect(this.getDrawing(), 'touchstart');
+			this.disconnect(this.getDrawing(), 'touchstart', this.onTouchStart);
 
 			var touchStartEvent = document.createEvent('TouchEvent');
 			touchStartEvent.initTouchEvent('touchstart', true, true, window, 0, 0, 0, 0, 0,

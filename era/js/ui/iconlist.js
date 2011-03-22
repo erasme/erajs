@@ -1,24 +1,24 @@
 
 
 Ui.ScrollingArea.extend('Ui.IconList', {
-	fbox: undefined,
+	flow: undefined,
 
 	constructor: function(config) {
-		this.fbox = new Ui.FBox({ uniform: true });
-		this.setContent(this.fbox);
+		this.flow = new Ui.Flow({ uniform: true });
+		this.setContent(this.flow);
 	},
 
-	appendIcon: function(icon) {
-		this.fbox.appendChild(icon);
+	append: function(icon) {
+		this.flow.append(icon);
 	},
 
-	removeIcon: function(icon) {
-		this.fbox.removeChild(icon);
+	remove: function(icon) {
+		this.flow.remove(icon);
 	},
 
 	clear: function() {
-		while(this.fbox.children.length > 0) {
-			this.fbox.removeChild(this.fbox.children[0]);
+		while(this.flow.getChildren().length > 0) {
+			this.flow.remove(this.flow.getChildren()[0]);
 		}
 	},
 

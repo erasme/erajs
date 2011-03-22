@@ -1,5 +1,5 @@
 
-Ui.Element.extend('Ui.Text', {
+Ui.SVGElement.extend('Ui.Text', {
 	text: undefined,
 	measureDrawing: undefined,
 	textDrawing: undefined,
@@ -12,6 +12,10 @@ Ui.Element.extend('Ui.Text', {
 	spaceWidth: undefined,
 	maxWidth: undefined,
 	lineHeight: undefined,
+	fontSize: 16,
+	fontFamily: 'Sans-serif',
+	fontWeight: 'normal',
+	color: 'black',
 
 	constructor: function(config) {
 		if(config.text != undefined)
@@ -22,6 +26,8 @@ Ui.Element.extend('Ui.Text', {
 			this.setFamilySize(config.fontFamily);
 		if(config.fontWeight != undefined)
 			this.setFontWeight(config.fontWeight);
+		if(config.color != undefined)
+			this.setColor(config.color);
 	},
 
 	getText: function() {
@@ -37,33 +43,50 @@ Ui.Element.extend('Ui.Text', {
 	},
 
 	setFontSize: function(fontSize) {
-		this.setStyleProperty('font-size', fontSize+'px');
-		this.invalidateRender();
-		this.invalidateMeasure();
+		if(this.fontSize != fontSize) {
+			this.fontSize = fontSize;
+			this.invalidateRender();
+			this.invalidateMeasure();
+		}
 	},
 
 	getFontSize: function() {
-		return new Number(this.getComputedStyleProperty('font-size').replace(/px$/, ''));
+		return this.fontSize;
 	},
 
 	setFontFamily: function(fontFamily) {
-		this.setStyleProperty('font-family', fontFamily);
-		this.invalidateRender();
-		this.invalidateMeasure();
+		if(this.fontFamily != fontFamily) {
+			this.fontFamily = fontFamily;
+			this.invalidateRender();
+			this.invalidateMeasure();
+		}
 	},
 
 	getFontFamily: function() {
-		return this.getComputedStyleProperty('font-family');
+		return this.fontFamily;
 	},
 
 	setFontWeight: function(fontWeight) {
-		this.setStyleProperty('font-weight', fontWeight);
-		this.invalidateRender();
-		this.invalidateMeasure();
+		if(this.fontWeight != fontWeight) {
+			this.fontWeight = fontWeight;
+			this.invalidateRender();
+			this.invalidateMeasure();
+		}
 	},
 
 	getFontWeight: function() {
-		return this.getComputedStyleProperty('font-weight');
+		return this.fontWeight;
+	},
+
+	setColor: function(color) {
+		if(this.color != color) {
+			this.color = color;
+			this.invalidateRender();
+		}
+	},
+
+	getColor: function() {
+		return this.color;
 	},
 
 	//
@@ -163,10 +186,8 @@ Ui.Element.extend('Ui.Text', {
 	},
 
 }, {
-	render: function() {
-		var svg = document.createElementNS(svgNS, 'svg');
+	renderSVG: function() {
 		var group = document.createElementNS(svgNS, 'g');
-		svg.appendChild(group);
 		// create an hidden text to measure things
 		this.measureDrawing = document.createElementNS(svgNS, 'text');
 		this.measureDrawing.setAttributeNS(null, 'visibility', 'hidden');
@@ -183,7 +204,7 @@ Ui.Element.extend('Ui.Text', {
 			this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
 		this.textDrawing.style.pointerEvents = 'none';
 		group.appendChild(this.textDrawing);
-		return svg;
+		return group;
 	},
 
 	measureCore: function(width, height, force) {
@@ -206,10 +227,10 @@ Ui.Element.extend('Ui.Text', {
 
 	updateRenderCore: function() {
 //		console.log('updateRenderCore');
-
 		this.textDrawing.setAttributeNS(null, 'font-family', this.getFontFamily());
 		this.textDrawing.setAttributeNS(null, 'font-weight', this.getFontWeight());
 		this.textDrawing.setAttributeNS(null, 'font-size', this.getFontSize());
+		this.textDrawing.setAttributeNS(null, 'fill', this.getColor(), null);
 
 		this.measureDrawing.setAttributeNS(null, 'font-family', this.getFontFamily());
 		this.measureDrawing.setAttributeNS(null, 'font-weight', this.getFontWeight());

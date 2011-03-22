@@ -33,9 +33,6 @@ include(eraBaseDirectory+'core/httprequest.js');
 // Animations
 //
 include(eraBaseDirectory+'anim/timemanager.js');
-include(eraBaseDirectory+'anim/timeline.js');
-include(eraBaseDirectory+'anim/timelinegroup.js');
-include(eraBaseDirectory+'anim/paralleltimeline.js');
 include(eraBaseDirectory+'anim/easingfunction.js');
 include(eraBaseDirectory+'anim/powerease.js');
 include(eraBaseDirectory+'anim/elasticease.js');
@@ -57,11 +54,10 @@ include(eraBaseDirectory+'ui/container.js');
 // Ui Layout
 //
 include(eraBaseDirectory+'ui/lbox.js');
-include(eraBaseDirectory+'ui/vbox.js');
-include(eraBaseDirectory+'ui/hbox.js');
-include(eraBaseDirectory+'ui/fbox.js');
+include(eraBaseDirectory+'ui/box.js');
+include(eraBaseDirectory+'ui/flow.js');
 include(eraBaseDirectory+'ui/grid.js');
-include(eraBaseDirectory+'ui/canvas.js');
+include(eraBaseDirectory+'ui/fixed.js');
 include(eraBaseDirectory+'ui/fold.js');
 include(eraBaseDirectory+'ui/accordeon.js');
 
@@ -96,16 +92,16 @@ include(eraBaseDirectory+'ui/movable.js');
 include(eraBaseDirectory+'ui/scrollable.js');
 include(eraBaseDirectory+'ui/draggable.js');
 include(eraBaseDirectory+'ui/dropbox.js');
+include(eraBaseDirectory+'ui/iframe.js');
 
 //
-// Ui high level element (= drawing + logic)
+// Ui high level element (= drawing + logic + style)
 //
-//include(eraBaseDirectory+'ui/entry.js');
+include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/button.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');
 include(eraBaseDirectory+'ui/slider.js');
-include(eraBaseDirectory+'ui/iframe.js');
 include(eraBaseDirectory+'ui/iconlist.js');
 include(eraBaseDirectory+'ui/locator.js');
 include(eraBaseDirectory+'ui/program.js');

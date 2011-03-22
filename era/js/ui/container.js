@@ -16,6 +16,8 @@ Ui.Element.extend('Ui.Container', {
 		this.childChanged = true;
 		this.invalidateMeasure();
 		this.invalidateRender();
+
+//		console.log(this+'.appendChild '+Ui.App.current.renderList);
 		child.setIsLoaded(this.isLoaded);
 	},
 
@@ -68,7 +70,7 @@ Ui.Element.extend('Ui.Container', {
 		}
 	},
 
-	updateRenderCore: function(force) {
+	updateRenderCore: function() {
 		// update childs
 		if(this.childChanged) {
 			this.childChanged = false;
@@ -97,11 +99,14 @@ Ui.Element.extend('Ui.Container', {
 			for(var i = 0; i < removeList.length; i++)
 				this.getDrawing().removeChild(removeList[i]);
 		}
-		for(var i = 0; i < this.children.length; i++)
-			this.children[i].updateRender(force);
-
 		if(this.children.length != this.getDrawing().childNodes.length)
-			console.log('updateRenderChildren PROBLEM');
+			throw('updateRenderChildren PROBLEM');
+	},
+
+	onStyleChange: function() {
+		Ui.Container.base.onStyleChange.call(this);
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].setParentStyle(this.mergeStyle);
 	},
 });
 

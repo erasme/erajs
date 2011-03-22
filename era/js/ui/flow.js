@@ -1,6 +1,6 @@
 
 
-Ui.Container.extend('Ui.FBox', {
+Ui.Container.extend('Ui.Flow', {
 	uniform: false,
 	uniformWidth: undefined,
 	uniformHeight: undefined,
@@ -30,6 +30,20 @@ Ui.Container.extend('Ui.FBox', {
 	},
 
 	//
+	// Append a child at the end of the flow
+	//
+	append: function(child) {
+		this.appendChild(child);
+	},
+
+	//
+	// Remove a child from the flow
+	//
+	remove: function(child) {
+		this.removeChild(child);
+	},
+
+	//
 	// Private
 	//
 
@@ -54,8 +68,8 @@ Ui.Container.extend('Ui.FBox', {
 
 				line = { pos: ++lineCount, y: lineY, width: 0, height: 0 };
 			}
-			child.fboxLine = line;
-			child.fboxLineX = lineX;
+			child.flowLine = line;
+			child.flowLineX = lineX;
 			lineX += size.width;
 			if(size.height > lineHeight)
 				lineHeight = size.height;
@@ -115,7 +129,7 @@ Ui.Container.extend('Ui.FBox', {
 		else {
 			for(var i = 0; i < this.getChildren().length; i++) {
 				var child = this.getChildren()[i];
-				child.arrange(child.fboxLineX, child.fboxLine.y, child.getMeasureWidth(), child.fboxLine.height, force);
+				child.arrange(child.flowLineX, child.flowLine.y, child.getMeasureWidth(), child.flowLine.height, force);
 			}
 		}
 	},

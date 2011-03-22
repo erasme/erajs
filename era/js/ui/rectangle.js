@@ -3,6 +3,11 @@
 Ui.Element.extend('Ui.Rectangle', {
 	fill: 'black',
 	rectDrawing: undefined,
+	radiusTopLeft: 0,
+	radiusTopRight: 0,
+	radiusBottomLeft: 0,
+	radiusBottomRight: 0,
+	shadow: undefined,
 
 	constructor: function(config) {
 		if(config.radius != undefined)
@@ -19,6 +24,19 @@ Ui.Element.extend('Ui.Rectangle', {
 			this.setFill(config.fill);
 		else
 			this.setFill(this.fill);
+		if(config.shadow != undefined)
+			this.setShadow(config.shadow);
+	},
+
+	setShadow: function(shadow) {
+		if(this.shadow != shadow) {
+			this.shadow = shadow;
+			this.invalidateRender();
+		}
+	},
+
+	getBoxShadow: function() {
+		return this.shadow;
 	},
 
 	setRadius: function(radius) {
@@ -28,45 +46,55 @@ Ui.Element.extend('Ui.Rectangle', {
 		this.setRadiusBottomRight(radius);
 	},
 
-	setRadiusTopLeft: function(radius) {
-		if(Ui.Rectangle.supportBorderRadius)
-			this.rectDrawing.style.setProperty('border-top-left-radius', radius+'px', null);
-		else if(Ui.Rectangle.supportMozBorderRadius)
-			this.rectDrawing.style.setProperty('-moz-border-radius-topleft', radius+'px', null);
-		else if(Ui.Rectangle.supportWebkitBorderRadius)
-			this.rectDrawing.style.setProperty('-webkit-border-top-left-radius', radius+'px', null);
+	getRadiusTopLeft: function() {
+		return this.radiusTopLeft;
 	},
 
-	setRadiusTopRight: function(radius) {
-		if(Ui.Rectangle.supportBorderRadius)
-			this.rectDrawing.style.setProperty('border-top-right-radius', radius+'px', null);
-		else if(Ui.Rectangle.supportMozBorderRadius)
-			this.rectDrawing.style.setProperty('-moz-border-radius-topright', radius+'px', null);
-		else if(Ui.Rectangle.supportWebkitBorderRadius)
-			this.rectDrawing.style.setProperty('-webkit-border-top-right-radius', radius+'px', null);
+	setRadiusTopLeft: function(radiusTopLeft) {
+		if(this.radiusTopLeft != radiusTopLeft) {
+			this.radiusTopLeft = radiusTopLeft;
+			this.invalidateRender();
+		}
 	},
 
-	setRadiusBottomLeft: function(radius) {
-		if(Ui.Rectangle.supportBorderRadius)
-			this.rectDrawing.style.setProperty('border-bottom-left-radius', radius+'px', null);
-		else if(Ui.Rectangle.supportMozBorderRadius)
-			this.rectDrawing.style.setProperty('-moz-border-radius-bottomleft', radius+'px', null);
-		else if(Ui.Rectangle.supportWebkitBorderRadius)
-			this.rectDrawing.style.setProperty('-webkit-border-bottom-left-radius', radius+'px', null);
+	getRadiusTopRight: function() {
+		return this.radiusTopRight;
 	},
 
-	setRadiusBottomRight: function(radius) {
-		if(Ui.Rectangle.supportBorderRadius)
-			this.rectDrawing.style.setProperty('border-bottom-right-radius', radius+'px', null);
-		else if(Ui.Rectangle.supportMozBorderRadius)
-			this.rectDrawing.style.setProperty('-moz-border-radius-bottomright', radius+'px', null);
-		else if(Ui.Rectangle.supportWebkitBorderRadius)
-			this.rectDrawing.style.setProperty('-webkit-border-bottom-right-radius', radius+'px', null);
+	setRadiusTopRight: function(radiusTopRight) {
+		if(this.radiusTopRight != radiusTopRight) {
+			this.radiusTopRight = radiusTopRight;
+			this.invalidateRender();
+		}
+	},
+
+	getRadiusBottomLeft: function() {
+		return this.radiusBottomLeft;
+	},
+
+	setRadiusBottomLeft: function(radiusBottomLeft) {
+		if(this.radiusBottomLeft != radiusBottomLeft) {
+			this.radiusBottomLeft = radiusBottomLeft;
+			this.invalidateRender();
+		}
+	},
+
+	getRadiusBottomRight: function() {
+		return this.radiusBottomRight;
+	},
+
+	setRadiusBottomRight: function(radiusBottomRight) {
+		if(this.radiusBottomRight != radiusBottomRight) {
+			this.radiusBottomRight = radiusBottomRight;
+			this.invalidateRender();
+		}
 	},
 
 	setFill: function(fill) {
-		this.fill = fill;
-		this.rectDrawing.style.background = this.fill;
+		if(this.fill != fill) {
+			this.fill = fill;
+			this.invalidateRender();
+		}
 	},
 
 	getFill: function() {
@@ -81,6 +109,40 @@ Ui.Element.extend('Ui.Rectangle', {
 	arrangeCore: function(width, height) {
 		this.rectDrawing.style.setProperty('width', width+'px', null);
 		this.rectDrawing.style.setProperty('height', height+'px', null);
+	},
+
+	updateRenderCore: function() {
+		if(Ui.Rectangle.supportBorderRadius) {
+			this.rectDrawing.style.setProperty('border-top-left-radius', this.getRadiusTopLeft()+'px', null);
+			this.rectDrawing.style.setProperty('border-top-right-radius', this.getRadiusTopRight()+'px', null);
+			this.rectDrawing.style.setProperty('border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
+			this.rectDrawing.style.setProperty('border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
+		}
+		else if(Ui.Rectangle.supportMozBorderRadius) {
+			this.rectDrawing.style.setProperty('-moz-border-radius-topleft', this.getRadiusTopLeft()+'px', null);
+			this.rectDrawing.style.setProperty('-moz-border-radius-topright', this.getRadiusTopRight()+'px', null);
+			this.rectDrawing.style.setProperty('-moz-border-radius-bottomleft', this.getRadiusBottomLeft()+'px', null);
+			this.rectDrawing.style.setProperty('-moz-border-radius-bottomright', this.getRadiusBottomRight()+'px', null);
+		}		
+		else if(Ui.Rectangle.supportWebkitBorderRadius) {
+			this.rectDrawing.style.setProperty('-webkit-border-top-left-radius', this.getRadiusTopLeft()+'px', null);
+			this.rectDrawing.style.setProperty('-webkit-border-top-right-radius', this.getRadiusTopRight()+'px', null);
+			this.rectDrawing.style.setProperty('-webkit-border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
+			this.rectDrawing.style.setProperty('-webkit-border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
+		}
+
+		var shadow = 'none';
+		if(this.shadow != undefined)
+			shadow = this.shadow;
+
+		if(Ui.Rectangle.supportBoxShadow)
+			this.rectDrawing.style.setProperty('box-shadow', shadow, null);
+		else if(Ui.Rectangle.supportMozBoxShadow)
+			this.rectDrawing.style.setProperty('-moz-box-shadow', shadow, null);
+		else if(Ui.Rectangle.supportWebkitBoxShadow)
+			this.rectDrawing.style.setProperty('-webkit-box-shadow', shadow, null);
+
+		this.rectDrawing.style.setProperty('background', this.getFill(), null);
 	},
 });
 
@@ -107,6 +169,31 @@ else {
 		}
 	}
 }
+
+
+Ui.Rectangle.supportBoxShadow = false;
+Ui.Rectangle.supportMozBoxShadow = false;
+Ui.Rectangle.supportWebkitBoxShadow = false;
+
+test.style.setProperty('box-shadow', '0px 0px 4px black', null);
+var res = test.style.getPropertyValue('box-shadow');
+if((res != null) && (res != undefined) && (res != ''))
+	Ui.Rectangle.supportBoxShadow = true;
+else {
+	test.style.setProperty('-moz-box-shadow', '0px 0px 4px black', null);
+	res = test.style.getPropertyValue('-moz-box-shadow');
+	if((res != null) && (res != undefined) && (res != '')) {
+		Ui.Rectangle.supportMozBoxShadow = true;
+	}
+	else {
+		test.style.setProperty('-webkit-box-shadow', '0px 0px 4px black', null);
+		res = test.style.getPropertyValue('-webkit-box-shadow');
+		if((res != null) && (res != undefined) && (res != '')) {
+			Ui.Rectangle.supportWebkitBoxShadow = true;
+		}
+	}
+}
+
 test = undefined;
 
 

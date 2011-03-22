@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/js/era-debug.js'></script>
+<script>
+//
+// The fixed allow children to be absolute positionned
+//
+
+var app = new Ui.App();
+
+var fixed = new Ui.Fixed();
+app.append(fixed);
+
+var r1 = new Ui.Rectangle({ fill: 'black', width: 50, height: 50, radius: 8 });
+fixed.append(r1, 20, 20);
+
+var r2 = new Ui.Rectangle({ fill: 'orange', width: 50, height: 50, radius: 8 });
+fixed.append(r2, 40, 40);
+
+var r3 = new Ui.Rectangle({ fill: 'purple', width: 50, height: 50, radius: 8 });
+fixed.append(r3, 60, 60);
+
+</script>
+  </head>
+	<body></body>
+</html>

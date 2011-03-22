@@ -132,8 +132,8 @@ Ui.LBox.extend('Ui.Movable', {
 		if(event.button != 0)
 			return;
 
-		this.disconnect(window, 'mousemove');
-		this.disconnect(window, 'mouseup');
+		this.disconnect(window, 'mousemove', this.onMouseMove);
+		this.disconnect(window, 'mouseup', this.onMouseUp);
 
 		if(this.measureSpeedTimer != undefined) {
 			this.stopComputeInertia();
@@ -256,7 +256,7 @@ Ui.LBox.extend('Ui.Movable', {
 
 	startInertia: function() {
 		if(this.inertiaClock == undefined) {
-			var timeline = new Anim.Timeline({ duration: 'forever', target: this,
+			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this,
 				callback: function(clock, progress, delta) {
 					if(delta == 0)
 						return;
@@ -284,7 +284,7 @@ Ui.LBox.extend('Ui.Movable', {
 						this.stopInertia();
 				}
 			});
-			this.inertiaClock = timeline.begin();
+			this.inertiaClock.begin();
 		}
 	},
 

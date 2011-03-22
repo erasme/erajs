@@ -13,6 +13,7 @@ resources: {
 
 general: {
 	fontFamily: 'Ubuntu',
+	fontSize: 16,
 
 	backgroundColor: '#fefefe',
 	textColor: 'black',

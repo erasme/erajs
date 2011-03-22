@@ -23,7 +23,7 @@ Ui.Fold.extend('Laclasse.HomeBar', {
 		lbox = new Ui.LBox();
 		lbox.appendChild(new Ui.Rectangle({ fill: '#f9f9f9' }));
 		this.appLauncher = new Laclasse.AppLauncher();
-		lbox.appendChild(this.appLauncher);		
+		lbox.appendChild(this.appLauncher);
 		this.setContent(lbox);
 
 		this.connect(this.appLauncher, 'launch', this.onAppLaunch);

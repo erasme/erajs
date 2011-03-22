@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/js/era-debug.js'></script>
+<script>
+//
+// Play with Ui.HBox, the element allow horizontal stacking
+//
+
+var app = new Ui.App();
+
+var hbox1 = new Ui.HBox();
+app.append(hbox1);
+
+// create a 20 width rectangle. The default packing behavior of element
+// is to stretch the available size. In this case, the width will be
+// stretched to the parent hbox height
+hbox1.append(new Ui.Rectangle({ fill: 'orange', width: 20 }));
+
+// the second argument (true) specify that the hbox can use this
+// rectangle to fill all the available space
+hbox1.append(new Ui.Rectangle({ fill: 'lightgreen' }), true);
+
+// unlike the first rectangle, specify that we want this element
+// to be verticaly centered
+hbox1.append(new Ui.Rectangle({ fill: 'brown', width: 20, height: 100, verticalAlign: 'center' }));
+
+</script>
+  </head>
+	<body></body>
+</html>

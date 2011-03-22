@@ -201,8 +201,8 @@ Ui.Container.extend('Ui.Fold', {
 		if(this.clock != undefined)
 			this.clock.stop();
 
-		var timeline = new Anim.Timeline({ duration: 2, target: this, callback: this.onClockTick });
-		this.clock = timeline.begin();
+		this.clock = new Anim.Clock({ duration: 2, target: this, callback: this.onClockTick });
+		this.clock.begin();
 	},
 
 	stopAnimation: function() {
