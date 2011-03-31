@@ -146,3 +146,41 @@ if(navigator.isIE) {
 	};
 }
 
+if(window.JSON == undefined) {
+	var json = {};
+	json.parse = function(json) {
+		return eval('('+json+')');
+	};
+	json.stringify = function(object) {
+		var res = '';
+		var first = true;
+		var isArray = (this.constructor.toString().indexOf('function Array()') != -1);
+		for(var prop in this) {
+			try {
+				var propValue = this[prop];
+				if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object'))
+					continue;
+				if(first)
+					first = false;
+				else
+					res += ", ";
+				if(!isArray)
+					res += '"'+prop+'": ';
+				if(typeof(propValue) == 'object')
+					res += JSON.stringify(propValue);
+				else if(typeof(propValue) == 'number')
+					res += propValue;
+				else if(typeof(propValue) == 'string')
+					res += '"'+propValue.replace('"','\\"')+'"';
+			} catch(err) {}
+		}
+		if(isArray)
+			res = '[ '+res+' ]';
+		else
+			res = '{ '+res+' }';
+		return res;
+	};
+	window.JSON = json;
+}
+
+

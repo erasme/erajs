@@ -15,23 +15,43 @@ Object.extend('Core.HttpRequest', {
 		if(config.binary != undefined)
 			this.binary = config.binary;
 
-		this.request = new XMLHttpRequest();
-		if(this.binary)
-			this.request.overrideMimeType('text/plain; charset=x-user-defined');
-		this.request.open(this.method, this.url, true);
+//		if(Core.HttpRequest.supportXDomainRequest) {
+//			this.request = new XDomainRequest();
+//
+//			var wrapperLoad = function() {
+//				var httprequest = arguments.callee.httprequest;
+//				httprequest.fireEvent('done');
+//			}
+//			wrapperLoad.httprequest = this;
+//			this.request.onload = wrapperLoad;
+//
+//			var wrapperError = function() {
+//				var httprequest = arguments.callee.httprequest;
+//				httprequest.fireEvent('error');
+//			}
+//			wrapperError.httprequest = this;
+//			this.request.onerror = wrapperError;
+//
+//			this.request.open(this.method, this.url);
+//		}
+//		else {
+			this.request = new XMLHttpRequest();
+			if(this.binary)
+				this.request.overrideMimeType('text/plain; charset=x-user-defined');
+			this.request.open(this.method, this.url, true);
 
-		var wrapper = function() {
-			var httprequest = arguments.callee.httprequest;
-			if(httprequest.request.readyState == 4) {
-				if(httprequest.request.status == 200)
-					httprequest.fireEvent('done');
-				else
-					httprequest.fireEvent('error', httprequest.request.status);
+			var wrapper = function() {
+				var httprequest = arguments.callee.httprequest;
+				if(httprequest.request.readyState == 4) {
+					if(httprequest.request.status == 200)
+						httprequest.fireEvent('done');
+					else
+						httprequest.fireEvent('error', httprequest.request.status);
+				}
 			}
-		}
-		wrapper.httprequest = this;
-		this.request.onreadystatechange = wrapper;
-
+			wrapper.httprequest = this;
+			this.request.onreadystatechange = wrapper;
+//		}
 		this.addEvents('error', 'done');
 	},
 
@@ -88,7 +108,7 @@ Object.extend('Core.HttpRequest', {
 	getResponseJSON: function() {
 		var res;
 		try {
-			res = eval('('+this.getResponseText()+')');
+			res = JSON.parse(this.getResponseText());
 		}
 		catch(err) {
 			res = undefined;
@@ -96,5 +116,22 @@ Object.extend('Core.HttpRequest', {
 		return res;
 	},
 
+	getResponseXML: function() {
+		var parser=new DOMParser();
+		try {
+			var xmlDoc = parser.parseFromString(this.getResponseText(), 'text/xml');
+			return xmlDoc;
+		} catch(e) {}
+		return undefined;
+	},
+
 });
+
+
+//Core.HttpRequest.supportXDomainRequest = false;
+//try {
+//	new XDomainRequest();
+//	Core.HttpRequest.supportXDomainRequest = true;
+//}
+//catch(e) {}
 

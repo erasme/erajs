@@ -55,4 +55,14 @@ Ui.Pressable.extend('Ui.Button', {
 		console.log(this+'.onStyleChange '+this.getStyleProperty('backgroundColor'));
 		this.background.setFill(this.getStyleProperty('backgroundColor'));
 	},
+
+	onDisable: function() {
+		Ui.Button.base.onDisable.call(this);
+		this.content.setColor('red');
+	},
+
+	onEnable: function() {
+		Ui.Button.base.onEnable.call(this);
+		this.content.setColor('black');
+	},
 });

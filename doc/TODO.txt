@@ -33,10 +33,10 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 
 * - Proposer une option "autoscale" pour les App
 
-- Dans l'Accordeon, cacher les éléments (avec display: none) lorsqu'ils
-  ne sont plus du tout visible. Cela devrait permettre de gagner des ressources
+* - Dans l'Accordeon, cacher les éléments (avec display: none) lorsqu'ils
+    ne sont plus du tout visible. Cela devrait permettre de gagner des ressources
 
-- Dans Ui.App, ne plus utiliser appendChild, fournir une méthode setContent
+- Dans Ui.App, ne plus utiliser append, fournir une méthode setContent
 
 - Dans Ui.App, permettre de fournir un dépôt de police de caractère. Les éléments
   texte comme Label et Text doivent utiliser ce dépôt pour charger la police
@@ -75,8 +75,9 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - voir pour intégrer les animations dans le "update" de Ui.App
   (ordre logique: event, anim, render, measure, arrange)
 
-- dans Ui.Fold, utiliser display: none lorsque la partie cachée est
-  cachée
+* - dans Ui.Fold, utiliser display: none lorsque la partie cachée est
+    cachée (pas display: none mais visibility: hidden sinon on ne peut
+    plus mesuré le texte)
 
 - dans Ui.Scrollable envoyer systématiquement comme taille minimum
   la taille de barre de scroll
@@ -84,4 +85,11 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - dans Ui.App update, gérer la mise à jour de l'arbre de rendu
   d'abords et le rendu graphique à la fin (en gros, séparer
   l'updateRender en 2)
+
+* - dans Accordeon, utiliser offset entre 0-1 (en relatif) pour
+    pouvoir gérer correctement le redimentionnement
+
+- lorsqu'un Ui.Element Focusable est disabled, il ne doit plus
+  être accessible au focus et doit même le perdre s'il l'avait
+
 

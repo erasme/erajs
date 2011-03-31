@@ -89,7 +89,7 @@ Ui.LBox.extend('Ui.App', {
 					var key = decodeURIComponent(tab2[0]);
 					var val = decodeURIComponent(tab2[1]);
 					if(key == 'base64')
-						base64 = eval('('+val.fromBase64()+')');
+						base64 = JSON.parse(val.fromBase64());
 					else
 						arguments[key] = val;
 				}
@@ -254,6 +254,8 @@ Ui.LBox.extend('Ui.App', {
 		this.windowWidth = innerWidth;
 		this.windowHeight = innerHeight;
 
+//		console.log(this+'.update size: '+this.windowWidth+' x '+this.windowHeight+', child: '+size.width+' x '+size.height);
+
 		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
 
 		// update rendering if needed
@@ -341,7 +343,7 @@ Ui.LBox.extend('Ui.App', {
 			event.preventDefault();
 			event.stopPropagation();
 
-			var msg = eval('('+event.data+')');
+			var msg = JSON.parse(event.data);
 			this.fireEvent('parentmessage', msg);
 		}
 	},

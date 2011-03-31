@@ -71,7 +71,7 @@ Ui.Container.extend('Ui.Accordeon', {
 	//
 	appendPage: function(page) {
 		this.appendChild(page);
-		page.setOffset(this.contentSize);
+		page.setOffset(1);
 		page.setOrientation(this.orientation);
 		this.connect(page, 'select', this.onPageSelect);
 		this.connect(page, 'close', this.onPageClose);
@@ -110,17 +110,23 @@ Ui.Container.extend('Ui.Accordeon', {
 	onClockTick: function(clock, progress) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
+
+			if(i == this.current)
+				child.showContent();
+
 			var offset = child.getOffset();
-			if(offset > this.contentSize)
-				child.setOffset(this.contentSize);
+			if(offset > 1)
+				child.setOffset(1);
 			else {
 				var destOffset;
 				if(i <= this.current)
 					destOffset = 0;
 				else
-					destOffset = this.contentSize;
+					destOffset = 1;
 				child.setOffset(destOffset - ((destOffset - offset) * (1 - progress)));
 			}
+			if((progress == 1) && (i != this.current))
+				child.hideContent();
 		}
 	},
 
@@ -215,7 +221,6 @@ Ui.Container.extend('Ui.Accordeon', {
 				y += child.getHeader().getMeasureHeight();
 			}
 		}
-		this.setCurrentPosition(this.current);
 	},
 });
 
@@ -250,6 +255,18 @@ Ui.Container.extend('Ui.AccordeonPage', {
 	//
 	close: function() {
 		this.fireEvent('close', this);
+	},
+
+	showContent: function() {
+		if(this.content != undefined) {
+			this.content.show();
+		}
+	},
+
+	hideContent: function() {
+		if(this.content != undefined) {
+			this.content.hide();
+		}
 	},
 
 	//
@@ -327,9 +344,9 @@ Ui.Container.extend('Ui.AccordeonPage', {
 	setOffset: function(offset) {
 		this.offset = offset;
 		if(this.orientation == 'horizontal')
-			this.setTransform(Ui.Matrix.createTranslate(this.offset, 0));
+			this.setTransform(Ui.Matrix.createTranslate(this.offset * (this.getLayoutWidth() - this.headerBox.getMeasureWidth()), 0));
 		else
-			this.setTransform(Ui.Matrix.createTranslate(0, this.offset));
+			this.setTransform(Ui.Matrix.createTranslate(0, this.offset * (this.getLayoutHeight() - this.headerBox.getMeasureHeight())));
 	},
 
 	onHeaderPress: function() {
@@ -373,6 +390,7 @@ Ui.Container.extend('Ui.AccordeonPage', {
 			if(this.content != undefined)
 				this.content.arrange(0, this.headerBox.getMeasureHeight(), width, height - this.headerBox.getMeasureHeight(), force);
 		}
+		this.setOffset(this.offset);
 	},
 });
 

@@ -28,6 +28,7 @@ Ui.Container.extend('Ui.Fold', {
 
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
+		this.contentBox.hide();
 
 		if(config.header != undefined)
 			this.setHeader(config.header);
@@ -201,6 +202,9 @@ Ui.Container.extend('Ui.Fold', {
 		if(this.clock != undefined)
 			this.clock.stop();
 
+		if(!this.isFolded)
+			this.contentBox.show();
+
 		this.clock = new Anim.Clock({ duration: 2, target: this, callback: this.onClockTick });
 		this.clock.begin();
 	},
@@ -230,6 +234,10 @@ Ui.Container.extend('Ui.Fold', {
 			else
 				destOffset = 1;
 			this.setOffset(destOffset - ((destOffset - offset) * (1 - progress)));
+		}
+		if((progress == 1) && this.isFolded) {
+			console.log('hide content');
+			this.contentBox.hide();
 		}
 	},
 

@@ -11,7 +11,7 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.setFocusable(true);
 		this.setRole('button');
 
-		this.addEvents('press', 'down', 'up', 'disable', 'enable');
+		this.addEvents('press', 'down', 'up');
 
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
@@ -25,7 +25,7 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.connect(this, 'keydown', this.onKeyDown);
 	},
 
-	disable: function() {
+/*	disable: function() {
 		if(this.isEnable) {
 			this.isEnable = false;
 			this.fireEvent('disable', this);
@@ -37,7 +37,7 @@ Ui.LBox.extend('Ui.Pressable', {
 			this.isEnable = true;
 			this.fireEvent('enable', this);
 		}
-	},
+	},*/
 
 	//
 	// Private
@@ -170,4 +170,14 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.fireEvent('up', this);
 	},
 
+}, {
+	onDisable: function() {
+		console.log(this+'.onDisable');
+		this.isEnable = false;
+	},
+
+	onEnable: function() {
+		console.log(this+'.onEnable');
+		this.isEnable = true;
+	},
 });

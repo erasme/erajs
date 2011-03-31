@@ -28,6 +28,7 @@ include(eraBaseDirectory+'core/object.js');
 include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');
+include(eraBaseDirectory+'core/socket.js');
 
 //
 // Animations

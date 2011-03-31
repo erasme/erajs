@@ -103,10 +103,22 @@ Ui.Element.extend('Ui.Container', {
 			throw('updateRenderChildren PROBLEM');
 	},
 
-	onStyleChange: function() {
-		Ui.Container.base.onStyleChange.call(this);
+	onInternalStyleChange: function() {
+		this.onStyleChange();
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].setParentStyle(this.mergeStyle);
+	},
+
+	onInternalDisable: function() {
+		Ui.Container.base.onInternalDisable.call(this);
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].setParentDisabled(true);
+	},
+
+	onInternalEnable: function() {
+		Ui.Container.base.onInternalEnable.call(this);
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].setParentDisabled(false);
 	},
 });
 

@@ -25,7 +25,7 @@ Ui.IFrame.extend('Ui.Program', {
 		if(this.getIFrame().contentWindow === event.source) {
 			event.preventDefault();
 			event.stopPropagation();
-			var msg = eval('('+event.data+')');
+			var msg = JSON.parse(event.data);
 			this.fireEvent('message', this, msg);
 		}
 	},

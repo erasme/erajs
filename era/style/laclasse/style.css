@@ -5,7 +5,8 @@
 
 .laclasse-homebar {
 	border-left: 1px solid rgba(0, 0, 0, 0.2);
-	box-shadow: -2px 0px 2px rgba(0, 0, 0, 0.05);
+/*	box-shadow: -2px 0px 2px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: -2px 0px 2px rgba(0, 0, 0, 0.05);*/
 	background: #f9f9f9;
 }
 
@@ -18,7 +19,8 @@
  */
 .laclasse-programpage {
 	border-left: 1px solid rgba(0, 0, 0, 0.2);
-	box-shadow: -2px 0px 2px rgba(0, 0, 0, 0.05);
+/*	box-shadow: -2px 0px 2px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: -2px 0px 2px rgba(0, 0, 0, 0.05);*/
 	background: #f9f9f9;
 }
 

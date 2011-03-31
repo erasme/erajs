@@ -71,6 +71,11 @@ Object.extend('Ui.Element', {
 
 	opacity: 1,
 
+	// handle disable
+	disabled: undefined,
+	parentDisabled: undefined,
+
+	// handle styles
 	style: undefined,
 	parentStyle: undefined,
 	mergeStyle: undefined,
@@ -119,7 +124,7 @@ Object.extend('Ui.Element', {
 //		this.connect(this.drawing, 'focus', this.focus);
 //		this.connect(this.drawing, 'blur', this.blur);
 
-		this.addEvents('keypress', 'keydown', 'focus', 'blur', 'load', 'unload');
+		this.addEvents('keypress', 'keydown', 'focus', 'blur', 'load', 'unload', 'enable', 'disable');
 	},
 
 	//
@@ -955,11 +960,67 @@ Object.extend('Ui.Element', {
 	},
 
 	show: function() {
-		this.drawing.style.display = 'block';
+		this.drawing.style.visibility = 'visible';
 	},
 
 	hide: function() {
-		this.drawing.style.display = 'none';
+		this.drawing.style.visibility = 'hidden';
+	},
+
+	disable: function() {
+		if((this.disabled == undefined) || !this.disabled) {
+			var old = this.getIsDisabled();
+			this.disabled = true;
+			if(!old)
+				this.onInternalDisable();
+		}
+	},
+	
+	enable: function() {
+		if((this.disabled == undefined) || this.disabled) {
+			var old = this.getIsDisabled();
+			this.disabled = false;
+			if(old)
+				this.onInternalEnable();
+		}
+	},
+
+	getIsDisabled: function() {
+		if(this.disabled != undefined)
+			return this.disabled;
+		else {
+			if(this.parentDisabled != undefined)
+				return this.parentDisabled;
+			else
+				return false;
+		}
+	},
+
+	setParentDisabled: function(disabled) {
+		var old = this.getIsDisabled();
+		this.parentDisabled = disabled;
+		if(old != this.getIsDisabled()) {
+			if(this.getIsDisabled())
+				this.onInternalDisable();
+			else
+				this.onInternalEnable();
+		}
+	},
+
+	onInternalDisable: function() {
+		this.onDisable();
+		this.fireEvent('disable', this);
+	},
+
+	onDisable: function() {
+	},
+
+	onInternalEnable: function() {
+		this.onEnable();
+		this.fireEvent('enable', this);
+	},
+
+	onEnable: function() {
 	},
 
 	mergeStyles: function() {
@@ -982,14 +1043,14 @@ Object.extend('Ui.Element', {
 		if(this.parentStyle != parentStyle) {
 			this.parentStyle = parentStyle;
 			this.mergeStyles();
-			this.onStyleChange();
+			this.onInternalStyleChange();
 		}
 	},
 
 	setStyle: function(style) {
 		this.style = style;
 		this.mergeStyles();
-		this.onStyleChange();
+		this.onInternalStyleChange();
 	},
 
 	getStyleProperty: function(property) {
@@ -997,6 +1058,10 @@ Object.extend('Ui.Element', {
 			return this.mergeStyle[property];
 		else
 			return undefined;
+	},
+
+	onInternalStyleChange: function() {
+		this.onStyleChange();
 	},
 
 	//
@@ -1060,8 +1125,10 @@ Object.extend('Ui.Element', {
 	},
 
 	onLoad: function() {
-		if(this.parent != undefined)
+		if(this.parent != undefined) {
 			this.setParentStyle(this.parent.mergeStyle);
+			this.setParentDisabled(this.getIsDisabled());
+		}
 		this.fireEvent('load');
 	},
 

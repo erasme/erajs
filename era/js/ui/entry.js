@@ -7,6 +7,15 @@ Ui.Element.extend('Ui.Entry', {
 	color: 'black',
 
 	constructor: function(config) {
+		if(config.fontSize != undefined)
+			this.setFontSize(config.fontSize);
+		if(config.fontFamily != undefined)
+			this.setFontFamily(config.fontFamily);
+		if(config.fontWeight != undefined)
+			this.setFontWeight(config.fontWeight);
+		if(config.color != undefined)
+			this.setColor(config.color);
+
 //		this.connect(this.entryDrawing, 'mousedown', function(event) {
 //			console.log('entry mousedown');
 //			this.entryDrawing.focus();
@@ -70,6 +79,13 @@ Ui.Element.extend('Ui.Entry', {
 		return this.color;
 	},
 
+	getValue: function() {
+		return this.entryDrawing.value;
+	},
+
+	setValue: function(value) {
+		this.entryDrawing.value = value;
+	},
 
 	//
 	// Private
@@ -89,11 +105,12 @@ Ui.Element.extend('Ui.Entry', {
 		this.entryDrawing.style.setProperty('background', 'none', null);
 		if(navigator.isWebkit)
 			this.entryDrawing.style.setProperty('-webkit-appearance', 'none', null);
+		this.updateRenderCore();
 		return this.entryDrawing;
 	},
 
 	measureCore: function(width, height, force) {
-		return { width: 8, height: 8 };
+		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
