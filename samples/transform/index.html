@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test Animation</title>
+	<script src='../../era/js/era-debug.js'></script>
+<script>
+var app = new Ui.App();
+
+var toolbar = new Ui.ToolBar({ verticalAlign: 'top', spacing: 10 });
+app.append(toolbar);
+
+var beginButton = new Ui.Button({ text: 'begin' });
+toolbar.append(beginButton);
+app.connect(beginButton, 'press', function() {
+	clock.begin();
+});
+
+var pauseButton = new Ui.Button({ text: 'pause' });
+toolbar.append(pauseButton);
+app.connect(pauseButton, 'press', function() {
+	clock.pause();
+});
+
+var resumeButton = new Ui.Button({ text: 'resume' });
+toolbar.append(resumeButton);
+app.connect(resumeButton, 'press', function() {
+	clock.resume();
+});
+
+var stopButton = new Ui.Button({ text: 'stop' });
+toolbar.append(stopButton);
+app.connect(stopButton, 'press', function() {
+	console.log('press stop button');
+	clock.stop();
+});
+
+var rect = new Ui.Rectangle({ width: 200, height: 100, fill: 'green', verticalAlign: 'center', horizontalAlign: 'center' });
+app.append(rect);
+
+var clock = new Anim.ClockGroup({ duration: 4, target: rect });
+
+var clock1 = new Anim.Clock({ duration: 4.0,
+	ease: new Anim.ElasticEase({ mode: 'out' }),
+	callback: function(clock, progress) {
+		this.setTransform(Ui.Matrix.createRotate(progress * 360));
+	}
+});
+clock.appendChild(clock1);
+
+
+var clock2 = new Anim.Clock({ duration: 2.0,
+	callback: function(clock, progress) {
+		this.setOpacity(progress);
+	}
+});
+clock.appendChild(clock2);
+
+
+</script>
+	</head>
+</html>

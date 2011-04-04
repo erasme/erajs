@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Slider</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var toolbar = new Ui.ToolBar({ verticalAlign: 'top', spacing: 10 });
+app.append(toolbar);
+
+var beginButton = new Ui.Button({ text: 'begin' });
+toolbar.append(beginButton);
+app.connect(beginButton, 'press', function() {
+	clock.begin();
+});
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+app.append(vbox);
+
+var label = new Ui.Label({ horizontalAlign: 'center', text: 'Value: 0.00' });
+vbox.append(label);
+
+var slider = new Ui.Slider({ verticalAlign: 'center', horizontalAlign: 'center', width: 200, height: 50 });
+vbox.append(slider);
+
+app.connect(slider, 'change', function() {
+	label.setText('Value: '+slider.getValue().toFixed(2));
+});
+
+var clock = new Anim.Clock({ duration: 4.0, target: slider,
+	callback: function(clock, progress) {
+		this.setValue(progress);
+	}
+});
+
+</script>
+  </head>
+</html>

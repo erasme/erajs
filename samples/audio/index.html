@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Audio</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var toolbar = new Ui.ToolBar({ verticalAlign: 'top', spacing: 10 });
+app.append(toolbar);
+
+var playButton = new Ui.Button({ text: 'play' });
+toolbar.append(playButton);
+app.connect(playButton, 'press', function() {
+	audio.play();
+});
+
+var pauseButton = new Ui.Button({ text: 'pause' });
+toolbar.append(pauseButton);
+app.connect(pauseButton, 'press', function() {
+	audio.pause();
+});
+
+var resumeButton = new Ui.Button({ text: 'resume' });
+toolbar.append(resumeButton);
+app.connect(resumeButton, 'press', function() {
+	audio.resume();
+});
+
+var stopButton = new Ui.Button({ text: 'stop' });
+toolbar.append(stopButton);
+app.connect(stopButton, 'press', function() {
+	audio.stop();
+});
+
+var rect = new Ui.Rectangle({ height: 10, fill: 'green', verticalAlign: 'center', horizontalAlign: 'stretch'});
+rect.setTransformOrigin(0, 0);
+toolbar.append(rect, true);
+
+var audio = new Ui.Audio({ oggSrc: 'sound.ogg', mp3Src: 'sound.mp3', wavSrc: 'sound.wav', volume: 1 });
+app.append(audio);
+
+app.connect(audio, 'ready', function() {
+	console.log('audio ready');
+});
+
+app.connect(audio, 'ended', function() {
+	console.log('audio ended');
+});
+
+app.connect(audio, 'timeupdate', function(time) {
+	console.log('audio pos: '+time);
+	rect.setTransform(Ui.Matrix.createScale(time/audio.getDuration(), 1));
+});
+
+</script>
+  </head>
+</html>

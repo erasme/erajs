@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src='../../era/js/era-debug.js'></script>
+<script>
+
+var count = 0;
+
+var app = new Ui.App({ });
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+app.append(vbox);
+
+var label = new Ui.Label({ text: 'press count: 0' });
+vbox.append(label);
+
+var pressable = new Ui.Pressable();
+vbox.append(pressable);
+
+var rectangle = new Ui.Rectangle({ width: 100, height: 100, fill: 'lightblue' });
+pressable.append(rectangle);
+app.connect(pressable, 'press', function() {
+	label.setText('press count: '+(++count));
+});
+app.connect(pressable, 'down', function() {
+	rectangle.setFill('blue');
+});
+app.connect(pressable, 'up', function() {
+	rectangle.setFill('lightblue');
+});
+
+</script>
+  </head>
+</html>
