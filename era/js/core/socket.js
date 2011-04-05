@@ -134,7 +134,8 @@ Object.extend('Core.Socket', {
 			this.fireEvent('open', this);
 		}
 		else {
-			this.fireEvent('message', this, JSON.parse(data.fromBase64()));
+			if(data != 'keepalive')
+				this.fireEvent('message', this, JSON.parse(data.fromBase64()));
 		}
 	},
 

@@ -20,6 +20,11 @@ Ui.LBox.extend('Ui.App', {
 	windowHeight: 0,
 	windowScale: 1,
 
+	contentBox: undefined,
+	content: undefined,
+
+	dialogs: undefined,
+
 	constructor: function(config) {
 		Ui.App.current = this;
 /*		if(navigator.isIE)
@@ -30,6 +35,9 @@ Ui.LBox.extend('Ui.App', {
 			this.addClass('webkit');
 		else if(navigator.isOpera)
 			this.addClass('opera');*/
+
+		this.contentBox = new Ui.LBox();
+		this.append(this.contentBox);
 
 		if(config.autoscale != undefined)
 			this.setAutoScale(config.autoscale);
@@ -269,6 +277,33 @@ Ui.LBox.extend('Ui.App', {
 		this.updateTask = undefined;
 	},
 
+	setContent: function(content) {
+		if(this.content != content) {
+			if(this.content != undefined)
+				this.contentBox.remove(content);
+			if(content != undefined)
+				this.contentBox.append(content);
+			this.content = content;
+		}
+	},
+
+	appendDialog: function(dialog) {
+		if(this.dialogs == undefined) {
+			this.dialogs = new Ui.LBox();
+			this.append(this.dialogs);
+		}
+		this.dialogs.append(dialog);
+	},
+
+	removeDialog: function(dialog) {
+		this.dialogs.remove(dialog);
+		if(this.dialogs.getChildren().length == 0) {
+			this.remove(this.dialogs);
+			this.dialogs = undefined;
+			console.log('last dialog removed');
+		}
+	},
+
 	//
 	// Return the arguments given if any
 	//
@@ -461,6 +496,8 @@ Ui.LBox.extend('Ui.App', {
 
 	invalidateArrange: function() {
 		if(this.arrangeValid) {
+			console.log('invalidate Arrange');
+
 			this.arrangeValid = false;
 			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });

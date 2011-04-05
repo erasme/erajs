@@ -5,11 +5,15 @@ Ui.LBox.extend('Ui.Selectable', {
 	isDown: false,
 	isSelected: false,
 	lastTime: undefined,
+	button: undefined,
+	menuTimer: undefined,
+	menuPosX: undefined,
+	menuPosY: undefined,
 
 	constructor: function(config) {
 		this.setFocusable(true);
 
-		this.addEvents('select', 'unselect', 'activate');
+		this.addEvents('select', 'unselect', 'activate', 'menu');
 
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
@@ -25,8 +29,13 @@ Ui.LBox.extend('Ui.Selectable', {
 	//
 
 	onMouseDown: function(event) {
-		if(event.button != 0)
+		console.log('onMouseDown button: '+event.button);
+
+
+		if((event.button != 0) && (event.button != 2))
 			return;
+
+		this.button = event.button;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -39,7 +48,7 @@ Ui.LBox.extend('Ui.Selectable', {
 
 		this.isDown = true;
 
-		if(!this.isSelected) {
+		if((this.button == 0) && (!this.isSelected)) {
 			this.isSelected = true;
 			this.onSelect();
 			this.fireEvent('select', this);
@@ -88,23 +97,27 @@ Ui.LBox.extend('Ui.Selectable', {
 
 		event.preventDefault();
 		event.stopPropagation();
+
+		if(this.button != event.button)
+			return;
+
+		this.disconnect(window, 'mousemove', this.onMouseMove);
+		this.disconnect(window, 'mouseup', this.onMouseUp);
+
 		if(event.button == 0) {
-			this.disconnect(window, 'mousemove', this.onMouseMove);
-			this.disconnect(window, 'mouseup', this.onMouseUp);
-//			this.onUp();
-//			this.fireEvent('press', this);
-
-
 			var currentTime = (new Date().getTime())/1000;
 			if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250)) {
 				this.fireEvent('activate', this);
 			}
 			this.lastTime = currentTime;
 		}
+		else if(event.button == 2) {
+			this.fireEvent('menu', this, event.pageX, event.pageY);
+		}
 	},
 
 	onTouchStart: function(event) {
-		console.log('touchstart');
+		console.log('touchstart '+this.isDown);
 
 //		if(!this.isEnable)
 //			return;
@@ -137,6 +150,13 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.onSelect();
 			this.fireEvent('select', this);
 		}
+
+		if(this.menuTimer != undefined)
+			this.menuTimer.abort();
+
+		this.menuTimer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onMenuTimer });
+		this.menuPosX = event.targetTouches[0].pageX;
+		this.menuPosY = event.targetTouches[0].pageY;
 	},
 
 	onTouchMove: function(event) {
@@ -150,6 +170,11 @@ Ui.LBox.extend('Ui.Selectable', {
 		// if the user move to much, release the touch event
 		if(delta > 10) {
 //			this.onUp();
+
+			if(this.menuTimer != undefined) {
+				this.menuTimer.abort();
+				this.menuTimer = undefined;
+			}
 
 			this.isDown = false;
 
@@ -181,6 +206,8 @@ Ui.LBox.extend('Ui.Selectable', {
 		if(!this.isDown)
 			return;
 
+		this.isDown = false;
+
 		event.preventDefault();
 		event.stopPropagation();
 //		this.onUp();
@@ -192,6 +219,17 @@ Ui.LBox.extend('Ui.Selectable', {
 		}
 		this.lastTime = currentTime;
 
+		if(this.menuTimer != undefined) {
+			this.menuTimer.abort();
+			this.menuTimer = undefined;
+		}
+	},
+
+	onMenuTimer: function() {
+		console.log('onMenuTimer');
+
+		this.fireEvent('menu', this, this.menuPosX, this.menuPosY);
+		this.menuTimer = undefined;
 	},
 
 /*	onDown: function() {

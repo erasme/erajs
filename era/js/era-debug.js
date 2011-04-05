@@ -98,6 +98,7 @@ include(eraBaseDirectory+'ui/iframe.js');
 //
 // Ui high level element (= drawing + logic + style)
 //
+include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/button.js');
 include(eraBaseDirectory+'ui/toolbar.js');
