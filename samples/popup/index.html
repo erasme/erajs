@@ -55,8 +55,8 @@ selectable.append(new Ui.Rectangle({ width: 50, height: 50, radius: 8, fill: 'li
 selectable.append(new Ui.Label({ text: 'right click' }));
 
 app.connect(selectable, 'menu', function(item, x, y) {
-	console.log('open the menu: '+x+'x'+y);
-	popup.show(x, y);
+	console.log('open the menu at element');
+	popup.show(selectable);
 });
 
 </script>

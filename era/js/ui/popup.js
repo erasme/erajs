@@ -85,7 +85,14 @@ Ui.Container.extend('Ui.Popup', {
 	show: function(posX, posY) {
 		if(!this.visible) {
 			this.visible = true;
-			if((posX != undefined) && (posY != undefined)) {
+			if((typeof(posX) == 'object') && (posX.isSubclass('Ui.Element'))) {
+				var element = posX;
+				var point = element.pointToPage({ x: element.getLayoutWidth(), y: element.getLayoutHeight()/2 });
+				this.posX = point.x;
+				this.posY = point.y;
+				this.background.setArrowBorder('left');
+			}
+			else if((posX != undefined) && (posY != undefined)) {
 				this.posX = posX;
 				this.posY = posY;
 				this.background.setArrowBorder('left');
@@ -97,6 +104,8 @@ Ui.Container.extend('Ui.Popup', {
 			}
 			this.invalidateArrange();
 			Ui.App.current.appendDialog(this);
+
+
 		}
 	},
 
