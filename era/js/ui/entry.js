@@ -21,14 +21,20 @@ Ui.Element.extend('Ui.Entry', {
 			this.entryDrawing.focus();
 		});
 
-//		this.setFocusable(true);
+		this.connect(this.entryDrawing, 'change', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.fireEvent('change', this, this.getValue());
+		});
 
-		this.connect(this.entryDrawing, 'focus', function(event) {
-			console.log('entry focus');
-		});
-		this.connect(this.entryDrawing, 'blur', function(event) {
-			console.log('entry blur');
-		});
+//		this.setFocusable(true);
+//		this.connect(this.entryDrawing, 'focus', function(event) {
+//			console.log('entry focus');
+//		});
+//		this.connect(this.entryDrawing, 'blur', function(event) {
+//			console.log('entry blur');
+//		});
+		this.addEvents('change');
 	},
 
 	setFontSize: function(fontSize) {

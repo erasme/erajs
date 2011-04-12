@@ -13,11 +13,28 @@ Ui.LBox.extend('Ui.TextField', {
 
 		this.entry = new Ui.Entry({ margin: 4 });
 		this.append(this.entry);
+
+		this.connect(this.entry, 'change', this.onEntryChange);
+
+		this.addEvents('change');
+	},
+
+	getValue: function() {
+		return this.entry.getValue();
+	},
+
+	setValue: function(value) {
+		this.entry.setValue(value);
 	},
 
 	//
 	// Private
 	//
+
+	onEntryChange: function(entry, value) {
+		this.fireEvent('change', this, value);
+	},
+
 }, {
 	onStyleChange: function() {
 	},

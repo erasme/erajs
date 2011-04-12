@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test TextField</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', width: 200 });
+app.setContent(vbox);
+
+var textfield = new Ui.TextField();
+vbox.append(textfield);
+
+app.connect(textfield, 'change', function(textfield, value) {
+	console.log('TextField change: '+value);
+});
+
+var getButton = new Ui.Button({ text: 'get text' });
+vbox.append(getButton);
+
+app.connect(getButton, 'press', function() {
+	console.log('TextField value: '+textfield.getValue());
+});
+
+</script>
+  </head>
+</html>
