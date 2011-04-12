@@ -10,6 +10,9 @@ Ui.Container.extend('Ui.Popup', {
 	lbox: undefined,
 
 	constructor: function(config) {
+		this.setHorizontalAlign('stretch');
+		this.setVerticalAlign('stretch');
+
 		this.shadow = new Ui.Rectangle({ fill: 'white', opacity: 0.5 });
 		this.appendChild(this.shadow);
 
@@ -105,6 +108,8 @@ Ui.Container.extend('Ui.Popup', {
 	},
 
 	measureCore: function(width, height) {
+		console.log('popup.measureCore('+width+','+height+') '+this.verticalAlign);
+
 		this.background.measure(width, height);
 		var size = this.contentBox.measure(width, height);
 		return { width: Math.max(width, size.width), height: Math.max(height, size.height) };

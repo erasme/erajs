@@ -42,6 +42,8 @@ Ui.LBox.extend('Ui.TextButtonField', {
 			this.setButtonText(config.buttonText);
 		if(config.buttonIcon != undefined)
 			this.setButtonIcon(config.buttonIcon);
+
+		this.addEvents('press', 'change');
 	},
 
 	getButtonIcon: function() {
