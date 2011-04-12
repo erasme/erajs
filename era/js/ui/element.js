@@ -82,7 +82,7 @@ Object.extend('Ui.Element', {
 
 	constructor: function(config) {
 		// create the drawing container
-		this.drawing = document.createElementNS(htmlNS, 'div');
+		this.drawing = this.renderDrawing();
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '0px';
 		this.drawing.style.top = '0px';
@@ -200,7 +200,9 @@ Object.extend('Ui.Element', {
 	// Provide the available size and return
 	// the minimum required size
 	//
-	measure: function(width, height, force) {
+	measure: function(width, height) {
+
+		console.log(this+'.measure ('+width+','+height+')');
 
 		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
 			return { width: this.measureWidth, height: this.measureHeight };
@@ -212,7 +214,21 @@ Object.extend('Ui.Element', {
 		var marginRight = this.getMarginRight();
 		var marginTop = this.getMarginTop();
 		var marginBottom = this.getMarginBottom();
-		var size = this.measureCore(width - (marginLeft+marginRight), height - (marginTop+marginBottom), force);
+
+		var constraintWidth = Math.max(width - (marginLeft+marginRight), 0);
+		var constraintHeight = Math.max(height - (marginTop+marginBottom), 0);
+
+		if(this.horizontalAlign != 'stretch')
+			constraintWidth = 0;
+		if(this.verticalAlign != 'stretch')
+			constraintHeight = 0;
+
+		if(this.width != undefined)
+			constraintWidth = Math.max(this.width, constraintWidth);
+		if(this.height != undefined)
+			constraintHeight = Math.max(this.height, constraintHeight);
+
+		var size = this.measureCore(constraintWidth, constraintHeight);
 
 		// if width and height are set they are taken as a minimum
 		if((this.width != undefined) && (size.width < this.width))
@@ -226,7 +242,7 @@ Object.extend('Ui.Element', {
 
 		this.measureValid = true;
 
-//		console.log(this+'.measure ('+width+','+height+') => '+this.measureWidth+'x'+this.measureHeight);
+		console.log(this+'.measure ('+width+','+height+') => '+this.measureWidth+'x'+this.measureHeight);
 
 		return { width: this.measureWidth, height: this.measureHeight };
 	},
@@ -347,6 +363,15 @@ Object.extend('Ui.Element', {
 			if(this.parent != undefined)
 				this.parent.invalidateArrange();
 		}
+	},
+
+	//
+	// Override this method to provide a custom
+	// rendering of the current element.
+	// Return the HTML element of the rendering
+	//
+	renderDrawing: function() {
+		return document.createElementNS(htmlNS, 'div');
 	},
 
 	//
@@ -1031,10 +1056,14 @@ Object.extend('Ui.Element', {
 				this.mergeStyle = this.parentStyle;
 			else {
 				this.mergeStyle = {};
-				for(var prop in this.parentStyle)
-					this.mergeStyle[prop] = this.parentStyle[prop];
-				for(var prop in this.style)
-					this.mergeStyle[prop] = this.style[prop];
+				for(var prop in this.parentStyle) {
+					if(prop != 'resources')
+						this.mergeStyle[prop] = this.parentStyle[prop];
+				}
+				for(var prop in this.style) {
+					if(prop != 'resources')
+						this.mergeStyle[prop] = this.style[prop];
+				}
 			}
 		}
 	},
@@ -1058,6 +1087,18 @@ Object.extend('Ui.Element', {
 			return this.mergeStyle[property];
 		else
 			return undefined;
+	},
+
+	getStyleResource: function(key) {
+		if((this.mergeStyle == undefined) || (this.mergeStyle.resources == undefined))
+			return undefined;
+		return this.mergeStyle.resources[key];
+	},
+
+	setStyleResource: function(key, value) {
+		if(this.mergeStyle.resources == undefined)
+			this.mergeStyle.resources = {};
+		this.mergeStyle.resources[key] = value;
 	},
 
 	onInternalStyleChange: function() {

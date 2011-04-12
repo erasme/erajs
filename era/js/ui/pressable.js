@@ -83,6 +83,10 @@ Ui.LBox.extend('Ui.Pressable', {
 		}
 	},
 
+	getIsDown: function() {
+		return this.isDown;
+	},
+
 	onMouseUp: function(event) {
 		if(!this.isDown)
 			return;

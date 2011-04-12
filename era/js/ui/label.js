@@ -155,6 +155,10 @@ Ui.Element.extend('Ui.Label', {
 		this.labelDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
 		this.labelDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
 		this.labelDrawing.textContent = this.text;
-		this.labelDrawing.style.setProperty('color', this.getColor(), null);
+
+		var color = this.getColor();
+		if(color.isSubclass('Ui.Color'))
+			color = color.getCssRgba();
+		this.labelDrawing.style.setProperty('color', color, null);
 	},
 });

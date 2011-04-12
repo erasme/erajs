@@ -1,8 +1,8 @@
 
-Ui.Element.extend('Ui.Entry', {
-	entryDrawing: undefined,
+Ui.Element.extend('Ui.TextArea', {
+	textareaDrawing: undefined,
 	fontSize: 14,
-	fontFamily: 'Sans-serif',
+	fontFamily: 'sans-serif',
 	fontWeight: 'normal',
 	color: 'black',
 
@@ -16,18 +16,18 @@ Ui.Element.extend('Ui.Entry', {
 		if(config.color != undefined)
 			this.setColor(config.color);
 
-		this.connect(this.entryDrawing, 'mousedown', function(event) {
+		this.connect(this.textareaDrawing, 'mousedown', function(event) {
 //			console.log('entry mousedown');
-			this.entryDrawing.focus();
+			this.textareaDrawing.focus();
 		});
 
 //		this.setFocusable(true);
 
-		this.connect(this.entryDrawing, 'focus', function(event) {
-			console.log('entry focus');
+		this.connect(this.textareaDrawing, 'focus', function(event) {
+			console.log('textarea focus');
 		});
-		this.connect(this.entryDrawing, 'blur', function(event) {
-			console.log('entry blur');
+		this.connect(this.textareaDrawing, 'blur', function(event) {
+			console.log('textarea blur');
 		});
 	},
 
@@ -96,33 +96,34 @@ Ui.Element.extend('Ui.Entry', {
 
 }, {
 	render: function() {
-		this.entryDrawing = document.createElementNS(htmlNS, 'input');
-		this.entryDrawing.setAttributeNS(null, 'type', 'text');
-		this.entryDrawing.style.setProperty('border', '0px', null);
-		this.entryDrawing.style.setProperty('margin', '0px', null);
-		this.entryDrawing.style.setProperty('padding', '0px', null);
-		this.entryDrawing.style.setProperty('outline', 'none', null);
-		this.entryDrawing.style.setProperty('background', 'none', null);
+		this.textareaDrawing = document.createElementNS(htmlNS, 'textarea');
+		this.textareaDrawing.style.setProperty('display', 'block', null);
+		this.textareaDrawing.style.setProperty('resize', 'none', null);
+		this.textareaDrawing.style.setProperty('overflow', 'hidden', null);
+		this.textareaDrawing.style.setProperty('border', '0px', null);
+		this.textareaDrawing.style.setProperty('margin', '0px', null);
+		this.textareaDrawing.style.setProperty('padding', '0px', null);
+		this.textareaDrawing.style.setProperty('outline', 'none', null);
+		this.textareaDrawing.style.setProperty('background', 'none', null);
 		if(navigator.isWebkit)
-			this.entryDrawing.style.setProperty('-webkit-appearance', 'none', null);
+			this.textareaDrawing.style.setProperty('-webkit-appearance', 'none', null);
 		this.updateRenderCore();
-		return this.entryDrawing;
+		return this.textareaDrawing;
 	},
 
-	measureCore: function(width, height) {
-		console.log(this+'.measureCore('+width+','+height+')');
+	measureCore: function(width, height, force) {
 		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
-		this.entryDrawing.style.setProperty('width', width+'px', null);
-		this.entryDrawing.style.setProperty('height', height+'px', null);
+		this.textareaDrawing.style.setProperty('width', width+'px', null);
+		this.textareaDrawing.style.setProperty('height', height+'px', null);
 	},
 
 	updateRenderCore: function() {
-		this.entryDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
-		this.entryDrawing.style.setProperty('font-family', this.getFontFamily(), null);
-		this.entryDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
-		this.entryDrawing.style.setProperty('color', this.getColor(), null);
+		this.textareaDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
+		this.textareaDrawing.style.setProperty('font-family', this.getFontFamily(), null);
+		this.textareaDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
+		this.textareaDrawing.style.setProperty('color', this.getColor(), null);
 	},
 });

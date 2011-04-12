@@ -202,7 +202,7 @@ Ui.SVGElement.extend('Ui.LocatorRightArrow', {
 	},
 
 }, {
-	renderSVG: function() {
+	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
 		this.arrowDrawing.style.setProperty('fill', this.fill, null);
 		this.arrowDrawing.style.setProperty('fill-opacity', '1', null);
@@ -240,7 +240,7 @@ Ui.SVGElement.extend('Ui.LocatorLeftArrow', {
 	},
 
 }, {
-	renderSVG: function() {
+	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
 		this.arrowDrawing.style.setProperty('fill', this.fill, null);
 		this.arrowDrawing.style.setProperty('fill-opacity', '1', null);
@@ -278,7 +278,7 @@ Ui.SVGElement.extend('Ui.LocatorLeftRightArrow', {
 	},
 
 }, {
-	renderSVG: function() {
+	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
 		this.arrowDrawing.style.setProperty('fill', this.fill, null);
 		this.arrowDrawing.style.setProperty('fill-opacity', '1', null);
@@ -299,8 +299,6 @@ Ui.SVGElement.extend('Ui.LocatorHome', {
 	fill: 'black',
 
 	constructor: function(config) {
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
 		if(config.fill != undefined)
 			this.setFill(config.fill);
 	},
@@ -311,7 +309,7 @@ Ui.SVGElement.extend('Ui.LocatorHome', {
 	},
 
 }, {
-	renderSVG: function() {
+	render: function() {
 		this.homeDrawing = document.createElementNS(svgNS, 'path');
 		this.homeDrawing.style.setProperty('fill', this.fill, null);
 		this.homeDrawing.style.setProperty('fill-opacity', '1', null);

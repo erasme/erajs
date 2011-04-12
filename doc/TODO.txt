@@ -92,4 +92,24 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - lorsqu'un Ui.Element Focusable est disabled, il ne doit plus
   être accessible au focus et doit même le perdre s'il l'avait
 
+- dans Ui.Button, fournir une propriété "variant" ou "ui"
+  pour proposer différents "style" de bouton comme:
+  - normal
+  - normal-left
+  - normal-right
+  - normal-middle
+  - toolbar
+  - toolbar-left
+  - toolbar-right
+  - toolbar-middle
+
+- Proposer un style différent pour les menus, les dialogs
+  style que les menus et les dialogs appliqueront aux éléments
+  enfants (avec les propriétés génériques: background, spacing...)
+
+* - pour Ui.Rectangle, supprimer un niveau de div. Modifier le drawing
+    pour l'affichage.
+
+- pour Ui.Color faire un parser pour #rgb #rrggbb rgb(r,g,b) rgba(r,g,b,a)
+  dans Ui.Color.create
 

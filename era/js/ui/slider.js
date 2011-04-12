@@ -63,8 +63,8 @@ Ui.LBox.extend('Ui.Slider', {
 	},
 
 }, {
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		this.updateValue();
-		Ui.Slider.base.arrangeCore.call(this, width, height, force);
+		Ui.Slider.base.arrangeCore.call(this, width, height);
 	},
 });

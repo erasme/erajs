@@ -186,7 +186,7 @@ Ui.SVGElement.extend('Ui.Text', {
 	},
 
 }, {
-	renderSVG: function() {
+	render: function() {
 		var group = document.createElementNS(svgNS, 'g');
 		// create an hidden text to measure things
 		this.measureDrawing = document.createElementNS(svgNS, 'text');

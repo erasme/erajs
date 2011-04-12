@@ -120,8 +120,8 @@ Ui.Container.extend('Ui.LBox', {
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
 		var bottom = this.getPaddingBottom();
-		var constraintWidth = width - (left + right);
-		var constraintHeight = height - (top + bottom);
+		var constraintWidth = Math.max(width - (left + right), 0);
+		var constraintHeight = Math.max(height - (top + bottom), 0);
 		var minWidth = 0;
 		var minHeight = 0;
 		for(var i = 0; i < this.getChildren().length; i++) {

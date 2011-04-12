@@ -60,6 +60,7 @@ Ui.LBox.extend('Ui.App', {
 
 		this.connect(window, 'load', this.onWindowLoad);
 		this.connect(window, 'resize', this.onWindowResize);
+
 		this.addEvents('resize', 'ready', 'parentmessage');
 
 /*		if(config.style != undefined)
@@ -72,9 +73,9 @@ Ui.LBox.extend('Ui.App', {
 //		this.connect(window, 'mousedown', this.onWindowMouseDown);
 
 		// prevent bad event handling
-//		this.connect(window, 'mousedown', function(event) { event.preventDefault(); });
-//		this.connect(window, 'mouseup', function(event) { event.preventDefault(); });
-//		this.connect(window, 'mousemove', function(event) { event.preventDefault(); });
+		this.connect(window, 'mousedown', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) event.preventDefault(); });
+		this.connect(window, 'mouseup', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) event.preventDefault(); });
+		this.connect(window, 'mousemove', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) event.preventDefault(); });
 //		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });
@@ -82,6 +83,7 @@ Ui.LBox.extend('Ui.App', {
 			event.preventDefault();	return false; });
 		this.connect(window, 'drop', function(event) { event.preventDefault(); return false; });
 		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
+//		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 
 		// handle messages
 		this.connect(window, 'message', this.onMessage);
@@ -280,7 +282,7 @@ Ui.LBox.extend('Ui.App', {
 	setContent: function(content) {
 		if(this.content != content) {
 			if(this.content != undefined)
-				this.contentBox.remove(content);
+				this.contentBox.remove(this.content);
 			if(content != undefined)
 				this.contentBox.append(content);
 			this.content = content;

@@ -145,7 +145,7 @@ Ui.Container.extend('Ui.VBox', {
 	// Private
 	//
 
-	measureChildrenUniform: function(width, height, force) {
+	measureChildrenUniform: function(width, height) {
 		var minWidth = 0;
 		var minHeight = 0;
 
@@ -207,7 +207,7 @@ Ui.Container.extend('Ui.VBox', {
 		return { width: minWidth, height: minHeight };
 	},
 
-	measureChildrenNonUniform: function(width, height, force) {
+	measureChildrenNonUniform: function(width, height) {
 		var minWidth = 0;
 		var minHeight = 0;
 
@@ -245,12 +245,12 @@ Ui.Container.extend('Ui.VBox', {
 				for(var i = 0; i < this.getChildren().length; i++) {
 					var child = this.getChildren()[i];
 					if(!child.vboxResizable) {
-						child.measure(width, child.getMeasureHeight(), force);
+						child.measure(width, child.getMeasureHeight());
 						minHeight += child.getMeasureHeight();
 					}
 					else {
 						if(!child.vboxStarDone) {
-							var size = child.measure(width, starHeight, force);
+							var size = child.measure(width, starHeight);
 							if(size.height > starHeight) {
 								child.vboxStarDone = true;
 								starFound = false;
@@ -280,7 +280,7 @@ Ui.Container.extend('Ui.VBox', {
 			minHeight = 0;
 			for(var i = 0; i < this.getChildren().length; i++) {
 				var child = this.getChildren()[i];
-				child.measure(width, child.getMeasureHeight(), force);
+				child.measure(width, child.getMeasureHeight());
 				minHeight += child.getMeasureHeight();
 			}
 		}
@@ -290,7 +290,7 @@ Ui.Container.extend('Ui.VBox', {
 	},
 
 }, {
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
@@ -299,15 +299,15 @@ Ui.Container.extend('Ui.VBox', {
 		var constraintHeight = height - (top + bottom);
 		var size;
 		if(this.uniform)
-			size = this.measureChildrenUniform(constraintWidth, constraintHeight, force);
+			size = this.measureChildrenUniform(constraintWidth, constraintHeight);
 		else
-			size = this.measureChildrenNonUniform(constraintWidth, constraintHeight, force);
+			size = this.measureChildrenNonUniform(constraintWidth, constraintHeight,);
 		size.width += left + right;
 		size.height += top + bottom;
 		return size;
 	},
 
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
@@ -327,7 +327,7 @@ Ui.Container.extend('Ui.VBox', {
 			}
 			if(i != 0)
 				y += this.spacing;
-			child.arrange(left, y, width, childHeight, force);
+			child.arrange(left, y, width, childHeight);
 			y += childHeight;
 		}
 	},

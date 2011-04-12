@@ -10,8 +10,6 @@ Ui.Container.extend('Ui.Popup', {
 	lbox: undefined,
 
 	constructor: function(config) {
-//		this.background = new Ui.Rectangle({ radius: 8, fill: 'pink' });
-
 		this.shadow = new Ui.Rectangle({ fill: 'white', opacity: 0.5 });
 		this.appendChild(this.shadow);
 
@@ -48,7 +46,6 @@ Ui.Container.extend('Ui.Popup', {
 	},
 
 	onWindowResize: function() {
-		console.log('window resize');
 		if(this.visible) {
 			this.hide();
 		}
@@ -109,18 +106,13 @@ Ui.Container.extend('Ui.Popup', {
 
 	measureCore: function(width, height) {
 		this.background.measure(width, height);
-
 		var size = this.contentBox.measure(width, height);
-		console.log('popup.measure '+width+'x'+height+' => '+size.width+'x'+size.height);
-
-		return { width: width, height: height };
+		return { width: Math.max(width, size.width), height: Math.max(height, size.height) };
 	},
 
 	arrangeCore: function(width, height, force) {
 		var x = 0;
 		var y = 0;
-
-		console.log('popup arrangeCore');
 
 		if(this.posX == undefined) {
 			x = (width - this.contentBox.getMeasureWidth())/2;
@@ -133,6 +125,19 @@ Ui.Container.extend('Ui.Popup', {
 			y = this.posY;
 			x += 10;
 			y -= 30;
+
+			if(y + this.contentBox.getMeasureHeight() > height) {
+				y = height - this.contentBox.getMeasureHeight();
+
+				var offset = this.posY - y;
+				if(offset > this.contentBox.getMeasureHeight() - 18)
+					offset = this.contentBox.getMeasureHeight() - 18;
+				this.background.setArrowOffset(offset);
+			}
+			else {
+				this.background.setArrowOffset(30);
+			}
+
 			this.shadow.arrange(0, 0, 0, 0);
 			this.background.arrange(x - 10, y, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		}
@@ -167,6 +172,13 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 		}
 	},
 
+	setArrowOffset: function(offset) {
+		if(this.arrowOffset != offset) {
+			this.arrowOffset = offset;
+			this.invalidateArrange();
+		}
+	},
+
 	setRadius: function(radius) {
 		if(this.radius != radius) {
 			this.radius = radius;
@@ -179,7 +191,7 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 		this.popupDrawing.style.setProperty('fill', this.fill, null);
 	},
 }, {
-	renderSVG: function() {
+	render: function() {
 		this.popupDrawing = document.createElementNS(svgNS, 'path');
 		this.popupDrawing.style.setProperty('fill', this.fill, null);
 		this.popupDrawing.style.setProperty('fill-opacity', '1', null);

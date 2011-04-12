@@ -1,8 +1,9 @@
 
 
 Ui.Element.extend('Ui.Rectangle', {
-	fill: 'black',
-	rectDrawing: undefined,
+	fill: undefined,
+	stroke: undefined,
+	strokeWidth: 0,
 	radiusTopLeft: 0,
 	radiusTopRight: 0,
 	radiusBottomLeft: 0,
@@ -10,6 +11,8 @@ Ui.Element.extend('Ui.Rectangle', {
 	shadow: undefined,
 
 	constructor: function(config) {
+		this.getDrawing().style.setProperty('box-sizing', 'border-box', null);
+
 		if(config.radius != undefined)
 			this.setRadius(config.radius);
 		if(config.radiusTopLeft != undefined)
@@ -20,10 +23,12 @@ Ui.Element.extend('Ui.Rectangle', {
 			this.setRadiusBottomLeft(config.radiusBottomLeft);
 		if(config.radiusBottomRight != undefined)
 			this.setRadiusBottomRight(config.radiusBottomRight);
+		if(config.stroke != undefined)
+			this.setStroke(config.stroke);
+		if(config.strokeWidth != undefined)
+			this.setStrokeWidth(config.strokeWidth);
 		if(config.fill != undefined)
 			this.setFill(config.fill);
-		else
-			this.setFill(this.fill);
 		if(config.shadow != undefined)
 			this.setShadow(config.shadow);
 	},
@@ -100,35 +105,57 @@ Ui.Element.extend('Ui.Rectangle', {
 	getFill: function() {
 		return this.fill;
 	},
-}, {
-	render: function() {
-		this.rectDrawing = document.createElementNS(htmlNS, 'div');
-		return this.rectDrawing;
+
+	setStroke: function(stroke) {
+		if(this.stroke != stroke) {
+			this.stroke = stroke;
+			this.invalidateRender();
+		}
 	},
 
-	arrangeCore: function(width, height) {
+	getStroke: function() {
+		return this.stroke;
+	},
+
+	setStrokeWidth: function(strokeWidth) {
+		if(this.strokeWidth != strokeWidth) {
+			this.strokeWidth = strokeWidth;
+			this.invalidateRender();
+		}
+	},
+	
+}, {
+/*	render: function() {
+		this.rectDrawing = document.createElementNS(htmlNS, 'div');
+		this.rectDrawing.style.setProperty('box-sizing', 'border-box', null);
+		return this.rectDrawing;
+	},*/
+
+/*	arrangeCore: function(width, height) {
 		this.rectDrawing.style.setProperty('width', width+'px', null);
 		this.rectDrawing.style.setProperty('height', height+'px', null);
-	},
+	},*/
 
 	updateRenderCore: function() {
+		var drawing = this.getDrawing();
+
 		if(Ui.Rectangle.supportBorderRadius) {
-			this.rectDrawing.style.setProperty('border-top-left-radius', this.getRadiusTopLeft()+'px', null);
-			this.rectDrawing.style.setProperty('border-top-right-radius', this.getRadiusTopRight()+'px', null);
-			this.rectDrawing.style.setProperty('border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
-			this.rectDrawing.style.setProperty('border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
+			drawing.style.setProperty('border-top-left-radius', this.getRadiusTopLeft()+'px', null);
+			drawing.style.setProperty('border-top-right-radius', this.getRadiusTopRight()+'px', null);
+			drawing.style.setProperty('border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
+			drawing.style.setProperty('border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
 		}
 		else if(Ui.Rectangle.supportMozBorderRadius) {
-			this.rectDrawing.style.setProperty('-moz-border-radius-topleft', this.getRadiusTopLeft()+'px', null);
-			this.rectDrawing.style.setProperty('-moz-border-radius-topright', this.getRadiusTopRight()+'px', null);
-			this.rectDrawing.style.setProperty('-moz-border-radius-bottomleft', this.getRadiusBottomLeft()+'px', null);
-			this.rectDrawing.style.setProperty('-moz-border-radius-bottomright', this.getRadiusBottomRight()+'px', null);
+			drawing.style.setProperty('-moz-border-radius-topleft', this.getRadiusTopLeft()+'px', null);
+			drawing.style.setProperty('-moz-border-radius-topright', this.getRadiusTopRight()+'px', null);
+			drawing.style.setProperty('-moz-border-radius-bottomleft', this.getRadiusBottomLeft()+'px', null);
+			drawing.style.setProperty('-moz-border-radius-bottomright', this.getRadiusBottomRight()+'px', null);
 		}		
 		else if(Ui.Rectangle.supportWebkitBorderRadius) {
-			this.rectDrawing.style.setProperty('-webkit-border-top-left-radius', this.getRadiusTopLeft()+'px', null);
-			this.rectDrawing.style.setProperty('-webkit-border-top-right-radius', this.getRadiusTopRight()+'px', null);
-			this.rectDrawing.style.setProperty('-webkit-border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
-			this.rectDrawing.style.setProperty('-webkit-border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
+			drawing.style.setProperty('-webkit-border-top-left-radius', this.getRadiusTopLeft()+'px', null);
+			drawing.style.setProperty('-webkit-border-top-right-radius', this.getRadiusTopRight()+'px', null);
+			drawing.style.setProperty('-webkit-border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
+			drawing.style.setProperty('-webkit-border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
 		}
 
 		var shadow = 'none';
@@ -136,13 +163,34 @@ Ui.Element.extend('Ui.Rectangle', {
 			shadow = this.shadow;
 
 		if(Ui.Rectangle.supportBoxShadow)
-			this.rectDrawing.style.setProperty('box-shadow', shadow, null);
+			drawing.style.setProperty('box-shadow', shadow, null);
 		else if(Ui.Rectangle.supportMozBoxShadow)
-			this.rectDrawing.style.setProperty('-moz-box-shadow', shadow, null);
+			drawing.style.setProperty('-moz-box-shadow', shadow, null);
 		else if(Ui.Rectangle.supportWebkitBoxShadow)
-			this.rectDrawing.style.setProperty('-webkit-box-shadow', shadow, null);
+			drawing.style.setProperty('-webkit-box-shadow', shadow, null);
 
-		this.rectDrawing.style.setProperty('background', this.getFill(), null);
+		if(this.fill == undefined)
+			drawing.style.setProperty('barkground', 'none', null);
+		else if(typeof(this.fill) == 'string')
+			drawing.style.setProperty('background', this.fill, null);
+		else {
+			if(this.fill.isSubclass('Ui.Color'))
+				drawing.style.setProperty('background', this.fill.getCssRgba(), null);
+			else if(this.fill.isSubclass('Ui.LinearGradient')) {
+				drawing.style.setProperty('background-image', this.fill.getBackgroundImage(), null);
+				drawing.style.setProperty('background-size', '100% 100%', null);
+			}
+		}
+		if((this.stroke != undefined) && (this.strokeWidth > 0)) {
+			drawing.style.setProperty('border-width', this.strokeWidth+'px', null);
+			drawing.style.setProperty('border-style', 'solid', null);
+			if(typeof(this.stroke) == 'string')
+				drawing.style.setProperty('border-color', this.stroke);
+			else if(this.fill.isSubclass('Ui.Color'))
+				drawing.style.setProperty('background', this.fill.getCssRgba(), null);
+		}
+		else
+			drawing.style.setProperty('border-width', '0px', null);
 	},
 });
 

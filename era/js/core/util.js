@@ -145,6 +145,13 @@ if(navigator.isIE) {
 		return this.getCharNumAtPositionHelper(x, middle+1, end);
 	};
 }
+// correct Opera specific bugs
+if(navigator.isOpera) {
+	CanvasRenderingContext2D.prototype.arcTo = function(x1, y1, x2, y2, r) {
+		// TODO: improve this with a correct interpolation
+		this.quadraticCurveTo(x1, y1, x2, y2);
+	};
+}
 
 if(window.JSON == undefined) {
 	var json = {};

@@ -46,9 +46,12 @@ include(eraBaseDirectory+'anim/clockgroup.js');
 //
 include(eraBaseDirectory+'ui/matrix.js');
 include(eraBaseDirectory+'ui/point.js');
+include(eraBaseDirectory+'ui/color.js');
+include(eraBaseDirectory+'ui/lineargradient.js');
 include(eraBaseDirectory+'ui/keyboard.js');
 include(eraBaseDirectory+'ui/element.js');
 include(eraBaseDirectory+'ui/svgelement.js');
+include(eraBaseDirectory+'ui/canvaselement.js');
 include(eraBaseDirectory+'ui/container.js');
 
 //
@@ -67,7 +70,7 @@ include(eraBaseDirectory+'ui/accordeon.js');
 //
 include(eraBaseDirectory+'ui/spacer.js');
 include(eraBaseDirectory+'ui/rectangle.js');
-
+include(eraBaseDirectory+'ui/icon.js');
 
 //
 // Ui text
@@ -89,6 +92,7 @@ include(eraBaseDirectory+'ui/video.js');
 //
 include(eraBaseDirectory+'ui/pressable.js');
 include(eraBaseDirectory+'ui/selectable.js');
+include(eraBaseDirectory+'ui/downloadable.js');
 include(eraBaseDirectory+'ui/movable.js');
 include(eraBaseDirectory+'ui/scrollable.js');
 include(eraBaseDirectory+'ui/draggable.js');
@@ -100,12 +104,16 @@ include(eraBaseDirectory+'ui/iframe.js');
 //
 include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/entry.js');
+include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');
 include(eraBaseDirectory+'ui/slider.js');
 include(eraBaseDirectory+'ui/iconlist.js');
 include(eraBaseDirectory+'ui/locator.js');
+include(eraBaseDirectory+'ui/textfield.js');
+include(eraBaseDirectory+'ui/textbuttonfield.js');
+include(eraBaseDirectory+'ui/textareafield.js');
 include(eraBaseDirectory+'ui/program.js');
 include(eraBaseDirectory+'ui/app.js');
 
