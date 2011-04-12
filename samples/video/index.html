@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test Video</title>
+    <script src='../../era/js/era-debug.js'></script>
+	<script>
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
+vbox.append(toolbar);
+
+var playButton = new Ui.Button({ text: 'play' });
+toolbar.append(playButton);
+app.connect(playButton, 'press', function() {
+	video.play();
+});
+
+var pauseButton = new Ui.Button({ text: 'pause' });
+toolbar.append(pauseButton);
+app.connect(pauseButton, 'press', function() {
+	video.pause();
+});
+
+var resumeButton = new Ui.Button({ text: 'resume' });
+toolbar.append(resumeButton);
+app.connect(resumeButton, 'press', function() {
+	video.resume();
+});
+
+var stopButton = new Ui.Button({ text: 'stop' });
+toolbar.append(stopButton);
+app.connect(stopButton, 'press', function() {
+	video.stop();
+});
+
+var rect = new Ui.Rectangle({ height: 10, fill: 'green', verticalAlign: 'center', horizontalAlign: 'stretch'});
+rect.setTransformOrigin(0, 0);
+toolbar.append(rect, true);
+
+var lbox = new Ui.LBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+vbox.append(lbox, true);
+
+lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+
+var video = new Ui.Video({ margin: 10, width: 512, height: 384, oggSrc: 'video.ogg', mp4Src: 'video.mp4', webmSrc: 'video.webm', volume: 1 });
+lbox.append(video);
+
+app.connect(video, 'ready', function() {
+//	console.log('video ready');
+});
+
+app.connect(video, 'ended', function() {
+//	console.log('video ended');
+});
+
+app.connect(video, 'timeupdate', function(time) {
+//	console.log('video pos: '+time);
+	rect.setTransform(Ui.Matrix.createScale(time/video.getDuration(), 1));
+});
+
+</script>
+  </head>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Button 2</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var iconName = 'exit';
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var verticalButton = new Ui.Button({ text: 'vertical' });
+toolbar.append(verticalButton);
+app.connect(verticalButton, 'press', function() {
+	button.setOrientation('vertical');
+});
+
+var horizontalButton = new Ui.Button({ text: 'horizontal' });
+toolbar.append(horizontalButton);
+app.connect(horizontalButton, 'press', function() {
+	button.setOrientation('horizontal');
+});
+
+var textButton = new Ui.Button({ text: 'text' });
+toolbar.append(textButton);
+app.connect(textButton, 'press', function() {
+	button.setText('click me');
+	button.setIcon(undefined);
+});
+
+var iconButton = new Ui.Button({ text: 'icon' });
+toolbar.append(iconButton);
+app.connect(iconButton, 'press', function() {
+	button.setText(undefined);
+	button.setIcon(iconName);
+});
+
+var textIconButton = new Ui.Button({ text: 'text + icon' });
+toolbar.append(textIconButton);
+app.connect(textIconButton, 'press', function() {
+	button.setText('click me');
+	button.setIcon(iconName);
+});
+
+var enableButton = new Ui.Button({ text: 'enable' });
+toolbar.append(enableButton);
+app.connect(enableButton, 'press', function() {
+	button.enable();
+	console.log('after enable: '+button.disabled);
+});
+
+var disableButton = new Ui.Button({ text: 'disable' });
+toolbar.append(disableButton);
+app.connect(disableButton, 'press', function() {
+	button.disable();
+	console.log('after disable: '+button.disabled);
+});
+
+
+var toolbar2 = new Ui.ToolBar();
+vbox.append(toolbar2);
+
+var defaultButton = new Ui.Button({ text: 'default' });
+defaultButton.setStyle({ backgroundColor: undefined });
+toolbar2.append(defaultButton);
+app.connect(defaultButton, 'press', function() {
+	button.setStyle({ backgroundColor: undefined });
+	toolbar2.setStyle({ backgroundColor: undefined });
+});
+
+var blueButton = new Ui.Button({ text: 'blue' });
+blueButton.setStyle({ backgroundColor: new Ui.Color({ h: 225, s: 0.76, l: 1 }) });
+toolbar2.append(blueButton);
+app.connect(blueButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ h: 225, s: 0.76, l: 1 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ h: 225, s: 0.76, l: 1 }) });
+});
+
+var greenButton = new Ui.Button({ text: 'green' });
+greenButton.setStyle({ backgroundColor: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }) });
+toolbar2.append(greenButton);
+app.connect(greenButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }) });
+});
+
+var redButton = new Ui.Button({ text: 'red' });
+redButton.setStyle({ backgroundColor: new Ui.Color({ r: 0.70, g: 0.13, b: 0.13 }) });
+toolbar2.append(redButton);
+app.connect(redButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ r: 0.70, g: 0.13, b: 0.13 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ r: 0.70, g: 0.13, b: 0.13 }) });
+});
+
+var whiteButton = new Ui.Button({ text: 'white' });
+whiteButton.setStyle({ backgroundColor: new Ui.Color({ r: 1, g: 1, b: 1 }) });
+toolbar2.append(whiteButton);
+app.connect(whiteButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ r: 1, g: 1, b: 1 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ r: 1, g: 1, b: 1 }) });
+});
+
+var blackButton = new Ui.Button({ text: 'dark' });
+blackButton.setStyle({ backgroundColor: new Ui.Color({ r: 0.3, g: 0.3, b: 0.3 }) });
+toolbar2.append(blackButton);
+app.connect(blackButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ r: 0.3, g: 0.3, b: 0.3 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ r: 0.3, g: 0.3, b: 0.3 }) });
+});
+
+var laclasseButton = new Ui.Button({ text: 'laclasse' });
+laclasseButton.setStyle({ backgroundColor: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) });
+toolbar2.append(laclasseButton);
+app.connect(laclasseButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) });
+});
+
+var darkBlueButton = new Ui.Button({ text: 'dark blue' });
+darkBlueButton.setStyle({ backgroundColor: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) });
+toolbar2.append(darkBlueButton);
+app.connect(darkBlueButton, 'press', function() {
+	button.setStyle({ backgroundColor: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) });
+	toolbar2.setStyle({ backgroundColor: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) });
+});
+
+
+var button = new Ui.Button({ icon: 'exit', text: 'click me', orientation: 'horizontal', verticalAlign: 'center', horizontalAlign: 'center' });
+vbox.append(button, true);
+
+app.connect(button, 'press', function() {
+	console.log('press');
+});
+
+</script>
+  </head>
+</html>

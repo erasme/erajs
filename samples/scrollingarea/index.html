@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test ScrollingArea</title>
+    <script src='../../era/js/era-debug.js'></script>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var topLeftButton = new Ui.Button({ text: 'top left' });
+toolbar.append(topLeftButton);
+app.connect(topLeftButton, 'press', function() {
+	scroll.setOffset(0, 0);
+});
+
+var bottomRightButton = new Ui.Button({ text: 'bottom right' });
+toolbar.append(bottomRightButton);
+app.connect(bottomRightButton, 'press', function() {
+	scroll.setOffset(1, 1);
+});
+
+var scroll = new Ui.ScrollingArea();
+vbox.append(scroll, true);
+
+var grid = new Ui.Grid({ cols: 'auto,auto,auto', rows: 'auto,auto,auto' });
+scroll.setContent(grid);
+
+var rect1 = new Ui.Rectangle({ width: 200, height: 200, fill: 'lightgreen' });
+grid.attach(rect1, 0, 0);
+
+var rect2 = new Ui.Rectangle({ width: 200, height: 200, fill: 'lightblue' });
+grid.attach(rect2, 0,1);
+
+var rect3 = new Ui.Rectangle({ width: 200, height: 200, fill: 'purple' });
+grid.attach(rect3, 1,0);
+
+var button4 = new Ui.Button({ width: 200, height: 200, text: 'fun' });
+grid.attach(button4, 1, 1);
+app.connect(button4, 'press', function() {
+	console.log('grid button press'); 
+});
+
+var rect5 = new Ui.Rectangle({ width: 400, height: 200, fill: 'pink' });
+grid.attach(rect5, 2,0);
+
+var rect6 = new Ui.Rectangle({ width: 400, height: 200, fill: 'purple' });
+grid.attach(rect6, 2,1);
+
+var rect7 = new Ui.Rectangle({ width: 200, height: 400, fill: 'orange' });
+grid.attach(rect7, 0,2, 3, 1);
+
+</script>
+  </head>
+</html>
