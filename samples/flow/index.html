@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Flow</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var flow = new Ui.Flow();
+app.setContent(flow);
+
+flow.append(new Ui.Rectangle({ width: 150, height: 150, fill: 'pink' }));
+flow.append(new Ui.Rectangle({ width: 100, height: 50, fill: 'purple', verticalAlign: 'center' }));
+flow.append(new Ui.Rectangle({ width: 150, height: 150, fill: 'brown' }));
+flow.append(new Ui.Rectangle({ width: 200, height: 15, fill: 'orange' }));
+flow.append(new Ui.Rectangle({ width: 150, height: 150, fill: 'lightblue' }));
+
+
+</script>
+  </head>
+</html>

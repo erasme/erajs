@@ -431,12 +431,12 @@ Ui.Pressable.extend('Ui.Button', {
 			var yuv = color.getYuv();
 			var rgb = color.getRgb();
 
-			console.log('color rgb r:'+rgb.r+', g: '+rgb.g+', b: '+rgb.b);
-			console.log('color yuv y:'+yuv.y+', u: '+yuv.u+', v: '+yuv.v);
+//			console.log('color rgb r:'+rgb.r+', g: '+rgb.g+', b: '+rgb.b);
+//			console.log('color yuv y:'+yuv.y+', u: '+yuv.u+', v: '+yuv.v);
 
 			var newColor = new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 			rgb = newColor.getRgb();
-			console.log('new color rgb r:'+rgb.r+', g: '+rgb.g+', b: '+rgb.b);
+//			console.log('new color rgb r:'+rgb.r+', g: '+rgb.g+', b: '+rgb.b);
 
 			gradient = new Ui.LinearGradient({ stops: [
 //				{ offset: 0, color: new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.96 }) },

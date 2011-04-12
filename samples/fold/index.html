@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Fold</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var orientationButton = new Ui.Button({ text: 'change orientation' });
+toolbar.append(orientationButton, true);
+app.connect(orientationButton, 'press', function() {
+	if(fold.getOrientation() == 'horizontal')
+		fold.setOrientation('vertical');
+	else
+		fold.setOrientation('horizontal');
+});
+
+var overButton = new Ui.Button({ text: 'change over' });
+toolbar.append(overButton, true);
+app.connect(overButton, 'press', function() {
+	if(fold.getOver())
+		fold.setOver(false);
+	else
+		fold.setOver(true);
+});
+
+var modeButton = new Ui.Button({ text: 'change mode' });
+toolbar.append(modeButton, true);
+app.connect(modeButton, 'press', function() {
+	if(fold.getMode() == 'extend')
+		fold.setMode('slide');
+	else
+		fold.setMode('extend');
+});
+
+
+var fold = new Ui.Fold({ horizontalAlign: 'center', verticalAlign: 'center', over: true, mode: 'extend' });
+vbox.append(fold, true);
+fold.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue' }));
+fold.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+
+</script>
+  </head>
+</html>

@@ -202,7 +202,7 @@ Object.extend('Ui.Element', {
 	//
 	measure: function(width, height) {
 
-		console.log(this+'.measure ('+width+','+height+')');
+//		console.log(this+'.measure ('+width+','+height+')');
 
 		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
 			return { width: this.measureWidth, height: this.measureHeight };
@@ -242,7 +242,7 @@ Object.extend('Ui.Element', {
 
 		this.measureValid = true;
 
-		console.log(this+'.measure ('+width+','+height+') => '+this.measureWidth+'x'+this.measureHeight);
+//		console.log(this+'.measure ('+width+','+height+') => '+this.measureWidth+'x'+this.measureHeight);
 
 		return { width: this.measureWidth, height: this.measureHeight };
 	},

@@ -10,7 +10,7 @@ var count = 0;
 var app = new Ui.App({ });
 
 var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
-app.append(vbox);
+app.setContent(vbox);
 
 var label = new Ui.Label({ text: 'press count: 0' });
 vbox.append(label);

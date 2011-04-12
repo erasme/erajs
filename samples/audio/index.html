@@ -10,8 +10,11 @@
 
 var app = new Ui.App();
 
-var toolbar = new Ui.ToolBar({ verticalAlign: 'top', spacing: 10 });
-app.append(toolbar);
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
 
 var playButton = new Ui.Button({ text: 'play' });
 toolbar.append(playButton);

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test HTML</title>
+	<script src='../../era/js/era-debug.js'></script>
+<script>
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ verticalAlign: 'center' });
+app.setContent(vbox);
+
+vbox.append(new Ui.Rectangle({ fill: 'lightblue', height: 10 }));
+
+var hbox = new Ui.HBox({ horizontalAlign: 'center' });
+vbox.append(hbox);
+
+hbox.append(new Ui.Rectangle({ fill: 'lightblue', width: 10 }), true);
+
+var html = new Ui.Html({ html: 'Have fun with HTML, I <b>hope</b> the text is enough long', width: 100 });
+hbox.append(html, false);
+
+hbox.append(new Ui.Rectangle({ fill: 'lightblue', width: 10 }), true);
+
+vbox.append(new Ui.Rectangle({ fill: 'lightblue', height: 10 }));
+
+</script>
+	</head>
+</html>

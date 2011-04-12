@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test Grid</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var grid = new Ui.Grid({ cols: 'auto,auto,*', rows: 'auto,auto,auto,*,2*' });
+app.setContent(grid);
+
+grid.attach(new Ui.Rectangle({ fill: 'lightgreen', width: 150, height: 50 }), 0, 0, 1, 1);
+grid.attach(new Ui.Rectangle({ fill: 'lightblue', width: 150, height: 80 }), 1, 0, 1, 2);
+
+grid.attach(new Ui.Rectangle({ fill: 'purple', width: 50, height: 50 }), 0, 1, 1, 1);
+
+var button = new Ui.Button({ text: 'salut' });
+grid.attach(button, 0, 2, 2, 1);
+
+app.connect(button, 'press', function() {
+	console.log('press');
+});
+
+grid.attach(new Ui.Rectangle({ fill: 'green', width: 50, height: 50, verticalAlign: 'stretch' }), 0, 3, 2, 1);
+
+grid.attach(new Ui.Rectangle({ fill: 'orange', width: 50, height: 50, verticalAlign: 'stretch' }), 0, 4, 2, 1);
+
+grid.attach(new Ui.Rectangle({ fill: '#45dfac', width: 50, height: 50, verticalAlign: 'stretch' }), 2, 0, 1, 5);
+
+var text = new Ui.Text({ verticalAlign: 'top', text: 
+  'salut, je suis un texte à rallonge pour tester le retour à la ligne,\n\n'+
+  'voir même encore plus long que ça pour un max de fun qui dure.' });
+
+grid.attach(text, 2, 0, 1, 5);
+</script>
+  </head>
+</html>

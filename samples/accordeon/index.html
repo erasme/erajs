@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Accordeon</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App({ padding: 20 });
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var button = new Ui.Button({ text: 'change orientation' });
+vbox.append(button);
+app.connect(button, 'press', function() {
+	if(accordeon.getOrientation() == 'horizontal')
+		accordeon.setOrientation('vertical');
+	else
+		accordeon.setOrientation('horizontal');
+});
+
+var accordeon = new Ui.Accordeon();
+vbox.append(accordeon, true);
+
+var page = new Ui.AccordeonPage();
+accordeon.appendPage(page);
+page.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue' }));
+page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+
+page = new Ui.AccordeonPage();
+accordeon.appendPage(page);
+page.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'pink' }));
+page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+
+page = new Ui.AccordeonPage();
+accordeon.appendPage(page);
+page.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'purple' }));
+page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+
+
+</script>
+  </head>
+</html>

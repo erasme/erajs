@@ -11,7 +11,7 @@
 var app = new Ui.App();
 
 var locator = new Ui.Locator({ path: '/Fun/Apps/Here', verticalAlign: 'center', horizontalAlign: 'center' });
-app.appendChild(locator);
+app.setContent(locator);
 
 app.connect(locator, 'change', function(locator, path) {
 	console.log('path change: '+path);

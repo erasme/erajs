@@ -7,8 +7,11 @@
 <script>
 var app = new Ui.App();
 
-var toolbar = new Ui.ToolBar({ verticalAlign: 'top', spacing: 10 });
-app.append(toolbar);
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
+vbox.append(toolbar);
 
 var beginButton = new Ui.Button({ text: 'begin' });
 toolbar.append(beginButton);
@@ -36,7 +39,7 @@ app.connect(stopButton, 'press', function() {
 });
 
 var rect = new Ui.Rectangle({ width: 200, height: 100, fill: 'green', verticalAlign: 'center', horizontalAlign: 'center' });
-app.append(rect);
+vbox.append(rect, true);
 
 var clock = new Anim.ClockGroup({ duration: 4, target: rect });
 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Button</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(vbox);
+
+// the default style
+app.setStyle({
+	backgroundColor: new Ui.Color({ r: 1, g: 1, b: 0 }),
+});
+
+var button = new Ui.Button({ text: 'salut', width: 200 });
+vbox.append(button);
+app.connect(button, 'press', function() {
+	app.setStyle({
+		backgroundColor: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
+	});
+});
+
+var button2 = new Ui.Button({ text: 'style1', width: 200 });
+vbox.append(button2);
+app.connect(button2, 'press', function() {
+	app.setStyle({
+		backgroundColor: new Ui.Color({ r: 1, g: 0.75, b: 0.80 }),
+	});
+});
+
+var button3 = new Ui.Button({ text: 'style2', width: 200 });
+vbox.append(button3);
+app.connect(button3, 'press', function() {
+	app.setStyle({
+		backgroundColor: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }),
+	});
+});
+
+</script>
+  </head>
+</html>
