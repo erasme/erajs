@@ -105,6 +105,13 @@ Ui.Container.extend('Ui.LBox', {
 	},
 
 	//
+	// Append a child on the bottom of all other layers
+	//
+	prepend: function(child) {
+		this.prependChild(child);
+	},
+
+	//
 	// Remove a child from the layers
 	//
 	remove: function(child) {
