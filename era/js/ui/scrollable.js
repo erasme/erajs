@@ -460,8 +460,8 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.measureSpeedTimer = undefined;
 		}
 
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
+		this.disconnect(window, 'mousemove', this.onVerticalMouseMove);
+		this.disconnect(window, 'mouseup', this.onVerticalMouseUp);
 		if(!this.speedComputed) {
 			// compute speed
 			var currentTime = (new Date().getTime())/1000;
@@ -521,8 +521,8 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.measureSpeedTimer = undefined;
 		}
 
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
+		this.disconnect(window, 'mousemove', this.onHorizontalMouseMove);
+		this.disconnect(window, 'mouseup', this.onHorizontalMouseUp);
 		if(!this.speedComputed) {
 			// compute speed
 			var currentTime = (new Date().getTime())/1000;
