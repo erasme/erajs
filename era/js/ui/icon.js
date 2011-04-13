@@ -54,6 +54,12 @@ Ui.SVGElement.extend('Ui.Icon', {
 Ui.Icon.icons = {};
 
 Ui.Icon.register = function(iconName, iconPath) {
+	if(Ui.Icon.icons[iconName] != undefined)
+		throw('Icon \''+iconName+'\' is already registered. To change it, use override');
+	Ui.Icon.icons[iconName] = iconPath;
+};
+
+Ui.Icon.override = function(iconName, iconPath) {
 	Ui.Icon.icons[iconName] = iconPath;
 };
 

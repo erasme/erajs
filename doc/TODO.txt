@@ -113,3 +113,6 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - pour Ui.Color faire un parser pour #rgb #rrggbb rgb(r,g,b) rgba(r,g,b,a)
   dans Ui.Color.create
 
+- a verifier le comportement de measure dans Box pour les Uniform
+  (la contrainte doit faire au plus petit possible)
+

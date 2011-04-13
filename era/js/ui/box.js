@@ -309,7 +309,13 @@ Ui.Container.extend('Ui.Box', {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			if(!child.boxResizable) {
-				var size = child.measure(constraintWidth, constraintHeight);
+//				var size = child.measure(constraintWidth, constraintHeight);
+				var size;
+				if(this.vertical)
+					size = child.measure(constraintWidth, 0);
+				else
+					size = child.measure(0, constraintHeight);
+
 				if((this.vertical?size.width:size.height) > minOpSize)
 					minOpSize = this.vertical?size.width:size.height;
 				minSize += this.vertical?size.height:size.width;

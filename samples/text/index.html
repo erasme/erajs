@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/js/era-debug.js'></script>
+<script>
+//
+// Play with Ui.Text, the simplest text element
+//
+
+var app = new Ui.App();
+
+var lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'stretch', margin: 100 });
+app.setContent(lbox);
+
+lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+
+var text = new Ui.Text({
+	margin: 5,
+	text: 'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters',
+});
+lbox.append(text);
+
+</script>
+  </head>
+	<body></body>
+</html>
