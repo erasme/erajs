@@ -10,8 +10,7 @@ Ui.VBox.extend('Ui.ToolBar', {
 		var content = new Ui.LBox();
 		Ui.ToolBar.base.append.call(this, content);
 
-//		this.background = new Ui.Rectangle({ fill: Ui.ToolBar.gradient, marginBottom: 1, marginRight: 1 });
-		this.background = new Ui.Rectangle({ fill: Ui.ToolBar.gradient });
+		this.background = new Ui.Rectangle({ fill: this.getGradient() });
 		content.append(this.background);
 
 		this.hbox = new Ui.HBox({ spacing: 8, margin: 4 });
@@ -19,19 +18,6 @@ Ui.VBox.extend('Ui.ToolBar', {
 
 		this.bottomShadow = new Ui.Rectangle({ fill: this.getDarkColor(), height: 1 });
 		Ui.ToolBar.base.append.call(this, this.bottomShadow);
-
-		
-
-
-//		this.topShadow = Ui.ToolBar.base.append.call(this, new Ui.Rectangle({ fill: 'white', height: '1',  }));
-
-//		Ui.ToolBar.base.append.call(this, new Ui.Rectangle({ fill: '#bdbdbd' }));
-
-//		this.background = new Ui.Rectangle({ fill: Ui.ToolBar.gradient, marginBottom: 1, marginRight: 1 });
-//		Ui.ToolBar.base.append.call(this, this.background);
-
-//		this.hbox = new Ui.HBox({ spacing: 8, margin: 4 });
-//		Ui.ToolBar.base.append.call(this, this.hbox);
 	},
 
 	//
@@ -39,27 +25,15 @@ Ui.VBox.extend('Ui.ToolBar', {
 	//
 
 	getGradient: function() {
-		var gradient = this.getStyleResource('ui-toolbar-gradient');
-		if(gradient == undefined)
-			return Ui.ToolBar.gradient;
-		else
-			return gradient;
+		return this.getStyleResource('ui-toolbar-gradient');
 	},
 
 	getLightColor: function() {
-		var lightColor = this.getStyleResource('ui-toolbar-light-color');
-		if(lightColor == undefined)
-			return Ui.ToolBar.lightColor;
-		else
-			return lightColor;
+		return this.getStyleResource('ui-toolbar-light-color');
 	},
 
 	getDarkColor: function() {
-		var darkColor = this.getStyleResource('ui-toolbar-dark-color');
-		if(darkColor == undefined)
-			return Ui.ToolBar.darkColor;
-		else
-			return darkColor;
+		return this.getStyleResource('ui-toolbar-dark-color');
 	},
 
 }, {
@@ -76,27 +50,18 @@ Ui.VBox.extend('Ui.ToolBar', {
 		var lightColor;
 		var darkColor;
 		if(gradient == undefined) {
-			var color = this.getStyleProperty('backgroundColor');
-			if(color == undefined)
-				color = new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 });
-			var hsl = color.getHsl();
-
+			var color = this.getStyleProperty('color');
 			var yuv = color.getYuv();
 
 			gradient = new Ui.LinearGradient({ stops: [
-//				{ offset: 0, color: new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.91 }) },
-//				{ offset: 1, color: new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.84 }) },
-
 				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
 			] });
 			this.setStyleResource('ui-toolbar-gradient', gradient);
 
-//			lightColor = new Ui.Color({ h: hsl.h, s: hsl.s, l: 1.1 });
 			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
 			this.setStyleResource('ui-toolbar-light-color', lightColor);
 
-//			darkColor = new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.64 });
 			darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
 			this.setStyleResource('ui-toolbar-dark-color', darkColor);
 		}
@@ -108,14 +73,13 @@ Ui.VBox.extend('Ui.ToolBar', {
 		this.topShadow.setFill(lightColor);
 		this.bottomShadow.setFill(darkColor);
 	},
-
-
 });
 
-Ui.ToolBar.gradient = new Ui.LinearGradient({ stops: [
-	{ offset: 0, color: new Ui.Color({ r: 0.91, g: 0.91, b: 0.91 }) },
-	{ offset: 1, color: new Ui.Color({ r: 0.84, g: 0.84, b: 0.84 }) },
-] });
-Ui.ToolBar.lightColor = new Ui.Color({ r: 0.94, g: 0.94, b: 0.94 });
-Ui.ToolBar.darkColor = new Ui.Color({ r: 0.64, g: 0.64, b: 0.64 });
+Ui.ToolBar.style = {
+	color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
+
+	"Ui.Button": {
+		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
+	},
+};
 

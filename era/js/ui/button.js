@@ -2,7 +2,6 @@
 // Define the Button class.
 //
 Ui.Pressable.extend('Ui.Button', {
-//	background: undefined,
 	allcontent: undefined,
 	contentBox: undefined,
 	content: undefined,
@@ -19,20 +18,17 @@ Ui.Pressable.extend('Ui.Button', {
 	rect1: undefined,
 	rect2: undefined,
 
+	lightShadow: undefined,
+	darkShadow: undefined,
+
 	constructor: function(config) {
 		this.setPadding(3);
 
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  }));
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  }));
+		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  });
+		this.append(this.lightShadow);
 
-//		this.append(new Ui.Rectangle({ fill: '#ffffff', radius: 4, marginTop: 1  }));
-//		this.append(new Ui.Rectangle({ fill: '#9d9d9d', radius: 4, marginBottom: 1  }));
-
-//		this.pr1 = new Ui.Rectangle({ fill: '#ffffff', radius: 4, marginTop: 1  });
-//		this.append(this.pr1);
-
-//		this.pr2 = new Ui.Rectangle({ fill: '#9d9d9d', radius: 4, marginBottom: 1  });
-//		this.append(this.pr2);
+		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  });
+		this.append(this.darkShadow);
 
 		this.allcontent = new Ui.LBox();
 		this.append(this.allcontent);
@@ -42,21 +38,6 @@ Ui.Pressable.extend('Ui.Button', {
 
 		this.rect1 = new Ui.Rectangle({ fill: this.getGradient(), radius: 3, marginTop: 2, marginBottom: 2, marginLeft: 1, marginRight: 1 });
 		this.allcontent.append(this.rect1);
-
-
-
-/*		this.background = new Ui.Rectangle({ radius: 8, fill: 'lightblue' });
-		this.append(this.background);
-
-//		this.append(new Ui.Rectangle({ radius: 8, fill: '#f9f9f9', margin: 2 }));
-
-		this.contentBox = new Ui.LBox({ paddingLeft: 15, paddingRight: 15, paddingTop: 11, paddingBottom: 11 });
-		this.append(this.contentBox);
-
-		if(config.text != undefined) {
-			this.content = new Ui.Label({ text: config.text });
-			this.contentBox.append(this.content);
-		}*/
 
 		this.contentBox = new Ui.Box({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.allcontent.append(this.contentBox);
@@ -331,72 +312,35 @@ Ui.Pressable.extend('Ui.Button', {
 	},
 
 	getGradient: function() {
-		var gradient = this.getStyleResource('ui-button-gradient');
-		if(gradient == undefined)
-			return Ui.Button.gradient;
-		else
-			return gradient;
+		return this.getStyleResource('ui-button-gradient');
 	},
 
 	getGradientDown: function() {
-		var gradientDown = this.getStyleResource('ui-button-gradient-down');
-		if(gradientDown == undefined)
-			return Ui.Button.gradientDown;
-		else
-			return gradientDown;
+		return this.getStyleResource('ui-button-gradient-down');
 	},
 
 	getContentColor: function() {
-		var contentColor = this.getStyleResource('ui-button-content-color');
-		if(contentColor == undefined)
-			return new Ui.Color({ r: 0.38, g: 0.38, b: 0.38 });
-		else
-			return contentColor;
+		return this.getStyleResource('ui-button-content-color');
 	},
 
 	getContentLightColor: function() {
-		var contentLightColor = this.getStyleResource('ui-button-content-light-color');
-		if(contentLightColor == undefined)
-			return Ui.Button.contentLightColor;
-		else
-			return contentLightColor;
+		return this.getStyleResource('ui-button-content-light-color');
 	},
 
 	getContentLightColorDown: function() {
-		var contentLightColorDown = this.getStyleResource('ui-button-content-light-color-down');
-		if(contentLightColorDown == undefined)
-			return Ui.Button.contentLightColorDown;
-		else
-			return contentLightColorDown;
+		return this.getStyleResource('ui-button-content-light-color-down');
 	},
 
 	getLightColor: function() {
-		var lightColor = this.getStyleResource('ui-button-light-color');
-		if(lightColor == undefined)
-			return Ui.Button.lightColor;
-		else
-			return lightColor;
+		return this.getStyleResource('ui-button-light-color');
 	},
 
 	getLightColorDown: function() {
-		var lightColorDown = this.getStyleResource('ui-button-light-color-down');
-		if(lightColorDown == undefined)
-			return Ui.Button.lightColorDown;
-		else
-			return lightColorDown;
-	},
-
-	getBackgroundColor: function() {
-		var color = this.getStyleProperty('backgroundColor');
-		if(color == undefined)
-			color = 'lightblue';
-		return color;
+		return this.getStyleResource('ui-button-light-color-down');
 	},
 
 	onButtonDown: function() {
 		this.rect1.setFill(this.getGradientDown());
-//		this.allcontent.setOpacity(0.7);
-
 		if(this.icon1 != undefined)
 			this.icon1.setFill(this.getContentLightColorDown());
 		if(this.text1 != undefined)
@@ -412,8 +356,6 @@ Ui.Pressable.extend('Ui.Button', {
 		if(this.text1 != undefined)
 			this.text1.setColor(this.getContentLightColor());
 		this.rect2.setFill(this.getLightColor());
-
-//		this.allcontent.setOpacity(this.getIsDisabled()?0.2:1);
 	},
 }, {
 	onStyleChange: function() {
@@ -424,24 +366,9 @@ Ui.Pressable.extend('Ui.Button', {
 		var lightColor;
 		var gradientDown;
 		if(gradient == undefined) {
-			var color = this.getStyleProperty('backgroundColor');
-			if(color == undefined)
-				color = new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 });
-			var hsl = color.getHsl();
-			var yuv = color.getYuv();
-			var rgb = color.getRgb();
-
-//			console.log('color rgb r:'+rgb.r+', g: '+rgb.g+', b: '+rgb.b);
-//			console.log('color yuv y:'+yuv.y+', u: '+yuv.u+', v: '+yuv.v);
-
-			var newColor = new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
-			rgb = newColor.getRgb();
-//			console.log('new color rgb r:'+rgb.r+', g: '+rgb.g+', b: '+rgb.b);
+			var yuv = this.getStyleProperty('color').getYuv();
 
 			gradient = new Ui.LinearGradient({ stops: [
-//				{ offset: 0, color: new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.96 }) },
-//				{ offset: 1, color: new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.84 }) },
-
 				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
 
@@ -454,9 +381,6 @@ Ui.Pressable.extend('Ui.Button', {
 
 			] });
 			this.setStyleResource('ui-button-gradient-down', gradientDown);
-
-
-//			contentColor = new Ui.Color({ h: hsl.h, s: hsl.s, l: 0.38 });
 
 			if(yuv.y < 0.4) {
 				contentColor = new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
@@ -474,14 +398,8 @@ Ui.Pressable.extend('Ui.Button', {
 			}
 
 			this.setStyleResource('ui-button-content-color', contentColor);
-
-//			contentShadowColor = new Ui.Color({ h: hsl.h, s: hsl.s, l: 1.1 });
-//			contentLightColor = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
 			this.setStyleResource('ui-button-content-light-color', contentLightColor);
-
 			this.setStyleResource('ui-button-content-light-color-down', contentLightColorDown);
-
-//			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
 			this.setStyleResource('ui-button-light-color', lightColor);
 			this.setStyleResource('ui-button-light-color-down', lightColorDown);
 		}
@@ -512,6 +430,13 @@ Ui.Pressable.extend('Ui.Button', {
 			this.icon2.setFill(contentColor);
 		if(this.text2 != undefined)
 			this.text2.setColor(contentColor);
+
+
+		var radius = this.getStyleProperty('radius');
+		this.lightShadow.setRadius(radius);
+		this.darkShadow.setRadius(radius);
+		this.rect2.setRadius(radius);
+		this.rect1.setRadius(radius - 1);
 	},
 
 	onDisable: function() {
@@ -525,19 +450,9 @@ Ui.Pressable.extend('Ui.Button', {
 	},
 });
 
-Ui.Button.gradient = new Ui.LinearGradient({ stops: [
-	{ offset: 0, color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }) },
-	{ offset: 1, color: new Ui.Color({ r: 0.84, g: 0.84, b: 0.84 }) },
-] });
-Ui.Button.gradientDown = new Ui.LinearGradient({ stops: [
-	{ offset: 0, color: new Ui.Color({ r: 0.76, g: 0.76, b: 0.76 }) },
-	{ offset: 1, color: new Ui.Color({ r: 0.64, g: 0.64, b: 0.64 }) },
-] });
-
-Ui.Button.lightColor = new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 });
-Ui.Button.lightColorDown = new Ui.Color({ r: 0.76, g: 0.76, b: 0.76 });
-Ui.Button.contentLightColor = new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 });
-Ui.Button.contentLightColorDown = new Ui.Color({ r: 0.76, g: 0.76, b: 0.76 });
-
-
+Ui.Button.style = {
+	color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+//	color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+	radius: 4,
+};
 

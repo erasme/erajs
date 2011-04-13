@@ -1048,7 +1048,149 @@ Object.extend('Ui.Element', {
 	onEnable: function() {
 	},
 
+	containSubStyle: function(style) {
+		for(var prop in style) {
+			if((prop.indexOf('.') != -1) && (typeof(style[prop]) == 'object'))
+				return true; 
+		}
+		return false;
+	},
+
+	fusionStyle: function(dst, src) {
+		for(var prop in src) {
+			if(prop == 'resources')
+				continue;
+			if((prop.indexOf('.') == -1) || (typeof(src[prop]) != 'object'))
+				continue;
+
+			if(dst[prop] != undefined) {
+				var old = dst[prop];
+				dst[prop] = {};
+				for(var prop2 in old) {
+					if(prop2 != 'resources')
+						dst[prop][prop2] = old[prop2];
+				}
+				for(var prop2 in src[prop]) {
+					if(prop2 != 'resources')
+						dst[prop][prop2] = src[prop][prop2];
+				}
+			}
+			else
+				dst[prop] = src[prop];
+		}
+	},
+
 	mergeStyles: function() {
+		this.mergeStyle = undefined;
+		if(this.constructor.style != undefined) {
+			if(this.constructor.classStyle != undefined)
+				this.mergeStyle = this.constructor.classStyle;
+			else {
+				this.mergeStyle = {};
+				console.log('CREATE NEW STYLE');
+				this.mergeStyle[this.classType] = this.constructor.style;
+				this.fusionStyle(this.mergeStyle, this.constructor.style);
+				this.constructor.classStyle = this.mergeStyle;
+			}
+		}
+		if(this.parentStyle != undefined) {
+			if(this.mergeStyle != undefined) {
+				var old = this.mergeStyle;
+				this.mergeStyle = {};
+				console.log('CREATE NEW STYLE');
+				this.fusionStyle(this.mergeStyle, old);
+				this.fusionStyle(this.mergeStyle, this.parentStyle);
+
+				if((this.parentStyle[this.classType] != undefined) && (this.containSubStyle(this.parentStyle[this.classType])))
+					this.fusionStyle(this.mergeStyle, this.parentStyle[this.classType]);
+			}
+			else {
+				if((this.parentStyle[this.classType] != undefined) && (this.containSubStyle(this.parentStyle[this.classType]))) {
+					this.mergeStyle = {};
+					this.fusionStyle(this.mergeStyle, this.parentStyle[this.classType]);
+				}
+				else
+					this.mergeStyle = this.parentStyle;
+			}
+		}
+		if(this.style != undefined) {
+			if(this.mergeStyle != undefined) {
+				var old = this.mergeStyle;
+				this.mergeStyle = {};
+				console.log('CREATE NEW STYLE');
+				this.fusionStyle(this.mergeStyle, old);
+				this.fusionStyle(this.mergeStyle, this.style);
+
+				if((this.style[this.classType] != undefined) && (this.containSubStyle(this.style[this.classType])))
+					this.fusionStyle(this.mergeStyle, this.style[this.classType]);
+			}
+			else {
+				if((this.style[this.classType] != undefined) && (this.containSubStyle(this.style[this.classType]))) {
+					this.mergeStyle = {};
+					console.log('CREATE NEW STYLE');
+					this.fusionStyle(this.mergeStyle, this.style[this.classType]);
+				}
+				else
+					this.mergeStyle = this.style;
+			}
+		}
+/*
+		if(this.parentStyle == undefined) {
+			if(this.style == undefined) {
+				if(this.constructor.style != undefined) {
+					if(this.constructor.style[this.classType] != undefined) {
+						if(this.containSubStyle(this.constructor.style)) {
+							this.mergeStyle = {};
+							this.fusionStyle(this.mergeStyle, this.constructor.style);
+							this.fusionStyle(this.mergeStyle, this.constructor.style[this.classType]);
+						}
+					}
+					else
+						this.mergeStyle = this.constructor.style;
+				}
+				else
+					this.mergeStyle = undefined;
+			}
+
+			if((this.style != undefined) && (this.style[this.classType] != undefined)) {
+				// TODO
+			}
+			else
+				this.mergeStyle = this.style;
+		}
+		else {
+		}*/
+
+//////
+
+/*		this.mergeStyle = {};
+		if(this.parentStyle != undefined) {
+			for(var prop in this.parentStyle) {
+				if(prop != 'resources')
+					this.mergeStyle[prop] = this.parentStyle[prop];
+			}
+			if(this.parentStyle[this.classType] != undefined) {
+				for(var prop in this.parentStyle[this.classType]) {
+					if(prop != 'resources')
+						this.mergeStyle[prop] = this.parentStyle[this.classType][prop];
+				}
+			}
+		}
+		if(this.style != undefined) {
+			for(var prop in this.style) {
+				if(prop != 'resources')
+					this.mergeStyle[prop] = this.style[prop];
+			}
+			if(this.style[this.classType] != undefined) {
+				for(var prop in this.style[this.classType]) {
+					if(prop != 'resources')
+						this.mergeStyle[prop] = this.style[this.classType][prop];
+				}
+			}
+		}*/
+	},
+
+/*	mergeStyles: function() {
 		if(this.parentStyle == undefined)
 			this.mergeStyle = this.style;
 		else {
@@ -1066,14 +1208,14 @@ Object.extend('Ui.Element', {
 				}
 			}
 		}
-	},
+	},*/
 
 	setParentStyle: function(parentStyle) {
 		if(this.parentStyle != parentStyle) {
 			this.parentStyle = parentStyle;
-			this.mergeStyles();
-			this.onInternalStyleChange();
 		}
+		this.mergeStyles();
+		this.onInternalStyleChange();
 	},
 
 	setStyle: function(style) {
@@ -1083,11 +1225,37 @@ Object.extend('Ui.Element', {
 	},
 
 	getStyleProperty: function(property) {
+		console.log(this+".getStyleProperty("+property+") classType: "+this.classType+", "+this.constructor.style);
+/*		console.log(this);
+		if(this.mergeStyle != undefined) {
+			if((this.mergeStyle[this.classType] != undefined) && (this.mergeStyle[this.classType][property] != undefined)) {
+				console.log(this+'.getStyleProperty FROM ELEMENT MERGE');
+				return this.mergeStyle[this.classType][property];
+			}
+			else if(this.mergeStyle[property] != undefined) {
+				console.log(this+'.getStyleProperty FROM MERGE');
+				return this.mergeStyle[property];
+			}
+			else if(this.constructor.style != undefined) {
+				console.log(this+'.getStyleProperty FROM CLASS DEFAULT');
+				return this.constructor.style[property];
+			}
+		}
+		else
+			return undefined;*/
+
+		if((this.mergeStyle != undefined) && (this.mergeStyle[this.classType] != undefined) && (this.mergeStyle[this.classType][property] != undefined))
+			return this.mergeStyle[this.classType][property];
+		else
+			return undefined;
+	},
+
+/*	getStyleProperty: function(property) {
 		if((this.mergeStyle != undefined) && (this.mergeStyle[property] != undefined))
 			return this.mergeStyle[property];
 		else
 			return undefined;
-	},
+	},*/
 
 	getStyleResource: function(key) {
 		if((this.mergeStyle == undefined) || (this.mergeStyle.resources == undefined))
