@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Test TextField</title>
+	<title>Test TextButtonField</title>
     <script src='../../era/js/era-debug.js'></script>
 <style>
 </style>
@@ -31,25 +31,15 @@ var app = new Ui.App();
 var vbox = new Ui.VBox({ padding: 50, spacing: 10 });
 app.setContent(vbox);
 
-var hbox = new Ui.HBox({ spacing: 10 });
-vbox.append(hbox);
+var textbuttonfield = new Ui.TextButtonField({ buttonIcon: 'search' });
+vbox.append(textbuttonfield);
 
-var textfield = new Ui.TextField();
-hbox.append(textfield, true);
-
-app.connect(textfield, 'change', function(textfield, value) {
+app.connect(textbuttonfield, 'change', function(textbuttonfield, value) {
 	logs.log('change: '+value);
 });
 
-app.connect(textfield, 'validate', function(textfield) {
-	logs.log('validate: '+textfield.getValue(), 'green');
-});
-
-var getButton = new Ui.Button({ text: 'get text' });
-hbox.append(getButton);
-
-app.connect(getButton, 'press', function() {
-	logs.log('get text: '+textfield.getValue(), 'blue');
+app.connect(textbuttonfield, 'validate', function(textbuttonfield) {
+	logs.log('validate: '+textbuttonfield.getValue(), 'green');
 });
 
 var logs = new Test.Logs();

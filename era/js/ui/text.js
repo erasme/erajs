@@ -1,6 +1,6 @@
 
 Ui.SVGElement.extend('Ui.Text', {
-	text: undefined,
+	text: '',
 	measureDrawing: undefined,
 	textDrawing: undefined,
 	// var needed to update the layout

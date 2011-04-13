@@ -8,6 +8,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	buttonText: undefined,
 
 	constructor: function(config) {
+		this.setPadding(3);
 
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  }));
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  }));
@@ -22,6 +23,8 @@ Ui.LBox.extend('Ui.TextButtonField', {
 
 		this.entry = new Ui.Entry({ margin: 4, fontSize: 16 });
 		lbox.append(this.entry);
+		this.connect(this.entry, 'change', this.onEntryChange);
+		this.connect(this.entry, 'validate', this.onEntryValidate);
 
 		this.button = new Ui.Pressable();
 		hbox.append(this.button);
@@ -46,7 +49,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		if(config.buttonIcon != undefined)
 			this.setButtonIcon(config.buttonIcon);
 
-		this.addEvents('press', 'change');
+		this.addEvents('change', 'validate');
 	},
 
 	getButtonIcon: function() {
@@ -133,6 +136,13 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		}
 	},
 
+	getValue: function() {
+		return this.entry.getValue();
+	},
+
+	setValue: function(value) {
+		this.entry.setValue(value);
+	},
 
 	//
 	// Private
@@ -222,8 +232,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	},
 
 	onButtonPress: function() {
-		console.log('onButtonPress');
-		this.fireEvent('press', this);
+		this.fireEvent('validate', this);
 	},
 
 	onButtonDown: function() {
@@ -232,6 +241,14 @@ Ui.LBox.extend('Ui.TextButtonField', {
 
 	onButtonUp: function() {
 		console.log('onButtonUp');
+	},
+
+	onEntryChange: function(entry, value) {
+		this.fireEvent('change', this, value);
+	},
+
+	onEntryValidate: function(entry) {
+		this.fireEvent('validate', this);
 	},
 
 }, {

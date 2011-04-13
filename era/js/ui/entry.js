@@ -5,6 +5,7 @@ Ui.Element.extend('Ui.Entry', {
 	fontFamily: 'Sans-serif',
 	fontWeight: 'normal',
 	color: 'black',
+	value: '',
 
 	constructor: function(config) {
 		if(config.fontSize != undefined)
@@ -16,16 +17,9 @@ Ui.Element.extend('Ui.Entry', {
 		if(config.color != undefined)
 			this.setColor(config.color);
 
-		this.connect(this.entryDrawing, 'mousedown', function(event) {
-//			console.log('entry mousedown');
-			this.entryDrawing.focus();
-		});
-
-		this.connect(this.entryDrawing, 'change', function(event) {
-			event.preventDefault();
-			event.stopPropagation();
-			this.fireEvent('change', this, this.getValue());
-		});
+		this.connect(this.entryDrawing, 'mousedown', this.onMouseDown);
+		this.connect(this.entryDrawing, 'change', this.onChange);
+		this.connect(this.entryDrawing, 'keyup', this.onKeyUp);
 
 //		this.setFocusable(true);
 //		this.connect(this.entryDrawing, 'focus', function(event) {
@@ -34,7 +28,8 @@ Ui.Element.extend('Ui.Entry', {
 //		this.connect(this.entryDrawing, 'blur', function(event) {
 //			console.log('entry blur');
 //		});
-		this.addEvents('change');
+
+		this.addEvents('change', 'validate');
 	},
 
 	setFontSize: function(fontSize) {
@@ -86,11 +81,12 @@ Ui.Element.extend('Ui.Entry', {
 	},
 
 	getValue: function() {
-		return this.entryDrawing.value;
+		return this.value;
 	},
 
 	setValue: function(value) {
-		this.entryDrawing.value = value;
+		this.value = value;
+		this.entryDrawing.value = this.value;
 	},
 
 	//
@@ -98,6 +94,28 @@ Ui.Element.extend('Ui.Entry', {
 	//
 
 	onMouseDown: function(event) {
+		this.entryDrawing.focus();
+	},
+
+	onChange: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		if(this.entryDrawing.value != this.value) {
+			this.value = this.entryDrawing.value;
+			this.fireEvent('change', this, this.value);
+		}
+	},
+
+	onKeyUp: function(event) {
+		if(this.entryDrawing.value != this.value) {
+			this.value = this.entryDrawing.value;
+			this.fireEvent('change', this, this.value);
+		}
+		if(event.which == 13) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.fireEvent('validate', this);
+		}
 	},
 
 }, {
