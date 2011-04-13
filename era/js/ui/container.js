@@ -16,8 +16,18 @@ Ui.Element.extend('Ui.Container', {
 		this.childChanged = true;
 		this.invalidateMeasure();
 		this.invalidateRender();
+		child.setIsLoaded(this.isLoaded);
+	},
 
-//		console.log(this+'.appendChild '+Ui.App.current.renderList);
+	//
+	// Add a child in the container at the begining
+	//
+	prependChild: function(child) {
+		child.parent = this;
+		this.children.unshift(child);
+		this.childChanged = true;
+		this.invalidateMeasure();
+		this.invalidateRender();
 		child.setIsLoaded(this.isLoaded);
 	},
 

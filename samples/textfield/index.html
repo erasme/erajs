@@ -10,19 +10,20 @@
 
 Ui.VBox.extend('Test.Logs', {
 	logs: undefined,
+	scrolling: undefined,
 
 	constructor: function() {
 		this.append(new Ui.Label({ text: 'Logs:', horizontalAlign: 'left', fontWeight: 'bold' }));
-		var scrolling = new Ui.ScrollingArea();
-		this.append(scrolling, true);
+		this.scrolling = new Ui.ScrollingArea();
+		this.append(this.scrolling, true);
 		this.logs = new Ui.VBox();
-		scrolling.setContent(this.logs);
+		this.scrolling.setContent(this.logs);
 	},
 
 	log: function(text, color) {
 		if(color == undefined)
 			color = 'black';
-		this.logs.append(new Ui.Label({ text: text, color: color, horizontalAlign: 'left' }));
+		this.logs.prepend(new Ui.Label({ text: text, color: color, horizontalAlign: 'left' }));
 	},
 });
 

@@ -22,7 +22,7 @@ Ui.VBox.extend('Test.Logs', {
 	log: function(text, color) {
 		if(color == undefined)
 			color = 'black';
-		this.logs.append(new Ui.Label({ text: text, color: color, horizontalAlign: 'left' }));
+		this.logs.prepend(new Ui.Label({ text: text, color: color, horizontalAlign: 'left' }));
 	},
 });
 

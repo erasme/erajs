@@ -180,6 +180,16 @@ Ui.Container.extend('Ui.Box', {
 	},
 
 	//
+	// Append a child at the begining of the box
+	//
+	prepend: function(child, resizable) {
+		if(resizable == undefined)
+			resizable = false;
+		child.boxResizable = resizable;
+		this.prependChild(child);
+	},
+
+	//
 	// Remove a child from the box
 	//
 	remove: function(child) {
