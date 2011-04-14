@@ -1087,7 +1087,7 @@ Object.extend('Ui.Element', {
 				this.mergeStyle = this.constructor.classStyle;
 			else {
 				this.mergeStyle = {};
-				console.log('CREATE NEW STYLE');
+//				console.log('CREATE NEW STYLE');
 				this.mergeStyle[this.classType] = this.constructor.style;
 				this.fusionStyle(this.mergeStyle, this.constructor.style);
 				this.constructor.classStyle = this.mergeStyle;
@@ -1097,7 +1097,7 @@ Object.extend('Ui.Element', {
 			if(this.mergeStyle != undefined) {
 				var old = this.mergeStyle;
 				this.mergeStyle = {};
-				console.log('CREATE NEW STYLE');
+//				console.log('CREATE NEW STYLE');
 				this.fusionStyle(this.mergeStyle, old);
 				this.fusionStyle(this.mergeStyle, this.parentStyle);
 
@@ -1117,7 +1117,7 @@ Object.extend('Ui.Element', {
 			if(this.mergeStyle != undefined) {
 				var old = this.mergeStyle;
 				this.mergeStyle = {};
-				console.log('CREATE NEW STYLE');
+//				console.log('CREATE NEW STYLE');
 				this.fusionStyle(this.mergeStyle, old);
 				this.fusionStyle(this.mergeStyle, this.style);
 
@@ -1127,7 +1127,7 @@ Object.extend('Ui.Element', {
 			else {
 				if((this.style[this.classType] != undefined) && (this.containSubStyle(this.style[this.classType]))) {
 					this.mergeStyle = {};
-					console.log('CREATE NEW STYLE');
+//					console.log('CREATE NEW STYLE');
 					this.fusionStyle(this.mergeStyle, this.style[this.classType]);
 				}
 				else
@@ -1225,7 +1225,7 @@ Object.extend('Ui.Element', {
 	},
 
 	getStyleProperty: function(property) {
-		console.log(this+".getStyleProperty("+property+") classType: "+this.classType+", "+this.constructor.style);
+//		console.log(this+".getStyleProperty("+property+") classType: "+this.classType+", "+this.constructor.style);
 /*		console.log(this);
 		if(this.mergeStyle != undefined) {
 			if((this.mergeStyle[this.classType] != undefined) && (this.mergeStyle[this.classType][property] != undefined)) {

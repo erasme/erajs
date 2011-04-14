@@ -41,13 +41,6 @@ Ui.Container.extend('Ui.Popup', {
 		}
 	},
 
-	getBackgroundColor: function() {
-		var color = this.getStyleProperty('backgroundColor');
-		if(color == undefined)
-			color = 'lightblue';
-		return color;
-	},
-
 	onWindowResize: function() {
 		if(this.visible) {
 			this.hide();
@@ -78,8 +71,8 @@ Ui.Container.extend('Ui.Popup', {
 
 }, {
 	onStyleChange: function() {
-		console.log(this+'.onStyleChange '+this.getStyleProperty('backgroundColor'));
-		this.background.setFill(this.getStyleProperty('backgroundColor'));
+		console.log(this+'.onStyleChange '+this.getStyleProperty('color'));
+		this.background.setFill(this.getStyleProperty('color'));
 	},
 
 	show: function(posX, posY) {
@@ -202,7 +195,9 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 
 	setFill: function(fill) {
 		this.fill = fill;
-		this.popupDrawing.style.setProperty('fill', this.fill, null);
+		if(typeof(fill) != 'string')
+			fill = fill.getCssHtml();
+		this.popupDrawing.style.setProperty('fill', fill, null);
 	},
 }, {
 	render: function() {
@@ -231,4 +226,7 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 	},
 });
 
+Ui.Popup.style = {
+	color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+};
 
