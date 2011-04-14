@@ -70,17 +70,17 @@ app.connect(selectable, 'up', function() {
 });
 app.connect(selectable, 'select', function() {
 	bg.setOpacity(0.2);
-	logs.log('select');
+	logs.log('select', 'green');
 });
 app.connect(selectable, 'unselect', function() {
 	bg.setOpacity(0);
-	logs.log('unselect');
+	logs.log('unselect', 'red');
 });
 app.connect(selectable, 'activate', function() {
-	logs.log('activate');
+	logs.log('activate', 'blue');
 });
 app.connect(selectable, 'menu', function() {
-	logs.log('menu');
+	logs.log('menu', 'orange');
 });
 
 var logs = new Test.Logs({ margin: 10 });
