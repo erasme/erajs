@@ -117,7 +117,7 @@ Ui.Container.extend('Ui.Popup', {
 		return { width: Math.max(width, size.width), height: Math.max(height, size.height) };
 	},
 
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		var x = 0;
 		var y = 0;
 

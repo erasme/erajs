@@ -24,20 +24,20 @@ Ui.Container.extend('Ui.Fixed', {
 	//
 	// Return the required size for the current element
 	//
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		for(var i = 0; i < this.getChildren().length; i++)
-			this.getChildren()[i].measure(width, height, force);
+			this.getChildren()[i].measure(width, height);
 		return { width: 0, height: 0 };
 	},
 
 	//
 	// Arrange children
 	//
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		this.fireEvent('resize', this, width, height);
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight(), force);
+			child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
 		}
 	},
 });

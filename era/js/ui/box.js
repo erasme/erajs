@@ -217,7 +217,7 @@ Ui.Container.extend('Ui.Box', {
 	// Private
 	//
 
-	measureUniform: function(width, height, force) {
+	measureUniform: function(width, height) {
 		var minWidth = 0;
 		var minHeight = 0;
 		var constraintWidth; var constraintHeight;
@@ -300,7 +300,7 @@ Ui.Container.extend('Ui.Box', {
 			return { width: minSize, height: minHeight };
 	},
 
-	measureNonUniform: function(width, height, force) {
+	measureNonUniform: function(width, height) {
 		var minWidth = 0;
 		var minHeight = 0;
 
@@ -351,18 +351,18 @@ Ui.Container.extend('Ui.Box', {
 					var child = this.getChildren()[i];
 					if(!child.boxResizable) {
 						if(this.vertical)
-							child.measure(constraintWidth, child.getMeasureHeight(), force);
+							child.measure(constraintWidth, child.getMeasureHeight());
 						else
-							child.measure(child.getMeasureWidth(), constraintHeight, force);
+							child.measure(child.getMeasureWidth(), constraintHeight);
 						minSize += this.vertical?child.getMeasureHeight():child.getMeasureWidth();
 					}
 					else {
 						if(!child.boxStarDone) {
 							var size;
 							if(this.vertical)
-								size = child.measure(constraintWidth, star, force);
+								size = child.measure(constraintWidth, star);
 							else
-								size = child.measure(star, constraintHeight, force);
+								size = child.measure(star, constraintHeight);
 							if((this.vertical?size.height:size.width) > star) {
 								child.boxStarDone = true;
 								starFound = false;
@@ -396,7 +396,7 @@ Ui.Container.extend('Ui.Box', {
 			return { width: minSize, height: minOpSize };
 	},
 }, {
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
@@ -405,15 +405,15 @@ Ui.Container.extend('Ui.Box', {
 		var constraintHeight = height - (top + bottom);
 		var size;
 		if(this.uniform)
-			size = this.measureUniform(constraintWidth, constraintHeight, force);
+			size = this.measureUniform(constraintWidth, constraintHeight);
 		else
-			size = this.measureNonUniform(constraintWidth, constraintHeight, force);
+			size = this.measureNonUniform(constraintWidth, constraintHeight);
 		size.width += left + right;
 		size.height += top + bottom;
 		return size;
 	},
 
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		var left = this.paddingLeft;
 		var right = this.paddingRight;
 		var top = this.paddingTop;
@@ -433,9 +433,9 @@ Ui.Container.extend('Ui.Box', {
 			if(i != 0)
 				offset += this.spacing;
 			if(this.vertical)
-				child.arrange(left, offset, width, childSize, force);
+				child.arrange(left, offset, width, childSize);
 			else
-				child.arrange(offset, top, childSize, height, force);
+				child.arrange(offset, top, childSize, height);
 			offset += childSize;
 		}
 	},

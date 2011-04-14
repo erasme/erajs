@@ -245,11 +245,11 @@ Ui.Container.extend('Ui.Fold', {
 	//
 	// Return the required size for the current element
 	//
-	measureCore: function(width, height, force) {
-		var size = this.headerBox.measure(width, height, force);
+	measureCore: function(width, height) {
+		var size = this.headerBox.measure(width, height);
 		var contentSize = { width: 0, height: 0 };
 		if(this.orientation == 'horizontal') {
-			contentSize = this.contentBox.measure(width - size.width, height, force);
+			contentSize = this.contentBox.measure(width - size.width, height);
 			if(contentSize.height > size.height)
 				size.height = contentSize.height;
 			if(!this.over)
@@ -257,7 +257,7 @@ Ui.Container.extend('Ui.Fold', {
 			this.contentSize = contentSize.width;
 		}
 		else {
-			contentSize = this.contentBox.measure(width, height - size.height, force);
+			contentSize = this.contentBox.measure(width, height - size.height);
 			if(contentSize.width > size.width)
 				size.width = contentSize.width;
 			if(!this.over)
@@ -270,15 +270,15 @@ Ui.Container.extend('Ui.Fold', {
 	//
 	// Arrange children
 	//
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		if(this.orientation == 'horizontal') {
-			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height, force);
-			this.contentBox.arrange(this.headerBox.getMeasureWidth(), 0, this.contentBox.getMeasureWidth(), height, force);
+			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);
+			this.contentBox.arrange(this.headerBox.getMeasureWidth(), 0, this.contentBox.getMeasureWidth(), height);
 			this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), Math.round(height));
 		}
 		else {
-			this.headerBox.arrange(0, 0, width, this.headerBox.getMeasureHeight(), force);
-			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight(), force);
+			this.headerBox.arrange(0, 0, width, this.headerBox.getMeasureHeight());
+			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight());
 			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
 		}
 	},

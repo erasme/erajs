@@ -549,10 +549,10 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 }, {
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var size = child.measure(width, height, force);
+			var size = child.measure(width, height);
 		}
 		var contentWidth = width;
 		var contentHeight = height;
@@ -579,7 +579,7 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.scrollbarVerticalNeeded = false;
 			this.scrollbarHorizontalNeeded = false;
 
-			this.contentBox.measure(contentWidth, contentHeight, force);
+			this.contentBox.measure(contentWidth, contentHeight);
 
 			var contentWidth = width;
 			var contentHeight = height;
@@ -620,7 +620,7 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		if(this.scrollbarVerticalNeeded)
 			this.scrollbarVerticalBox.show();
 		else {

@@ -30,7 +30,7 @@ Ui.Element.extend('Ui.Html', {
 		return this.htmlDrawing;
 	},
 
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		if(this.measureTask == undefined) {
 			this.htmlDrawing.style.setProperty('width', width+'px', null);
 			this.measureTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.invalidateMeasure });

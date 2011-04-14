@@ -43,7 +43,7 @@ Ui.Element.extend('Ui.ProgressBar', {
 		return this.progressBarDrawing;
 	},
 
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		this.updateValue();
 	},
 

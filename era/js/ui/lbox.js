@@ -122,7 +122,7 @@ Ui.Container.extend('Ui.LBox', {
 	//
 	// Return the required size for the current element
 	//
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
@@ -133,7 +133,7 @@ Ui.Container.extend('Ui.LBox', {
 		var minHeight = 0;
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var size = child.measure(constraintWidth, constraintHeight, force);
+			var size = child.measure(constraintWidth, constraintHeight);
 			if(size.width > minWidth)
 				minWidth = size.width;
 			if(size.height > minHeight)
@@ -147,7 +147,7 @@ Ui.Container.extend('Ui.LBox', {
 	//
 	// Arrange children
 	//
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
@@ -155,7 +155,7 @@ Ui.Container.extend('Ui.LBox', {
 		width -= left + right;
 		height -= top + bottom;
 		for(var i = 0; i < this.getChildren().length; i++)
-			this.getChildren()[i].arrange(left, top, width, height, force);
+			this.getChildren()[i].arrange(left, top, width, height);
 	},
 });
 

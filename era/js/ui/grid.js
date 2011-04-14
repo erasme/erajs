@@ -170,14 +170,14 @@ Ui.Container.extend('Ui.Grid', {
 	},
 
 }, {
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
 
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var constraintWidth = (width * child.gridColSpan) / this.cols.length;
 			var constraintHeight = (height * child.gridRowSpan) / this.rows.length;
-			child.measure(constraintWidth, constraintHeight, force);
+			child.measure(constraintWidth, constraintHeight);
 		}
 
 		var colStarCount = 0.0;
@@ -340,7 +340,7 @@ Ui.Container.extend('Ui.Grid', {
 		return { width: offsetX, height: offsetY };
 	},
 
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var col = child.gridCol;

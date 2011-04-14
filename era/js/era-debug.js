@@ -114,6 +114,7 @@ include(eraBaseDirectory+'ui/locator.js');
 include(eraBaseDirectory+'ui/textfield.js');
 include(eraBaseDirectory+'ui/textbuttonfield.js');
 include(eraBaseDirectory+'ui/textareafield.js');
+include(eraBaseDirectory+'ui/listview.js');
 include(eraBaseDirectory+'ui/program.js');
 include(eraBaseDirectory+'ui/app.js');
 

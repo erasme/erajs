@@ -251,7 +251,7 @@ Object.extend('Ui.Element', {
 	// Override this method to provide your own
 	// measure policy
 	//
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		return { width: 0, height: 0 };
 	},
 
@@ -279,8 +279,8 @@ Object.extend('Ui.Element', {
 	//
 	// Update the current element arrangement
 	//
-	arrange: function(x, y, width, height, force) {
-		if(((force != undefined) &&  force) || (!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) || (this.arrangeHeight != height)) {
+	arrange: function(x, y, width, height) {
+		if((!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) || (this.arrangeHeight != height)) {
 			this.arrangeX = x;
 			this.arrangeY = y;
 			this.arrangeWidth = width;
@@ -341,7 +341,7 @@ Object.extend('Ui.Element', {
 				this.updateClipRectangle();
 			}
 
-			this.arrangeCore(width, height, force);
+			this.arrangeCore(width, height);
 		}
 		this.arrangeValid = true;
 	},
@@ -350,7 +350,7 @@ Object.extend('Ui.Element', {
 	// Override this to provide your own
 	// arrangement policy
 	//
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 	},
 
 	//

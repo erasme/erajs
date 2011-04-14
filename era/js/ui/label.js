@@ -116,7 +116,7 @@ Ui.Element.extend('Ui.Label', {
 		return this.labelDrawing;
 	},
 
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		if(this.orientation == 'vertical')
 			return { width: this.labelDrawing.offsetHeight, height: this.labelDrawing.offsetWidth };
 		else

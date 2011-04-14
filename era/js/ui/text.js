@@ -207,7 +207,7 @@ Ui.SVGElement.extend('Ui.Text', {
 		return group;
 	},
 
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+', '+height+')');
 
 		if(this.getWidth() != undefined)

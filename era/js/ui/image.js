@@ -84,7 +84,7 @@ Ui.Element.extend('Ui.Image', {
 		return this.imageDrawing;
 	},
 
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		if(!this.loaddone)
 			return { width: 0, height: 0 };
 		var size;

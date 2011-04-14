@@ -129,12 +129,12 @@ Ui.Container.extend('Ui.Locator', {
 	//
 	// Return the required size for the current element
 	//
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		if(this.foregrounds.length == 0)
 			return { width: 0, height: 0 };
 
 		for(var i = 0; i < this.getChildren().length; i++)
-			this.getChildren()[i].measure(width, height, force);
+			this.getChildren()[i].measure(width, height);
 
 		if(this.foregrounds.length == 1) {
 			return { width: this.foregrounds[0].getMeasureWidth(), height: this.foregrounds[0].getMeasureHeight() };
@@ -156,10 +156,10 @@ Ui.Container.extend('Ui.Locator', {
 	//
 	// Arrange children
 	//
-	arrangeCore: function(width, height, force) {
+	arrangeCore: function(width, height) {
 		if(this.foregrounds.length == 1) {
-			this.foregrounds[0].arrange(0, 0, width, height, force);
-			this.backgrounds[0].arrange(0, 0, width, height, force);
+			this.foregrounds[0].arrange(0, 0, width, height);
+			this.backgrounds[0].arrange(0, 0, width, height);
 			return;
 		}
 
@@ -168,13 +168,13 @@ Ui.Container.extend('Ui.Locator', {
 			var bg = this.backgrounds[i];
 			var fg = this.foregrounds[i];
 			var fgWidth = fg.getMeasureWidth();
-			fg.arrange(x, 0, fgWidth, height, force);
+			fg.arrange(x, 0, fgWidth, height);
 			if(i == 0)
-				bg.arrange(x, 0, fgWidth + height/2, height, force);
+				bg.arrange(x, 0, fgWidth + height/2, height);
 			else if(i == this.foregrounds.length -1)
-				bg.arrange(x - height/2, 0, fgWidth + height/2, height, force);
+				bg.arrange(x - height/2, 0, fgWidth + height/2, height);
 			else
-				bg.arrange(x - height/2, 0, fgWidth + height, height, force);
+				bg.arrange(x - height/2, 0, fgWidth + height, height);
 			x += fgWidth + height/2 + this.spacing;
 		}
 	},

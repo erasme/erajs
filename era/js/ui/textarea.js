@@ -111,7 +111,7 @@ Ui.Element.extend('Ui.TextArea', {
 		return this.textareaDrawing;
 	},
 
-	measureCore: function(width, height, force) {
+	measureCore: function(width, height) {
 		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
