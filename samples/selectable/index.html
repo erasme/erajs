@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Selectable</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.VBox.extend('Test.Logs', {
+	logs: undefined,
+
+	constructor: function() {
+		this.append(new Ui.Label({ text: 'Logs:', horizontalAlign: 'left', fontWeight: 'bold' }));
+		var scrolling = new Ui.ScrollingArea();
+		this.append(scrolling, true);
+		this.logs = new Ui.VBox();
+		scrolling.setContent(this.logs);
+	},
+
+	log: function(text, color) {
+		if(color == undefined)
+			color = 'black';
+		this.logs.prepend(new Ui.Label({ text: text, color: color, horizontalAlign: 'left' }));
+	},
+});
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var selectButton = new Ui.Button({ text: 'select' });
+toolbar.append(selectButton);
+app.connect(selectButton, 'press', function() {
+	selectable.select();
+});
+
+var unselectButton = new Ui.Button({ text: 'unselect' });
+toolbar.append(unselectButton);
+app.connect(unselectButton, 'press', function() {
+	selectable.unselect();
+});
+
+var hbox = new Ui.HBox();
+vbox.append(hbox, true);
+
+var selectable = new Ui.Selectable({ verticalAlign: 'center', horizontalAlign: 'center' });
+hbox.append(selectable, true);
+
+var bg = new Ui.Rectangle({ fill: 'black', radius: 8, opacity: 0 });
+selectable.append(bg);
+
+selectable.append(new Ui.Image({ src: 'building.png', width: 64, height: 64, margin: 10 }));
+
+app.connect(selectable, 'down', function() {
+	bg.setOpacity(0.4);
+	logs.log('down');
+});
+app.connect(selectable, 'up', function() {
+	if(selectable.getIsSelected())
+		bg.setOpacity(0.2);
+	else
+		bg.setOpacity(0);
+	logs.log('up');
+});
+app.connect(selectable, 'select', function() {
+	bg.setOpacity(0.2);
+	logs.log('select');
+});
+app.connect(selectable, 'unselect', function() {
+	bg.setOpacity(0);
+	logs.log('unselect');
+});
+app.connect(selectable, 'activate', function() {
+	logs.log('activate');
+});
+app.connect(selectable, 'menu', function() {
+	logs.log('menu');
+});
+
+var logs = new Test.Logs({ margin: 10 });
+hbox.append(logs, true);
+
+</script>
+  </head>
+</html>
