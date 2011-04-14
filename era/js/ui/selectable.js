@@ -4,7 +4,6 @@
 Ui.LBox.extend('Ui.Selectable', {
 	isDown: false,
 	isSelected: false,
-	lastIsSelected: false,
 	lastTime: undefined,
 	button: undefined,
 	menuTimer: undefined,
@@ -44,20 +43,7 @@ Ui.LBox.extend('Ui.Selectable', {
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 
-		this.isDown = true;
-
-		this.lastIsSelected = this.isSelected;
-
-		if(this.button == 0) {
-			this.fireEvent('down', this);
-		}
-
-
-//		if((this.button == 0) && (!this.isSelected)) {
-//			this.isSelected = true;
-//			this.onSelect();
-//			this.fireEvent('select', this);
-//		}
+		this.onDown();
 	},
 
 	onMouseMove: function(event) {
@@ -69,18 +55,9 @@ Ui.LBox.extend('Ui.Selectable', {
 		if(delta > 10) {
 			this.disconnect(window, 'mousemove', this.onMouseMove);
 			this.disconnect(window, 'mouseup', this.onMouseUp);
-
-			this.isDown = false;
-
-			this.fireEvent('up', this);
-
-//			if(!this.lastIsSelected && this.isSelected) {
-//				this.isSelected = false;
-//				this.onUnSelect();
-//				this.fireEvent('unselect', this);
-//			}
-
 			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
+
+			this.onUp();
 
 			var mouseDownEvent = document.createEvent('MouseEvents');
 			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
@@ -108,61 +85,34 @@ Ui.LBox.extend('Ui.Selectable', {
 		this.disconnect(window, 'mousemove', this.onMouseMove);
 		this.disconnect(window, 'mouseup', this.onMouseUp);
 
+		this.onUp();
+
 		if(event.button == 0) {
-			this.isDown = false;
-			this.fireEvent('up', this);
-
-			if(!this.isSelected) {
-				this.onSelect();
-			}
-
 			var currentTime = (new Date().getTime())/1000;
-			if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250)) {
+			if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
 				this.fireEvent('activate', this);
-			}
+
 			this.lastTime = currentTime;
+			this.onSelect();
 		}
-		else if(event.button == 2) {
+		else if(event.button == 2)
 			this.fireEvent('menu', this, event.pageX, event.pageY);
-		}
 	},
 
 	onTouchStart: function(event) {
-		console.log('touchstart '+this.isDown);
-
-//		if(!this.isEnable)
-//			return;
-		if(this.isDown) {
-
-//			var currentTime = (new Date().getTime())/1000;
-//			if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250)) {
-//				this.fireEvent('activate', this);
-//			}
-//			this.lastTime = currentTime;
-//			this.onUp();
+		if(this.isDown)
 			return;
-		}
+
 		if(event.targetTouches.length != 1)
 			return;
-
-//		console.log('touchstart ok');
 
 		event.preventDefault();
 		event.stopPropagation();
 
 		this.touchStartX = event.targetTouches[0].screenX;
 		this.touchStartY = event.targetTouches[0].screenY;
-//		this.onDown();
 
-		this.isDown = true;
-
-		this.lastIsSelected = this.isSelected;
-
-		if(!this.isSelected) {
-			this.isSelected = true;
-			this.onSelect();
-			this.fireEvent('select', this);
-		}
+		this.onDown();
 
 		if(this.menuTimer != undefined)
 			this.menuTimer.abort();
@@ -182,19 +132,11 @@ Ui.LBox.extend('Ui.Selectable', {
 
 		// if the user move to much, release the touch event
 		if(delta > 10) {
-//			this.onUp();
+			this.onUp();
 
 			if(this.menuTimer != undefined) {
 				this.menuTimer.abort();
 				this.menuTimer = undefined;
-			}
-
-			this.isDown = false;
-
-			if(!this.lastIsSelected && this.isSelected) {
-				this.isSelected = false;
-				this.onUnSelect();
-				this.fireEvent('unselect', this);
 			}
 
 			this.disconnect(this.getDrawing(), 'touchstart', this.onTouchStart);
@@ -214,33 +156,27 @@ Ui.LBox.extend('Ui.Selectable', {
 	},
 	
 	onTouchEnd: function(event) {
-		console.log('touchend');
-
 		if(!this.isDown)
 			return;
 
-		this.isDown = false;
+		this.onUp();
 
 		event.preventDefault();
 		event.stopPropagation();
-//		this.onUp();
-//		this.fireEvent('press', this);
-
-		var currentTime = (new Date().getTime())/1000;
-		if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250)) {
-			this.fireEvent('activate', this);
-		}
-		this.lastTime = currentTime;
 
 		if(this.menuTimer != undefined) {
 			this.menuTimer.abort();
 			this.menuTimer = undefined;
+
+			var currentTime = (new Date().getTime())/1000;
+			if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
+				this.fireEvent('activate', this);
+			this.lastTime = currentTime;
+			this.onSelect();
 		}
 	},
 
 	onMenuTimer: function() {
-		console.log('onMenuTimer');
-
 		this.fireEvent('menu', this, this.menuPosX, this.menuPosY);
 		this.menuTimer = undefined;
 	},
@@ -257,22 +193,19 @@ Ui.LBox.extend('Ui.Selectable', {
 		this.onUnselect();
 	},
 
-
-/*	onDown: function() {
-		this.isDown = true;
-		if(!this.isSelected) {
-			this.isSelected = true;
-			this.fireEvent('select', this);
+	onDown: function() {
+		if(!this.isDown) {
+			this.isDown = true;
+			this.fireEvent('down', this);
 		}
 	},
 
 	onUp: function() {
-		this.disconnect(window, 'mousemove');
-		this.disconnect(window, 'mouseup');
- 		this.isDown = false;
-		this.removeClass('ui-button-down');
-		this.fireEvent('up', this);
-	},*/
+		if(this.isDown) {
+			this.isDown = false;
+			this.fireEvent('up', this);
+		}
+	},
 
 	onSelect: function() {
 		if(!this.isSelected) {
