@@ -38,6 +38,7 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.setScrollVertical(config.scrollVertical);
 
 		this.contentBox = new Ui.LBox();
+		this.contentBox.getDrawing().style.overflow = 'hidden';
 		this.appendChild(this.contentBox);
 
 		this.scrollbarHorizontalBox = new Ui.LBox();
@@ -544,8 +545,13 @@ Ui.Container.extend('Ui.Scrollable', {
 			var relOffsetY = this.offsetY / (this.contentHeight - this.viewHeight);
 			this.scrollbarVerticalBox.setTransform(Ui.Matrix.createTranslate(0, (this.viewHeight - this.scrollbarVerticalHeight) * relOffsetY));
 		}
-		this.contentBox.setTransform(Ui.Matrix.createTranslate(-this.offsetX, -this.offsetY));
-		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
+//		this.contentBox.setTransform(Ui.Matrix.createTranslate(-this.offsetX, -this.offsetY));
+//		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
+
+//		console.log('updateOffset('+this.offsetX+','+this.offsetY+')');
+
+		this.contentBox.getDrawing().scrollLeft = this.offsetX;
+		this.contentBox.getDrawing().scrollTop = this.offsetY;
 	},
 
 }, {
@@ -672,7 +678,16 @@ Ui.Container.extend('Ui.Scrollable', {
 					this.scrollbarHorizontalWidth, this.scrollbarHorizontalBox.getMeasureHeight());
 			}
 		}
-		this.contentBox.arrange(0, 0, this.contentWidth, this.contentHeight);
+		if(this.content != undefined)
+			this.content.arrange(0, 0, this.contentWidth, this.contentHeight);
+		this.contentBox.getDrawing().style.left = '0px';
+		this.contentBox.getDrawing().style.top = '0px';
+		this.contentBox.getDrawing().style.width = this.viewWidth+'px';
+		this.contentBox.getDrawing().style.height = this.viewHeight+'px';
+
+//		this.contentBox.arrange(0, 0, this.contentWidth, this.contentHeight);
+//		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
+
 		this.updateOffset();
 	},
 });
