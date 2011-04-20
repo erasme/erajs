@@ -197,14 +197,14 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 		this.fill = fill;
 		if(typeof(fill) != 'string')
 			fill = fill.getCssHtml();
-		this.popupDrawing.style.setProperty('fill', fill, null);
+		this.popupDrawing.style.fill = fill;
 	},
 }, {
 	render: function() {
 		this.popupDrawing = document.createElementNS(svgNS, 'path');
-		this.popupDrawing.style.setProperty('fill', this.fill, null);
-		this.popupDrawing.style.setProperty('fill-opacity', '1', null);
-		this.popupDrawing.style.setProperty('stroke', 'none', null);
+		this.popupDrawing.style.fill = this.fill;
+		this.popupDrawing.style.fillOpacity = '1';
+		this.popupDrawing.style.stroke = 'none';
 		return this.popupDrawing;
 	},
 

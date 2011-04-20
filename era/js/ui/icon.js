@@ -14,40 +14,31 @@ Ui.SVGElement.extend('Ui.Icon', {
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = fill;
-			this.invalidateRender();
+			if(fill.isSubclass('Ui.Color'))
+				fill = fill.getCssHtml();
+			this.iconDrawing.style.fill = fill;
 		}
 	},
 
 	setPath: function(path) {
 		if(this.path != path) {
 			this.path = path;
-			this.invalidateRender();
+			this.iconDrawing.setAttributeNS(null, 'd', this.path, null);
 		}
 	},
 
 }, {
 	render: function() {
 		this.iconDrawing = document.createElementNS(svgNS, 'path');
-		this.iconDrawing.style.setProperty('fill', this.fill, null);
-		this.iconDrawing.style.setProperty('fill-opacity', '1', null);
-		this.iconDrawing.style.setProperty('stroke', 'none', null);
+		this.iconDrawing.style.fill = this.fill;
+		this.iconDrawing.style.fillOpacity = '1';
+		this.iconDrawing.style.stroke = 'none';
 		return this.iconDrawing;
 	},
 
 	arrangeCore: function(width, height) {
 		var scale = Math.min(width, height) / 48;
 		this.iconDrawing.setAttributeNS(null, 'transform', 'scale( '+scale.toFixed(4)+', '+scale.toFixed(4)+' )');
-	},
-
-	updateRenderCore: function() {
-		var fill = this.fill;
-		if(fill.isSubclass('Ui.Color'))
-			fill = fill.getCssHtml();
-
-		console.log('color: '+fill);
-
-		this.iconDrawing.style.setProperty('fill', fill, null);
-		this.iconDrawing.setAttributeNS(null, 'd', this.path, null);
 	},
 });
 

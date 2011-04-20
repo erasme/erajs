@@ -34,7 +34,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 
-		this.contentBox.getDrawing().style.setProperty('cursor', 'move', null);
+		this.contentBox.getDrawing().style.cursor = 'move';
 		this.addEvents('move');
 
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);

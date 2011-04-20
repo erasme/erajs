@@ -10,7 +10,7 @@ Ui.LBox.extend('Ui.Togglable', {
 //
 
 	constructor: function(config) {
-		this.getDrawing().style.setProperty('cursor', 'pointer', null);
+		this.getDrawing().style.cursor = 'pointer';
 
 		this.setFocusable(true);
 		this.setRole('button');

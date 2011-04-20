@@ -27,8 +27,8 @@ Ui.Element.extend('Ui.IFrame', {
 			this.isReady = true;
 			if(navigator.iPad) {
 				console.log('onIFrameLoad, setSize: '+this.getLayoutWidth()+' x '+this.getLayoutHeight());
-				this.iframeDrawing.style.setProperty('width', this.getLayoutWidth()+'px', null);
-				this.iframeDrawing.style.setProperty('height', this.getLayoutHeight()+'px', null);
+				this.iframeDrawing.style.width = this.getLayoutWidth()+'px';
+				this.iframeDrawing.style.height = this.getLayoutHeight()+'px';
 			}
 			this.fireEvent('ready', this);
 		}
@@ -37,7 +37,7 @@ Ui.Element.extend('Ui.IFrame', {
 }, {
 	render: function() {
 		this.iframeDrawing = document.createElementNS(htmlNS, 'iframe');
-		this.iframeDrawing.style.setProperty('border', '0px', null);
+		this.iframeDrawing.style.border = '0px';
 		return this.iframeDrawing;
 	},
 
@@ -45,12 +45,12 @@ Ui.Element.extend('Ui.IFrame', {
 		// correct a bug in Chrome
 		if(navigator.isChrome) {
 			var matrix = this.transformFromPage();
-			this.iframeDrawing.style.setProperty('width', (width*matrix.getA())+'px', null);
-			this.iframeDrawing.style.setProperty('height', (height*matrix.getD())+'px', null);
+			this.iframeDrawing.style.width = (width*matrix.getA())+'px';
+			this.iframeDrawing.style.height = (height*matrix.getD())+'px';
 		}
 		else {
-			this.iframeDrawing.style.setProperty('width', width+'px', null);
-			this.iframeDrawing.style.setProperty('height', height+'px', null);
+			this.iframeDrawing.style.width = width+'px';
+			this.iframeDrawing.style.height = height+'px';
 		}
 	},
 });

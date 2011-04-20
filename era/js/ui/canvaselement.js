@@ -22,9 +22,5 @@ Ui.Element.extend('Ui.CanvasElement', {
 		this.getDrawing().setAttribute('height', height, null);
 		this.updateCanvas(this.context);
 	},
-       
-	updateRenderCore: function() {
-		this.updateCanvas(this.context);
-	},
 });
 

@@ -14,14 +14,15 @@ Ui.Element.extend('Ui.Html', {
 	setHtml: function(html) {
 		this.htmlDrawing.innerHTML = html;
 	},
+
 }, {
 	render: function() {
 		this.htmlDrawing = document.createElementNS(htmlNS, 'div');
-		this.htmlDrawing.style.setProperty('display', 'inline', null);
+		this.htmlDrawing.style.display = 'inline';
 		if(navigator.isWebkit)
 			this.htmlDrawing.style.webkitUserSelect = 'none';
 		else if(navigator.isGecko)
-			this.htmlDrawing.style.setProperty('-moz-user-select', 'none', null);
+			this.htmlDrawing.style.MozUserSelect = 'none';
 		else if(navigator.isIE)
 			this.htmlDrawing.onselectstart = function(event) { event.preventDefault(); };
 		else if(navigator.isOpera)
@@ -30,18 +31,9 @@ Ui.Element.extend('Ui.Html', {
 		return this.htmlDrawing;
 	},
 
-	measureCore: function(width, height) {
-		if(this.measureTask == undefined) {
-			this.htmlDrawing.style.setProperty('width', width+'px', null);
-			this.measureTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.invalidateMeasure });
-		}
-		else
-			this.measureTask = undefined;
-		return { width: this.htmlDrawing.offsetWidth, height: this.htmlDrawing.offsetHeight };
-	},
-
 	arrangeCore: function(width, height) {
-		this.htmlDrawing.style.setProperty('width', width+'px', null);
+		this.htmlDrawing.style.width = width+'px';
+		this.htmlDrawing.style.height = height+'px';
 	},
 });
 

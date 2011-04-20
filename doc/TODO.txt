@@ -116,3 +116,17 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - a verifier le comportement de measure dans Box pour les Uniform
   (la contrainte doit faire au plus petit possible)
 
+- dans Scrollable, ne laisser la possiblité à l'utilisateur de fixer
+  l'offset uniquement relatif (entre 0 et 1). Si l'offset est en relatif
+  mettre à jour le positionnement absolue dans arrange.
+
+- pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'il
+  faut (en hauteur)
+
+- Problème avec l'iPad. Si le clavier virtuel est ouvert et que l'on recalcul
+  la taille de la fenêtre. On perd la taille du clavier virtuel. Lorsqu'il ferme
+  le clavier virtuel. Il ne nous informe pas de l'augmentation de la taille.
+  SALOPERIE D'APPLE.
+
+- dans Ui.Container appendChild... ne doit pas utiliser invalidateMeasure
+  mais onChildInvalidateMeasure()

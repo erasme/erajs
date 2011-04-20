@@ -145,9 +145,9 @@ Ui.Element.extend('Ui.Video', {
 			this.connect(this.videoDrawing, 'timeupdate', this.onTimeupdate);
 			this.videoDrawing.setAttributeNS(null, 'preload', 'auto');
 			this.videoDrawing.load();
-			this.videoDrawing.style.setProperty('position', 'absolute', null);
-			this.videoDrawing.style.setProperty('left', '0px', null);
-			this.videoDrawing.style.setProperty('top', '0px', null);
+			this.videoDrawing.style.position = 'absolute';
+			this.videoDrawing.style.left = '0px';
+			this.videoDrawing.style.top = '0px';
 			drawing = this.videoDrawing;
 		}
 		return drawing;

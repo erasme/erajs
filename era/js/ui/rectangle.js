@@ -11,7 +11,9 @@ Ui.Element.extend('Ui.Rectangle', {
 	shadow: undefined,
 
 	constructor: function(config) {
-		this.getDrawing().style.setProperty('box-sizing', 'border-box', null);
+		this.getDrawing().style.boxSizing = 'border-box';
+		this.getDrawing().style.borderStyle = 'solid';
+		this.getDrawing().style.borderWidth = '0px';
 
 		if(config.radius != undefined)
 			this.setRadius(config.radius);
@@ -36,7 +38,14 @@ Ui.Element.extend('Ui.Rectangle', {
 	setShadow: function(shadow) {
 		if(this.shadow != shadow) {
 			this.shadow = shadow;
-			this.invalidateRender();
+			if(shadow == undefined)
+				shadow = 'none';
+			if(Ui.Rectangle.supportBoxShadow)
+				this.getDrawing().style.boxShadow = shadow;
+			else if(Ui.Rectangle.supportMozBoxShadow)
+				this.getDrawing().style.MozBoxShadow = shadow;
+			else if(Ui.Rectangle.supportWebkitBoxShadow)
+				this.getDrawing().style.webkitBoxShadow = shadow;
 		}
 	},
 
@@ -58,7 +67,12 @@ Ui.Element.extend('Ui.Rectangle', {
 	setRadiusTopLeft: function(radiusTopLeft) {
 		if(this.radiusTopLeft != radiusTopLeft) {
 			this.radiusTopLeft = radiusTopLeft;
-			this.invalidateRender();
+			if(Ui.Rectangle.supportBorderRadius)
+				this.getDrawing().style.borderTopLeftRadius = this.radiusTopLeft+'px';
+			else if(Ui.Rectangle.supportMozBorderRadius)
+				this.getDrawing().style.MozBorderRadiusTopleft = this.radiusTopLeft+'px';
+			else if(Ui.Rectangle.supportWebkitBorderRadius)
+				this.getDrawing().style.webkitBorderTopLeftRadius = this.radiusTopLeft+'px';
 		}
 	},
 
@@ -69,7 +83,12 @@ Ui.Element.extend('Ui.Rectangle', {
 	setRadiusTopRight: function(radiusTopRight) {
 		if(this.radiusTopRight != radiusTopRight) {
 			this.radiusTopRight = radiusTopRight;
-			this.invalidateRender();
+			if(Ui.Rectangle.supportBorderRadius)
+				this.getDrawing().style.borderTopRightRadius = this.radiusTopRight+'px';
+			else if(Ui.Rectangle.supportMozBorderRadius)
+				this.getDrawing().style.MozBorderRadiusTopright = this.radiusTopRight+'px';
+			else if(Ui.Rectangle.supportWebkitBorderRadius)
+				this.getDrawing().style.webkitBorderTopRightRadius = this.radiusTopRight+'px';
 		}
 	},
 
@@ -80,7 +99,12 @@ Ui.Element.extend('Ui.Rectangle', {
 	setRadiusBottomLeft: function(radiusBottomLeft) {
 		if(this.radiusBottomLeft != radiusBottomLeft) {
 			this.radiusBottomLeft = radiusBottomLeft;
-			this.invalidateRender();
+			if(Ui.Rectangle.supportBorderRadius)
+				this.getDrawing().style.borderBottomLeftRadius = this.radiusBottomLeft+'px';
+			else if(Ui.Rectangle.supportMozBorderRadius)
+				this.getDrawing().style.MozBorderRadiusBottomleft = this.radiusBottomLeft+'px';
+			else if(Ui.Rectangle.supportWebkitBorderRadius)
+				this.getDrawing().style.webkitBorderBottomLeftRadius = this.radiusBottomLeft+'px';
 		}
 	},
 
@@ -91,14 +115,30 @@ Ui.Element.extend('Ui.Rectangle', {
 	setRadiusBottomRight: function(radiusBottomRight) {
 		if(this.radiusBottomRight != radiusBottomRight) {
 			this.radiusBottomRight = radiusBottomRight;
-			this.invalidateRender();
+			if(Ui.Rectangle.supportBorderRadius)
+				this.getDrawing().style.borderBottomRightRadius = this.radiusBottomRight+'px';
+			else if(Ui.Rectangle.supportMozBorderRadius)
+				this.getDrawing().style.MozBorderRadiusBottomright = this.radiusBottomRight+'px';
+			else if(Ui.Rectangle.supportWebkitBorderRadius)
+				this.getDrawing().style.webkitBorderBottomRightRadius = this.radiusBottomRight+'px';
 		}
 	},
 
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = fill;
-			this.invalidateRender();
+			if(this.fill == undefined)
+				this.getDrawing().style.barkground = 'none';
+			else if(typeof(this.fill) == 'string')
+				this.getDrawing().style.background = this.fill;
+			else {
+				if(this.fill.isSubclass('Ui.Color'))
+					this.getDrawing().style.background = this.fill.getCssRgba();
+				else if(this.fill.isSubclass('Ui.LinearGradient')) {
+					this.getDrawing().style.backgroundImage = this.fill.getBackgroundImage();
+					this.getDrawing().style.backgroundSize = '100% 100%';
+				}
+			}
 		}
 	},
 
@@ -109,7 +149,10 @@ Ui.Element.extend('Ui.Rectangle', {
 	setStroke: function(stroke) {
 		if(this.stroke != stroke) {
 			this.stroke = stroke;
-			this.invalidateRender();
+			if(typeof(this.stroke) == 'string')
+				this.getDrawing().style.borderColor = this.stroke;
+			else if(this.stroke.isSubclass('Ui.Color'))
+				this.getDrawing().style.borderColor = this.fill.getCssRgba();
 		}
 	},
 
@@ -120,78 +163,11 @@ Ui.Element.extend('Ui.Rectangle', {
 	setStrokeWidth: function(strokeWidth) {
 		if(this.strokeWidth != strokeWidth) {
 			this.strokeWidth = strokeWidth;
-			this.invalidateRender();
+			this.getDrawing().style.borderWidth = this.strokeWidth+'px';
 		}
 	},
 	
 }, {
-/*	render: function() {
-		this.rectDrawing = document.createElementNS(htmlNS, 'div');
-		this.rectDrawing.style.setProperty('box-sizing', 'border-box', null);
-		return this.rectDrawing;
-	},*/
-
-/*	arrangeCore: function(width, height) {
-		this.rectDrawing.style.setProperty('width', width+'px', null);
-		this.rectDrawing.style.setProperty('height', height+'px', null);
-	},*/
-
-	updateRenderCore: function() {
-		var drawing = this.getDrawing();
-
-		if(Ui.Rectangle.supportBorderRadius) {
-			drawing.style.setProperty('border-top-left-radius', this.getRadiusTopLeft()+'px', null);
-			drawing.style.setProperty('border-top-right-radius', this.getRadiusTopRight()+'px', null);
-			drawing.style.setProperty('border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
-			drawing.style.setProperty('border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
-		}
-		else if(Ui.Rectangle.supportMozBorderRadius) {
-			drawing.style.setProperty('-moz-border-radius-topleft', this.getRadiusTopLeft()+'px', null);
-			drawing.style.setProperty('-moz-border-radius-topright', this.getRadiusTopRight()+'px', null);
-			drawing.style.setProperty('-moz-border-radius-bottomleft', this.getRadiusBottomLeft()+'px', null);
-			drawing.style.setProperty('-moz-border-radius-bottomright', this.getRadiusBottomRight()+'px', null);
-		}		
-		else if(Ui.Rectangle.supportWebkitBorderRadius) {
-			drawing.style.setProperty('-webkit-border-top-left-radius', this.getRadiusTopLeft()+'px', null);
-			drawing.style.setProperty('-webkit-border-top-right-radius', this.getRadiusTopRight()+'px', null);
-			drawing.style.setProperty('-webkit-border-bottom-left-radius', this.getRadiusBottomLeft()+'px', null);
-			drawing.style.setProperty('-webkit-border-bottom-right-radius', this.getRadiusBottomRight()+'px', null);
-		}
-
-		var shadow = 'none';
-		if(this.shadow != undefined)
-			shadow = this.shadow;
-
-		if(Ui.Rectangle.supportBoxShadow)
-			drawing.style.setProperty('box-shadow', shadow, null);
-		else if(Ui.Rectangle.supportMozBoxShadow)
-			drawing.style.setProperty('-moz-box-shadow', shadow, null);
-		else if(Ui.Rectangle.supportWebkitBoxShadow)
-			drawing.style.setProperty('-webkit-box-shadow', shadow, null);
-
-		if(this.fill == undefined)
-			drawing.style.setProperty('barkground', 'none', null);
-		else if(typeof(this.fill) == 'string')
-			drawing.style.setProperty('background', this.fill, null);
-		else {
-			if(this.fill.isSubclass('Ui.Color'))
-				drawing.style.setProperty('background', this.fill.getCssRgba(), null);
-			else if(this.fill.isSubclass('Ui.LinearGradient')) {
-				drawing.style.setProperty('background-image', this.fill.getBackgroundImage(), null);
-				drawing.style.setProperty('background-size', '100% 100%', null);
-			}
-		}
-		if((this.stroke != undefined) && (this.strokeWidth > 0)) {
-			drawing.style.setProperty('border-width', this.strokeWidth+'px', null);
-			drawing.style.setProperty('border-style', 'solid', null);
-			if(typeof(this.stroke) == 'string')
-				drawing.style.setProperty('border-color', this.stroke);
-			else if(this.fill.isSubclass('Ui.Color'))
-				drawing.style.setProperty('background', this.fill.getCssRgba(), null);
-		}
-		else
-			drawing.style.setProperty('border-width', '0px', null);
-	},
 });
 
 Ui.Rectangle.supportBorderRadius = false;
@@ -199,18 +175,18 @@ Ui.Rectangle.supportMozBorderRadius = false;
 Ui.Rectangle.supportWebkitBorderRadius = false;
 
 var test = document.createElementNS(htmlNS, 'div');
-test.style.setProperty('border-top-left-radius', '8px', null);
+test.style.borderTopLeftRadius = '8px';
 var res = test.style.getPropertyValue('border-top-left-radius');
 if((res != null) && (res != undefined) && (res != ''))
 	Ui.Rectangle.supportBorderRadius = true;
 else {
-	test.style.setProperty('-moz-border-radius-topleft', '8px', null);
+	test.style.MozBorderRadiusTopleft = '8px';
 	res = test.style.getPropertyValue('-moz-border-radius-topleft');
 	if((res != null) && (res != undefined) && (res != '')) {
 		Ui.Rectangle.supportMozBorderRadius = true;
 	}
 	else {
-		test.style.setProperty('-webkit-border-top-left-radius', '8px', null);
+		test.style.webkitBorderTopLeftRadius = '8px';
 		res = test.style.getPropertyValue('-webkit-border-top-left-radius');
 		if((res != null) && (res != undefined) && (res != '')) {
 			Ui.Rectangle.supportWebkitBorderRadius = true;
@@ -223,18 +199,18 @@ Ui.Rectangle.supportBoxShadow = false;
 Ui.Rectangle.supportMozBoxShadow = false;
 Ui.Rectangle.supportWebkitBoxShadow = false;
 
-test.style.setProperty('box-shadow', '0px 0px 4px black', null);
+test.style.boxShadow = '0px 0px 4px black';
 var res = test.style.getPropertyValue('box-shadow');
 if((res != null) && (res != undefined) && (res != ''))
 	Ui.Rectangle.supportBoxShadow = true;
 else {
-	test.style.setProperty('-moz-box-shadow', '0px 0px 4px black', null);
+	test.style.MozBoxShadow = '0px 0px 4px black';
 	res = test.style.getPropertyValue('-moz-box-shadow');
 	if((res != null) && (res != undefined) && (res != '')) {
 		Ui.Rectangle.supportMozBoxShadow = true;
 	}
 	else {
-		test.style.setProperty('-webkit-box-shadow', '0px 0px 4px black', null);
+		test.style.webkitBoxShadow = '0px 0px 4px black';
 		res = test.style.getPropertyValue('-webkit-box-shadow');
 		if((res != null) && (res != undefined) && (res != '')) {
 			Ui.Rectangle.supportWebkitBoxShadow = true;
@@ -243,5 +219,4 @@ else {
 }
 
 test = undefined;
-
 

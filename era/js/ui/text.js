@@ -38,14 +38,14 @@ Ui.SVGElement.extend('Ui.Text', {
 		if(this.text != text) {
 			this.text = text;
 			this.invalidateMeasure();
-			this.invalidateRender();
 		}
 	},
 
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.invalidateRender();
+			this.textDrawing.setAttributeNS(null, 'font-size', this.fontSize);
+			this.measureDrawing.setAttributeNS(null, 'font-size', this.fontSize);
 			this.invalidateMeasure();
 		}
 	},
@@ -57,7 +57,8 @@ Ui.SVGElement.extend('Ui.Text', {
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.invalidateRender();
+			this.textDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
+			this.measureDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
 			this.invalidateMeasure();
 		}
 	},
@@ -69,7 +70,8 @@ Ui.SVGElement.extend('Ui.Text', {
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.invalidateRender();
+			this.textDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
+			this.measureDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
 			this.invalidateMeasure();
 		}
 	},
@@ -81,7 +83,7 @@ Ui.SVGElement.extend('Ui.Text', {
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = color;
-			this.invalidateRender();
+			this.textDrawing.setAttributeNS(null, 'fill', this.color, null);
 		}
 	},
 
@@ -197,12 +199,22 @@ Ui.SVGElement.extend('Ui.Text', {
 		if(navigator.isWebkit)
 			this.textDrawing.style.webkitUserSelect = 'none';
 		else if(navigator.isGecko)
-			this.textDrawing.style.setProperty('-moz-user-select', 'none', null);
+			this.textDrawing.style.MozUserSelect = 'none';
 		else if(navigator.isIE)
 			this.textDrawing.onselectstart = function(event) { event.preventDefault(); };
 		else if(navigator.isOpera)
 			this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
 		this.textDrawing.style.pointerEvents = 'none';
+
+		this.textDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
+		this.textDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
+		this.textDrawing.setAttributeNS(null, 'font-size', this.fontSize);
+		this.textDrawing.setAttributeNS(null, 'fill', this.color, null);
+
+		this.measureDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
+		this.measureDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
+		this.measureDrawing.setAttributeNS(null, 'font-size', this.fontSize);
+
 		group.appendChild(this.textDrawing);
 		return group;
 	},
@@ -223,17 +235,5 @@ Ui.SVGElement.extend('Ui.Text', {
 		while(this.textDrawing.hasChildNodes())
 			this.textDrawing.removeChild(this.textDrawing.firstChild);
 		this.updateFlow(width, true);
-	},
-
-	updateRenderCore: function() {
-//		console.log('updateRenderCore');
-		this.textDrawing.setAttributeNS(null, 'font-family', this.getFontFamily());
-		this.textDrawing.setAttributeNS(null, 'font-weight', this.getFontWeight());
-		this.textDrawing.setAttributeNS(null, 'font-size', this.getFontSize());
-		this.textDrawing.setAttributeNS(null, 'fill', this.getColor(), null);
-
-		this.measureDrawing.setAttributeNS(null, 'font-family', this.getFontFamily());
-		this.measureDrawing.setAttributeNS(null, 'font-weight', this.getFontWeight());
-		this.measureDrawing.setAttributeNS(null, 'font-size', this.getFontSize());
 	},
 });

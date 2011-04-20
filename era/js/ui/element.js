@@ -16,8 +16,6 @@ Object.extend('Ui.Element', {
 	height: undefined,
 
 	// rendering
-	renderNext: undefined,
-	renderValid: true,
 	drawing: undefined,
 
 	// measurement
@@ -34,6 +32,8 @@ Object.extend('Ui.Element', {
 	arrangeWidth: 0,
 	arrangeHeight: 0,
 
+	layoutValid: true,
+	layoutNext: undefined,
 	layoutX: 0,
 	layoutY: 0,
 	layoutWidth: 0,
@@ -84,8 +84,8 @@ Object.extend('Ui.Element', {
 		// create the drawing container
 		this.drawing = this.renderDrawing();
 		this.drawing.style.position = 'absolute';
-		this.drawing.style.left = '0px';
-		this.drawing.style.top = '0px';
+		this.drawing.style.left = '-10000px';
+		this.drawing.style.top = '-10000px';
 		this.addClass(this.classType.toLowerCase().replace(/\./gi, '-'));
 		var content = this.render();
 		if(content != undefined)
@@ -272,8 +272,20 @@ Object.extend('Ui.Element', {
 		}
 	},
 
+	invalidateLayout: function() {
+		if(this.layoutValid) {
+			console.log('invalidateLayout enqueue ('+(new Date()).getTime()+')');
+
+			this.layoutValid = false;
+			Ui.App.current.enqueueLayout(this);
+		}
+	},
+
 	onChildInvalidateMeasure: function(child) {
 		this.invalidateMeasure();
+	},
+
+	updateLayout: function() {
 	},
 
 	//
@@ -327,11 +339,11 @@ Object.extend('Ui.Element', {
 
 //			console.log(this+'.arrange '+x+','+y+' ('+width+'x'+height+')');
 
-			this.drawing.style.setProperty('left', this.layoutX+'px', null);
-			this.drawing.style.setProperty('top', this.layoutY+'px', null);
+			this.drawing.style.left = this.layoutX+'px';
+			this.drawing.style.top = this.layoutY+'px';
 			this.updateTransform();
-			this.drawing.style.setProperty('width', width+'px', null);
-			this.drawing.style.setProperty('height', height+'px', null);
+			this.drawing.style.width = width+'px';
+			this.drawing.style.height = height+'px';
 
 			if(this.clipToBounds) {
 				this.clipX = 0;
@@ -361,8 +373,12 @@ Object.extend('Ui.Element', {
 		if(this.arrangeValid) {
 			this.arrangeValid = false;
 			if(this.parent != undefined)
-				this.parent.invalidateArrange();
+				this.parent.onChildInvalidateArrange(this);
 		}
+	},
+
+	onChildInvalidateArrange: function(child) {
+		this.invalidateArrange();
 	},
 
 	//
@@ -381,41 +397,6 @@ Object.extend('Ui.Element', {
 	//
 	render: function() {
 		return undefined;
-	},
-
-	//
-	// Called to synchronize the current element
-	// with its visual aspect (INTERNAL)
-	//
-	updateRender: function() {
-		if(!this.renderValid) {
-			this.drawing.style.opacity = this.opacity;
-			this.updateTransform();
-			this.updateClipRectangle();
-			this.updateRenderCore();
-			this.renderValid = true;
-		}
-	},
-
-	//
-	// Called when the rendering need to be updated (color, aspect...)
-	// Override this method to synchronize the current element
-	// with its visual aspect
-	//
-	updateRenderCore: function() {
-	},
-
-	//
-	// Signal that the current element graphical
-	// display need to be updated
-	//
-	invalidateRender: function() {
-		if(this.renderValid) {
-//			console.log(this+'.invalidateRender');
-
-			this.renderValid = false;
-			Ui.App.current.enqueueRender(this);
-		}
 	},
 
 	//
@@ -505,7 +486,7 @@ Object.extend('Ui.Element', {
 				this.clipWidth = undefined;
 				this.clipHeight = undefined;
 			}
-			this.invalidateRender();
+			this.updateClipRectangle();
 		}
 	},
 
@@ -514,12 +495,7 @@ Object.extend('Ui.Element', {
 		this.clipY = y;
 		this.clipWidth = width;
 		this.clipHeight = height;
-		this.invalidateRender();
-//		x = Math.round(x);
-//		y = Math.round(y);
-//		width = Math.round(width);
-//		height = Math.round(height);
-//		this.drawing.style.setProperty('clip', 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)', null);
+		this.updateClipRectangle();
 	},
 
 	updateClipRectangle: function() {
@@ -528,11 +504,10 @@ Object.extend('Ui.Element', {
 			y = Math.round(this.clipY);
 			width = Math.round(this.clipWidth);
 			height = Math.round(this.clipHeight);
-			this.drawing.style.setProperty('clip', 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)', null);
+			this.drawing.style.clip = 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)';
 		}
 		else
 			this.drawing.style.removeProperty('clip');
-//			this.drawing.style.setProperty('clip', 'none', null);
 	},
 
 	//
@@ -607,21 +582,7 @@ Object.extend('Ui.Element', {
 			this.drawing.setAttributeNS(null, 'class', tmp);
 		}
 	},
-/*
-	//
-	// Get the CSS computed value of a given property
-	//
-	getComputedStyleProperty: function(property) {
-		return window.getComputedStyle(this.drawing, null).getPropertyValue(property);
-	},
 
-	//
-	// Set the local style value of a given property
-	//
-	setStyleProperty: function(property, value) {
-		this.drawing.style.setProperty(property, value, 'important');
-	},
-*/
 	//
 	// Set the current element margin for all borders
 	//
@@ -705,7 +666,6 @@ Object.extend('Ui.Element', {
 	//
 	getOpacity: function() {
 		return this.opacity;
-//		return new Number(this.getComputedStyleProperty('opacity'));
 	},
 
 	//
@@ -714,7 +674,7 @@ Object.extend('Ui.Element', {
 	setOpacity: function(opacity) {
 		if(this.opacity != opacity) {
 			this.opacity = opacity;
-			this.invalidateRender();
+			this.drawing.style.opacity = this.opacity;
 		}
 	},
 
@@ -749,7 +709,7 @@ Object.extend('Ui.Element', {
 	setTransform: function(transform) {
 		if(this.transform != transform) {
 			this.transform = transform;
-			this.invalidateRender();
+			this.updateTransform();
 		}
 	},
 
@@ -767,7 +727,6 @@ Object.extend('Ui.Element', {
 				this.transformOriginAbsolute = false;
 			else
 				this.transformOriginAbsolute = absolute;
-//			this.invalidateRender();
 			this.updateTransform();
 		}
 	},
@@ -1311,16 +1270,16 @@ Object.extend('Ui.Element', {
 			this.drawing.style.msTransformOrigin = '0% 0%';
 		}
 		else if(navigator.isGecko) {
-			this.drawing.style.setProperty('-moz-transform', 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)', null);
-			this.drawing.style.setProperty('-moz-transform-origin', '0% 0%', null);
+			this.drawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
+			this.drawing.style.MozTransformOrigin = '0% 0%';
 		}
 		else if(navigator.isWebkit) {
 			this.drawing.style.webkitTransform = matrix.toString();
 			this.drawing.style.webkitTransformOrigin = '0% 0%';
 		}
 		else if(navigator.isOpera) {
-			this.drawing.style.setProperty('-o-transform', matrix.toString(), null);
-			this.drawing.style.setProperty('-o-transform-origin', '0% 0%', null);
+			this.drawing.style.OTransform = matrix.toString();
+			this.drawing.style.OTransformOrigin = '0% 0%';
 		}
 	},
 

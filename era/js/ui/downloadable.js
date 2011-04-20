@@ -10,7 +10,7 @@ Ui.LBox.extend('Ui.Downloadable', {
 		if(config.src != undefined)
 			this.setSrc(config.src);
 
-		this.getDrawing().style.setProperty('cursor', 'pointer', null);
+		this.getDrawing().style.cursor = 'pointer';
 		this.setFocusable(true);
 		this.setRole('button');
 
@@ -41,12 +41,8 @@ Ui.LBox.extend('Ui.Downloadable', {
 }, {
 	renderDrawing: function() {
 		var linkDrawing = document.createElementNS(htmlNS, 'a');
-		linkDrawing.style.setProperty('display', 'block', null);
-		linkDrawing.style.setProperty('text-decoration', 'none', null);
-//		linkDrawing.style.setProperty('color', 'none', null);
-
-//		linkDrawing.dump();
-
+		linkDrawing.style.display = 'block';
+		linkDrawing.style.textDecoration = 'none';
 		return linkDrawing;
 	},
 });

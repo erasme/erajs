@@ -29,12 +29,14 @@ Ui.Element.extend('Ui.TextArea', {
 		this.connect(this.textareaDrawing, 'blur', function(event) {
 			console.log('textarea blur');
 		});
+
+		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
 	},
 
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.invalidateRender();
+			this.textareaDrawing.style.fontSize = this.fontSize+'px';
 			this.invalidateMeasure();
 		}
 	},
@@ -46,7 +48,7 @@ Ui.Element.extend('Ui.TextArea', {
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.invalidateRender();
+			this.textareaDrawing.style.fontFamily = this.fontFamily;
 			this.invalidateMeasure();
 		}
 	},
@@ -58,7 +60,7 @@ Ui.Element.extend('Ui.TextArea', {
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.invalidateRender();
+			this.textareaDrawing.style.fontWeight = this.fontWeight;
 			this.invalidateMeasure();
 		}
 	},
@@ -70,7 +72,7 @@ Ui.Element.extend('Ui.TextArea', {
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = color;
-			this.invalidateRender();
+			this.textareaDrawing.style.color = this.color;
 			this.invalidateMeasure();
 		}
 	},
@@ -94,36 +96,42 @@ Ui.Element.extend('Ui.TextArea', {
 	onMouseDown: function(event) {
 	},
 
+	onKeyUp: function(event) {
+		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
+		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
+			this.invalidateMeasure();
+	},
+
 }, {
 	render: function() {
 		this.textareaDrawing = document.createElementNS(htmlNS, 'textarea');
-		this.textareaDrawing.style.setProperty('display', 'block', null);
-		this.textareaDrawing.style.setProperty('resize', 'none', null);
-		this.textareaDrawing.style.setProperty('overflow', 'hidden', null);
-		this.textareaDrawing.style.setProperty('border', '0px', null);
-		this.textareaDrawing.style.setProperty('margin', '0px', null);
-		this.textareaDrawing.style.setProperty('padding', '0px', null);
-		this.textareaDrawing.style.setProperty('outline', 'none', null);
-		this.textareaDrawing.style.setProperty('background', 'none', null);
+		this.textareaDrawing.style.display = 'block';
+		this.textareaDrawing.style.resize = 'none';
+		this.textareaDrawing.style.overflow = 'hidden';
+		this.textareaDrawing.style.border = '0px';
+		this.textareaDrawing.style.margin = '0px';
+		this.textareaDrawing.style.padding = '0px';
+		this.textareaDrawing.style.outline = 'none';
+		this.textareaDrawing.style.background = 'none';
 		if(navigator.isWebkit)
-			this.textareaDrawing.style.setProperty('-webkit-appearance', 'none', null);
-		this.updateRenderCore();
+			this.textareaDrawing.style.webkitAppearance = 'none'
+		this.textareaDrawing.style.fontSize = this.fontSize+'px';
+		this.textareaDrawing.style.fontFamily = this.fontFamily;
+		this.textareaDrawing.style.fontWeight = this.fontWeight;
+		this.textareaDrawing.style.color = this.color;
 		return this.textareaDrawing;
 	},
 
 	measureCore: function(width, height) {
-		return { width: 8, height: (this.fontSize * 3/2) };
+		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollHeight);
+		return { width: 8, height: this.textareaDrawing.scrollHeight };
+//		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
-		this.textareaDrawing.style.setProperty('width', width+'px', null);
-		this.textareaDrawing.style.setProperty('height', height+'px', null);
-	},
+		console.log(this+'.arrangeCore('+width+','+height+')');
 
-	updateRenderCore: function() {
-		this.textareaDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
-		this.textareaDrawing.style.setProperty('font-family', this.getFontFamily(), null);
-		this.textareaDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
-		this.textareaDrawing.style.setProperty('color', this.getColor(), null);
+		this.textareaDrawing.style.width = width+'px';
+		this.textareaDrawing.style.height = height+'px';
 	},
 });

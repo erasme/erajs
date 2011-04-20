@@ -198,15 +198,15 @@ Ui.SVGElement.extend('Ui.LocatorRightArrow', {
 
 	setFill: function(fill) {
 		this.fill = fill;
-		this.arrowDrawing.style.setProperty('fill', this.fill, null);
+		this.arrowDrawing.style.fill = this.fill;
 	},
 
 }, {
 	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
-		this.arrowDrawing.style.setProperty('fill', this.fill, null);
-		this.arrowDrawing.style.setProperty('fill-opacity', '1', null);
-		this.arrowDrawing.style.setProperty('stroke', 'none', null);
+		this.arrowDrawing.style.fill = this.fill;
+		this.arrowDrawing.style.fillOpacity = '1';
+		this.arrowDrawing.style.stroke = 'none';
 		return this.arrowDrawing;
 	},
 
@@ -236,15 +236,15 @@ Ui.SVGElement.extend('Ui.LocatorLeftArrow', {
 
 	setFill: function(fill) {
 		this.fill = fill;
-		this.arrowDrawing.style.setProperty('fill', this.fill, null);
+		this.arrowDrawing.style.fill = this.fill;
 	},
 
 }, {
 	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
-		this.arrowDrawing.style.setProperty('fill', this.fill, null);
-		this.arrowDrawing.style.setProperty('fill-opacity', '1', null);
-		this.arrowDrawing.style.setProperty('stroke', 'none', null);
+		this.arrowDrawing.style.fill = this.fill;
+		this.arrowDrawing.style.fillOpacity = '1';
+		this.arrowDrawing.style.stroke = 'none';
 		return this.arrowDrawing;
 	},
 
@@ -274,15 +274,15 @@ Ui.SVGElement.extend('Ui.LocatorLeftRightArrow', {
 
 	setFill: function(fill) {
 		this.fill = fill;
-		this.arrowDrawing.style.setProperty('fill', this.fill, null);
+		this.arrowDrawing.style.fill = this.fill;
 	},
 
 }, {
 	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
-		this.arrowDrawing.style.setProperty('fill', this.fill, null);
-		this.arrowDrawing.style.setProperty('fill-opacity', '1', null);
-		this.arrowDrawing.style.setProperty('stroke', 'none', null);
+		this.arrowDrawing.style.fill = this.fill;
+		this.arrowDrawing.style.fillOpacity = '1';
+		this.arrowDrawing.style.stroke = 'none';
 		return this.arrowDrawing;
 	},
 
@@ -305,15 +305,15 @@ Ui.SVGElement.extend('Ui.LocatorHome', {
 
 	setFill: function(fill) {
 		this.fill = fill;
-		this.homeDrawing.style.setProperty('fill', this.fill, null);
+		this.homeDrawing.style.fill = this.fill;
 	},
 
 }, {
 	render: function() {
 		this.homeDrawing = document.createElementNS(svgNS, 'path');
-		this.homeDrawing.style.setProperty('fill', this.fill, null);
-		this.homeDrawing.style.setProperty('fill-opacity', '1', null);
-		this.homeDrawing.style.setProperty('stroke', 'none', null);
+		this.homeDrawing.style.fill = this.fill;
+		this.homeDrawing.style.fillOpacity = '1';
+		this.homeDrawing.style.stroke = 'none';
 		this.homeDrawing.setAttributeNS(null, 'd', 'M 25.78125 8.4375 C 25.324787 8.4375 24.892151 8.63045 24.53125 8.96875 C 24.53125 8.96875 6.032579 23.87715 5.6875 24.21875 C 4.081261 25.55365 4.524131 25.86215 4.96875 26.46875 C 7.1319435 26.472745 6.9387918 26.465628 8.875 26.46875 L 8.875 38.40625 C 8.875 40.46895 10.593558 42.1875 12.65625 42.1875 L 37.3125 42.1875 C 39.375192 42.1875 41.09375 40.46895 41.09375 38.40625 L 41.09375 26.5 C 42.834133 26.49218 44.96875 26.46875 44.96875 26.46875 C 45.304525 25.79985 45.215875 24.96585 44.65625 24.40625 L 39.96875 20.3125 C 40.040347 20.078087 40.09375 19.817094 40.09375 19.5625 L 40.09375 11.875 C 40.09375 10.4883 38.949133 9.34375 37.5625 9.34375 L 33.25 9.34375 C 31.863368 9.34375 30.71875 10.4883 30.71875 11.875 L 30.71875 12.1875 L 27.03125 8.96875 C 26.681485 8.61895 26.237713 8.4375 25.78125 8.4375 z M 33.71875 12.34375 L 37.09375 12.34375 L 37.09375 17.78125 L 33.71875 14.8125 L 33.71875 12.34375 z M 12.875 26.46875 C 23.518938 26.483067 32.947599 26.505366 37.09375 26.5 L 37.09375 38.1875 L 12.875 38.1875 L 12.875 26.46875 z');
 		return this.homeDrawing;
 	},

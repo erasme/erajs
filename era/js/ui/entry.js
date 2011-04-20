@@ -35,7 +35,7 @@ Ui.Element.extend('Ui.Entry', {
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.invalidateRender();
+			this.entryDrawing.style.fontSize = this.fontSize+'px';
 			this.invalidateMeasure();
 		}
 	},
@@ -47,7 +47,7 @@ Ui.Element.extend('Ui.Entry', {
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.invalidateRender();
+			this.entryDrawing.style.fontFamily = this.fontFamily;
 			this.invalidateMeasure();
 		}
 	},
@@ -59,7 +59,7 @@ Ui.Element.extend('Ui.Entry', {
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.invalidateRender();
+			this.entryDrawing.style.fontWeight = this.fontWeight;
 			this.invalidateMeasure();
 		}
 	},
@@ -71,8 +71,7 @@ Ui.Element.extend('Ui.Entry', {
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = color;
-			this.invalidateRender();
-			this.invalidateMeasure();
+			this.entryDrawing.style.color = this.color;
 		}
 	},
 
@@ -122,31 +121,26 @@ Ui.Element.extend('Ui.Entry', {
 	render: function() {
 		this.entryDrawing = document.createElementNS(htmlNS, 'input');
 		this.entryDrawing.setAttributeNS(null, 'type', 'text');
-		this.entryDrawing.style.setProperty('border', '0px', null);
-		this.entryDrawing.style.setProperty('margin', '0px', null);
-		this.entryDrawing.style.setProperty('padding', '0px', null);
-		this.entryDrawing.style.setProperty('outline', 'none', null);
-		this.entryDrawing.style.setProperty('background', 'none', null);
+		this.entryDrawing.style.border = '0px';
+		this.entryDrawing.style.margin = '0px';
+		this.entryDrawing.style.padding = '0px';
+		this.entryDrawing.style.outline = 'none';
+		this.entryDrawing.style.background = 'none';
 		if(navigator.isWebkit)
-			this.entryDrawing.style.setProperty('-webkit-appearance', 'none', null);
-		this.updateRenderCore();
+			this.entryDrawing.style.webkitAppearance = 'none';
+		this.entryDrawing.style.fontSize = this.fontSize+'px';
+		this.entryDrawing.style.fontFamily = this.fontFamily;
+		this.entryDrawing.style.fontWeight = this.fontWeight;
+		this.entryDrawing.style.color = this.color;
 		return this.entryDrawing;
 	},
 
 	measureCore: function(width, height) {
-		console.log(this+'.measureCore('+width+','+height+')');
 		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
-		this.entryDrawing.style.setProperty('width', width+'px', null);
-		this.entryDrawing.style.setProperty('height', height+'px', null);
-	},
-
-	updateRenderCore: function() {
-		this.entryDrawing.style.setProperty('font-size', this.getFontSize()+'px', null);
-		this.entryDrawing.style.setProperty('font-family', this.getFontFamily(), null);
-		this.entryDrawing.style.setProperty('font-weight', this.getFontWeight(), null);
-		this.entryDrawing.style.setProperty('color', this.getColor(), null);
+		this.entryDrawing.style.width = width+'px';
+		this.entryDrawing.style.height = height+'px';
 	},
 });

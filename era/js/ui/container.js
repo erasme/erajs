@@ -1,7 +1,6 @@
 
 Ui.Element.extend('Ui.Container', {
 	children: undefined,
-	childChanged: false,
 
 	constructor: function(config) {
 		this.children = [];
@@ -13,9 +12,8 @@ Ui.Element.extend('Ui.Container', {
 	appendChild: function(child) {
 		child.parent = this;
 		this.children.push(child);
-		this.childChanged = true;
+		this.getDrawing().appendChild(child.getDrawing());
 		this.invalidateMeasure();
-		this.invalidateRender();
 		child.setIsLoaded(this.isLoaded);
 	},
 
@@ -25,9 +23,11 @@ Ui.Element.extend('Ui.Container', {
 	prependChild: function(child) {
 		child.parent = this;
 		this.children.unshift(child);
-		this.childChanged = true;
 		this.invalidateMeasure();
-		this.invalidateRender();
+		if(this.getDrawing().firstChild != undefined)
+			this.getDrawing().insertBefore(child.getDrawing(), this.getDrawing().firstChild);
+		else
+			this.getDrawing().appendChild(child.getDrawing());
 		child.setIsLoaded(this.isLoaded);
 	},
 
@@ -36,31 +36,14 @@ Ui.Element.extend('Ui.Container', {
 	//
 	removeChild: function(child) {
 		child.parent = undefined;
-		this.childChanged = true;
+		this.getDrawing().removeChild(child.getDrawing());
 		var i = 0;
 		while((i < this.children.length) && (this.children[i] != child)) { i++ };
 		if(i < this.children.length)
 			this.children.splice(i, 1);
-		this.invalidateMeasure();
-		this.invalidateRender();
-		child.setIsLoaded(false);
-	},
 
-	//
-	// Insert a child element before another element already
-	// in the container
-	//
-	insertBefore: function(newElement, beforeElement) {
-		this.childChanged = true;
-		var i = 0;
-		while((i < this.children.length) && (this.children[i] != beforeElement)) { i++ };
-		if(i < this.length)
-			this.children = this.children.splice(i, 0, newElement);
-		else
-			this.children.push(newElement);
 		this.invalidateMeasure();
-		this.invalidateRender();
-		newElement.setIsLoaded(this.isLoaded);
+		child.setIsLoaded(false);
 	},
 
 	//
@@ -78,39 +61,6 @@ Ui.Element.extend('Ui.Container', {
 				this.children[i].setIsLoaded(isLoaded);
 			Ui.Container.base.setIsLoaded.call(this, isLoaded);
 		}
-	},
-
-	updateRenderCore: function() {
-		// update childs
-		if(this.childChanged) {
-			this.childChanged = false;
-			for(var i = 0; i < this.children.length; i++) {
-				var child = this.children[i];
-				child.getDrawing().style.zIndex = i;
-				var found = false;
-				for(var i2 = 0; (i2 < this.getDrawing().childNodes.length) && !found; i2++) {
-					if(this.getDrawing().childNodes[i2] === child.getDrawing())
-						found = true;
-				}
-				if(!found)
-					this.getDrawing().appendChild(child.getDrawing());
-			}
-			var removeList = [];
-			for(var i2 = 0; i2 < this.getDrawing().childNodes.length; i2++) {
-				var found = false;
-				for(var i = 0; (i < this.children.length) && !found; i++) {
-					var child = this.children[i];
-					if(child.getDrawing() === this.getDrawing().childNodes[i2])
-						found = true;
-				}
-				if(!found)
-					removeList.push(this.getDrawing().childNodes[i2]);
-			}
-			for(var i = 0; i < removeList.length; i++)
-				this.getDrawing().removeChild(removeList[i]);
-		}
-		if(this.children.length != this.getDrawing().childNodes.length)
-			throw('updateRenderChildren PROBLEM');
 	},
 
 	onInternalStyleChange: function() {

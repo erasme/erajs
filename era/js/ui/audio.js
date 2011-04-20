@@ -140,7 +140,7 @@ Ui.Element.extend('Ui.Audio', {
 		var drawing;
 		if(Ui.Audio.htmlAudio) {
 			this.audioDrawing = document.createElementNS(htmlNS, 'audio');
-			this.audioDrawing.style.setProperty('display', 'none', null);
+			this.audioDrawing.style.display = 'none';
 			this.connect(this.audioDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.audioDrawing, 'ended', this.onEnded);
 			this.connect(this.audioDrawing, 'timeupdate', this.onTimeupdate);

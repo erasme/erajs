@@ -15,7 +15,7 @@ Ui.LBox.extend('Ui.App', {
 	autoscale: false,
 	ready: false,
 
-	renderList: undefined,
+	layoutList: undefined,
 	windowWidth: 0,
 	windowHeight: 0,
 	windowScale: 1,
@@ -42,7 +42,7 @@ Ui.LBox.extend('Ui.App', {
 		if(config.autoscale != undefined)
 			this.setAutoScale(config.autoscale);
 
-		this.getDrawing().style.setProperty('position', 'fixed', null);
+//		this.getDrawing().style.position = 'fixed';
 
 		document.documentElement.style.padding = '0px';
 		document.documentElement.style.margin = '0px';
@@ -148,8 +148,12 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	onWindowResize: function() {
+//		console.log(this+'.onWindowResize start updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
+
 		this.fireEvent('resize', this);
 		this.invalidateMeasure();
+
+//		console.log(this+'.onWindowResize end updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 	},
 
 	onWindowKeyPress: function(event) {
@@ -215,17 +219,19 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	update: function() {
-		// update rendering if needed
-		var current = this.renderList;
-		while(current != undefined) {
-			current.updateRender();
-			current = current.renderNext;
-		}
-		this.renderList = undefined;
+		console.log(this+'.update start ('+(new Date()).getTime()+')');
 
 		// update measure
-		var innerWidth = window.innerWidth;
-		var innerHeight = window.innerHeight;
+//		var innerWidth = window.innerWidth;
+//		var innerHeight = window.innerHeight;
+
+		var innerWidth = document.body.clientWidth;
+		var innerHeight = document.body.clientHeight;
+
+//		console.log('window.update('+innerWidth+' x '+innerHeight+') '+document.body.clientWidth+' x '+document.body.clientHeight);
+
+//		window.dump('height');
+
 		var size;
 		if(this.autoscale) {
 			// if window size changed, try to find a new scale
@@ -268,13 +274,16 @@ Ui.LBox.extend('Ui.App', {
 
 		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
 
-		// update rendering if needed
-		current = this.renderList;
-		while(current != undefined) {
-			current.updateRender();
-			current = current.renderNext;
+		// update arrange
+		while(this.layoutList != undefined) {
+			var next = this.layoutList.layoutNext;
+			this.layoutList.layoutValid = true;
+			this.layoutList.layoutNext = undefined;
+			this.layoutList.updateLayout();
+			this.layoutList = next;
 		}
-		this.renderList = undefined;
+
+		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
 		this.updateTask = undefined;
 	},
@@ -302,7 +311,7 @@ Ui.LBox.extend('Ui.App', {
 		if(this.dialogs.getChildren().length == 0) {
 			this.remove(this.dialogs);
 			this.dialogs = undefined;
-			console.log('last dialog removed');
+//			console.log('last dialog removed');
 		}
 	},
 
@@ -451,13 +460,13 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	onWindowMouseDown: function(mouse) {
-		console.log('onWindowMouseDown');
+//		console.log('onWindowMouseDown');
 		if(this.focusElement != undefined)
 			this.removeFocus(this.focusElement);
 	},
 
 	onWindowFocus: function(event) {
-		console.log('onWindowFocus');
+//		console.log('onWindowFocus');
 		if(!this.hasFocus) {
 			this.hasFocus = true;
 			var focusable = this.findFirstFocusable();
@@ -475,35 +484,33 @@ Ui.LBox.extend('Ui.App', {
 		}
 	},
 
-	enqueueRender: function(element) {
-		element.renderNext = this.renderList;
-		this.renderList = element;
+	enqueueLayout: function(element) {
+		element.layoutNext = this.layoutList;
+		this.layoutList = element;
 		if((this.updateTask == undefined) && this.ready)
 			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 	},
 
-	enqueueMeasure: function(element) {
-		// TODO
-	},
-
 }, {
 	invalidateMeasure: function() {
-		if(this.measureValid) {
+//		if(this.measureValid) {
 			this.invalidateArrange();
 			this.measureValid = false;
 			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-		}
+//		}
 	},
 
 	invalidateArrange: function() {
-		if(this.arrangeValid) {
-			console.log('invalidate Arrange');
-
+//		if(this.arrangeValid) {
+//			console.log('invalidate Arrange');
 			this.arrangeValid = false;
+
+//			this.enqueueArrange(this);
+
 			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-		}
+//		}
 	},
 });
 

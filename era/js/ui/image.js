@@ -78,8 +78,8 @@ Ui.Element.extend('Ui.Image', {
 }, {
 	render: function() {
 		this.imageDrawing = document.createElementNS(htmlNS, 'img');
-		this.imageDrawing.style.setProperty('width', '0px', null);
-		this.imageDrawing.style.setProperty('height', '0px', null);
+		this.imageDrawing.style.width = '0px';
+		this.imageDrawing.style.height = '0px';
 		this.imageDrawing.setAttributeNS(null, 'draggable', false);
 		return this.imageDrawing;
 	},
@@ -108,7 +108,7 @@ Ui.Element.extend('Ui.Image', {
 	},
 
 	arrangeCore: function(width, height) {
-		this.imageDrawing.style.setProperty('width', width+'px', null);
-		this.imageDrawing.style.setProperty('height', height+'px', null);
+		this.imageDrawing.style.width = width+'px';
+		this.imageDrawing.style.height = height+'px';
 	},
 });
