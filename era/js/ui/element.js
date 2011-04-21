@@ -660,7 +660,7 @@ Object.extend('Ui.Element', {
 	// from the current element coordinate system to the page
 	// coordinate system
 	//
-	transformToPage: function() {
+	transformToWindow: function() {
 		if(navigator.isWebkit) {
 			var matrix = new Ui.Matrix();
 			var current = this.drawing;
@@ -792,8 +792,8 @@ Object.extend('Ui.Element', {
 	// from the page coordinate system to the current element
 	// coordinate system
 	//
-	transformFromPage: function() {
-		var matrix = this.transformToPage();
+	transformFromWindow: function() {
+		var matrix = this.transformToWindow();
 		matrix.inverse();
 		return matrix;
 	},
@@ -804,8 +804,8 @@ Object.extend('Ui.Element', {
 	// element coordinate system
 	//
 	transformToElement: function(element) {
-		var matrix = this.transformToPage();
-		matrix.multiply(element.transformFromPage());
+		var matrix = this.transformToWindow();
+		matrix.multiply(element.transformFromWindow());
 		return matrix;
 	},
 
@@ -813,12 +813,12 @@ Object.extend('Ui.Element', {
 	// Return the given point converted from the current element
 	// coordinate system to the page coordinate system
 	//
-	pointToPage: function(point) {
+	pointToWindow: function(point) {
 		if(navigator.isWebkit)
 			return window.webkitConvertPointFromNodeToPage(this.drawing, new WebKitPoint(point.x, point.y));
 		else {
 			point = new Ui.Point({point: point });
-			point.matrixTransform(this.transformToPage());
+			point.matrixTransform(this.transformToWindow());
 			return point;
 		}
 	},
@@ -827,12 +827,12 @@ Object.extend('Ui.Element', {
 	// Return the given point converted from the page coordinate
 	// system to the current element coordinate system
 	//
-	pointFromPage: function(point) {
+	pointFromWindow: function(point) {
 		if(navigator.isWebkit)
 			return window.webkitConvertPointFromPageToNode(this.drawing, new WebKitPoint(point.x, point.y));
 		else {
 			point = new Ui.Point({ point: point });
-			point.matrixTransform(this.transformFromPage());
+			point.matrixTransform(this.transformFromWindow());
 			return point;
 		}
 	},
@@ -842,7 +842,7 @@ Object.extend('Ui.Element', {
 	// system to the current element coordinate system
 	//
 	pointFromElement: function(element, point) {
-		return this.pointFromPage(element.pointToPage(point));
+		return this.pointFromWindow(element.pointToWindow(point));
 	},
 
 	//

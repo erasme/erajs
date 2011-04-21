@@ -96,7 +96,7 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.onSelect();
 		}
 		else if(event.button == 2)
-			this.fireEvent('menu', this, event.pageX, event.pageY);
+			this.fireEvent('menu', this, event.clientX, event.clientY);
 	},
 
 	onTouchStart: function(event) {
@@ -118,8 +118,8 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.menuTimer.abort();
 
 		this.menuTimer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onMenuTimer });
-		this.menuPosX = event.targetTouches[0].pageX;
-		this.menuPosY = event.targetTouches[0].pageY;
+		this.menuPosX = event.targetTouches[0].clientX;
+		this.menuPosY = event.targetTouches[0].clientY;
 	},
 
 	onTouchMove: function(event) {

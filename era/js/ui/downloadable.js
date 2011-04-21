@@ -22,7 +22,6 @@ Ui.LBox.extend('Ui.Downloadable', {
 		this.getDrawing().setAttributeNS(null, 'href', src);
 	},
 
-
 	setContent: function(content) {
 		if(this.content != content) {
 			if(this.content != undefined)
@@ -34,7 +33,6 @@ Ui.LBox.extend('Ui.Downloadable', {
 	},
 
 	onClick: function(event) {
-		console.log('downloadable click');
 		this.fireEvent('download', this);
 	},
 }, {

@@ -211,7 +211,7 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	update: function() {
-		console.log(this+'.update start ('+(new Date()).getTime()+')');
+//		console.log(this+'.update start ('+(new Date()).getTime()+')');
 
 		// update measure
 //		var innerWidth = window.innerWidth;
@@ -275,7 +275,7 @@ Ui.LBox.extend('Ui.App', {
 			this.layoutList = next;
 		}
 
-		console.log(this+'.update end ('+(new Date()).getTime()+')');
+//		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
 		this.updateTask = undefined;
 	},

@@ -103,7 +103,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 
-		this.mouseStart = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
 		if(this.inertia)
@@ -114,7 +114,7 @@ Ui.LBox.extend('Ui.Movable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaX = mousePos.x - this.mouseStart.x;
 		if(!this.moveHorizontal)
 			deltaX = 0;
@@ -157,7 +157,7 @@ Ui.LBox.extend('Ui.Movable', {
 
 		this.stopInertia();
 
-		this.touchStart = this.pointFromPage({ x: event.targetTouches[0].pageX, y: event.targetTouches[0].pageY });
+		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
 		if(this.inertia)
@@ -173,7 +173,7 @@ Ui.LBox.extend('Ui.Movable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var touchPos = this.pointFromPage({ x: event.targetTouches[0].pageX, y: event.targetTouches[0].pageY });
+		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		var deltaX = touchPos.x - this.touchStart.x;
 		if(!this.moveHorizontal)
 			deltaX = 0;

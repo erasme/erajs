@@ -176,7 +176,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 
-		this.mouseStart = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.startComputeInertia();
@@ -187,7 +187,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.stopPropagation();
 
 		this.hasMoved = true;
-		var mousePos = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetX = this.startOffsetX - deltaX;
@@ -246,7 +246,7 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		this.stopInertia();
 
-		this.touchStart = this.pointFromPage({ x: event.targetTouches[0].pageX, y: event.targetTouches[0].pageY });
+		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.startComputeInertia();
@@ -261,7 +261,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var touchPos = this.pointFromPage({ x: event.targetTouches[0].pageX, y: event.targetTouches[0].pageY });
+		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		var deltaX = touchPos.x - this.touchStart.x;
 		var deltaY = touchPos.y - this.touchStart.y;
 		offsetX = this.startOffsetX - deltaX;
@@ -422,7 +422,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(window, 'mouseup', this.onVerticalMouseUp, true);
 		this.connect(window, 'mousemove', this.onVerticalMouseMove, true);
 
-		this.mouseStart = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.lastOffsetX = this.offsetX;
@@ -439,7 +439,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetY = this.startOffsetY + deltaY * this.contentHeight / this.viewHeight;
 		this.setOffset(this.startOffsetX, offsetY, true);
@@ -483,7 +483,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(window, 'mouseup', this.onHorizontalMouseUp, true);
 		this.connect(window, 'mousemove', this.onHorizontalMouseMove, true);
 
-		this.mouseStart = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.lastOffsetX = this.offsetX;
@@ -500,7 +500,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaX = mousePos.x - this.mouseStart.x;
 		offsetX = this.startOffsetX + deltaX * this.contentWidth / this.viewWidth;
 		this.setOffset(offsetX, this.startOffsetY, true);

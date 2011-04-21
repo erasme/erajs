@@ -116,7 +116,7 @@ Ui.Container.extend('Ui.ListView', {
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 
-		this.mouseStart = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 	},
@@ -125,7 +125,7 @@ Ui.Container.extend('Ui.ListView', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromPage({ x: event.pageX, y: event.pageY });
+		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetX = this.startOffsetX - deltaX;
@@ -160,7 +160,7 @@ Ui.Container.extend('Ui.ListView', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.touchStart = this.pointFromPage({ x: event.targetTouches[0].pageX, y: event.targetTouches[0].pageY });
+		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 
@@ -176,7 +176,7 @@ Ui.Container.extend('Ui.ListView', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var touchPos = this.pointFromPage({ x: event.targetTouches[0].pageX, y: event.targetTouches[0].pageY });
+		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		var deltaX = touchPos.x - this.touchStart.x;
 		var deltaY = touchPos.y - this.touchStart.y;
 		offsetY = this.startOffsetY - deltaY;

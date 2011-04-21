@@ -29,20 +29,6 @@ Ui.LBox.extend('Ui.Togglable', {
 		this.connect(this, 'keydown', this.onKeyDown);
 	},
 
-	disable: function() {
-		if(this.isEnable) {
-			this.isEnable = false;
-			this.fireEvent('disable', this);
-		}
-	},
-	
-	enable: function() {
-		if(!this.isEnable) {
-			this.isEnable = true;
-			this.fireEvent('enable', this);
-		}
-	},
-
 	//
 	// Private
 	//

@@ -44,7 +44,7 @@ Ui.Element.extend('Ui.IFrame', {
 	arrangeCore: function(width, height) {
 		// correct a bug in Chrome
 		if(navigator.isChrome) {
-			var matrix = this.transformFromPage();
+			var matrix = this.transformFromWindow();
 			this.iframeDrawing.style.width = (width*matrix.getA())+'px';
 			this.iframeDrawing.style.height = (height*matrix.getD())+'px';
 		}

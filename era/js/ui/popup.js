@@ -80,7 +80,7 @@ Ui.Container.extend('Ui.Popup', {
 			this.visible = true;
 			if((typeof(posX) == 'object') && (posX.isSubclass('Ui.Element'))) {
 				var element = posX;
-				var point = element.pointToPage({ x: element.getLayoutWidth(), y: element.getLayoutHeight()/2 });
+				var point = element.pointToWindow({ x: element.getLayoutWidth(), y: element.getLayoutHeight()/2 });
 				this.posX = point.x;
 				this.posY = point.y;
 				this.background.setArrowBorder('left');
