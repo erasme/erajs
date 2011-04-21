@@ -2,7 +2,6 @@
 // Define the Pressable class.
 //
 Ui.LBox.extend('Ui.Pressable', {
-	isEnable: true,
 	isDown: false,
 
 	constructor: function(config) {
@@ -25,26 +24,12 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.connect(this, 'keydown', this.onKeyDown);
 	},
 
-/*	disable: function() {
-		if(this.isEnable) {
-			this.isEnable = false;
-			this.fireEvent('disable', this);
-		}
-	},
-	
-	enable: function() {
-		if(!this.isEnable) {
-			this.isEnable = true;
-			this.fireEvent('enable', this);
-		}
-	},*/
-
 	//
 	// Private
 	//
 
 	onMouseDown: function(event) {
-		if((event.button != 0) || (!this.isEnable))
+		if((event.button != 0) || this.getIsDisabled())
 			return;
 
 		event.preventDefault();
@@ -100,7 +85,7 @@ Ui.LBox.extend('Ui.Pressable', {
 	},
 
 	onTouchStart: function(event) {
-		if(!this.isEnable)
+		if(this.getIsDisabled())
 			return;
 		if(this.isDown) {
 			this.onUp();
@@ -156,7 +141,7 @@ Ui.LBox.extend('Ui.Pressable', {
 	},
 
 	onKeyDown: function(keyboard, key) {
-		if((key == 13) && this.isEnable)
+		if((key == 13) && this.getIsDisabled())
 			this.fireEvent('press', this);
 	},
 
@@ -172,16 +157,5 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.disconnect(window, 'mouseup', this.onMouseUp);
  		this.isDown = false;
 		this.fireEvent('up', this);
-	},
-
-}, {
-	onDisable: function() {
-		console.log(this+'.onDisable');
-		this.isEnable = false;
-	},
-
-	onEnable: function() {
-		console.log(this+'.onEnable');
-		this.isEnable = true;
 	},
 });

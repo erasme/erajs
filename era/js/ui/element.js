@@ -86,7 +86,6 @@ Object.extend('Ui.Element', {
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';
-		this.addClass(this.classType.toLowerCase().replace(/\./gi, '-'));
 		var content = this.render();
 		if(content != undefined)
 			this.drawing.appendChild(content);
@@ -118,8 +117,6 @@ Object.extend('Ui.Element', {
 			this.setClipToBounds(config.clipToBounds);
 		if(config.id != undefined)
 			this.setId(config.id);
-		else
-			this.setId(Core.Util.generateId());
 
 //		this.connect(this.drawing, 'focus', this.focus);
 //		this.connect(this.drawing, 'blur', this.blur);
@@ -341,7 +338,8 @@ Object.extend('Ui.Element', {
 
 			this.drawing.style.left = this.layoutX+'px';
 			this.drawing.style.top = this.layoutY+'px';
-			this.updateTransform();
+			if(this.transform != undefined)
+				this.updateTransform();
 			this.drawing.style.width = width+'px';
 			this.drawing.style.height = height+'px';
 
@@ -511,80 +509,6 @@ Object.extend('Ui.Element', {
 	},
 
 	//
-	// Return true if the given class is applied to the current element
-	// CSS class
-	//
-	checkClass: function(className) {
-		var cssClass = this.drawing.getAttributeNS(null, 'class');
-		if((cssClass == undefined) || (cssClass == ''))
-			return false;
-		var classes = cssClass.split(' ');
-		for(var i = 0; i < classes.length; i++) {
-			if(classes[i] == className)
-				return true;
-		}
-		return false;
-	},
-
-	//
-	// Add CSS class to the current element
-	//
-	addClass: function(className) {
-		var cssClass = this.drawing.getAttributeNS(null, 'class');
-		if(!cssClass)
-			this.drawing.setAttributeNS(null, 'class', className);
-		else
-			if(!this.checkClass(className))
-				this.drawing.setAttributeNS(null, 'class', cssClass+' '+className);
-	},
-
-	//
-	// Remove CSS class to the current element
-	//
-	removeClass: function(className) {
-		if(className == undefined)
-			return;
-		var cssClass = this.drawing.getAttributeNS(null, 'class');
-		if(cssClass) {
-			var classes = cssClass.split(' ');
-			var tmp = '';
-			for(var i = 0; i < classes.length; i++) {
-				if((classes[i] == className) || (classes[i] == ''))
-					continue;
-				if(tmp != '')
-					tmp += ' ';
-				tmp += classes[i];
-			}
-			this.drawing.setAttributeNS(null, 'class', tmp);
-		}
-	},
-
-	//
-	// Replace CSS class to the current element
-	//
-	replaceClass: function(oldClassName, newClassName) {
-		var cssClass = this.drawing.getAttributeNS(null, 'class');
-		if(!cssClass)
-			this.drawing.setAttributeNS(null, 'class', newClassName);
-		else {
-			var classes = cssClass.split(' ');
-			var tmp = '';
-			for(var i = 0; i < classes.length; i++) {
-				if(classes[i] == '')
-					continue;
-				if(tmp != '')
-					tmp += ' ';
-				if(classes[i] == oldClassName)
-					tmp += newClassName;
-				else
-					tmp += classes[i];
-			}
-			this.drawing.setAttributeNS(null, 'class', tmp);
-		}
-	},
-
-	//
-	// Set the current element margin for all borders
 	//
 	setMargin: function(margin) {
 		this.setMarginTop(margin);
@@ -1253,8 +1177,8 @@ Object.extend('Ui.Element', {
 	},
 
 	updateTransform: function() {
-		var matrix = new Ui.Matrix();
 		if(this.transform != undefined) {
+			var matrix = new Ui.Matrix();
 			var x = this.transformOriginX;
 			var y = this.transformOriginY;
 			if(!this.transformOriginAbsolute) {
@@ -1264,22 +1188,41 @@ Object.extend('Ui.Element', {
 			matrix.translate(x, y);
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
+
+			if(navigator.isIE) {
+				this.drawing.style.msTransform = matrix.toString();
+				this.drawing.style.msTransformOrigin = '0% 0%';
+			}
+			else if(navigator.isGecko) {
+				this.drawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
+				this.drawing.style.MozTransformOrigin = '0% 0%';
+			}
+			else if(navigator.isWebkit) {
+				this.drawing.style.webkitTransform = matrix.toString();
+				this.drawing.style.webkitTransformOrigin = '0% 0%';
+			}
+			else if(navigator.isOpera) {
+				this.drawing.style.OTransform = matrix.toString();
+				this.drawing.style.OTransformOrigin = '0% 0%';
+			}
 		}
-		if(navigator.isIE) {
-			this.drawing.style.msTransform = matrix.toString();
-			this.drawing.style.msTransformOrigin = '0% 0%';
-		}
-		else if(navigator.isGecko) {
-			this.drawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
-			this.drawing.style.MozTransformOrigin = '0% 0%';
-		}
-		else if(navigator.isWebkit) {
-			this.drawing.style.webkitTransform = matrix.toString();
-			this.drawing.style.webkitTransformOrigin = '0% 0%';
-		}
-		else if(navigator.isOpera) {
-			this.drawing.style.OTransform = matrix.toString();
-			this.drawing.style.OTransformOrigin = '0% 0%';
+		else {
+			if(navigator.isIE) {
+				this.drawing.style.removeProperty('-ms-transform');
+				this.drawing.style.removeProperty('-ms-transform-origin');
+			}
+			else if(navigator.isGecko) {
+				this.drawing.style.removeProperty('-moz-transform');
+				this.drawing.style.removeProperty('-moz-transform-origin');
+			}
+			else if(navigator.isWebkit) {
+				this.drawing.style.removeProperty('webkit-transform');
+				this.drawing.style.removeProperty('webkit-transform-origin');
+			}
+			else if(navigator.isOpera) {
+				this.drawing.style.removeProperty('-o-transform');
+				this.drawing.style.removeProperty('-o-transform-origin');
+			}
 		}
 	},
 

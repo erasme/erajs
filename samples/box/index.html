@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Box</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var orientationButton = new Ui.Button({ text: 'change orientation' });
+toolbar.append(orientationButton, true);
+app.connect(orientationButton, 'press', function() {
+	if(box.getOrientation() == 'horizontal')
+		box.setOrientation('vertical');
+	else
+		box.setOrientation('horizontal');
+});
+
+var uniformButton = new Ui.Button({ text: 'change uniform' });
+toolbar.append(uniformButton, true);
+app.connect(uniformButton, 'press', function() {
+	if(box.getUniform())
+		box.setUniform(false);
+	else
+		box.setUniform(true);
+});
+
+var resizableButton = new Ui.Button({ text: 'change resizable (green)' });
+toolbar.append(resizableButton, true);
+app.connect(resizableButton, 'press', function() {
+	if(box.getResizable(greenRect))
+		box.setResizable(greenRect, false);
+	else
+		box.setResizable(greenRect, true);
+});
+
+var box = new Ui.Box();
+vbox.append(box, true);
+box.append(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue' }));
+var greenRect = new Ui.Rectangle({ width: 100, height: 100, fill: 'lightgreen' });
+box.append(greenRect, false);
+box.append(new Ui.Rectangle({ width: 50, height: 50, fill: 'orange' }));
+
+</script>
+  </head>
+</html>

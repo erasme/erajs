@@ -2,7 +2,6 @@
 // Define the Downloadable class.
 //
 Ui.LBox.extend('Ui.Downloadable', {
-	isEnable: true,
 	content: undefined,
 	link: undefined,
 

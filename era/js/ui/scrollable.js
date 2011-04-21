@@ -23,7 +23,7 @@ Ui.Container.extend('Ui.Scrollable', {
 	scrollVertical: true,
 
 	contentBox: undefined,
-	content: undefined,
+//	content: undefined,
 
 	scrollbarHorizontalBox: undefined,
 	scrollbarHorizontal: undefined,
@@ -37,9 +37,11 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(config.scrollVertical != undefined)
 			this.setScrollVertical(config.scrollVertical);
 
-		this.contentBox = new Ui.LBox();
-		this.contentBox.getDrawing().style.overflow = 'hidden';
+		this.contentBox = new Ui.ScrollableContent();
 		this.appendChild(this.contentBox);
+		this.connect(this.contentBox, 'scroll', function(content, offsetX, offsetY) {
+			this.setOffset(offsetX, offsetY, true);
+		});
 
 		this.scrollbarHorizontalBox = new Ui.LBox();
 		this.scrollbarHorizontalBox.getDrawing().style.cursor = 'move';
@@ -65,13 +67,7 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	setContent: function(content) {
-		if(this.content != content) {
-			if(this.content != undefined)
-				this.contentBox.removeChild(this.content);
-			this.content = content;
-			if(this.content != undefined)
-				this.contentBox.appendChild(this.content);
-		}
+		this.contentBox.setContent(content);
 	},
 
 	getScrollHorizontal: function() {
@@ -556,10 +552,15 @@ Ui.Container.extend('Ui.Scrollable', {
 
 }, {
 	measureCore: function(width, height) {
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var size = child.measure(width, height);
-		}
+//		for(var i = 0; i < this.getChildren().length; i++) {
+//			var child = this.getChildren()[i];
+//			var size = child.measure(width, height);
+//		}
+
+		this.scrollbarVerticalBox.measure(width, height);
+		this.scrollbarHorizontalBox.measure(width, height);
+		this.contentBox.measure(width, height);
+
 		var contentWidth = width;
 		var contentHeight = height;
 		this.scrollbarVerticalNeeded = false;
@@ -678,12 +679,14 @@ Ui.Container.extend('Ui.Scrollable', {
 					this.scrollbarHorizontalWidth, this.scrollbarHorizontalBox.getMeasureHeight());
 			}
 		}
-		if(this.content != undefined)
-			this.content.arrange(0, 0, this.contentWidth, this.contentHeight);
-		this.contentBox.getDrawing().style.left = '0px';
-		this.contentBox.getDrawing().style.top = '0px';
-		this.contentBox.getDrawing().style.width = this.viewWidth+'px';
-		this.contentBox.getDrawing().style.height = this.viewHeight+'px';
+//		if(this.content != undefined)
+//			this.content.arrange(0, 0, this.contentWidth, this.contentHeight);
+//		this.contentBox.getDrawing().style.left = '0px';
+//		this.contentBox.getDrawing().style.top = '0px';
+//		this.contentBox.getDrawing().style.width = this.viewWidth+'px';
+//		this.contentBox.getDrawing().style.height = this.viewHeight+'px';
+
+		this.contentBox.arrange(0, 0, this.viewWidth, this.viewHeight);
 
 //		this.contentBox.arrange(0, 0, this.contentWidth, this.contentHeight);
 //		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
@@ -691,3 +694,63 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.updateOffset();
 	},
 });
+
+Ui.Container.extend('Ui.ScrollableContent', {
+	viewWidth: 0,
+	viewHeight: 0,
+	content: undefined,
+	contentWidth: 0,
+	contentHeight: 0,
+
+	constructor: function(config) {
+		this.getDrawing().style.overflow = 'hidden';
+		this.addEvents('scroll');
+
+		this.connect(this.getDrawing(), 'scroll', function() {
+			this.fireEvent('scroll', this, this.getDrawing().scrollLeft, this.getDrawing().scrollTop);
+		});
+	},
+
+	setContent: function(content) {
+		console.log(this+'.setContent('+content+')');
+
+		if(this.content != content) {
+			if(this.content != undefined)
+				this.removeChild(this.content);
+			this.content = content;
+			if(this.content != undefined)
+				this.appendChild(this.content);
+		}
+	},
+
+	setOffset: function(offsetX, offsetY) {
+		this.getDrawing().scrollLeft = offsetX;
+		this.getDrawing().scrollTop = offsetY;
+	},
+
+	getOffsetX: function() {
+		return this.getDrawing().scrollLeft;
+	},
+
+	getOffsetY: function() {
+		return this.getDrawing().scrollLeft;
+	},
+
+}, {
+	measureCore: function(width, height) {
+		var size;
+		if(this.content != undefined)
+			 size = this.content.measure(width, height);
+		else
+			size = { width: 0, height: 0 };
+		this.contentWidth = size.width;
+		this.contentHeight = size.height;
+		return size;
+	},
+
+	arrangeCore: function(width, height) {
+		if(this.content != undefined)
+			this.content.arrange(0, 0, this.contentWidth, this.contentHeight);
+	},
+});
+

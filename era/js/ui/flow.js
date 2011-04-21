@@ -102,6 +102,8 @@ Ui.Container.extend('Ui.Flow', {
 
 }, {
 	measureCore: function(width, height) {
+		console.log(this+'.measureCore('+width+','+height+')');
+
 		if(this.uniform)
 			return this.measureChildrenUniform(width, height);
 		else

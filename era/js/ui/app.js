@@ -27,14 +27,6 @@ Ui.LBox.extend('Ui.App', {
 
 	constructor: function(config) {
 		Ui.App.current = this;
-/*		if(navigator.isIE)
-			this.addClass('ie');
-		else if(navigator.isGecko)
-			this.addClass('gecko');
-		else if(navigator.isWebkit)
-			this.addClass('webkit');
-		else if(navigator.isOpera)
-			this.addClass('opera');*/
 
 		this.contentBox = new Ui.LBox();
 		this.append(this.contentBox);
@@ -446,14 +438,12 @@ Ui.LBox.extend('Ui.App', {
 		if(this.focusElement != element) {
 			this.removeFocus(this.focusElement);
 			this.focusElement = element;
-			this.focusElement.addClass('focus');
 			this.focusElement.fireEvent('focus');
 		}
 	},
 
 	removeFocus: function(element) {
 		if((this.focusElement != undefined) && (this.focusElement == element)) {
-			this.focusElement.removeClass('focus');
 			this.focusElement.fireEvent('blur');
 			this.focusElement = undefined;
 		}

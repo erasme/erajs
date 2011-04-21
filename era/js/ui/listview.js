@@ -103,7 +103,7 @@ Ui.Container.extend('Ui.ListView', {
 		else if(event.detail != undefined)
 			deltaY = event.detail * 10 / 3;
 
-		console.log('wheel delta: '+deltaY);
+//		console.log('wheel delta: '+deltaY);
 		this.setOffsetY(this.offsetY + deltaY);
 	},
 
@@ -164,7 +164,7 @@ Ui.Container.extend('Ui.ListView', {
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 
-		console.log('TouchStart');
+//		console.log('TouchStart');
 	},
 
 	onTouchMove: function(event) {
@@ -181,7 +181,7 @@ Ui.Container.extend('Ui.ListView', {
 		var deltaY = touchPos.y - this.touchStart.y;
 		offsetY = this.startOffsetY - deltaY;
 
-		console.log('TouchMove deltaY: '+offsetY+' ('+(new Date()).getTime()+')');
+//		console.log('TouchMove deltaY: '+offsetY+' ('+(new Date()).getTime()+')');
 
 		this.setOffsetY(offsetY);
 	},
@@ -195,7 +195,7 @@ Ui.Container.extend('Ui.ListView', {
 
 		this.isMoving = false;
 
-		console.log('TouchEnd');
+//		console.log('TouchEnd');
 	},
 
 	appendData: function(data) {
@@ -518,7 +518,7 @@ Ui.Container.extend('Ui.ListView', {
 //				cell.show();
 //				cell.setString(data[this.headers[col].key]);
 //				cell.measure(colWidth, data.rowHeight);
-				console.log('arrange cell x: '+x+', y: '+y+', width: '+colWidth+', height: '+data.rowHeight);
+//				console.log('arrange cell x: '+x+', y: '+y+', width: '+colWidth+', height: '+data.rowHeight);
 
 //				cell.arrange(x, y, colWidth, data.rowHeight);
 
