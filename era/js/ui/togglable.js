@@ -2,12 +2,8 @@
 // Define the Togglable class.
 //
 Ui.LBox.extend('Ui.Togglable', {
-	isEnable: true,
 	isDown: false,
-
-//
-// TODO
-//
+	isToggled: false,
 
 	constructor: function(config) {
 		this.getDrawing().style.cursor = 'pointer';
@@ -15,7 +11,7 @@ Ui.LBox.extend('Ui.Togglable', {
 		this.setFocusable(true);
 		this.setRole('button');
 
-		this.addEvents('press', 'down', 'up', 'disable', 'enable');
+		this.addEvents('down', 'up', 'toggle', 'untoggle');
 
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
@@ -34,7 +30,7 @@ Ui.LBox.extend('Ui.Togglable', {
 	//
 
 	onMouseDown: function(event) {
-		if((event.button != 0) || (!this.isEnable))
+		if((event.button != 0) || this.getIsDisabled())
 			return;
 
 		event.preventDefault();
@@ -73,6 +69,14 @@ Ui.LBox.extend('Ui.Togglable', {
 		}
 	},
 
+	getIsDown: function() {
+		return this.isDown;
+	},
+
+	getIsToggled: function() {
+		return this.isToggled;
+	},
+
 	onMouseUp: function(event) {
 		if(!this.isDown)
 			return;
@@ -81,12 +85,15 @@ Ui.LBox.extend('Ui.Togglable', {
 		event.stopPropagation();
 		if(event.button == 0) {
 			this.onUp();
-			this.fireEvent('press', this);
+			if(!this.isToggled)
+				this.onToggle();
+			else
+				this.onUntoggle();
 		}
 	},
 
 	onTouchStart: function(event) {
-		if(!this.isEnable)
+		if(this.getIsDisabled())
 			return;
 		if(this.isDown) {
 			this.onUp();
@@ -138,12 +145,19 @@ Ui.LBox.extend('Ui.Togglable', {
 		event.preventDefault();
 		event.stopPropagation();
 		this.onUp();
-		this.fireEvent('press', this);
+		if(!this.isToggled)
+			this.onToggle();
+		else
+			this.onUntoggle();
 	},
 
 	onKeyDown: function(keyboard, key) {
-		if((key == 13) && this.isEnable)
-			this.fireEvent('press', this);
+		if((key == 13) && this.getIsDisabled()) {
+			if(!this.isToggled)
+				this.onToggle();
+			else
+				this.onUntoggle();
+		}
 	},
 
 	onDown: function() {
@@ -160,4 +174,25 @@ Ui.LBox.extend('Ui.Togglable', {
 		this.fireEvent('up', this);
 	},
 
+	onToggle: function() {
+		if(!this.isToggled) {
+			this.isToggled = true;
+			this.fireEvent('toggle', this);
+		}
+	},
+
+	onUntoggle: function() {
+		if(this.isToggled) {
+			this.isToggled = false;
+			this.fireEvent('untoggle', this);
+		}
+	},
+
+	toggle: function() {
+		this.onToggle();
+	},
+
+	untoggle: function() {
+		this.onUntoggle();
+	},
 });
