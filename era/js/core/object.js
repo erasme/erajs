@@ -61,7 +61,7 @@ Object.prototype.constructorHelper = function(config, proto) {
 // classDefine: the object with the class define (method, properties and constructor)
 // classOverride: an object with the method that need to be overrided in parents classes
 //
-Function.prototype.extend = function(classType, classDefine, classOverride) {
+Function.prototype.extend = function(classType, classDefine, classOverride, classStatic) {
 	var tab = classType.split('.');
 	var namespace = "";
 	var current = window;
@@ -87,6 +87,12 @@ Function.prototype.extend = function(classType, classDefine, classOverride) {
 	}
 	func.prototype['__baseclass__'] = this.prototype;
 	func['base'] = this.prototype;
+
+	if(classStatic != undefined) {
+		for(var prop in classStatic)
+			func[prop] = classStatic[prop];
+	}
+
 	for(var prop in classDefine) {
 		if(prop == 'constructor')
 			func.prototype['__constructor'] = classDefine[prop];
@@ -113,6 +119,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride) {
 		}
 	}
 	func.prototype.classType = classType;
+
 	return func;
 };
 

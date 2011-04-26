@@ -941,22 +941,16 @@ Object.extend('Ui.Element', {
 
 	fusionStyle: function(dst, src) {
 		for(var prop in src) {
-			if(prop == 'resources')
-				continue;
 			if((prop.indexOf('.') == -1) || (typeof(src[prop]) != 'object'))
 				continue;
 
 			if(dst[prop] != undefined) {
 				var old = dst[prop];
 				dst[prop] = {};
-				for(var prop2 in old) {
-					if(prop2 != 'resources')
-						dst[prop][prop2] = old[prop2];
-				}
-				for(var prop2 in src[prop]) {
-					if(prop2 != 'resources')
-						dst[prop][prop2] = src[prop][prop2];
-				}
+				for(var prop2 in old)
+					dst[prop][prop2] = old[prop2];
+				for(var prop2 in src[prop])
+					dst[prop][prop2] = src[prop][prop2];
 			}
 			else
 				dst[prop] = src[prop];
@@ -1108,48 +1102,10 @@ Object.extend('Ui.Element', {
 	},
 
 	getStyleProperty: function(property) {
-//		console.log(this+".getStyleProperty("+property+") classType: "+this.classType+", "+this.constructor.style);
-/*		console.log(this);
-		if(this.mergeStyle != undefined) {
-			if((this.mergeStyle[this.classType] != undefined) && (this.mergeStyle[this.classType][property] != undefined)) {
-				console.log(this+'.getStyleProperty FROM ELEMENT MERGE');
-				return this.mergeStyle[this.classType][property];
-			}
-			else if(this.mergeStyle[property] != undefined) {
-				console.log(this+'.getStyleProperty FROM MERGE');
-				return this.mergeStyle[property];
-			}
-			else if(this.constructor.style != undefined) {
-				console.log(this+'.getStyleProperty FROM CLASS DEFAULT');
-				return this.constructor.style[property];
-			}
-		}
-		else
-			return undefined;*/
-
 		if((this.mergeStyle != undefined) && (this.mergeStyle[this.classType] != undefined) && (this.mergeStyle[this.classType][property] != undefined))
 			return this.mergeStyle[this.classType][property];
 		else
-			return undefined;
-	},
-
-/*	getStyleProperty: function(property) {
-		if((this.mergeStyle != undefined) && (this.mergeStyle[property] != undefined))
-			return this.mergeStyle[property];
-		else
-			return undefined;
-	},*/
-
-	getStyleResource: function(key) {
-		if((this.mergeStyle == undefined) || (this.mergeStyle.resources == undefined))
-			return undefined;
-		return this.mergeStyle.resources[key];
-	},
-
-	setStyleResource: function(key, value) {
-		if(this.mergeStyle.resources == undefined)
-			this.mergeStyle.resources = {};
-		this.mergeStyle.resources[key] = value;
+			return this.constructor.style[property];
 	},
 
 	onInternalStyleChange: function() {

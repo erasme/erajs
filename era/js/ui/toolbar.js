@@ -4,19 +4,19 @@ Ui.VBox.extend('Ui.ToolBar', {
 	background: undefined,
 
 	constructor: function(config) {
-		this.topShadow = new Ui.Rectangle({ fill: this.getLightColor(), height: 1 });
+		this.topShadow = new Ui.Rectangle({ height: 1 });
 		Ui.ToolBar.base.append.call(this, this.topShadow);
 
 		var content = new Ui.LBox();
 		Ui.ToolBar.base.append.call(this, content);
 
-		this.background = new Ui.Rectangle({ fill: this.getGradient() });
+		this.background = new Ui.Rectangle({ });
 		content.append(this.background);
 
 		this.hbox = new Ui.HBox({ spacing: 8, margin: 4 });
 		content.append(this.hbox);
 
-		this.bottomShadow = new Ui.Rectangle({ fill: this.getDarkColor(), height: 1 });
+		this.bottomShadow = new Ui.Rectangle({ height: 1 });
 		Ui.ToolBar.base.append.call(this, this.bottomShadow);
 	},
 
@@ -25,15 +25,21 @@ Ui.VBox.extend('Ui.ToolBar', {
 	//
 
 	getGradient: function() {
-		return this.getStyleResource('ui-toolbar-gradient');
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
 	},
 
 	getLightColor: function() {
-		return this.getStyleResource('ui-toolbar-light-color');
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
 	},
 
 	getDarkColor: function() {
-		return this.getStyleResource('ui-toolbar-dark-color');
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
 	},
 
 }, {
@@ -46,40 +52,27 @@ Ui.VBox.extend('Ui.ToolBar', {
 	},
 
 	onStyleChange: function() {
-		var gradient = this.getStyleResource('ui-toolbar-gradient');
+		var gradient;
 		var lightColor;
 		var darkColor;
-		if(gradient == undefined) {
-			var color = this.getStyleProperty('color');
-			var yuv = color.getYuv();
-
-			gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
-			] });
-			this.setStyleResource('ui-toolbar-gradient', gradient);
-
-			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
-			this.setStyleResource('ui-toolbar-light-color', lightColor);
-
-			darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-			this.setStyleResource('ui-toolbar-dark-color', darkColor);
-		}
-		else {
-			lightColor = this.getStyleResource('ui-toolbar-light-color');
-			darkColor = this.getStyleResource('ui-toolbar-dark-color');
-		}
+		var yuv = this.getStyleProperty('color').getYuv();
+		gradient = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
+		lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+		darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
 		this.background.setFill(gradient);
 		this.topShadow.setFill(lightColor);
 		this.bottomShadow.setFill(darkColor);
 	},
-});
+}, {
+	style: {
+		color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
 
-Ui.ToolBar.style = {
-	color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
-
-	"Ui.Button": {
-		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
+		"Ui.Button": {
+			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
+		},
 	},
-};
+});
 

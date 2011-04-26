@@ -34,9 +34,11 @@ Ui.LBox.extend('Ui.Loading', {
 	onStyleChange: function() {
 		this.icon.setFill(this.getStyleProperty('color'));
 	},
+}, {
+	style: {
+		color: new Ui.Color({ r: 0.39, g: 0.39, b: 0.39 }),
+	},
 });
 
-Ui.Loading.style = {
-	color: new Ui.Color({ r: 0.39, g: 0.39, b: 0.39 }),
-};
+
 

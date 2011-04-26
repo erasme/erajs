@@ -134,7 +134,7 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - virer la gestion des resources sur les styles dans Ui.Button et Ui.Element
   ça ne vaut pas le coup.
 
-- ecrire un élement Ui.Loading pour les animations de chargement
+* - ecrire un élement Ui.Loading pour les animations de chargement
 
 * - faire une progressbar
 

@@ -193,11 +193,12 @@ Ui.Togglable.extend('Ui.CheckBox', {
 		Ui.CheckBox.base.onEnable.call(this);
 		this.check.setOpacity(1);
 	},
+}, {
+	style: {
+		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
+		radius: 4,
+	},
 });
 
-Ui.CheckBox.style = {
-	color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
-	checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
-	radius: 4,
-};
 

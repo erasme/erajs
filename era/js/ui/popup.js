@@ -151,6 +151,10 @@ Ui.Container.extend('Ui.Popup', {
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 
 	},
+}, {
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+	},
 });
 
 
@@ -226,7 +230,4 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 	},
 });
 
-Ui.Popup.style = {
-	color: new Ui.Color({ r: 0, g: 0, b: 0 }),
-};
 

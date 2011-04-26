@@ -33,10 +33,10 @@ Ui.Pressable.extend('Ui.Button', {
 		this.allcontent = new Ui.LBox();
 		this.append(this.allcontent);
 
-		this.rect2 = new Ui.Rectangle({ fill: this.getLightColor(), radius: 4, marginTop: 1, marginBottom: 2, marginLeft: 1, marginRight: 1  });
+		this.rect2 = new Ui.Rectangle({ radius: 4, marginTop: 1, marginBottom: 2, marginLeft: 1, marginRight: 1  });
 		this.allcontent.append(this.rect2);
 
-		this.rect1 = new Ui.Rectangle({ fill: this.getGradient(), radius: 3, marginTop: 2, marginBottom: 2, marginLeft: 1, marginRight: 1 });
+		this.rect1 = new Ui.Rectangle({ radius: 3, marginTop: 2, marginBottom: 2, marginLeft: 1, marginRight: 1 });
 		this.allcontent.append(this.rect1);
 
 		this.contentBox = new Ui.Box({ verticalAlign: 'center', horizontalAlign: 'center' });
@@ -312,31 +312,63 @@ Ui.Pressable.extend('Ui.Button', {
 	},
 
 	getGradient: function() {
-		return this.getStyleResource('ui-button-gradient');
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
 	},
 
 	getGradientDown: function() {
-		return this.getStyleResource('ui-button-gradient-down');
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+		] });
 	},
 
 	getContentColor: function() {
-		return this.getStyleResource('ui-button-content-color');
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
 	},
 
 	getContentLightColor: function() {
-		return this.getStyleResource('ui-button-content-light-color');
+		console.log(this+'.getContentLightColor before');
+		var color = this.getStyleProperty('color');
+		console.log(this+'.getContentLightColor '+color);
+
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
 	},
 
 	getContentLightColorDown: function() {
-		return this.getStyleResource('ui-button-content-light-color-down');
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
 	},
 
 	getLightColor: function() {
-		return this.getStyleResource('ui-button-light-color');
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
 	},
 
 	getLightColorDown: function() {
-		return this.getStyleResource('ui-button-light-color-down');
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 	},
 
 	onButtonDown: function() {
@@ -359,55 +391,36 @@ Ui.Pressable.extend('Ui.Button', {
 	},
 }, {
 	onStyleChange: function() {
-		var gradient = this.getStyleResource('ui-button-gradient');
+		var gradient;
 		var contentColor;
 		var contentLightColor;
 		var contentLightColorDown;
 		var lightColor;
 		var gradientDown;
-		if(gradient == undefined) {
-			var yuv = this.getStyleProperty('color').getYuv();
 
-			gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		var yuv = this.getStyleProperty('color').getYuv();
 
-			] });
-			this.setStyleResource('ui-button-gradient', gradient);
-
-			gradientDown = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-
-			] });
-			this.setStyleResource('ui-button-gradient-down', gradientDown);
-
-			if(yuv.y < 0.4) {
-				contentColor = new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
-				contentLightColor = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
-				contentLightColorDown = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
-				lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
-				lightColorDown = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
-			}
-			else {
-				contentColor = new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
-				contentLightColor = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
-				contentLightColorDown = new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
-				lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
-				lightColorDown = new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
-			}
-
-			this.setStyleResource('ui-button-content-color', contentColor);
-			this.setStyleResource('ui-button-content-light-color', contentLightColor);
-			this.setStyleResource('ui-button-content-light-color-down', contentLightColorDown);
-			this.setStyleResource('ui-button-light-color', lightColor);
-			this.setStyleResource('ui-button-light-color-down', lightColorDown);
+		gradient = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
+		gradientDown = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+		] });
+		if(yuv.y < 0.4) {
+			contentColor = new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
+			contentLightColor = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+			contentLightColorDown = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+			lightColorDown = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
 		}
 		else {
-			contentColor = this.getStyleResource('ui-button-content-color');
-			contentLightColor = this.getStyleResource('ui-button-content-light-color');
-			contentLightColorDown = this.getStyleResource('ui-button-content-light-color-down');
-			lightColor = this.getStyleResource('ui-button-light-color');
+			contentColor = new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
+			contentLightColor = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+			contentLightColorDown = new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
+			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+			lightColorDown = new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 		}
 		this.rect1.setFill(gradient);
 
@@ -448,11 +461,12 @@ Ui.Pressable.extend('Ui.Button', {
 		Ui.Button.base.onEnable.call(this);
 		this.contentBox.setOpacity(1);
 	},
-});
+}, {
+	style: {
+		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+//		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+		radius: 4,
+	},
 
-Ui.Button.style = {
-	color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-//	color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
-	radius: 4,
-};
+});
 
