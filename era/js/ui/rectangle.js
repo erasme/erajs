@@ -152,7 +152,7 @@ Ui.Element.extend('Ui.Rectangle', {
 			if(typeof(this.stroke) == 'string')
 				this.getDrawing().style.borderColor = this.stroke;
 			else if(this.stroke.isSubclass('Ui.Color'))
-				this.getDrawing().style.borderColor = this.fill.getCssRgba();
+				this.getDrawing().style.borderColor = this.stroke.getCssRgba();
 		}
 	},
 

@@ -111,6 +111,8 @@ include(eraBaseDirectory+'ui/checkbox.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');
 include(eraBaseDirectory+'ui/slider.js');
+include(eraBaseDirectory+'ui/progressbar.js');
+include(eraBaseDirectory+'ui/loading.js');
 include(eraBaseDirectory+'ui/iconlist.js');
 include(eraBaseDirectory+'ui/locator.js');
 include(eraBaseDirectory+'ui/textfield.js');

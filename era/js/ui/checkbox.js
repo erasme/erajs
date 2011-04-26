@@ -3,33 +3,112 @@
 //
 Ui.Togglable.extend('Ui.CheckBox', {
 	check: undefined,
-	background: undefined,
 	checkBox: undefined,
 	contentBox: undefined,
+	hbox: undefined,
+
+	lightShadow: undefined,
+	darkShadow: undefined,
+	lightBorder: undefined,
+	background: undefined,
+
+	content: undefined,
+	text: undefined,
 
 	constructor: function(config) {
 		this.setPadding(3);
 
-		var hbox = new Ui.HBox();
-		this.append(hbox);
+		this.hbox = new Ui.HBox();
+		this.append(this.hbox);
 
 		this.checkBox = new Ui.LBox();
-		hbox.append(this.checkBox);
+		this.hbox.append(this.checkBox);
 
-		this.background = new Ui.Rectangle({ radius: 4, fill: 'lightgrey', margin: 10 });
+		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, margin: 10, marginTop: 11  });
+		this.checkBox.append(this.lightShadow);
+
+		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, margin: 10, marginBottom: 11  });
+		this.checkBox.append(this.darkShadow);
+
+		this.lightBorder = new Ui.Rectangle({ fill: 'lightgray', radius: 4, marginTop: 11, marginBottom: 12, marginLeft: 11, marginRight: 11  });
+		this.checkBox.append(this.lightBorder);
+
+		this.background = new Ui.Rectangle({ fill: 'darkgray', radius: 3, marginTop: 12, marginBottom: 12, marginLeft: 11, marginRight: 11 });
 		this.checkBox.append(this.background);
 
-		this.check = Ui.Icon.create('check', 42, 42, 'green');
+		this.check = Ui.Icon.create('check', 24, 24, 'green');
+		this.check.setMargin(12);
 		this.check.hide();
 		this.checkBox.append(this.check);
-
-		this.contentBox = new Ui.LBox();
-		hbox.append(this.contentBox, true);
 
 		this.connect(this, 'down', this.onCheckBoxDown);
 		this.connect(this, 'up', this.onCheckBoxUp);
 		this.connect(this, 'toggle', this.onCheckBoxToggle);
 		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
+
+		if(config.text != undefined)
+			this.setText(config.text);
+		if(config.content != undefined)
+			this.setContent(config.content);
+	},
+
+	setText: function(text) {
+		if(text == undefined) {
+			if(this.contentBox != undefined) {
+				this.hbox.remove(this.contentBox);
+				this.contentBox = undefined;
+			}
+			this.text = undefined;
+			this.content = undefined;
+		}
+		else {
+			if(this.text != undefined) {
+				this.text = text;
+				this.contentBox.setText(this.text);
+			}
+			else {
+				if(this.content != undefined) {
+					this.hbox.remove(this.contentBox);
+					this.content = undefined;
+				}
+				this.text = text;
+				this.contentBox = new Ui.Label({ margin: 8,  text: this.text });
+				this.hbox.append(this.contentBox, true);
+			}
+		}
+	},
+
+	getText: function() {
+		return this.text;
+	},
+
+	setContent: function(content) {
+		if(content == undefined) {
+			if(this.contentBox != undefined) {
+				this.hbox.remove(this.contentBox);
+				this.contentBox = undefined;
+			}
+			this.text = undefined;
+			this.content = undefined;
+		}
+		else {
+			if(this.text != undefined) {
+				this.hbox.remove(this.contentBox);
+				this.text = undefined;
+			}
+			if(this.content != undefined)
+				this.contentBox.remove(this.content);
+			else {
+				this.contentBox = new Ui.LBox({ padding: 8 });
+				this.hbox.append(this.contentBox, true);
+			}
+			this.content = content;
+			this.contentBox.append(this.content);
+		}
+	},
+
+	getContent: function() {
+		return this.content;
 	},
 
 	//
@@ -37,9 +116,13 @@ Ui.Togglable.extend('Ui.CheckBox', {
 	//
 
 	onCheckBoxDown: function() {
+		this.background.setFill(this.getGradientDown());
+		this.lightBorder.setFill(this.getLightBorderColorDown());
 	},
 
 	onCheckBoxUp: function() {
+		this.background.setFill(this.getGradient());
+		this.lightBorder.setFill(this.getLightBorderColor());
 	},
 
 	onCheckBoxToggle: function() {
@@ -50,24 +133,71 @@ Ui.Togglable.extend('Ui.CheckBox', {
 		this.check.hide();
 	},
 
+	getGradient: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 0.05, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
+			{ offset: 0.9, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
+	},
+
+	getGradientDown: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 0.1, color: new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 0.9, color: new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+		] });
+	},
+
+	getLightBorderColor: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.Color({ y: yuv.y + 0.20, u: yuv.u, v: yuv.v });
+	},
+
+	getLightBorderColorDown: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
+	},
+
 }, {
 	onStyleChange: function() {
+		this.check.setFill(this.getStyleProperty('checkColor'));
+		if(this.getIsDown()) {
+			this.background.setFill(this.getGradientDown());
+			this.lightBorder.setFill(this.getLightBorderColorDown());
+		}
+		else {
+			this.background.setFill(this.getGradient());
+			this.lightBorder.setFill(this.getLightBorderColor());
+		}
+		var radius = this.getStyleProperty('radius');
+		this.lightShadow.setRadius(radius);
+		this.darkShadow.setRadius(radius);
+		this.lightBorder.setRadius(radius);
+		this.background.setRadius(radius);		
 	},
 
 	onDisable: function() {
-		Ui.Button.base.onDisable.call(this);
-//		this.contentBox.setOpacity(0.2);
+		Ui.CheckBox.base.onDisable.call(this);
+		this.check.setOpacity(0.4);
 	},
 
 	onEnable: function() {
-		Ui.Button.base.onEnable.call(this);
-//		this.contentBox.setOpacity(1);
+		Ui.CheckBox.base.onEnable.call(this);
+		this.check.setOpacity(1);
 	},
 });
 
 Ui.CheckBox.style = {
-	color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-//	color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+	color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+	checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
 	radius: 4,
 };
 

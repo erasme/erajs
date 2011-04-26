@@ -40,5 +40,13 @@ Ui.Container.extend('Ui.Fixed', {
 			child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
 		}
 	},
+
+	onChildInvalidateMeasure: function(child) {
+		child.measure(this.getLayoutWidth(), this.getLayoutHeight());
+	},
+
+	onChildInvalidateArrange: function(child) {
+		child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
+	},
 });
 
