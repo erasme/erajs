@@ -70,7 +70,30 @@ Object.extend('Ui.LinearGradient', {
 
 	getBackgroundImage: function() {
 		return this.image;
+	},
 
+	getSVGGradient: function() {
+		var gradient = document.createElementNS(svgNS, 'linearGradient');
+		gradient.setAttributeNS(null, 'gradientUnits', 'objectBoundingBox');
+		gradient.setAttributeNS(null, 'x1', 0);
+		gradient.setAttributeNS(null, 'y1', 0);
+		if(this.orientation == 'vertical') {
+			gradient.setAttributeNS(null, 'x2', 0);
+			gradient.setAttributeNS(null, 'y2', 1);
+		}
+		else {
+			gradient.setAttributeNS(null, 'x2', 1);
+			gradient.setAttributeNS(null, 'y2', 0);
+		}
+		for(var i = 0; i < this.stops.length; i++) {
+			var stop = this.stops[i];
+			var svgStop = document.createElementNS(svgNS, 'stop');
+			svgStop.setAttributeNS(null, 'offset', stop.offset);
+			svgStop.style.stopColor = stop.color.getCssHtml();
+			svgStop.style.stopOpacity = stop.color.getRgba().a;
+			gradient.appendChild(svgStop);
+		}
+		return gradient;
 	},
 
 }, {

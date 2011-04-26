@@ -681,6 +681,7 @@ Object.extend('Ui.Element', {
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
 				current = current.offsetParent;
 			}
 			return matrix;
@@ -711,6 +712,7 @@ Object.extend('Ui.Element', {
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
 				current = current.offsetParent;
 			}
 			return matrix;
@@ -741,6 +743,7 @@ Object.extend('Ui.Element', {
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
 				current = current.offsetParent;
 			}
 			return matrix;
@@ -771,6 +774,7 @@ Object.extend('Ui.Element', {
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
 				current = current.offsetParent;
 			}
 			return matrix;
