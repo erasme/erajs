@@ -235,6 +235,15 @@ Ui.Container.extend('Ui.ListView', {
 		}
 	},
 
+	//
+	// Remove all data
+	//
+	clearData: function() {
+		// TODO
+		this.data = [];
+		this.invalidateLayout();
+	},
+
 	getData: function() {
 		return this.data;
 	},

@@ -10,8 +10,11 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	constructor: function(config) {
 		this.setPadding(3);
 
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  }));
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  }));
+		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  });
+		this.append(this.lightShadow);
+
+		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  });
+		this.append(this.darkShadow);
 
 		var hbox = new Ui.HBox({ margin: 1 });
 		this.append(hbox);
@@ -32,10 +35,10 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		this.connect(this.button, 'down', this.onButtonDown);
 		this.connect(this.button, 'up', this.onButtonUp);
 
-		this.rect2 = new Ui.Rectangle({ fill: 'white', radiusTopRight: 4, radiusBottomRight: 4, marginBottom: 1 });
+		this.rect2 = new Ui.Rectangle({ radiusTopRight: 4, radiusBottomRight: 4, marginBottom: 1 });
 		this.button.append(this.rect2);
 
-		this.rect1 = new Ui.Rectangle({ fill: this.getGradient(), radiusTopRight: 3, radiusBottomRight: 3, marginLeft: 1, marginTop: 1, marginBottom: 1 });
+		this.rect1 = new Ui.Rectangle({ radiusTopRight: 3, radiusBottomRight: 3, marginLeft: 1, marginTop: 1, marginBottom: 1 });
 		this.button.append(this.rect1);
 
 		this.buttonContentBox = new Ui.HBox({ verticalAlign: 'center', horizontalAlign: 'center' });
@@ -82,8 +85,8 @@ Ui.LBox.extend('Ui.TextButtonField', {
 						this.iconBox.remove(this.icon1);
 					if(this.icon2 != undefined)
 						this.iconBox.remove(this.icon2);
-					this.icon1 = Ui.Icon.create(icon, 16, 16, new Ui.Color({ r: 1, g: 1, b: 1 }));
-					this.icon2 = Ui.Icon.create(icon, 16, 16,  new Ui.Color({ r: 0, g: 0, b: 0 }));
+					this.icon1 = Ui.Icon.create(icon, 24, 24, new Ui.Color({ r: 1, g: 1, b: 1 }));
+					this.icon2 = Ui.Icon.create(icon, 24, 24,  new Ui.Color({ r: 0, g: 0, b: 0 }));
 					this.iconBox.append(this.icon1);
 					this.iconBox.append(this.icon2);
 				}
@@ -148,23 +151,24 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	// Private
 	//
 	updateSizes: function() {
+		var spacing = this.getStyleProperty('spacing');
 		if(this.buttonText != undefined) {
 			// icon + text
 			if(this.buttonIcon != undefined) {
-				this.textBox.setMarginLeft(8);
-				this.textBox.setMarginRight(8);
-				this.textBox.setMarginTop(7);
-				this.textBox.setMarginBottom(7);
+				this.textBox.setMarginLeft(spacing + 2);
+				this.textBox.setMarginRight(spacing + 2);
+				this.textBox.setMarginTop(spacing + 1);
+				this.textBox.setMarginBottom(spacing + 1);
 				this.text1.setMargin(0);
 				this.text1.setMarginTop(2);
 				this.text2.setMargin(1);
 				this.text1.setFontWeight('bold');
 				this.text2.setFontWeight('bold');
 
-				this.iconBox.setMarginLeft(8);
+				this.iconBox.setMarginLeft(spacing + 2);
 				this.iconBox.setMarginRight(0);
-				this.iconBox.setMarginTop(7);
-				this.iconBox.setMarginBottom(7);
+				this.iconBox.setMarginTop(spacing + 1);
+				this.iconBox.setMarginBottom(spacing + 1);
 				this.icon1.setMarginTop(2);
 				this.icon1.setMarginBottom(0);
 				this.icon2.setMarginTop(1);
@@ -172,29 +176,27 @@ Ui.LBox.extend('Ui.TextButtonField', {
 			}
 			// content + text
 			else if(this.content != undefined) {
-				this.textBox.setMarginLeft(8);
-				this.textBox.setMarginRight(8);
-				this.textBox.setMarginTop(7);
-				this.textBox.setMarginBottom(7);
+				this.textBox.setMarginLeft(spacing + 2);
+				this.textBox.setMarginRight(spacing + 2);
+				this.textBox.setMarginTop(spacing + 1);
+				this.textBox.setMarginBottom(spacing + 1);
 				this.text1.setMargin(0);
 				this.text1.setMarginTop(2);
 				this.text2.setMargin(1);
 				this.text1.setFontWeight('bold');
 				this.text2.setFontWeight('bold');
 
-				this.iconBox.setMarginLeft(8);
+				this.iconBox.setMarginLeft(spacing + 2);
 				this.iconBox.setMarginRight(0);
-				this.iconBox.setMarginTop(8);
+				this.iconBox.setMarginTop(spacing + 2);
 				this.iconBox.setMarginBottom(0);
 			}
 			// text only
 			else {
-				console.log('updateSizes TEXT ONLY');
-
-				this.textBox.setMarginLeft(10);
-				this.textBox.setMarginRight(10);
-				this.textBox.setMarginTop(7);
-				this.textBox.setMarginBottom(7);
+				this.textBox.setMarginLeft(spacing + 4);
+				this.textBox.setMarginRight(spacing + 4);
+				this.textBox.setMarginTop(spacing + 1);
+				this.textBox.setMarginBottom(spacing + 1);
 				this.text1.setMargin(0);
 				this.text1.setMarginTop(2);
 				this.text2.setMargin(1);
@@ -208,27 +210,76 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		// icon only
 		else {
 			if(this.buttonIcon != undefined) {
-				this.iconBox.setMarginLeft(8);
-				this.iconBox.setMarginRight(8);
-				this.iconBox.setMarginTop(7);
-				this.iconBox.setMarginBottom(7);
+				this.iconBox.setMarginLeft(spacing + 2);
+				this.iconBox.setMarginRight(spacing + 2);
+				this.iconBox.setMarginTop(spacing + 1);
+				this.iconBox.setMarginBottom(spacing + 1);
 				this.icon1.setMarginTop(2);
 				this.icon1.setMarginBottom(0);
 				this.icon2.setMarginTop(1);
 				this.icon2.setMarginBottom(1);
 			}
 			else if(this.content != undefined) {
-				this.iconBox.setMargin(8);
+				this.iconBox.setMargin(spacing + 2);
 			}
 		}
 	},
 
 	getGradient: function() {
-		var gradient = this.getStyleResource('ui-textbuttonfield-gradient');
-		if(gradient == undefined)
-			return Ui.TextButtonField.gradient;
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
+	},
+
+	getGradientDown: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+		] });
+	},
+
+	getContentColor: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
 		else
-			return gradient;
+			return new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
+	},
+
+	getContentLightColor: function() {
+		var color = this.getStyleProperty('color');
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+	},
+
+	getContentLightColorDown: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
+	},
+
+	getLightColor: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+	},
+
+	getLightColorDown: function() {
+		var yuv = this.getStyleProperty('color').getYuv();
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+		else
+			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 	},
 
 	onButtonPress: function() {
@@ -236,11 +287,22 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	},
 
 	onButtonDown: function() {
-		console.log('onButtonDown');
+		this.rect1.setFill(this.getGradientDown());
+		if(this.icon1 != undefined)
+			this.icon1.setFill(this.getContentLightColorDown());
+		if(this.text1 != undefined)
+			this.text1.setColor(this.getContentLightColorDown());
+		this.rect2.setFill(this.getLightColorDown());
 	},
 
 	onButtonUp: function() {
-		console.log('onButtonUp');
+		this.rect1.setFill(this.getGradient());
+
+		if(this.icon1 != undefined)
+			this.icon1.setFill(this.getContentLightColor());
+		if(this.text1 != undefined)
+			this.text1.setColor(this.getContentLightColor());
+		this.rect2.setFill(this.getLightColor());
 	},
 
 	onEntryChange: function(entry, value) {
@@ -251,9 +313,72 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		this.fireEvent('validate', this);
 	},
 
+
+
 }, {
 	onStyleChange: function() {
+		var gradient;
+		var contentColor;
+		var contentLightColor;
+		var contentLightColorDown;
+		var lightColor;
+		var gradientDown;
+
+		var yuv = this.getStyleProperty('color').getYuv();
+		gradient = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+		] });
+		gradientDown = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+		] });
+		if(yuv.y < 0.4) {
+			contentColor = new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
+			contentLightColor = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+			contentLightColorDown = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+			lightColorDown = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+		}
+		else {
+			contentColor = new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
+			contentLightColor = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+			contentLightColorDown = new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
+			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+			lightColorDown = new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
+		}
+
+		this.rect1.setFill(gradient);
+
+		if(this.button.getIsDown()) {
+			if(this.icon1 != undefined)
+				this.icon1.setFill(contentLightColorDown);
+			if(this.text1 != undefined)
+				this.text1.setColor(contentLightColorDown);
+			this.rect2.setFill(lightColorDown);
+		}
+		else {
+			if(this.icon1 != undefined)
+				this.icon1.setFill(contentLightColor);
+			if(this.text1 != undefined)
+				this.text1.setColor(contentLightColor);
+			this.rect2.setFill(lightColor);
+		}
+
+		if(this.icon2 != undefined)
+			this.icon2.setFill(contentColor);
+		if(this.text2 != undefined)
+			this.text2.setColor(contentColor);
+
+//		var radius = this.getStyleProperty('radius');
+//		this.lightShadow.setRadius(radius);
+//		this.darkShadow.setRadius(radius);
+//		this.rect2.setRadius(radius);
+//		this.rect1.setRadius(radius - 1);
+
+		this.updateSizes();
 	},
+
 
 	onDisable: function() {
 		Ui.TextField.base.onDisable.call(this);
@@ -262,10 +387,11 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	onEnable: function() {
 		Ui.TextField.base.onEnable.call(this);
 	},
+}, {
+	style: {
+		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+		radius: 4,
+		spacing: 3,
+	},
 });
-
-Ui.TextButtonField.gradient = new Ui.LinearGradient({ stops: [
-	{ offset: 0, color: new Ui.Color({ h: 0,  s: 0, l: 0.93 }) },
-	{ offset: 1, color: new Ui.Color({ h: 0,  s: 0, l: 0.83 }) },
-] });
 

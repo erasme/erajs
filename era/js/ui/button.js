@@ -73,10 +73,10 @@ Ui.Pressable.extend('Ui.Button', {
 			}
 			else {
 				if(this.textBox == undefined) {
-					this.textBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+					this.textBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', height: 24 });
 					this.contentBox.append(this.textBox);
-					this.text1 = new Ui.Label({ text: this.text, color: this.getContentLightColor() });
-					this.text2 = new Ui.Label({ text: this.text, color: this.getContentColor() });
+					this.text1 = new Ui.Label({ text: this.text, color: this.getContentLightColor(), verticalAlign: 'center' });
+					this.text2 = new Ui.Label({ text: this.text, color: this.getContentColor(), verticalAlign: 'center' });
 					this.textBox.append(this.text1);
 					this.textBox.append(this.text2);
 				}
@@ -161,24 +161,25 @@ Ui.Pressable.extend('Ui.Button', {
 	//
 
 	updateSizes: function() {
+		var spacing = this.getStyleProperty('spacing');
 		// vertical
 		if(this.orientation == 'vertical') {
 			if(this.text != undefined) {
 				// icon + text
 				if(this.icon != undefined) {
-					this.textBox.setMarginLeft(8);
-					this.textBox.setMarginRight(8);
-					this.textBox.setMarginTop(6);
-					this.textBox.setMarginBottom(7);
+					this.textBox.setMarginLeft(spacing + 2);
+					this.textBox.setMarginRight(spacing + 2);
+					this.textBox.setMarginTop(spacing);
+					this.textBox.setMarginBottom(spacing + 1);
 					this.text1.setMargin(0);
 					this.text1.setMarginTop(2);
 					this.text2.setMargin(1);
 					this.text1.setFontWeight('normal');
 					this.text2.setFontWeight('normal');
 
-					this.iconBox.setMarginLeft(8);
-					this.iconBox.setMarginRight(8);
-					this.iconBox.setMarginTop(7);
+					this.iconBox.setMarginLeft(spacing + 2);
+					this.iconBox.setMarginRight(spacing + 2);
+					this.iconBox.setMarginTop(spacing +1);
 					this.iconBox.setMarginBottom(0);
 					this.icon1.setMarginTop(2);
 					this.icon1.setMarginBottom(0);
@@ -187,27 +188,27 @@ Ui.Pressable.extend('Ui.Button', {
 				}
 				// content + text
 				else if(this.content != undefined) {
-					this.textBox.setMarginLeft(8);
-					this.textBox.setMarginRight(8);
-					this.textBox.setMarginTop(7);
-					this.textBox.setMarginBottom(7);
+					this.textBox.setMarginLeft(spacing + 2);
+					this.textBox.setMarginRight(spacing + 2);
+					this.textBox.setMarginTop(spacing + 1);
+					this.textBox.setMarginBottom(spacing + 1);
 					this.text1.setMargin(0);
 					this.text1.setMarginTop(2);
 					this.text2.setMargin(1);
 					this.text1.setFontWeight('normal');
 					this.text2.setFontWeight('normal');
 
-					this.iconBox.setMarginLeft(8);
-					this.iconBox.setMarginRight(8);
-					this.iconBox.setMarginTop(8);
+					this.iconBox.setMarginLeft(spacing + 2);
+					this.iconBox.setMarginRight(spacing + 2);
+					this.iconBox.setMarginTop(spacing + 2);
 					this.iconBox.setMarginBottom(0);
 				}
 				// text only
 				else {
-					this.textBox.setMarginLeft(10);
-					this.textBox.setMarginRight(10);
-					this.textBox.setMarginTop(7);
-					this.textBox.setMarginBottom(7);
+					this.textBox.setMarginLeft(spacing + 4);
+					this.textBox.setMarginRight(spacing + 4);
+					this.textBox.setMarginTop(spacing + 1);
+					this.textBox.setMarginBottom(spacing + 1);
 					this.text1.setMargin(0);
 					this.text1.setMarginTop(2);
 					this.text2.setMargin(1);
@@ -221,17 +222,17 @@ Ui.Pressable.extend('Ui.Button', {
 			// icon only
 			else {
 				if(this.icon != undefined) {
-					this.iconBox.setMarginLeft(8);
-					this.iconBox.setMarginRight(8);
-					this.iconBox.setMarginTop(7);
-					this.iconBox.setMarginBottom(7);
+					this.iconBox.setMarginLeft(spacing + 2);
+					this.iconBox.setMarginRight(spacing + 2);
+					this.iconBox.setMarginTop(spacing + 1);
+					this.iconBox.setMarginBottom(spacing + 1);
 					this.icon1.setMarginTop(2);
 					this.icon1.setMarginBottom(0);
 					this.icon2.setMarginTop(1);
 					this.icon2.setMarginBottom(1);
 				}
 				else if(this.content != undefined) {
-					this.iconBox.setMargin(8);
+					this.iconBox.setMargin(spacing + 2);
 				}
 			}
 		}
@@ -240,20 +241,20 @@ Ui.Pressable.extend('Ui.Button', {
 			if(this.text != undefined) {
 				// icon + text
 				if(this.icon != undefined) {
-					this.textBox.setMarginLeft(8);
-					this.textBox.setMarginRight(8);
-					this.textBox.setMarginTop(7);
-					this.textBox.setMarginBottom(7);
+					this.textBox.setMarginLeft(spacing + 2);
+					this.textBox.setMarginRight(spacing + 2);
+					this.textBox.setMarginTop(spacing + 1);
+					this.textBox.setMarginBottom(spacing + 1);
 					this.text1.setMargin(0);
 					this.text1.setMarginTop(2);
 					this.text2.setMargin(1);
 					this.text1.setFontWeight('bold');
 					this.text2.setFontWeight('bold');
 
-					this.iconBox.setMarginLeft(8);
+					this.iconBox.setMarginLeft(spacing + 2);
 					this.iconBox.setMarginRight(0);
-					this.iconBox.setMarginTop(7);
-					this.iconBox.setMarginBottom(7);
+					this.iconBox.setMarginTop(spacing + 1);
+					this.iconBox.setMarginBottom(spacing + 1);
 					this.icon1.setMarginTop(2);
 					this.icon1.setMarginBottom(0);
 					this.icon2.setMarginTop(1);
@@ -261,27 +262,27 @@ Ui.Pressable.extend('Ui.Button', {
 				}
 				// content + text
 				else if(this.content != undefined) {
-					this.textBox.setMarginLeft(8);
-					this.textBox.setMarginRight(8);
-					this.textBox.setMarginTop(7);
-					this.textBox.setMarginBottom(7);
+					this.textBox.setMarginLeft(spacing + 2);
+					this.textBox.setMarginRight(spacing + 2);
+					this.textBox.setMarginTop(spacing + 1);
+					this.textBox.setMarginBottom(spacing + 1);
 					this.text1.setMargin(0);
 					this.text1.setMarginTop(2);
 					this.text2.setMargin(1);
 					this.text1.setFontWeight('bold');
 					this.text2.setFontWeight('bold');
 
-					this.iconBox.setMarginLeft(8);
+					this.iconBox.setMarginLeft(spacing + 2);
 					this.iconBox.setMarginRight(0);
-					this.iconBox.setMarginTop(8);
+					this.iconBox.setMarginTop(spacing + 2);
 					this.iconBox.setMarginBottom(0);
 				}
 				// text only
 				else {
-					this.textBox.setMarginLeft(10);
-					this.textBox.setMarginRight(10);
-					this.textBox.setMarginTop(7);
-					this.textBox.setMarginBottom(7);
+					this.textBox.setMarginLeft(spacing + 4);
+					this.textBox.setMarginRight(spacing + 4);
+					this.textBox.setMarginTop(spacing + 1);
+					this.textBox.setMarginBottom(spacing + 1);
 					this.text1.setMargin(0);
 					this.text1.setMarginTop(2);
 					this.text2.setMargin(1);
@@ -295,17 +296,17 @@ Ui.Pressable.extend('Ui.Button', {
 			// icon only
 			else {
 				if(this.icon != undefined) {
-					this.iconBox.setMarginLeft(8);
-					this.iconBox.setMarginRight(8);
-					this.iconBox.setMarginTop(7);
-					this.iconBox.setMarginBottom(7);
+					this.iconBox.setMarginLeft(spacing + 2);
+					this.iconBox.setMarginRight(spacing + 2);
+					this.iconBox.setMarginTop(spacing + 1);
+					this.iconBox.setMarginBottom(spacing + 1);
 					this.icon1.setMarginTop(2);
 					this.icon1.setMarginBottom(0);
 					this.icon2.setMarginTop(1);
 					this.icon2.setMarginBottom(1);
 				}
 				else if(this.content != undefined) {
-					this.iconBox.setMargin(8);
+					this.iconBox.setMargin(spacing + 2);
 				}
 			}
 		}
@@ -336,10 +337,6 @@ Ui.Pressable.extend('Ui.Button', {
 	},
 
 	getContentLightColor: function() {
-		console.log(this+'.getContentLightColor before');
-		var color = this.getStyleProperty('color');
-		console.log(this+'.getContentLightColor '+color);
-
 		var yuv = this.getStyleProperty('color').getYuv();
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
@@ -450,6 +447,8 @@ Ui.Pressable.extend('Ui.Button', {
 		this.darkShadow.setRadius(radius);
 		this.rect2.setRadius(radius);
 		this.rect1.setRadius(radius - 1);
+
+		this.updateSizes();
 	},
 
 	onDisable: function() {
@@ -466,6 +465,7 @@ Ui.Pressable.extend('Ui.Button', {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 //		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
 		radius: 4,
+		spacing: 3,
 	},
 
 });

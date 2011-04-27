@@ -13,7 +13,7 @@ Ui.VBox.extend('Ui.ToolBar', {
 		this.background = new Ui.Rectangle({ });
 		content.append(this.background);
 
-		this.hbox = new Ui.HBox({ spacing: 8, margin: 4 });
+		this.hbox = new Ui.HBox();
 		content.append(this.hbox);
 
 		this.bottomShadow = new Ui.Rectangle({ height: 1 });
@@ -65,14 +65,25 @@ Ui.VBox.extend('Ui.ToolBar', {
 		this.background.setFill(gradient);
 		this.topShadow.setFill(lightColor);
 		this.bottomShadow.setFill(darkColor);
+
+		var spacing = this.getStyleProperty('spacing');
+		this.hbox.setMargin(spacing);
+		this.hbox.setSpacing(spacing);
+
 	},
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
+		spacing: 3,
 
 		"Ui.Button": {
 			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
 		},
+
+		"Ui.TextButtonField": {
+			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
+		},
+
 	},
 });
 

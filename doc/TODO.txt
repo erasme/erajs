@@ -36,7 +36,7 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 * - Dans l'Accordeon, cacher les éléments (avec display: none) lorsqu'ils
     ne sont plus du tout visible. Cela devrait permettre de gagner des ressources
 
-- Dans Ui.App, ne plus utiliser append, fournir une méthode setContent
+* - Dans Ui.App, ne plus utiliser append, fournir une méthode setContent
 
 - Dans Ui.App, permettre de fournir un dépôt de police de caractère. Les éléments
   texte comme Label et Text doivent utiliser ce dépôt pour charger la police
@@ -55,22 +55,22 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
   pouvoir ou pas faire suivre a son parent. Passer donc par une methode
   que l'on peut surcharger pour gérer cela
 
-- implementer un Togglable
+* - implementer un Togglable
 
 * - Fournir l'accès aux box-shadow dans Ui.Rectangle
 
-- Fournir un système de gestion des styles (sous forme
-  de JSON)
+* - Fournir un système de gestion des styles (sous forme
+    de JSON)
 
-- Fournir un ToolBarButton
+X - Fournir un ToolBarButton
 
 - Fournir un ButtonBox + HButtonBox + VButtonBox (et inserer
   des éléments dedans)
 
-- Virer le parametre "force" de arrange de measure
+* - Virer le parametre "force" de arrange de measure
 
-- Gérer un état "disable" que l'on hérite. Cela doit nous
-  permettre de rendre inactive n'importe qu'elle arborescence
+* - Gérer un état "disable" que l'on hérite. Cela doit nous
+    permettre de rendre inactive n'importe qu'elle arborescence
 
 - voir pour intégrer les animations dans le "update" de Ui.App
   (ordre logique: event, anim, render, measure, arrange)
@@ -131,8 +131,8 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - dans Ui.Container appendChild... ne doit pas utiliser invalidateMeasure
   mais onChildInvalidateMeasure()
 
-- virer la gestion des resources sur les styles dans Ui.Button et Ui.Element
-  ça ne vaut pas le coup.
+* - virer la gestion des resources sur les styles dans Ui.Button et Ui.Element
+    ça ne vaut pas le coup.
 
 * - ecrire un élement Ui.Loading pour les animations de chargement
 

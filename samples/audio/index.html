@@ -40,24 +40,23 @@ app.connect(stopButton, 'press', function() {
 	audio.stop();
 });
 
-var rect = new Ui.Rectangle({ height: 10, fill: 'green', verticalAlign: 'center', horizontalAlign: 'stretch'});
-rect.setTransformOrigin(0, 0);
-toolbar.append(rect, true);
+var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', height: 20 });
+toolbar.append(progressbar, true);
 
 var audio = new Ui.Audio({ oggSrc: 'sound.ogg', mp3Src: 'sound.mp3', wavSrc: 'sound.wav', volume: 1 });
 app.append(audio);
 
 app.connect(audio, 'ready', function() {
-	console.log('audio ready');
+//	console.log('audio ready');
 });
 
 app.connect(audio, 'ended', function() {
-	console.log('audio ended');
+//	console.log('audio ended');
 });
 
 app.connect(audio, 'timeupdate', function(time) {
-	console.log('audio pos: '+time);
-	rect.setTransform(Ui.Matrix.createScale(time/audio.getDuration(), 1));
+//	console.log('audio pos: '+time);
+	progressbar.setValue(time/audio.getDuration());
 });
 
 </script>

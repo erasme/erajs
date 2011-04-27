@@ -190,4 +190,11 @@ if(window.JSON == undefined) {
 	window.JSON = json;
 }
 
+if(window.console == undefined) {
+	window.console = {
+		log: function() {},
+		error: function() {},
+		warn: function() {}
+	};
+}
 

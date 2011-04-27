@@ -140,20 +140,20 @@ Ui.Element.extend('Ui.Label', {
 			matrix = new Ui.Matrix();
 
 		if(navigator.isIE) {
-			this.drawing.style.msTransform = matrix.toString();
-			this.drawing.style.msTransformOrigin = '0% 0%';
+			this.labelDrawing.style.msTransform = matrix.toString();
+			this.labelDrawing.style.msTransformOrigin = '0% 0%';
 		}
 		else if(navigator.isGecko) {
-			this.drawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
-			this.drawing.style.MozTransformOrigin = '0% 0%';
+			this.labelDrawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
+			this.labelDrawing.style.MozTransformOrigin = '0% 0%';
 		}
 		else if(navigator.isWebkit) {
-			this.drawing.style.webkitTransform = matrix.toString();
-			this.drawing.style.webkitTransformOrigin = '0% 0%';
+			this.labelDrawing.style.webkitTransform = matrix.toString();
+			this.labelDrawing.style.webkitTransformOrigin = '0% 0%';
 		}
 		else if(navigator.isOpera) {
-			this.drawing.style.OTransform = matrix.toString();
-			this.drawing.style.OTransformOrigin = '0% 0%';
+			this.labelDrawing.style.OTransform = matrix.toString();
+			this.labelDrawing.style.OTransformOrigin = '0% 0%';
 		}
 	},
 });
