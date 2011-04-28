@@ -49,7 +49,7 @@ Object.extend('Anim.Clock', {
 		else
 			this.scope = this.target;
 		if(config.ease != undefined)
-			this.ease = config.ease;
+			this.ease = Anim.EasingFunction.create(config.ease);
 		if(this.duration == 'automatic')
 			this.duration = 'forever';
 

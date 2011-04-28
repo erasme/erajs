@@ -33,5 +33,9 @@ Anim.EasingFunction.extend('Anim.BounceEase', {
 		var sinstep = (sq * (this.bounces + 0.5)) - step;
 		return Math.sin(sinstep * Math.PI) / Math.exp(this.bounces - step);
 	},
+}, /* static */ {
+	constructor: function() {
+		Anim.EasingFunction.register('bounce', this);
+	},
 });
 

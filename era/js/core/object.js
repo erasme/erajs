@@ -91,6 +91,8 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	if(classStatic != undefined) {
 		for(var prop in classStatic)
 			func[prop] = classStatic[prop];
+		if(classStatic['constructor'] != undefined)
+			classStatic['constructor'].call(func);
 	}
 
 	for(var prop in classDefine) {

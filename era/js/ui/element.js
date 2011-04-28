@@ -1176,8 +1176,8 @@ Object.extend('Ui.Element', {
 				this.drawing.style.removeProperty('-moz-transform-origin');
 			}
 			else if(navigator.isWebkit) {
-				this.drawing.style.removeProperty('webkit-transform');
-				this.drawing.style.removeProperty('webkit-transform-origin');
+				this.drawing.style.removeProperty('-webkit-transform');
+				this.drawing.style.removeProperty('-webkit-transform-origin');
 			}
 			else if(navigator.isOpera) {
 				this.drawing.style.removeProperty('-o-transform');

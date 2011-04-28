@@ -37,5 +37,29 @@ Object.extend('Anim.EasingFunction', {
 	easeInCore: function(normalizedTime) {
 		return normalizedTime;
 	},
+}, {
+}, /* static */ {
+	eases: {},
+
+	register: function(easeName, classType) {
+		this.eases[easeName] = classType;
+	},
+
+	create: function(ease) {
+		if(ease == undefined)
+			return undefined;
+		if(typeof(ease) == 'string')
+			return new this.eases[ease]();
+		else if(typeof(ease) == 'object') {
+			if(ease.isSubclass('Anim.EasingFunction'))
+				return ease;
+			else if(ease.type != undefined) {
+				var type = ease.type;
+				ease.type = undefined;
+				return new this.eases[type](ease);
+			}
+		}
+		throw('invalid easing function ('+ease+')');
+	},
 });
 

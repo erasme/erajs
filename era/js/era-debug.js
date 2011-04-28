@@ -121,4 +121,10 @@ include(eraBaseDirectory+'ui/textareafield.js');
 include(eraBaseDirectory+'ui/listview.js');
 include(eraBaseDirectory+'ui/program.js');
 include(eraBaseDirectory+'ui/app.js');
+include(eraBaseDirectory+'ui/transition.js');
+include(eraBaseDirectory+'ui/fade.js');
+include(eraBaseDirectory+'ui/flip.js');
+include(eraBaseDirectory+'ui/slide.js');
+include(eraBaseDirectory+'ui/transitionbox.js');
+
 

@@ -138,4 +138,8 @@ X - Fournir un ToolBarButton
 
 * - faire une progressbar
 
+- virer "target" dans Anim.Clock. Laisser chacun gérer comme il faut comme
+  dans Ui.TransitionBox.
+
+
 

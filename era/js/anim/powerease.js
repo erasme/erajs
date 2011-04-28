@@ -20,5 +20,9 @@ Anim.EasingFunction.extend('Anim.PowerEase', {
 	easeInCore: function(normalizedTime) {
 		return Math.pow(normalizedTime, this.power);
 	},
+}, /* static */ {
+	constructor: function() {
+		Anim.EasingFunction.register('power', this);
+	},
 });
 

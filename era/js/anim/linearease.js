@@ -8,5 +8,9 @@ Anim.EasingFunction.extend('Anim.LinearEase', {
 	easeInCore: function(normalizedTime) {
 		return normalizedTime;
 	},
+}, /* static */ {
+	constructor: function() {
+		Anim.EasingFunction.register('linear', this);
+	},
 });
 

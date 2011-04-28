@@ -750,7 +750,7 @@ Ui.Container.extend('Ui.ScrollableContent', {
 
 	arrangeCore: function(width, height) {
 		if(this.content != undefined)
-			this.content.arrange(0, 0, this.contentWidth, this.contentHeight);
+			this.content.arrange(0, 0, Math.max(width, this.contentWidth), Math.max(height, this.contentHeight));
 	},
 });
 
