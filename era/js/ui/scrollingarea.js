@@ -3,8 +3,8 @@
 //
 Ui.Scrollable.extend('Ui.ScrollingArea', {
 	constructor: function(config) {
-		this.setScrollbarHorizontal(new Ui.Rectangle({ fill: '#009ee0', radius: 4, width: 8, height: 8, margin: 5 }));
-		this.setScrollbarVertical(new Ui.Rectangle({ fill: '#009ee0', radius: 4, width: 8, height: 8, margin: 5 }));
+		this.setScrollbarHorizontal(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.2, b: 0.2, a: 0.7 }), radius: 2, width: 4, height: 4, margin: 2 }));
+		this.setScrollbarVertical(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.2, b: 0.2, a: 0.7 }), radius: 2, width: 4, height: 4, margin: 2 }));
 	},
 }, {
 });

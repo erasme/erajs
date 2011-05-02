@@ -44,9 +44,9 @@ Object.extend('Core.HttpRequest', {
 				var httprequest = arguments.callee.httprequest;
 				if(httprequest.request.readyState == 4) {
 					if(httprequest.request.status == 200)
-						httprequest.fireEvent('done');
+						httprequest.fireEvent('done', httprequest);
 					else
-						httprequest.fireEvent('error', httprequest.request.status);
+						httprequest.fireEvent('error', httprequest, httprequest.request.status);
 				}
 			}
 			wrapper.httprequest = this;

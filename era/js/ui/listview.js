@@ -30,7 +30,7 @@ Ui.Container.extend('Ui.ListView', {
 			for(var i = 0; i < config.data.length; i++)
 				this.appendData(config.data[i]);
 		}
-		this.addEvents('select', 'unselect');
+		this.addEvents('select', 'unselect', 'activate');
 	},
 
 	getSelectedRow: function() {
@@ -44,6 +44,7 @@ Ui.Container.extend('Ui.ListView', {
 			this.connect(cell, 'down', this.onCellDown);
 			this.connect(cell, 'up', this.onCellUp);
 			this.connect(cell, 'select', this.onCellSelect);
+			this.connect(cell, 'activate', this.onCellActivate);
 			cell.setString(data[this.headers[col].key]);
 			this.headers[col].rows.push(cell);
 			this.rowContainer.appendChild(cell);
@@ -69,6 +70,7 @@ Ui.Container.extend('Ui.ListView', {
 				this.disconnect(cell, 'down', this.onCellDown);
 				this.disconnect(cell, 'up', this.onCellUp);
 				this.disconnect(cell, 'select', this.onCellSelect);
+				this.disconnect(cell, 'activate', this.onCellActivate);
 				this.rowContainer.removeChild(cell);
 				this.headers[col].rows.splice(position, 1);
 			}
@@ -160,6 +162,12 @@ Ui.Container.extend('Ui.ListView', {
 			}
 			this.fireEvent('select', this, this.selectedRow);
 		}
+	},
+
+	onCellActivate: function(cell) {
+		var row = this.findCellRow(cell);
+		if(row != -1)
+			this.fireEvent('activate', this, row, cell.getKey());
 	},
 
 }, {

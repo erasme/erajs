@@ -6,6 +6,7 @@ Ui.Element.extend('Ui.Entry', {
 	fontWeight: 'normal',
 	color: 'black',
 	value: '',
+	passwordMode: false,
 
 	constructor: function(config) {
 		if(config.fontSize != undefined)
@@ -16,20 +17,31 @@ Ui.Element.extend('Ui.Entry', {
 			this.setFontWeight(config.fontWeight);
 		if(config.color != undefined)
 			this.setColor(config.color);
+		if(config.passwordMode != undefined)
+			this.setPasswordMode(config.passwordMode);
 
 		this.connect(this.entryDrawing, 'mousedown', this.onMouseDown);
+		this.connect(this.entryDrawing, 'touchstart', this.onTouchStart);
 		this.connect(this.entryDrawing, 'change', this.onChange);
 		this.connect(this.entryDrawing, 'keyup', this.onKeyUp);
 
 //		this.setFocusable(true);
-//		this.connect(this.entryDrawing, 'focus', function(event) {
-//			console.log('entry focus');
-//		});
+//		this.connect(this.entryDrawing, 'focus', this.onFocus);
 //		this.connect(this.entryDrawing, 'blur', function(event) {
 //			console.log('entry blur');
 //		});
 
 		this.addEvents('change', 'validate');
+	},
+
+	setPasswordMode: function(passwordMode) {
+		if(this.passwordMode != passwordMode) {
+			this.passwordMode = passwordMode;
+			if(this.passwordMode)
+				this.entryDrawing.setAttributeNS(null, 'type', 'password');
+			else
+				this.entryDrawing.setAttributeNS(null, 'type', 'text');
+		}
 	},
 
 	setFontSize: function(fontSize) {
@@ -93,7 +105,23 @@ Ui.Element.extend('Ui.Entry', {
 	//
 
 	onMouseDown: function(event) {
-		this.entryDrawing.focus();
+		if(!this.getIsDisabled()) {
+			this.entryDrawing.focus();
+		}
+		else {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+
+	onTouchStart: function(event) {
+		if(!this.getIsDisabled()) {
+			this.entryDrawing.focus();
+		}
+		else {
+			event.preventDefault();
+			event.stopPropagation();
+		}
 	},
 
 	onChange: function(event) {
@@ -142,5 +170,14 @@ Ui.Element.extend('Ui.Entry', {
 	arrangeCore: function(width, height) {
 		this.entryDrawing.style.width = width+'px';
 		this.entryDrawing.style.height = height+'px';
+	},
+
+	onDisable: function() {
+		Ui.Entry.base.onDisable.call(this);
+		this.entryDrawing.blur();
+	},
+
+	onEnable: function() {
+		Ui.Entry.base.onEnable.call(this);
 	},
 });

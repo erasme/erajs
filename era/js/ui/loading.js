@@ -6,7 +6,7 @@ Ui.LBox.extend('Ui.Loading', {
 	clock: undefined,
 
 	constructor: function(config) {
-		this.icon = Ui.Icon.create('loading', 48, 48, 'black');
+		this.icon = Ui.Icon.create('loading', 4, 4, 'black');
 		this.icon.setTransformOrigin(0.5, 0.5);
 		this.append(this.icon);
 		this.clock = new Anim.Clock({ repeat: 'forever', duration: 2, callback: this.onTick, scope: this });

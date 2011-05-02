@@ -8,8 +8,12 @@ Ui.Container.extend('Ui.Popup', {
 	posX: undefined,
 	posY: undefined,
 	lbox: undefined,
+	autoHide: true,
 
 	constructor: function(config) {
+		if(config.autoHide != undefined)
+			this.setAutoHide(config.autoHide);
+
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
@@ -31,6 +35,10 @@ Ui.Container.extend('Ui.Popup', {
 		this.connect(window, 'resize', this.onWindowResize);
 	},
 
+	setAutoHide: function(autoHide) {
+		this.autoHide = autoHide;
+	},
+
 	setContent: function(content) {
 		if(this.content != content) {
 			if(this.content != undefined)
@@ -42,7 +50,7 @@ Ui.Container.extend('Ui.Popup', {
 	},
 
 	onWindowResize: function() {
-		if(this.visible) {
+		if(this.visible && this.autoHide) {
 			this.hide();
 		}
 	},
@@ -50,7 +58,8 @@ Ui.Container.extend('Ui.Popup', {
 	onMouseDown: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		this.hide();
+		if(this.autoHide)
+			this.hide();
 	},
 
 	onContentMouseDown: function(event) {
@@ -61,7 +70,8 @@ Ui.Container.extend('Ui.Popup', {
 	onTouchStart: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		this.hide();
+		if(this.autoHide)
+			this.hide();
 	},
 
 	onContentTouchStart: function(event) {

@@ -280,6 +280,10 @@ Ui.LBox.extend('Ui.App', {
 		this.updateTask = undefined;
 	},
 
+	getContent: function() {
+		return this.content;
+	},
+
 	setContent: function(content) {
 		if(this.content != content) {
 			if(this.content != undefined)

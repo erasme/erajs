@@ -1,6 +1,7 @@
 
 Ui.VBox.extend('Ui.ToolBar', {
 	hbox: undefined,
+	scroll: undefined,
 	background: undefined,
 
 	constructor: function(config) {
@@ -13,8 +14,13 @@ Ui.VBox.extend('Ui.ToolBar', {
 		this.background = new Ui.Rectangle({ });
 		content.append(this.background);
 
+		this.scroll = new Ui.ScrollingArea({ scrollVertical: false });
+		content.append(this.scroll);
+
 		this.hbox = new Ui.HBox();
-		content.append(this.hbox);
+		this.scroll.setContent(this.hbox);
+
+//		content.append(this.hbox);
 
 		this.bottomShadow = new Ui.Rectangle({ height: 1 });
 		Ui.ToolBar.base.append.call(this, this.bottomShadow);
