@@ -598,7 +598,9 @@ Ui.Container.extend('Ui.Scrollable', {
 
 //		console.log('contentBox measure: ('+contentWidth+','+contentHeight+') = ('+this.contentBox.getMeasureWidth()+','+this.contentBox.getMeasureHeight()+')');
 
-		return { width: minWidth, height: minHeight };
+//		console.log('scrolling measure: '+Math.max(minWidth, Math.min(size.width, width))+' x '+Math.max(minHeight, Math.min(size.height, height)));
+
+		return { width: Math.max(minWidth, Math.min(size.width, width)), height: Math.max(minHeight, Math.min(size.height, height)) };
 	},
 
 

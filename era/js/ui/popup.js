@@ -119,14 +119,21 @@ Ui.Container.extend('Ui.Popup', {
 	},
 
 	measureCore: function(width, height) {
+		console.log(this+'.measureCore('+width+','+height+')');
+
 		this.background.measure(width, height);
-		var size = this.contentBox.measure(width, height);
-		return { width: Math.max(width, size.width), height: Math.max(height, size.height) };
+		var size = this.contentBox.measure(Math.max(width - 80, 0), Math.max(height - 80, 0));
+
+		console.log('contentBox = '+size.width+' x '+size.height);
+
+		return { width: Math.max(width, size.width + 80), height: Math.max(height, size.height + 80) };
 	},
 
 	arrangeCore: function(width, height) {
 		var x = 0;
 		var y = 0;
+
+		console.log(this+'.arrangeCore('+width+','+height+')');
 
 		if(this.posX == undefined) {
 			x = (width - this.contentBox.getMeasureWidth())/2;
@@ -156,7 +163,6 @@ Ui.Container.extend('Ui.Popup', {
 			this.background.arrange(x - 10, y, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		}
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-
 	},
 }, {
 	style: {
@@ -221,9 +227,10 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) },
 			] });
 			this.svgGradient = gradient.getSVGGradient();
-			this.svgGradient.setAttributeNS(null, 'id', 'bgGrad');
-			this.popupDrawing.appendChild(this.svgGradient);
-
+			var gradId = 'grad'+Core.Util.generateId();
+			this.svgGradient.setAttributeNS(null, 'id', gradId);
+			this.popupDrawing.insertBefore(this.svgGradient, this.popupDrawing.firstChild);
+			this.background.style.fill = 'url(#'+gradId+')';
 			this.darkShadow.style.fill = (new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v })).getCssHtml();
 			this.lightShadow.style.fill = (new Ui.Color({ y: yuv.y + 0.3, u: yuv.u, v: yuv.v })).getCssHtml();
 		}

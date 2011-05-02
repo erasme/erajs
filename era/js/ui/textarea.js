@@ -24,10 +24,10 @@ Ui.Element.extend('Ui.TextArea', {
 //		this.setFocusable(true);
 
 		this.connect(this.textareaDrawing, 'focus', function(event) {
-			console.log('textarea focus');
+//			console.log('textarea focus');
 		});
 		this.connect(this.textareaDrawing, 'blur', function(event) {
-			console.log('textarea blur');
+//			console.log('textarea blur');
 		});
 
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
@@ -82,11 +82,11 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	getValue: function() {
-		return this.entryDrawing.value;
+		return this.textareaDrawing.value;
 	},
 
 	setValue: function(value) {
-		this.entryDrawing.value = value;
+		this.textareaDrawing.value = value;
 	},
 
 	//
@@ -97,7 +97,7 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	onKeyUp: function(event) {
-		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
+//		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
 		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
 			this.invalidateMeasure();
 	},
