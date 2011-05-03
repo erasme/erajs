@@ -14,7 +14,7 @@ Ui.Transition.extend('Ui.Fade', {
 			next.setOpacity(progress);
 	},
 }, {
-	constructor: function() {
+	constructor: function() {
 		Ui.Transition.register('fade', this);
 	},
 });

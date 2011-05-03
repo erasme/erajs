@@ -48,7 +48,7 @@ Ui.Transition.extend('Ui.Flip', {
 		}
 	},
 }, {
-	constructor: function() {
+	constructor: function() {
 		Ui.Transition.register('flip', this);
 	},
 });

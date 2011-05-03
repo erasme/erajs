@@ -50,7 +50,7 @@ Ui.Transition.extend('Ui.Slide', {
 		}
 	},
 }, {
-	constructor: function() {
+	constructor: function() {
 		Ui.Transition.register('slide', this);
 	},
 });

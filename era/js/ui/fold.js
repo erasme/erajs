@@ -38,7 +38,7 @@ Ui.Container.extend('Ui.Fold', {
 		this.addEvents('fold', 'unfold', 'orientationchange');
 	},
 
-	getIsFolded: function() {
+	getIsFolded: function() {
 		return this.isFolded;
 	},
 

@@ -5,6 +5,7 @@ Ui.Element.extend('Ui.TextArea', {
 	fontFamily: 'sans-serif',
 	fontWeight: 'normal',
 	color: 'black',
+	value: '',
 
 	constructor: function(config) {
 		if(config.fontSize != undefined)
@@ -31,6 +32,8 @@ Ui.Element.extend('Ui.TextArea', {
 		});
 
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
+
+		this.addEvents('change');
 	},
 
 	setFontSize: function(fontSize) {
@@ -98,6 +101,13 @@ Ui.Element.extend('Ui.TextArea', {
 
 	onKeyUp: function(event) {
 //		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
+
+		if(this.textareaDrawing.value != this.value) {
+			this.value = this.entryDrawing.value;
+			this.fireEvent('change', this, this.value);
+		}
+
+
 		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
 			this.invalidateMeasure();
 	},

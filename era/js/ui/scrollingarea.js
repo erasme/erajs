@@ -6,9 +6,9 @@ Ui.Scrollable.extend('Ui.ScrollingArea', {
 	verticalScrollbar: undefined,
 
 	constructor: function(config) {
-		this.horizontalScrollbar = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.2, b: 0.2, a: 0.7 }), radius: 2, width: 4, height: 4, margin: 2 });
+		this.horizontalScrollbar = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }), radius: 4, width: 8, height: 8, margin: 7 });
 		this.setScrollbarHorizontal(this.horizontalScrollbar);
-		this.verticalScrollbar = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.2, b: 0.2, a: 0.7 }), radius: 2, width: 4, height: 4, margin: 2 });
+		this.verticalScrollbar = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }), radius: 4, width: 8, height: 8, margin: 7 });
 		this.setScrollbarVertical(this.verticalScrollbar);
 	},
 }, {
@@ -19,6 +19,6 @@ Ui.Scrollable.extend('Ui.ScrollingArea', {
 	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.2, g: 0.2, b: 0.2, a: 0.7 })
+		color: new Ui.Color({ r: 0, g: 0.62, b: 0.88 })
 	}
 });
