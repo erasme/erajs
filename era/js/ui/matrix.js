@@ -1,6 +1,6 @@
 
 
-Object.extend('Ui.Matrix', {
+Core.Object.extend('Ui.Matrix', {
 	svgMatrix: undefined,
 
 	constructor: function(config) {

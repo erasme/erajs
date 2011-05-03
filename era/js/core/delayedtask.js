@@ -1,5 +1,5 @@
 
-Object.extend('Core.DelayedTask', {
+Core.Object.extend('Core.DelayedTask', {
 	delay: 1,
 	scope: undefined,
 	callback: undefined,

@@ -6,8 +6,8 @@ Ui.LBox.extend('Ui.App', {
 	defs: undefined,
 	styles: undefined,
 	updateTask: undefined,
-	style: '../era/style/default/style.css',
-	styleloaded: false,
+//	style: '../era/style/default/style.css',
+//	styleloaded: false,
 	loaded: false,
 	focusElement: undefined,
 	hasFocus: false,
@@ -417,7 +417,7 @@ Ui.LBox.extend('Ui.App', {
 
 	findFocusable: function(current) {
 		var element = current.element;
-		if(element.isSubclass('Ui.Container')) {
+		if(Ui.Container.hasInstance(element)) {
 			for(var i = 0; i < element.children.length; i++) {
 				var child = element.children[i];
 				if(child.getFocusable()) {

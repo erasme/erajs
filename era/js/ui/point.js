@@ -1,6 +1,6 @@
 
 
-Object.extend('Ui.Point', {
+Core.Object.extend('Ui.Point', {
 	svgPoint: undefined,
 	x: 0,
 	y: 0,

@@ -1,6 +1,6 @@
 
 
-Object.extend('Core.Socket', {
+Core.Object.extend('Core.Socket', {
 	host: undefined,
 	service: '/',
 	port: 80,

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test Transition</title>
+	<script src='../../era/js/era-debug.js'></script>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var toolbar2 = new Ui.ToolBar();
+vbox.append(toolbar2);
+
+var trans1Button = new Ui.Button({ text: 'transition 1' });
+toolbar.append(trans1Button);
+app.connect(trans1Button, 'press', function() {
+	transitionbox.setCurrent(page1);
+});
+
+var trans2Button = new Ui.Button({ text: 'transition 2' });
+toolbar.append(trans2Button);
+app.connect(trans2Button, 'press', function() {
+	transitionbox.setCurrent(page2);
+});
+
+var fadeButton = new Ui.Button({ text: 'fade' });
+toolbar.append(fadeButton);
+app.connect(fadeButton, 'press', function() {
+	transitionbox.setTransition('fade');
+});
+
+var flipButton = new Ui.Button({ text: 'flip horizontal' });
+toolbar2.append(flipButton);
+app.connect(flipButton, 'press', function() {
+	transitionbox.setTransition('flip');
+});
+
+var flipverticalButton = new Ui.Button({ text: 'flip vertical' });
+toolbar2.append(flipverticalButton);
+app.connect(flipverticalButton, 'press', function() {
+	transitionbox.setTransition({ type: 'flip', orientation: 'vertical' });
+});
+
+var slideButton = new Ui.Button({ text: 'slide right' });
+toolbar2.append(slideButton);
+app.connect(slideButton, 'press', function() {
+	transitionbox.setTransition('slide');
+});
+
+var slideleftButton = new Ui.Button({ text: 'slide left' });
+toolbar2.append(slideleftButton);
+app.connect(slideleftButton, 'press', function() {
+	transitionbox.setTransition({ type: 'slide', direction: 'left' });
+});
+
+var slidetopButton = new Ui.Button({ text: 'slide top' });
+toolbar2.append(slidetopButton);
+app.connect(slidetopButton, 'press', function() {
+	transitionbox.setTransition({ type: 'slide', direction: 'top' });
+});
+
+var slidebottomButton = new Ui.Button({ text: 'slide bottom' });
+toolbar2.append(slidebottomButton);
+app.connect(slidebottomButton, 'press', function() {
+	transitionbox.setTransition({ type: 'slide', direction: 'bottom' });
+});
+
+
+var linearButton = new Ui.Button({ text: 'linear' });
+toolbar.append(linearButton);
+app.connect(linearButton, 'press', function() {
+	transitionbox.setEase('linear');
+});
+
+var bounceButton = new Ui.Button({ text: 'bounce' });
+toolbar.append(bounceButton);
+app.connect(bounceButton, 'press', function() {
+	transitionbox.setEase('bounce');
+});
+
+var elasticButton = new Ui.Button({ text: 'elastic' });
+toolbar.append(elasticButton);
+app.connect(elasticButton, 'press', function() {
+	transitionbox.setEase('elastic');
+});
+
+var powerButton = new Ui.Button({ text: 'power' });
+toolbar.append(powerButton);
+app.connect(powerButton, 'press', function() {
+	transitionbox.setEase('power');
+});
+
+var poweroutButton = new Ui.Button({ text: 'power out' });
+toolbar.append(poweroutButton);
+app.connect(poweroutButton, 'press', function() {
+	transitionbox.setEase({ type: 'power', mode: 'out' });
+});
+
+var transitionbox = new Ui.TransitionBox({ transition: 'fade', duration: 0.5 });
+vbox.append(transitionbox, true);
+
+var page1 = new Ui.LBox();
+page1.append(new Ui.Rectangle({ fill: 'lightblue' }));
+page1.append(new Ui.Label({ color: 'white', fontSize: 40, text: 'Page 1', verticalAlign: 'center', horizontalAlign: 'center' }));
+transitionbox.append(page1);
+
+var page2 = new Ui.LBox();
+page2.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+page2.append(new Ui.Label({ color: 'white', fontSize: 40, text: 'Page 2', verticalAlign: 'center', horizontalAlign: 'center' }));
+transitionbox.append(page2);
+
+
+</script>
+	</head>
+</html>

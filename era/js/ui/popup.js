@@ -87,7 +87,7 @@ Ui.Container.extend('Ui.Popup', {
 	show: function(posX, posY) {
 		if(!this.visible) {
 			this.visible = true;
-			if((typeof(posX) == 'object') && (posX.isSubclass('Ui.Element'))) {
+			if((typeof(posX) == 'object') && (Ui.Element.hasInstance(posX))) {
 				var element = posX;
 				var point = element.pointToWindow({ x: element.getLayoutWidth(), y: element.getLayoutHeight()/2 });
 				this.posX = point.x;
@@ -119,12 +119,12 @@ Ui.Container.extend('Ui.Popup', {
 	},
 
 	measureCore: function(width, height) {
-		console.log(this+'.measureCore('+width+','+height+')');
+//		console.log(this+'.measureCore('+width+','+height+')');
 
 		this.background.measure(width, height);
 		var size = this.contentBox.measure(Math.max(width - 80, 0), Math.max(height - 80, 0));
 
-		console.log('contentBox = '+size.width+' x '+size.height);
+//		console.log('contentBox = '+size.width+' x '+size.height);
 
 		return { width: Math.max(width, size.width + 80), height: Math.max(height, size.height + 80) };
 	},
@@ -133,7 +133,7 @@ Ui.Container.extend('Ui.Popup', {
 		var x = 0;
 		var y = 0;
 
-		console.log(this+'.arrangeCore('+width+','+height+')');
+//		console.log(this+'.arrangeCore('+width+','+height+')');
 
 		if(this.posX == undefined) {
 			x = (width - this.contentBox.getMeasureWidth())/2;

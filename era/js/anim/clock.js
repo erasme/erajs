@@ -1,7 +1,7 @@
 //
 // Define the Clock class.
 //
-Object.extend('Anim.Clock', {
+Core.Object.extend('Anim.Clock', {
 	parent: undefined,
 	time: undefined,
 	iteration: undefined,

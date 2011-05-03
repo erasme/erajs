@@ -14,7 +14,7 @@ Ui.SVGElement.extend('Ui.Icon', {
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = fill;
-			if(fill.isSubclass('Ui.Color'))
+			if(Ui.Color.hasInstance(fill))
 				fill = fill.getCssHtml();
 			this.iconDrawing.style.fill = fill;
 		}

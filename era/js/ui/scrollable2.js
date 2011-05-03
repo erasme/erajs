@@ -37,7 +37,7 @@ Ui.Container.extend('Ui.Scrollable2', {
 		if(config.scrollVertical != undefined)
 			this.setScrollVertical(config.scrollVertical);
 
-		this.contentBox = new Ui.ScrollableContent();
+		this.contentBox = new Ui.ScrollableContent2();
 		this.appendChild(this.contentBox);
 		this.connect(this.contentBox, 'scroll', function(content, offsetX, offsetY) {
 			this.setOffset(offsetX, offsetY, true);

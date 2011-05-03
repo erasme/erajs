@@ -132,9 +132,9 @@ Ui.Element.extend('Ui.Rectangle', {
 			else if(typeof(this.fill) == 'string')
 				this.getDrawing().style.background = this.fill;
 			else {
-				if(this.fill.isSubclass('Ui.Color'))
+				if(Ui.Color.hasInstance(this.fill))
 					this.getDrawing().style.background = this.fill.getCssRgba();
-				else if(this.fill.isSubclass('Ui.LinearGradient')) {
+				else if(Ui.LinearGradient.hasInstance(this.fill)) {
 					this.getDrawing().style.backgroundImage = this.fill.getBackgroundImage();
 					this.getDrawing().style.backgroundSize = '100% 100%';
 				}
@@ -151,7 +151,7 @@ Ui.Element.extend('Ui.Rectangle', {
 			this.stroke = stroke;
 			if(typeof(this.stroke) == 'string')
 				this.getDrawing().style.borderColor = this.stroke;
-			else if(this.stroke.isSubclass('Ui.Color'))
+			else if(Ui.Color.hasInstance(this.stroke))
 				this.getDrawing().style.borderColor = this.stroke.getCssRgba();
 		}
 	},

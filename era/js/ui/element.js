@@ -2,7 +2,7 @@
 //
 // Define the base class for all GUI elements
 //
-Object.extend('Ui.Element', {
+Core.Object.extend('Ui.Element', {
 	marginTop: 0,
 	marginBottom: 0,
 	marginLeft: 0,
@@ -610,7 +610,7 @@ Object.extend('Ui.Element', {
 		while(current.parent != undefined) {
 			current = current.parent;
 		}
-		if(current.isSubclass('Ui.App'))
+		if(Ui.App.hasInstance(current))
 			current.askFocus(this);
 	},
 
@@ -622,7 +622,7 @@ Object.extend('Ui.Element', {
 		while(current.parent != undefined) {
 			current = current.parent;
 		}
-		if(current.isSubclass('Ui.App'))
+		if(Ui.App.hasInstance(current))
 			current.removeFocus(this);
 	},
 
@@ -644,7 +644,7 @@ Object.extend('Ui.Element', {
 	// width and height of the current element.
 	//
 	setTransformOrigin: function(x, y, absolute) {
-		if((this.transformOriginX != x) || (this.transformOriginY != y) || (this.transformOriginAbsolute != absolute)) {
+		if((this.transformOriginX != x) || (this.transformOriginY != y) || (this.transformOriginAbsolute != absolute)) {
 			this.transformOriginX = x;
 			this.transformOriginY = y;
 			if(absolute == undefined)

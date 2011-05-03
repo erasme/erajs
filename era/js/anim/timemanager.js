@@ -2,7 +2,7 @@
 // Define the TimeManager class.
 // The TimeManager handle animations clocks
 //
-Object.extend('Anim.TimeManager', {
+Core.Object.extend('Anim.TimeManager', {
 	clocks: undefined,
 	timer: undefined,
 	start: 0,

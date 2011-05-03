@@ -1,6 +1,6 @@
 
 
-Object.extend('Ui.LinearGradient', {
+Core.Object.extend('Ui.LinearGradient', {
 	orientation: 'vertical',
 	stops: undefined,
 	image: undefined,

@@ -1,5 +1,5 @@
 
-Object.extend('Ui.Keyboard', {
+Core.Object.extend('Ui.Keyboard', {
 	shiftKey: false,
 	altKey: false,
 	ctrlKey: false,

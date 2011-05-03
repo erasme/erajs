@@ -1,6 +1,6 @@
 
 
-Object.extend('Core.HttpRequest', {
+Core.Object.extend('Core.HttpRequest', {
 	url: undefined,
 	method: 'GET',
 	binary: false,

@@ -1,19 +1,21 @@
 
+Core.Object = function Core() {
+};
+
+Core.Object.prototype.classType = 'Core.Object';
+
 //
 // Change default object toString
 //
-Object.prototype.toString = function() {
-	if(this.classType != undefined)
-		return "[object "+this.classType+"]";
-	else
-		return "[object Object]";
+Core.Object.prototype.toString = function() {
+	return "[object "+this.classType+"]";
 };
 
 //
 // Add dump method to objects to allow object
 // content to be displayed in the console
 //
-Object.prototype.dump = function(filter) {
+Core.Object.prototype.dump = function(filter) {
 	if(filter != undefined)
 		filter = new RegExp(filter,'i');
 	console.log(this+':');
@@ -32,14 +34,14 @@ Object.prototype.dump = function(filter) {
 // Serialize a javascript object into a string
 // to deserialize, just use JSON.parse
 //
-Object.prototype.serialize = function() {
+Core.Object.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
 //
 // INTERNAL: dont use. Usefull function for the object constructor.
 //
-Object.prototype.constructorHelper = function(config, proto) {
+Core.Object.prototype.constructorHelper = function(config, proto) {
 	if(proto == undefined)
 		proto = this.__proto__;
 	if(proto == undefined)
@@ -102,13 +104,10 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			if((typeof(classDefine[prop]) == 'object') && (classDefine[prop] != null))
 				throw('object are not allowed in classDefine ('+prop+'). Create object in the constructor');
 
-			if(func.prototype[prop] != undefined) {
-				if(func.prototype[prop] != classDefine[prop])
-					throw('Try to override '+prop+' on class '+classType+'. Use classOverride you want to do it');
-			}
-			else {
-				func.prototype[prop] = classDefine[prop];
-			}
+			if(prop in func.prototype)
+				throw('Try to override '+prop+' on class '+classType+'. Use classOverride you want to do it');
+
+			func.prototype[prop] = classDefine[prop];
 		}
 	}
 	if((navigator.isIE) && (classDefine.constructor !== Object.prototype.constructor))
@@ -125,10 +124,23 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	return func;
 };
 
+Function.prototype.hasInstance = function(obj) {
+	if((typeof(obj) != 'object') || (obj == null))
+		return false;
+
+	var current = obj;
+	while(current != undefined) {
+		if(current.classType == this.prototype.classType)
+			return true;
+		current = current.__baseclass__;
+	}
+	return false;
+};
+
 //
 // Declare supported events on this class
 //
-Object.prototype.addEvents = function() {
+Core.Object.prototype.addEvents = function() {
 	if(this.events == undefined)
 		this.events = [];
 	for(var i = 0; i < arguments.length; i++)
@@ -139,7 +151,7 @@ Object.prototype.addEvents = function() {
 // Fire the eventName event. All given arguments are passed to the
 // registered methods.
 //
-Object.prototype.fireEvent = function(eventName) {
+Core.Object.prototype.fireEvent = function(eventName) {
 	var args = [];
 	for(var i = 1; i < arguments.length; i++)
 		args[i-1] = arguments[i];
@@ -156,7 +168,7 @@ Object.prototype.fireEvent = function(eventName) {
 // Connect a method to the eventName event of the obj object. The method will
 // be called in the current element scope.
 //
-Object.prototype.connect = function(obj, eventName, method, capture) {
+Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	if(capture == undefined)
 		capture = false;
 	if(obj.addEventListener != undefined) {
@@ -194,7 +206,7 @@ Object.prototype.connect = function(obj, eventName, method, capture) {
 //
 // Disconnect the current object from the eventName event on obj.
 //
-Object.prototype.disconnect = function(obj, eventName, method) {
+Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	if(obj.removeEventListener != undefined) {
 		for(var i = 0; i < obj.events.length; i++) {
 			var wrapper = obj.events[i];
@@ -220,40 +232,3 @@ Object.prototype.disconnect = function(obj, eventName, method) {
 	}
 };
 
-//
-// Check if the current object is a subclass of the given
-// parentClass.
-//
-Object.prototype.isSubclass = function(parentClassName) {
-	var current = this;
-	while(current != undefined) {
-		if(current.classType == parentClassName)
-			return true;
-		current = current.__baseclass__;
-	}
-	return false;
-};
-
-/*
-
-Era.classNames = {};
-
-
-//
-// Create an object from its JSON config. If config is already the object,
-// return the object.
-//
-Era.create = function(config) {
-	if(config == undefined)
-		return undefined;
-	else if(typeof(config) == 'string')
-		return new Era.classNames[config]();
-	else if(Era.isObject(config))
-		return config;
-	else {
-		if(config.type == undefined)
-			throw('config.type MUST be defined');
-		return new Era.classNames[config.type](config);
-	}
-};
-*/

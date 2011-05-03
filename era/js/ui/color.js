@@ -1,6 +1,6 @@
 
 
-Object.extend('Ui.Color', {
+Core.Object.extend('Ui.Color', {
 	r: 0,
 	g: 0,
 	b: 0,
@@ -150,32 +150,44 @@ Object.extend('Ui.Color', {
 	toString: function() {
 		return 'color('+this.r.toFixed(4)+', '+this.g.toFixed(4)+', '+this.b.toFixed(4)+', '+this.a.toFixed(4)+')';
 	},
+}, {
+	knownColor: {
+		white: { r: 1, g: 1, b: 1 },
+		black: { r: 0, g: 0, b: 0 },
+		red: { r: 1, g: 0, b: 0 },
+		green: { r: 0, g: 1, b: 0 },
+		blue: { r: 0, g: 0, b: 1 },
+	},
+
+	create: function(color) {
+		if(typeof(color) == 'string') {
+			// parse the color
+			if(color.indexOf('rgba(') == 0) {
+			}
+			else if(color.indexOf('rgb(') == 0) {
+			}
+			else if(color.indexOf('#') == 0) {
+				if(color.length == 7) {
+					var r = parseInt(color.substr(1,2), 16) / 255;
+					var g = parseInt(color.substr(3,2), 16) / 255;
+					var b = parseInt(color.substr(5,2), 16) / 255;
+					return new Ui.Color({ r: r, g: g, b: b });
+				}
+				else if(color.length == 4) {
+					var r = parseInt(color.substr(1,1), 16) / 15;
+					var g = parseInt(color.substr(2,1), 16) / 15;
+					var b = parseInt(color.substr(3,1), 16) / 15;
+					return new Ui.Color({ r: r, g: g, b: b });
+				}
+			}
+			else if(color in Ui.Color.knownColor)
+				return new Ui.Color(Ui.Color.knownColor[color]);
+		}
+		else if(Ui.Color.hasInstance(color))
+			return color;
+
+		throw('Unknown color format ('+color+')');
+	},
 });
 
-Ui.Color.create = function(color) {
-	if(typeof(color) == 'string') {
-		// parse the color
-		if(color.indexOf('rgba(') == 0) {
-		}
-		else if(color.indexOf('rgb(') == 0) {
-		}
-		else if(color.indexOf('#') == 0) {
-			if(color.length == 7) {
-				var r = parseInt(color.substr(1,2), 16) / 255;
-				var g = parseInt(color.substr(3,2), 16) / 255;
-				var b = parseInt(color.substr(5,2), 16) / 255;
-				return new Ui.Color({ r: r, g: g, b: b });
-			}
-			else if(color.length == 4) {
-				var r = parseInt(color.substr(1,1), 16) / 15;
-				var g = parseInt(color.substr(2,1), 16) / 15;
-				var b = parseInt(color.substr(3,1), 16) / 15;
-				return new Ui.Color({ r: r, g: g, b: b });
-			}
-		}
-		throw('Unknown color format');
-	}
-	else
-		return color;
-};
 

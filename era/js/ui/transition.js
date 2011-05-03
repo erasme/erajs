@@ -1,5 +1,5 @@
 
-Object.extend('Ui.Transition', {
+Core.Object.extend('Ui.Transition', {
 	run: function(current, next, progress) {
 		throw('transition classes MUST override run method');
 	},
@@ -18,7 +18,7 @@ Object.extend('Ui.Transition', {
 		if(typeof(transition) == 'string')
 			return new this.transitions[transition]();
 		else if(typeof(transition) == 'object') {
-			if(transition.isSubclass('Ui.Transition'))
+			if(Ui.Transition.hasInstance(transition))
 				return transition;
 			else if(transition.type != undefined) {
 				var type = transition.type;

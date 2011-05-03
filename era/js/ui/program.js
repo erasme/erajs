@@ -1,7 +1,6 @@
 
 Ui.IFrame.extend('Ui.Program', {
 	arguments: undefined,
-	isReady: false,
 
 	constructor: function(config) {
 		this.connect(window, 'message', this.onMessage, false);

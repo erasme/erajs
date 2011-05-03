@@ -19,6 +19,8 @@ Ui.Element.extend('Ui.Label', {
 			this.setFontWeight(config.fontWeight);
 		if(config.color != undefined)
 			this.setColor(config.color);
+		else
+			this.setColor(this.color);
 		if(config.orientation != undefined)
 			this.setOrientation(config.orientation);
 	},
@@ -73,11 +75,8 @@ Ui.Element.extend('Ui.Label', {
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
-			var color = this.getColor();
-			if(color.isSubclass('Ui.Color'))
-				color = color.getCssRgba();
-			this.labelDrawing.style.color = color;
+			this.color = Ui.Color.create(color);
+			this.labelDrawing.style.color = this.color.getCssRgba();
 		}
 	},
 

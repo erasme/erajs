@@ -1,7 +1,7 @@
 //
 // Define the EasingFunction class.
 //
-Object.extend('Anim.EasingFunction', {
+Core.Object.extend('Anim.EasingFunction', {
 	// [in|out|inout]
 	mode: 'in',
 
@@ -51,7 +51,7 @@ Object.extend('Anim.EasingFunction', {
 		if(typeof(ease) == 'string')
 			return new this.eases[ease]();
 		else if(typeof(ease) == 'object') {
-			if(ease.isSubclass('Anim.EasingFunction'))
+			if(Anim.EasingFunction.hasInstance(ease))
 				return ease;
 			else if(ease.type != undefined) {
 				var type = ease.type;
