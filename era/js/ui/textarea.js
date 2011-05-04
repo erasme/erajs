@@ -103,18 +103,21 @@ Ui.Element.extend('Ui.TextArea', {
 //		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
 
 		if(this.textareaDrawing.value != this.value) {
-			this.value = this.entryDrawing.value;
+			this.value = this.textareaDrawing.value;
 			this.fireEvent('change', this, this.value);
 		}
 
 
-		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
+//		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
 			this.invalidateMeasure();
 	},
 
 }, {
 	render: function() {
 		this.textareaDrawing = document.createElementNS(htmlNS, 'textarea');
+		this.textareaDrawing.setAttributeNS(null, 'rows', 1);
+		this.textareaDrawing.setAttributeNS(null, 'cols', 1);
+
 		this.textareaDrawing.style.display = 'block';
 		this.textareaDrawing.style.resize = 'none';
 		this.textareaDrawing.style.overflow = 'hidden';
@@ -133,8 +136,11 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	measureCore: function(width, height) {
-		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollHeight);
-		return { width: 8, height: this.textareaDrawing.scrollHeight };
+		this.textareaDrawing.style.width = '0px';
+		this.textareaDrawing.style.height = '0px';
+
+		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollWidth+' x '+this.textareaDrawing.scrollHeight);
+		return { width: this.textareaDrawing.scrollWidth, height: this.textareaDrawing.scrollHeight };
 //		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 

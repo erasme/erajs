@@ -10,6 +10,8 @@ navigator.isSafari = (navigator.userAgent.match(/ Safari\//) != null);
 navigator.iPad = (navigator.userAgent.match(/iPad/i) != null);
 navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
 
+navigator.Android = (navigator.userAgent.match(/Android/i) != null);
+
 var svgNS = "http://www.w3.org/2000/svg";
 var htmlNS = "http://www.w3.org/1999/xhtml";
 

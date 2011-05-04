@@ -64,6 +64,8 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'mousedown', this.onVerticalMouseDown);
 
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchstart', this.onVerticalTouchStart);
+		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchmove', this.onVerticalTouchMove);
+		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchend', this.onVerticalTouchEnd);
 
 //		this.connect(this, 'keydown', this.onKeyDown);
 	},
@@ -164,6 +166,9 @@ Ui.Container.extend('Ui.Scrollable', {
 
 	onMouseDown: function(event) {
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
+			return;
+
+		if(!((event.button == 1) || ((event.button == 0) && (event.ctrlKey))))
 			return;
 
 		this.focus();
@@ -507,34 +512,24 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		var deltaY = touchPos.y - this.touchStart.y;
-		offsetY = this.startOffsetY - deltaY;
+		offsetY = this.startOffsetY + deltaY * this.contentHeight / this.viewHeight;
+		console.log(this+'.onVerticalTouchMove deltaY: '+deltaY);
 		this.setOffset(this.startOffsetX, offsetY, true);
 	},
 
 	onVerticalTouchEnd: function(event) {
-/*		event.preventDefault();
-		event.stopPropagation();
+		console.log('onVerticalTouchEnd event: '+event);
 
-		if(event.button != 0)
+		if(!this.isVerticalMoving)
 			return;
 
-		if(this.measureSpeedTimer != undefined) {
-			this.measureSpeedTimer.abort();
-			this.measureSpeedTimer = undefined;
-		}
+		event.preventDefault();
+		event.stopPropagation();
 
-		this.disconnect(window, 'mousemove', this.onVerticalMouseMove);
-		this.disconnect(window, 'mouseup', this.onVerticalMouseUp);
-		if(!this.speedComputed) {
-			// compute speed
-			var currentTime = (new Date().getTime())/1000;
-			var deltaTime = currentTime - this.lastTime;
-			var deltaOffsetX = this.offsetX - this.lastOffsetX;
-			var deltaOffsetY = this.offsetY - this.lastOffsetY;
-			this.speedX = deltaOffsetX / deltaTime;
-			this.speedY = deltaOffsetY / deltaTime;
-		}
-		this.startInertia();*/
+		this.isVerticalMoving = false;
+
+		this.stopComputeInertia();
+		this.startInertia();
 	},
 
 	onHorizontalMouseDown: function(event) {
@@ -623,9 +618,13 @@ Ui.Container.extend('Ui.Scrollable', {
 //			var size = child.measure(width, height);
 //		}
 
+		console.log(this+'.measureCore('+width+','+height+')');
+
 		this.scrollbarVerticalBox.measure(width, height);
 		this.scrollbarHorizontalBox.measure(width, height);
 		this.contentBox.measure(width, height);
+
+		console.log(this+'.measureCore contentBox first measure: ('+this.contentBox.getMeasureWidth()+','+this.contentBox.getMeasureHeight()+')');
 
 		var contentWidth = width;
 		var contentHeight = height;
@@ -647,7 +646,7 @@ Ui.Container.extend('Ui.Scrollable', {
 				this.scrollbarVerticalNeeded = true;
 			}
 		}
-//		console.log(this+'.measureCore('+width+','+height+') scrollbarVertical: '+this.scrollbarVerticalNeeded+', scrollbarHorizontal: '+this.scrollbarHorizontalNeeded);
+		console.log(this+'.measureCore('+width+','+height+') scrollbarVertical: '+this.scrollbarVerticalNeeded+', scrollbarHorizontal: '+this.scrollbarHorizontalNeeded);
 		if(this.scrollbarHorizontalNeeded || this.scrollbarVerticalNeeded) {
 			this.scrollbarVerticalNeeded = false;
 			this.scrollbarHorizontalNeeded = false;
@@ -686,14 +685,21 @@ Ui.Container.extend('Ui.Scrollable', {
 
 //			console.log('contentBox measure: ('+contentWidth+','+contentHeight+') = ('+this.contentBox.getMeasureWidth()+','+this.contentBox.getMeasureHeight()+')');
 
+			console.log(this+'.measureCore('+width+','+height+') => min ('+minWidth+' x '+minHeight+')');
+
 			return { width: minWidth, height: minHeight };
 		}
-		else
+		else {
+			console.log(this+'.measureCore('+width+','+height+') => full ('+this.contentBox.getMeasureWidth()+' x '+this.contentBox.getMeasureHeight()+')');
 			return { width: this.contentBox.getMeasureWidth(), height: this.contentBox.getMeasureHeight() };
+		}
 	},
 
 
 	arrangeCore: function(width, height) {
+
+		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
+
 		if(this.scrollbarVerticalNeeded)
 			this.scrollbarVerticalBox.show();
 		else {
@@ -751,6 +757,8 @@ Ui.Container.extend('Ui.Scrollable', {
 //		this.contentBox.getDrawing().style.top = '0px';
 //		this.contentBox.getDrawing().style.width = this.viewWidth+'px';
 //		this.contentBox.getDrawing().style.height = this.viewHeight+'px';
+
+		console.log(this+'.arrangeCore view: ('+this.viewWidth+' x '+this.viewHeight+')');
 
 		this.contentBox.arrange(0, 0, this.viewWidth, this.viewHeight);
 

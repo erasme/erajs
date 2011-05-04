@@ -113,7 +113,7 @@ Ui.LBox.extend('Ui.App', {
 	//
 
 	onWindowLoad: function() {
-		if(navigator.iPad || navigator.iPhone) {
+		if(navigator.iPad || navigator.iPhone || navigator.Android) {
 			// support app mode for iPad, iPod and iPhone
 			var meta = document.createElementNS(htmlNS, 'meta');
 			meta.name = 'apple-mobile-web-app-capable';

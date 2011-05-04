@@ -26,11 +26,11 @@ Ui.Container.extend('Ui.Popup', {
 		this.contentBox = new Ui.LBox({ paddingLeft: 15, paddingRight: 15, paddingTop: 11, paddingBottom: 11 });
 		this.appendChild(this.contentBox);
 
-		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
-		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onContentMouseDown);
+		this.connect(this.shadow.getDrawing(), 'mousedown', this.onMouseDown);
+//		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onContentMouseDown);
 
-		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onContentTouchStart);
+		this.connect(this.shadow.getDrawing(), 'touchstart', this.onTouchStart);
+//		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onContentTouchStart);
 
 		this.connect(window, 'resize', this.onWindowResize);
 	},
@@ -106,8 +106,6 @@ Ui.Container.extend('Ui.Popup', {
 			}
 			this.invalidateArrange();
 			Ui.App.current.appendDialog(this);
-
-
 		}
 	},
 
@@ -135,11 +133,13 @@ Ui.Container.extend('Ui.Popup', {
 
 //		console.log(this+'.arrangeCore('+width+','+height+')');
 
+		this.shadow.arrange(0, 0, width, height);
+
 		if(this.posX == undefined) {
 			x = (width - this.contentBox.getMeasureWidth())/2;
 			y = (height - this.contentBox.getMeasureHeight())/2;
-			this.shadow.arrange(0, 0, width, height);
 			this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+			this.shadow.setOpacity(0.5);
 		}
 		else {
 			x = this.posX;
@@ -159,7 +159,8 @@ Ui.Container.extend('Ui.Popup', {
 				this.background.setArrowOffset(30);
 			}
 
-			this.shadow.arrange(0, 0, 0, 0);
+			this.shadow.setOpacity(0);
+//			this.shadow.arrange(0, 0, 0, 0);
 			this.background.arrange(x - 10, y, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		}
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());

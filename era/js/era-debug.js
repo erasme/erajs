@@ -1,4 +1,6 @@
 
+var debug = true;
+
 // find era-debug.js base directory
 var eraBaseDirectory;
 
