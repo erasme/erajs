@@ -135,17 +135,11 @@ Ui.SVGElement.extend('Ui.Text', {
 	measureText: function(text) {
 		this.measureDrawing.textContent = text;
 		var width;
-		if(navigator.isGecko) {
+		try {
+			width = this.measureDrawing.getComputedTextLength();
+		} catch(err) {
 			var bbox = this.measureDrawing.getBBox();
 			width = bbox.width;
-		}
-		else {
-			try {
-				width = this.measureDrawing.getComputedTextLength();
-			} catch(err) {
-				var bbox = this.measureDrawing.getBBox();
-				width = bbox.width;
-			}
 		}
 		return width;
 	},

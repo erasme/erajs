@@ -123,10 +123,11 @@ Ui.Element.extend('Ui.Label', {
 	},
 
 	measureCore: function(width, height) {
+		var size = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight);
 		if(this.orientation == 'vertical')
-			return { width: this.labelDrawing.offsetHeight, height: this.labelDrawing.offsetWidth };
+			return { width: size.height, height: size.width };
 		else
-			return { width: this.labelDrawing.offsetWidth, height: this.labelDrawing.offsetHeight };
+			return { width: size.width, height: size.height };
 	},
 
 	arrangeCore: function(width, height) {
@@ -155,4 +156,30 @@ Ui.Element.extend('Ui.Label', {
 			this.labelDrawing.style.OTransformOrigin = '0% 0%';
 		}
 	},
+}, {
+	measureBox: undefined,
+
+	constructor: function() {
+		if(document.body == undefined) {
+			var body = document.createElementNS(htmlNS, 'body');
+			document.body = body;
+		}
+		Ui.Label.measureBox = document.createElement('div');
+		Ui.Label.measureBox.style.whiteSpace = 'nowrap';
+		Ui.Label.measureBox.style.display = 'inline';
+		Ui.Label.measureBox.style.visibility = 'hidden';
+		document.body.appendChild(Ui.Label.measureBox);
+	},
+
+	measureText: function(text, fontSize, fontFamily, fontWeight) {
+		Ui.Label.measureBox.style.fontSize = fontSize+'px';
+		Ui.Label.measureBox.style.fontFamily = fontFamily;
+		Ui.Label.measureBox.style.fontWeight = fontWeight;
+		Ui.Label.measureBox.style.fontWeight = fontWeight;
+		Ui.Label.measureBox.textContent = text;
+		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
+	},
 });
+
+
+

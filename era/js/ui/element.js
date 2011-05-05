@@ -59,6 +59,9 @@ Core.Object.extend('Ui.Element', {
 
 	// whether or not the current element can get focus
 	focusable: false,
+	// if true, a keyboard is needed when the element get the focus
+	// open a virtual keyboard on pad systems
+	keyboardRequired: false,
 
 	transform: undefined,
 	transformOriginX: 0.5,
@@ -117,6 +120,8 @@ Core.Object.extend('Ui.Element', {
 			this.setOpacity(config.opacity);
 		if(config.focusable != undefined)
 			this.setFocusable(config.focusable);
+		if(config.keyboardRequired != undefined)
+			this.setKeyboardRequired(config.keyboardRequired);
 		if(config.clipToBounds != undefined)
 			this.setClipToBounds(config.clipToBounds);
 		if(config.id != undefined)
@@ -125,7 +130,7 @@ Core.Object.extend('Ui.Element', {
 //		this.connect(this.drawing, 'focus', this.focus);
 //		this.connect(this.drawing, 'blur', this.blur);
 
-		this.addEvents('keypress', 'keydown', 'focus', 'blur', 'load', 'unload', 'enable', 'disable');
+		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur', 'load', 'unload', 'enable', 'disable');
 	},
 
 	//
@@ -171,10 +176,10 @@ Core.Object.extend('Ui.Element', {
 	//
 	setFocusable: function(focusable) {
 		this.focusable = focusable;
-		if(focusable)
-			this.drawing.setAttributeNS(null, 'tabindex', 0);
-		else
-			this.drawing.setAttributeNS(null, 'tabindex', -1);
+//		if(focusable)
+//			this.drawing.setAttributeNS(null, 'tabindex', 0);
+//		else
+//			this.drawing.setAttributeNS(null, 'tabindex', -1);
 	},
 
 	//
@@ -182,6 +187,14 @@ Core.Object.extend('Ui.Element', {
 	//
 	getFocusable: function() {
 		return this.focusable;
+	},
+
+	setKeyboardRequired: function(keyboardRequired) {
+		this.keyboardRequired = keyboardRequired;
+	},
+
+	getKeyboardRequired: function() {
+		return this.keyboardRequired;
 	},
 
 	//
@@ -876,11 +889,13 @@ Core.Object.extend('Ui.Element', {
 	},
 
 	show: function() {
-		this.drawing.style.visibility = 'visible';
+//		this.drawing.style.visibility = 'visible';
+		this.drawing.style.display = 'block';
 	},
 
 	hide: function() {
-		this.drawing.style.visibility = 'hidden';
+//		this.drawing.style.visibility = 'hidden';
+		this.drawing.style.display = 'none';
 	},
 
 	disable: function() {
