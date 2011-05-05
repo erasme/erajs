@@ -15,6 +15,8 @@ Ui.Container.extend('Ui.Fold', {
 	contentSize: 0,
 
 	constructor: function(config) {
+		this.addEvents('fold', 'unfold', 'orientationchange');
+
 		if(config.over != undefined)
 			this.over = config.over;
 		if(config.extend != undefined)
@@ -34,8 +36,6 @@ Ui.Container.extend('Ui.Fold', {
 			this.setHeader(config.header);
 		if(config.content != undefined)
 			this.setContent(config.content);
-
-		this.addEvents('fold', 'unfold', 'orientationchange');
 	},
 
 	getIsFolded: function() {
