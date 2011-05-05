@@ -62,12 +62,13 @@ Ui.LBox.extend('Ui.App', {
 
 //		this.connect(window, 'keypress', this.onWindowKeyPress, true);
 //		this.connect(window, 'keydown', this.onWindowKeyDown, true);
+//		this.connect(window, 'keyup', this.onWindowKeyUp, true);
 //		this.connect(window, 'mousedown', this.onWindowMouseDown);
 
 		// prevent bad event handling
-		this.connect(window, 'mousedown', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) event.preventDefault(); });
-		this.connect(window, 'mouseup', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) event.preventDefault(); });
-		this.connect(window, 'mousemove', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) event.preventDefault(); });
+		this.connect(window, 'mousedown', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA') || (event.target == this.forceKeyboard))) event.preventDefault(); });
+		this.connect(window, 'mouseup', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA') || (event.target == this.forceKeyboard))) event.preventDefault(); });
+		this.connect(window, 'mousemove', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA') || (event.target == this.forceKeyboard))) event.preventDefault(); });
 //		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });
@@ -130,9 +131,9 @@ Ui.LBox.extend('Ui.App', {
 			meta.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no';
 			document.getElementsByTagName("head")[0].appendChild(meta);
 			// prevent Safari to handle touch event
-			this.connect(this.getDrawing(), 'touchstart', function(event) { event.preventDefault(); }, true);
-			this.connect(this.getDrawing(), 'touchmove', function(event) { event.preventDefault(); }, true);
-			this.connect(this.getDrawing(), 'touchend', function(event) { event.preventDefault(); }, true);
+			this.connect(this.getDrawing(), 'touchstart', function(event) { if(event.target != this.forceKeyboard) event.preventDefault(); }, true);
+			this.connect(this.getDrawing(), 'touchmove', function(event) { if(event.target != this.forceKeyboard) event.preventDefault(); }, true);
+			this.connect(this.getDrawing(), 'touchend', function(event) { if(event.target != this.forceKeyboard) event.preventDefault(); }, true);
 		}
 		this.loaded = true;
 		this.onReady();
@@ -149,6 +150,8 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	onWindowKeyPress: function(event) {
+		console.log('onWindowKeyPress '+event.which+', focus: '+this.focusElement);
+
 		event.preventDefault();
 		Ui.Keyboard.current.shiftKey = event.shiftKey;
 		Ui.Keyboard.current.altKey = event.altKey;
@@ -199,8 +202,6 @@ Ui.LBox.extend('Ui.App', {
 				next = this.findFirstFocusable();
 			if(next != undefined)
 				next.focus();
-			else
-				window.dump();
 		}
 		else {
 			if(event.which == 8)
@@ -209,6 +210,26 @@ Ui.LBox.extend('Ui.App', {
 				this.focusElement.fireEvent('keydown', Ui.Keyboard.current, event.which);
 		}
 	},
+
+	onWindowKeyUp: function(event) {
+		Ui.Keyboard.current.shiftKey = event.shiftKey;
+		Ui.Keyboard.current.altKey = event.altKey;
+		Ui.Keyboard.current.ctrlKey = event.ctrlKey;
+		Ui.Keyboard.current.altGraphKey = event.altGraphKey;
+		Ui.Keyboard.current.metaKey = event.metaKey;
+
+		if(Ui.Keyboard.current.elementCapture != undefined) {
+			event.preventDefault();
+			Ui.Keyboard.current.elementCapture.fireEvent('keyup', Ui.Keyboard.current, event.which);
+			return;
+		}
+
+		if(event.which == 8)
+			event.preventDefault();
+		if(this.focusElement != undefined)
+			this.focusElement.fireEvent('keyup', Ui.Keyboard.current, event.which);
+	},
+
 
 	update: function() {
 //		console.log(this+'.update start ('+(new Date()).getTime()+')');
@@ -373,7 +394,37 @@ Ui.LBox.extend('Ui.App', {
 			document.body.style.overflow = 'hidden';
 			document.body.style.width = '100%';
 			document.body.style.height = '100%';
+/*
+			this.forceKeyboard = document.createElement('input');
+			this.forceKeyboard.setAttributeNS(null, 'type', 'text');
+//			this.forceKeyboard.style.clip = 'rect(0px 0px 0px 0px)';
+			this.forceKeyboard.style.position = 'fixed';
+			this.forceKeyboard.style.right = '0px';
+			this.forceKeyboard.style.bottom = '0px';
+			this.forceKeyboard.style.width = '40px';
+			this.forceKeyboard.style.height = '40px';
+			this.forceKeyboard.style.background = 'black';
+
+			this.forceKeyboard.style.webkitAppearance = 'none';
+
+			this.connect(this.forceKeyboard, 'focus', function(event) {
+				console.log('forceKeyboard has the focus');
+	//			if(event.target == this.forceKeyboard)
+//					this.forceKeyboard.style.bottom = '-50px';
+			});
+
+			this.connect(this.forceKeyboard, 'blur', function(event) {
+//				this.forceKeyboard.style.bottom = '0px';
+			});
+
+			this.connect(this.forceKeyboard, 'keypress', this.onWindowKeyPress, true);
+			this.connect(this.forceKeyboard, 'keydown', this.onWindowKeyDown, true);
+			this.connect(this.forceKeyboard, 'keyup', this.onWindowKeyUp, true);
+*/
 			document.body.appendChild(this.getDrawing());
+
+//			document.body.appendChild(this.forceKeyboard);
+
 			this.update();
 			this.setIsLoaded(true);
 			this.fireEvent('ready');
@@ -395,14 +446,22 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	findNextFocusable: function() {
+		console.log('findNextFocusable');
+
 		var current = { element: this, seen: false, res: undefined };
 		this.findFocusable(current);
+
+		console.log('findNextFocusable res: '+current.res);
 		return current.res;
 	},
 
 	findFirstFocusable: function() {
+		console.log('findFirstFocusable');
+
 		var current = { element: this, seen: true, res: undefined };
 		this.findFocusable(current);
+
+		console.log('findFirstFocusable res: '+current.res);
 		return current.res;
 	},
 
@@ -416,11 +475,13 @@ Ui.LBox.extend('Ui.App', {
 	},
 
 	findFocusable: function(current) {
+		console.log('findFocusable current: '+current.element);
 		var element = current.element;
 		if(Ui.Container.hasInstance(element)) {
-			for(var i = 0; i < element.children.length; i++) {
-				var child = element.children[i];
+			for(var i = 0; i < element.getChildren().length; i++) {
+				var child = element.getChildren()[i];
 				if(child.getFocusable()) {
+					console.log('findFocusable FOUND: '+child);
 					if(current.seen) {
 						current.res = child;
 						return;
@@ -443,6 +504,10 @@ Ui.LBox.extend('Ui.App', {
 			this.removeFocus(this.focusElement);
 			this.focusElement = element;
 			this.focusElement.fireEvent('focus');
+//			console.log('askFocus for '+element+', keyboard ? '+this.focusElement.getKeyboardRequired()+', force: '+this.forceKeyboard);
+
+//			if(this.focusElement.getKeyboardRequired())
+//				this.forceKeyboard.focus();
 		}
 	},
 

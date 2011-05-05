@@ -141,5 +141,6 @@ X - Fournir un ToolBarButton
 - virer "target" dans Anim.Clock. Laisser chacun gérer comme il faut comme
   dans Ui.TransitionBox.
 
+- réécrire Ui.Text en utilisant du HTML à la place du SVG
 
 

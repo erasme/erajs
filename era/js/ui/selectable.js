@@ -22,11 +22,34 @@ Ui.LBox.extend('Ui.Selectable', {
 		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
 		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
 		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
 	//
 	// Private
 	//
+
+	onKeyDown: function(event) {
+		if(((event.which == 13) || (event.which == 32)) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onDown();
+		}
+	},
+
+	onKeyUp: function(event) {
+		if(((event.which == 13) || (event.which == 32))&& !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onUp();
+			this.onSelect();
+			if(event.which == 13)	
+				this.fireEvent('activate', this);
+		}
+	},
 
 	onMouseDown: function(event) {
 		if((event.button != 0) && (event.button != 2))
@@ -195,6 +218,7 @@ Ui.LBox.extend('Ui.Selectable', {
 
 	onDown: function() {
 		if(!this.isDown) {
+			this.focus();
 			this.isDown = true;
 			this.fireEvent('down', this);
 		}

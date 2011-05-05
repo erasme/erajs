@@ -108,6 +108,7 @@ include(eraBaseDirectory+'ui/iframe.js');
 //
 include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/entry.js');
+include(eraBaseDirectory+'ui/entry2.js');
 include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
 include(eraBaseDirectory+'ui/checkbox.js');

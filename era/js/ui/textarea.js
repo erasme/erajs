@@ -33,7 +33,18 @@ Ui.Element.extend('Ui.TextArea', {
 
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
 
-		this.addEvents('change');
+		this.addEvents('change', 'scroll');
+
+		this.connect(this.textareaDrawing, 'scroll', function() {
+			console.log(this+' scroll event ('+this.textareaDrawing.scrollLeft+','+this.textareaDrawing.scrollTop+')');
+
+			if((this.getMeasureWidth() != this.textareaDrawing.scrollWidth) || (this.getMeasureHeight() != this.textareaDrawing.scrollHeight)) {
+				console.log('invalidateMeasure');
+				this.invalidateMeasure();
+			}
+
+			this.fireEvent('scroll', this, this.textareaDrawing.scrollLeft, this.textareaDrawing.scrollTop);
+		});
 	},
 
 	setFontSize: function(fontSize) {
@@ -92,6 +103,21 @@ Ui.Element.extend('Ui.TextArea', {
 		this.textareaDrawing.value = value;
 	},
 
+	setOffset: function(offsetX, offsetY) {
+		console.log(this+'.setOffset('+offsetX+','+offsetY+')');
+
+		this.textareaDrawing.scrollLeft = offsetX;
+		this.textareaDrawing.scrollTop = offsetY;
+	},
+
+	getOffsetX: function() {
+		return this.textareaDrawing.scrollLeft;
+	},
+
+	getOffsetY: function() {
+		return this.textareaDrawing.scrollTop;
+	},
+
 	//
 	// Private
 	//
@@ -100,6 +126,7 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	onKeyUp: function(event) {
+		console.log(this+'.onKeyUp');
 //		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
 
 		if(this.textareaDrawing.value != this.value) {
@@ -136,7 +163,7 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	measureCore: function(width, height) {
-		this.textareaDrawing.style.width = '0px';
+		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = '0px';
 
 		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollWidth+' x '+this.textareaDrawing.scrollHeight);
@@ -150,4 +177,29 @@ Ui.Element.extend('Ui.TextArea', {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = height+'px';
 	},
+}, {
+/*	measureBox: undefined,
+
+	constructor: function() {
+		if(document.body == undefined) {
+			var body = document.createElementNS(htmlNS, 'body');
+			document.body = body;
+		}
+		Ui.TextArea.measureBox = document.createElement('textarea');
+		Ui.TextArea.measureBox.style.display = 'block';
+		Ui.TextArea.measureBox.style.width = '0px';
+		Ui.TextArea.measureBox.style.height = '0px';
+		Ui.TextArea.measureBox.style.visibility = 'hidden';
+		document.body.appendChild(Ui.TextArea.measureBox);
+	},
+
+	measureArea: function(text, fontSize, fontFamily, fontWeight) {
+		Ui.Label.measureBox.style.fontSize = fontSize+'px';
+		Ui.Label.measureBox.style.fontFamily = fontFamily;
+		Ui.Label.measureBox.style.fontWeight = fontWeight;
+		Ui.Label.measureBox.style.fontWeight = fontWeight;
+		Ui.Label.measureBox.textContent = text;
+		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
+	},*/
 });
+

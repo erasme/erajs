@@ -176,10 +176,10 @@ Core.Object.extend('Ui.Element', {
 	//
 	setFocusable: function(focusable) {
 		this.focusable = focusable;
-//		if(focusable)
-//			this.drawing.setAttributeNS(null, 'tabindex', 0);
-//		else
-//			this.drawing.setAttributeNS(null, 'tabindex', -1);
+		if(focusable)
+			this.drawing.setAttributeNS(null, 'tabindex', 0);
+		else
+			this.drawing.setAttributeNS(null, 'tabindex', -1);
 	},
 
 	//
@@ -623,12 +623,13 @@ Core.Object.extend('Ui.Element', {
 	// Ask for focus on the current element
 	//
 	focus: function() {
-		var current = this;
-		while(current.parent != undefined) {
-			current = current.parent;
-		}
-		if(Ui.App.hasInstance(current))
-			current.askFocus(this);
+		this.drawing.focus();
+//		var current = this;
+//		while(current.parent != undefined) {
+//			current = current.parent;
+//		}
+//		if(Ui.App.hasInstance(current))
+//			current.askFocus(this);
 	},
 
 	//
@@ -889,12 +890,10 @@ Core.Object.extend('Ui.Element', {
 	},
 
 	show: function() {
-//		this.drawing.style.visibility = 'visible';
 		this.drawing.style.display = 'block';
 	},
 
 	hide: function() {
-//		this.drawing.style.visibility = 'hidden';
 		this.drawing.style.display = 'none';
 	},
 

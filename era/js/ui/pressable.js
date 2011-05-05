@@ -21,7 +21,12 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
 
 		// handle keyboard
-		this.connect(this, 'keydown', this.onKeyDown);
+//		this.connect(this, 'keydown', this.onKeyDown);
+//		this.connect(this, 'keyup', this.onKeyUp);
+
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
+
 	},
 
 	//
@@ -81,6 +86,7 @@ Ui.LBox.extend('Ui.Pressable', {
 		if(event.button == 0) {
 			this.onUp();
 			this.fireEvent('press', this);
+			this.focus();
 		}
 	},
 
@@ -138,18 +144,34 @@ Ui.LBox.extend('Ui.Pressable', {
 		event.stopPropagation();
 		this.onUp();
 		this.fireEvent('press', this);
+		this.focus();
 	},
 
-	onKeyDown: function(keyboard, key) {
-		if((key == 13) && this.getIsDisabled())
+//	onKeyDown: function(keyboard, key) {
+	onKeyDown: function(event) {
+		var key = event.which;
+		if((key == 13) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onDown();
+		}
+	},
+
+//	onKeyUp: function(keyboard, key) {
+	onKeyUp: function(event) {
+		var key = event.which;
+		if((key == 13) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onUp();
 			this.fireEvent('press', this);
+		}
 	},
 
 	onDown: function() {
 		this.isDown = true;
 		this.focus();
 		this.fireEvent('down', this);
-
 	},
 
 	onUp: function() {
