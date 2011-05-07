@@ -33,6 +33,7 @@ Ui.LBox.extend('Ui.Selectable', {
 	//
 
 	onKeyDown: function(event) {
+		console.log(this+'.onKeyDown key: '+event.which);
 		if(((event.which == 13) || (event.which == 32)) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();

@@ -52,8 +52,10 @@ Ui.Pressable.extend('Ui.Button', {
 		if(config.orientation != undefined)
 			this.setOrientation(config.orientation);
 
-		this.connect(this, 'down', this.onButtonDown);
-		this.connect(this, 'up', this.onButtonUp);
+		this.connect(this, 'down', this.updateColors);
+		this.connect(this, 'up', this.updateColors);
+		this.connect(this, 'focus', this.updateColors);
+		this.connect(this, 'blur', this.updateColors);
 	},
 
 	getText: function() {
@@ -314,134 +316,77 @@ Ui.Pressable.extend('Ui.Button', {
 
 	getGradient: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
-		] });
-	},
+		var deltaY = 0;
+		if(this.getIsDown())
+			deltaY = -0.20;
+		else if(this.getHasFocus())
+			deltaY = 0.10;
 
-	getGradientDown: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 + deltaY, u: yuv.u, v: yuv.v }) },
 		] });
 	},
 
 	getContentColor: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
+
+		var deltaY = 0;
+		if(this.getIsDown())
+			deltaY = 0.20;
+		else if(this.getHasFocus())
+			deltaY = 0.20;
+
 		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y + (0.60 + deltaY), u: yuv.u, v: yuv.v });
 		else
-			return new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y - (0.60 + deltaY), u: yuv.u, v: yuv.v });
 	},
 
 	getContentLightColor: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
-		else
-			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
-	},
 
-	getContentLightColorDown: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var deltaY = 0;
+		if(this.getIsDown())
+			deltaY = 0.20;
+		else if(this.getHasFocus())
+			deltaY = 0.10;
+
 		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v });
 		else
-			return new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v });
 	},
 
 	getLightColor: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
+
+		var deltaY = 0;
+		if(this.getIsDown())
+			deltaY = -0.30;
+		else if(this.getHasFocus())
+			deltaY = 0.10;
+
 		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y - 0.20 + deltaY, u: yuv.u, v: yuv.v });
 		else
-			return new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y + 0.30 + deltaY, u: yuv.u, v: yuv.v });
 	},
 
-	getLightColorDown: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
-		else
-			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
-	},
-
-	onButtonDown: function() {
-		this.rect1.setFill(this.getGradientDown());
-		if(this.icon1 != undefined)
-			this.icon1.setFill(this.getContentLightColorDown());
-		if(this.text1 != undefined)
-			this.text1.setColor(this.getContentLightColorDown());
-		this.rect2.setFill(this.getLightColorDown());
-	},
-
-	onButtonUp: function() {
+	updateColors: function() {
 		this.rect1.setFill(this.getGradient());
-
 		if(this.icon1 != undefined)
 			this.icon1.setFill(this.getContentLightColor());
 		if(this.text1 != undefined)
 			this.text1.setColor(this.getContentLightColor());
+		if(this.icon2 != undefined)
+			this.icon2.setFill(this.getContentColor());
+		if(this.text2 != undefined)
+			this.text2.setColor(this.getContentColor());
 		this.rect2.setFill(this.getLightColor());
 	},
 }, {
 	onStyleChange: function() {
-		var gradient;
-		var contentColor;
-		var contentLightColor;
-		var contentLightColorDown;
-		var lightColor;
-		var gradientDown;
-
-		var yuv = this.getStyleProperty('color').getYuv();
-
-		gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
-		] });
-		gradientDown = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-		] });
-		if(yuv.y < 0.4) {
-			contentColor = new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
-			contentLightColor = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
-			contentLightColorDown = new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v });
-			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
-			lightColorDown = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
-		}
-		else {
-			contentColor = new Ui.Color({ y: yuv.y - 0.60, u: yuv.u, v: yuv.v });
-			contentLightColor = new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v });
-			contentLightColorDown = new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v });
-			lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
-			lightColorDown = new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
-		}
-		this.rect1.setFill(gradient);
-
-		if(this.getIsDown()) {
-			if(this.icon1 != undefined)
-				this.icon1.setFill(contentLightColorDown);
-			if(this.text1 != undefined)
-				this.text1.setColor(contentLightColorDown);
-			this.rect2.setFill(lightColorDown);
-		}
-		else {
-			if(this.icon1 != undefined)
-				this.icon1.setFill(contentLightColor);
-			if(this.text1 != undefined)
-				this.text1.setColor(contentLightColor);
-			this.rect2.setFill(lightColor);
-		}
-
-		if(this.icon2 != undefined)
-			this.icon2.setFill(contentColor);
-		if(this.text2 != undefined)
-			this.text2.setColor(contentColor);
-
-
 		var radius = this.getStyleProperty('radius');
 		this.lightShadow.setRadius(radius);
 		this.darkShadow.setRadius(radius);
@@ -449,6 +394,7 @@ Ui.Pressable.extend('Ui.Button', {
 		this.rect1.setRadius(radius - 1);
 
 		this.updateSizes();
+		this.updateColors();
 	},
 
 	onDisable: function() {

@@ -77,8 +77,6 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	setScrollingContent: function(scrollingContent) {
-		console.log(this+'.setScrollingContent('+scrollingContent+')');
-
 		if(this.contentBox != undefined) {
 			this.disconnect(this.contentBox, 'scroll', this.onContentBoxScroll);
 			this.removeChild(this.contentBox);
@@ -657,7 +655,7 @@ Ui.Container.extend('Ui.Scrollable', {
 //			var size = child.measure(width, height);
 //		}
 
-		console.log(this+'.measureCore('+width+','+height+')');
+//		console.log(this+'.measureCore('+width+','+height+')');
 
 		this.scrollbarVerticalBox.measure(width, height);
 		this.scrollbarHorizontalBox.measure(width, height);

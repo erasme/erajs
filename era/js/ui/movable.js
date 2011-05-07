@@ -22,8 +22,12 @@ Ui.LBox.extend('Ui.Movable', {
 	inertia: false,
 	touchId: undefined,
 	touchStart: undefined,
+	isDown: false,
 
 	constructor: function(config) {
+		this.addEvents('down', 'up', 'move');
+		this.setFocusable(true);
+
 		if(config.moveHorizontal != undefined)
 			this.setMoveHorizontal(config.moveHorizontal);
 		if(config.moveVertical != undefined)
@@ -35,12 +39,18 @@ Ui.LBox.extend('Ui.Movable', {
 		this.appendChild(this.contentBox);
 
 		this.contentBox.getDrawing().style.cursor = 'move';
-		this.addEvents('move');
 
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onTouchStart);
 		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onTouchMove);
 		this.connect(this.contentBox.getDrawing(), 'touchend', this.onTouchEnd);
+
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+	},
+
+	getIsDown: function() {
+		return this.isDown;
 	},
 
 	getInertia: function() {
@@ -78,11 +88,12 @@ Ui.LBox.extend('Ui.Movable', {
 	},
 
 	setPosition: function(x, y) {
-		if(x != undefined)
+		if((x != undefined) && (this.moveHorizontal))
 			this.posX = x;
-		if(y != undefined)
+		if((y != undefined) && (this.moveVertical))
 			this.posY = y;
 		this.contentBox.setTransform(Ui.Matrix.createTranslate(this.posX, this.posY));
+		this.fireEvent('move', this);
 	},
 
 	getPositionX: function() {
@@ -93,12 +104,56 @@ Ui.LBox.extend('Ui.Movable', {
 		return this.posY;
 	},
 
+	//
+	// Private
+	//
+
+	onDown: function() {
+		this.isDown = true;
+		this.focus();
+		this.fireEvent('down', this);
+	},
+
+	onUp: function() {
+ 		this.isDown = false;
+		this.fireEvent('up', this);
+	},
+
+	onKeyDown: function(event) {
+		if(this.getIsDisabled())
+			return;
+		var key = event.which;
+		// horizontal move
+		if(((key == 37) || (key == 39)) && this.moveHorizontal) {
+			event.preventDefault();
+			event.stopPropagation();
+			if(key == 37)
+				this.setPosition(this.posX - 10, undefined);
+			if(key == 39)
+				this.setPosition(this.posX + 10, undefined);
+		}
+		// vertical move
+		if(((key == 38) || (key == 40)) && this.moveVertical) {
+			event.preventDefault();
+			event.stopPropagation();
+			if(key == 38)
+				this.setPosition(undefined, this.posY - 10);
+			if(key == 40)
+				this.setPosition(undefined, this.posY + 10);
+		}
+	},
+
 	onMouseDown: function(event) {
+		if(this.getIsDisabled())
+			return;
+
 		if(event.button != 0)
 			return;
 
 		event.preventDefault();
 		event.stopPropagation();
+
+		this.onDown();
 
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		this.connect(window, 'mousemove', this.onMouseMove, true);
@@ -116,13 +171,8 @@ Ui.LBox.extend('Ui.Movable', {
 
 		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaX = mousePos.x - this.mouseStart.x;
-		if(!this.moveHorizontal)
-			deltaX = 0;
 		var deltaY = mousePos.y - this.mouseStart.y;
-		if(!this.moveVertical)
-			deltaY = 0;
 		this.setPosition(this.startPosX + deltaX, this.startPosY + deltaY);
-		this.fireEvent('move', this);
 	},
 
 	onMouseUp: function(event) {
@@ -135,6 +185,8 @@ Ui.LBox.extend('Ui.Movable', {
 		this.disconnect(window, 'mousemove', this.onMouseMove);
 		this.disconnect(window, 'mouseup', this.onMouseUp);
 
+		this.onUp();
+
 		if(this.measureSpeedTimer != undefined) {
 			this.stopComputeInertia();
 			this.startInertia();
@@ -142,6 +194,9 @@ Ui.LBox.extend('Ui.Movable', {
 	},
 
 	onTouchStart: function(event) {
+		if(this.getIsDisabled())
+			return;
+
 		if(event.targetTouches.length != 1)
 			return;
 
@@ -156,6 +211,8 @@ Ui.LBox.extend('Ui.Movable', {
 		event.stopPropagation();
 
 		this.stopInertia();
+
+		this.onDown();
 
 		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		this.startPosX = this.posX;
@@ -175,16 +232,11 @@ Ui.LBox.extend('Ui.Movable', {
 
 		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
 		var deltaX = touchPos.x - this.touchStart.x;
-		if(!this.moveHorizontal)
-			deltaX = 0;
 		var deltaY = touchPos.y - this.touchStart.y;
-		if(!this.moveVertical)
-			deltaY = 0;
 		posX = this.startPosX + deltaX;
 		posY = this.startPosY + deltaY;
 		this.setPosition(posX, posY);
 		this.hasMoved = true;
-		this.fireEvent('move', this);
 	},
 
 	onTouchEnd: function(event) {
@@ -195,6 +247,8 @@ Ui.LBox.extend('Ui.Movable', {
 		event.stopPropagation();
 
 		this.isMoving = false;
+
+		this.onUp();
 
 		if(this.measureSpeedTimer != undefined) {
 			this.stopComputeInertia();
@@ -267,8 +321,6 @@ Ui.LBox.extend('Ui.Movable', {
 					var posX = this.posX + (this.speedX * delta);
 					var posY = this.posY + (this.speedY * delta);
 					this.setPosition(posX, posY);
-
-					this.fireEvent('move', this);
 
 					if((this.posX == oldPosX) && (this.posY == oldPosY)) {
 						this.stopInertia();

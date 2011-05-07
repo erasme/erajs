@@ -22,6 +22,18 @@ app.connect(beginButton, 'press', function() {
 	clock.begin();
 });
 
+var enableButton = new Ui.Button({ text: 'enable' });
+toolbar.append(enableButton);
+app.connect(enableButton, 'press', function() {
+	slider.enable();
+});
+
+var disableButton = new Ui.Button({ text: 'disable' });
+toolbar.append(disableButton);
+app.connect(disableButton, 'press', function() {
+	slider.disable();
+});
+
 var vbox2 = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 vbox.append(vbox2, true);
 

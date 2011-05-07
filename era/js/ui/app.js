@@ -10,7 +10,7 @@ Ui.LBox.extend('Ui.App', {
 //	styleloaded: false,
 	loaded: false,
 	focusElement: undefined,
-	hasFocus: false,
+//	hasFocus: false,
 	arguments: undefined,
 	autoscale: false,
 	ready: false,
@@ -27,6 +27,8 @@ Ui.LBox.extend('Ui.App', {
 
 	constructor: function(config) {
 		Ui.App.current = this;
+
+//		this.setFocusable(true);
 
 		this.contentBox = new Ui.LBox();
 		this.append(this.contentBox);
@@ -65,10 +67,44 @@ Ui.LBox.extend('Ui.App', {
 //		this.connect(window, 'keyup', this.onWindowKeyUp, true);
 //		this.connect(window, 'mousedown', this.onWindowMouseDown);
 
+//		this.connect(this.getDrawing(), 'focus', function() {
+//			console.log('window has the focus');
+//		});
+
+		this.connect(window, 'focus', function(event) {
+//			console.log('window focus '+event.target);
+			this.focusElement = event.target;
+		}, true);
+
+//		this.connect(window, 'blur', function(event) {
+//			console.log('window blur');
+//		}, true);
+
 		// prevent bad event handling
-		this.connect(window, 'mousedown', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA') || (event.target == this.forceKeyboard))) event.preventDefault(); });
-		this.connect(window, 'mouseup', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA') || (event.target == this.forceKeyboard))) event.preventDefault(); });
-		this.connect(window, 'mousemove', function(event) { if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA') || (event.target == this.forceKeyboard))) event.preventDefault(); });
+		this.connect(window, 'mousedown', function(event) {
+//			console.log('window mousedown');
+			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+				event.preventDefault();
+				event.stopPropagation();
+//				if((this.focusElement != undefined) && (this.focusElement != window))
+//					this.focusElement.blur();
+//				this.focusElement = undefined;
+//			} else {
+//				console.log('bad target '+event.target);
+			}
+		});
+		this.connect(window, 'mouseup', function(event) {
+			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
+		this.connect(window, 'mousemove', function(event) {
+			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
 //		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });
@@ -131,9 +167,31 @@ Ui.LBox.extend('Ui.App', {
 			meta.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no';
 			document.getElementsByTagName("head")[0].appendChild(meta);
 			// prevent Safari to handle touch event
-			this.connect(this.getDrawing(), 'touchstart', function(event) { if(event.target != this.forceKeyboard) event.preventDefault(); }, true);
-			this.connect(this.getDrawing(), 'touchmove', function(event) { if(event.target != this.forceKeyboard) event.preventDefault(); }, true);
-			this.connect(this.getDrawing(), 'touchend', function(event) { if(event.target != this.forceKeyboard) event.preventDefault(); }, true);
+			this.connect(this.getDrawing(), 'touchstart', function(event) {
+				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}, false);
+			this.connect(this.getDrawing(), 'touchstart', function(event) {
+				if((navigator.Android) && (event.touches.length >= 4)) {
+					if((this.focusElement != undefined) && (this.focusElement != window) && (event.target != this.focusElement))
+						this.focusElement.blur();
+					this.focusElement = undefined;
+				}
+			}, true);
+			this.connect(this.getDrawing(), 'touchmove', function(event) {
+				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}, false);
+			this.connect(this.getDrawing(), 'touchend', function(event) {
+				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}, false);
 		}
 		this.loaded = true;
 		this.onReady();
@@ -149,7 +207,7 @@ Ui.LBox.extend('Ui.App', {
 //		console.log(this+'.onWindowResize end updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 	},
 
-	onWindowKeyPress: function(event) {
+/*	onWindowKeyPress: function(event) {
 		console.log('onWindowKeyPress '+event.which+', focus: '+this.focusElement);
 
 		event.preventDefault();
@@ -229,7 +287,7 @@ Ui.LBox.extend('Ui.App', {
 		if(this.focusElement != undefined)
 			this.focusElement.fireEvent('keyup', Ui.Keyboard.current, event.which);
 	},
-
+*/
 
 	update: function() {
 //		console.log(this+'.update start ('+(new Date()).getTime()+')');
@@ -444,7 +502,7 @@ Ui.LBox.extend('Ui.App', {
 	sendMessageToParent: function(msg) {
 		parent.postMessage(msg.serialize(), "*");
 	},
-
+/*
 	findNextFocusable: function() {
 		console.log('findNextFocusable');
 
@@ -523,25 +581,25 @@ Ui.LBox.extend('Ui.App', {
 		if(this.focusElement != undefined)
 			this.removeFocus(this.focusElement);
 	},
-
-	onWindowFocus: function(event) {
+*/
+//	onWindowFocus: function(event) {
 //		console.log('onWindowFocus');
-		if(!this.hasFocus) {
-			this.hasFocus = true;
-			var focusable = this.findFirstFocusable();
-			if(focusable != undefined)
-				focusable.focus();
-		}
-	},
+//		if(!this.hasFocus) {
+//			this.hasFocus = true;
+//			var focusable = this.findFirstFocusable();
+//			if(focusable != undefined)
+//				focusable.focus();
+//		}
+//	},
 
-	onWindowBlur: function(event) {
+//	onWindowBlur: function(event) {
 //		console.log('onWindowBlur');
-		if(this.hasFocus) {
-			this.hasFocus = false;
-			if(this.focusElement != undefined)
-				this.focusElement.blur();
-		}
-	},
+//		if(this.hasFocus) {
+//			this.hasFocus = false;
+//			if(this.focusElement != undefined)
+//				this.focusElement.blur();
+//		}
+//	},
 
 	enqueueLayout: function(element) {
 		element.layoutNext = this.layoutList;

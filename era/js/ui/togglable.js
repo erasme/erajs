@@ -22,7 +22,8 @@ Ui.LBox.extend('Ui.Togglable', {
 		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
 
 		// handle keyboard
-		this.connect(this, 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
 	//
@@ -151,8 +152,21 @@ Ui.LBox.extend('Ui.Togglable', {
 			this.onUntoggle();
 	},
 
-	onKeyDown: function(keyboard, key) {
-		if((key == 13) && this.getIsDisabled()) {
+	onKeyDown: function(event) {
+		var key = event.which;
+		if((key == 13) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onDown();
+		}
+	},
+
+	onKeyUp: function(event) {
+		var key = event.which;
+		if((key == 13) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onUp();
 			if(!this.isToggled)
 				this.onToggle();
 			else

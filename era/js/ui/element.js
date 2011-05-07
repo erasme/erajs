@@ -59,6 +59,7 @@ Core.Object.extend('Ui.Element', {
 
 	// whether or not the current element can get focus
 	focusable: false,
+	hasFocus: false,
 	// if true, a keyboard is needed when the element get the focus
 	// open a virtual keyboard on pad systems
 	keyboardRequired: false,
@@ -93,6 +94,7 @@ Core.Object.extend('Ui.Element', {
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';
+		this.drawing.style.outline = '0px';
 		var content = this.render();
 		if(content != undefined)
 			this.drawing.appendChild(content);
@@ -127,8 +129,8 @@ Core.Object.extend('Ui.Element', {
 		if(config.id != undefined)
 			this.setId(config.id);
 
-//		this.connect(this.drawing, 'focus', this.focus);
-//		this.connect(this.drawing, 'blur', this.blur);
+		this.connect(this.drawing, 'focus', this.onFocus);
+		this.connect(this.drawing, 'blur', this.onBlur);
 
 		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur', 'load', 'unload', 'enable', 'disable');
 	},
@@ -176,7 +178,7 @@ Core.Object.extend('Ui.Element', {
 	//
 	setFocusable: function(focusable) {
 		this.focusable = focusable;
-		if(focusable)
+		if(focusable && !this.getIsDisabled())
 			this.drawing.setAttributeNS(null, 'tabindex', 0);
 		else
 			this.drawing.setAttributeNS(null, 'tabindex', -1);
@@ -636,12 +638,13 @@ Core.Object.extend('Ui.Element', {
 	// Remove the focus current element
 	//
 	blur: function() {
-		var current = this;
-		while(current.parent != undefined) {
-			current = current.parent;
-		}
-		if(Ui.App.hasInstance(current))
-			current.removeFocus(this);
+		this.drawing.blur();
+//		var current = this;
+//		while(current.parent != undefined) {
+//			current = current.parent;
+//		}
+//		if(Ui.App.hasInstance(current))
+//			current.removeFocus(this);
 	},
 
 	//
@@ -938,6 +941,8 @@ Core.Object.extend('Ui.Element', {
 	},
 
 	onInternalDisable: function() {
+		if(this.focusable)
+			this.drawing.setAttributeNS(null, 'tabindex', -1);
 		this.onDisable();
 		this.fireEvent('disable', this);
 	},
@@ -946,6 +951,8 @@ Core.Object.extend('Ui.Element', {
 	},
 
 	onInternalEnable: function() {
+		if(this.focusable)
+			this.drawing.setAttributeNS(null, 'tabindex', 0);
 		this.onEnable();
 		this.fireEvent('enable', this);
 	},
@@ -1140,9 +1147,31 @@ Core.Object.extend('Ui.Element', {
 	onStyleChange: function() {
 	},
 
+	getHasFocus: function() {	
+		return this.hasFocus;
+	},
+
 	//
 	// Private
 	//
+
+	onFocus: function(event) {
+		if(this.focusable && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.hasFocus = true;
+			this.fireEvent('focus', this);
+		}
+	},
+
+	onBlur: function(event) {
+		if(this.focusable && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.hasFocus = false;
+			this.fireEvent('blur', this);
+		}
+	},
 
 	setIsLoaded: function(isLoaded) {
 		if(this.isLoaded != isLoaded) {
