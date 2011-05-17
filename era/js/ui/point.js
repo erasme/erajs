@@ -50,6 +50,10 @@ Core.Object.extend('Ui.Point', {
 		this.svgPoint.y = y;
 		this.y = y;
 	},
+
+	clone: function() {
+		return new Ui.Point({ x: this.x, y: this.y });
+	},
 }, {
 	toString: function() {
 		return 'point('+this.x.toFixed(4)+', '+this.y.toFixed(4)+')';

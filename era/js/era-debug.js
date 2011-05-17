@@ -97,6 +97,7 @@ include(eraBaseDirectory+'ui/togglable.js');
 include(eraBaseDirectory+'ui/selectable.js');
 include(eraBaseDirectory+'ui/downloadable.js');
 include(eraBaseDirectory+'ui/movable.js');
+include(eraBaseDirectory+'ui/transformable.js');
 include(eraBaseDirectory+'ui/scrollable.js');
 include(eraBaseDirectory+'ui/scrollable2.js');
 include(eraBaseDirectory+'ui/draggable.js');

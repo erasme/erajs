@@ -65,6 +65,10 @@ Core.Object.extend('Ui.Matrix', {
 		return this.svgMatrix.f;
 	},
 
+	clone: function() {
+		return Ui.Matrix.createMatrix(this.svgMatrix.a, this.svgMatrix.b, this.svgMatrix.c, this.svgMatrix.d, this.svgMatrix.e, this.svgMatrix.f);
+	},
+
 }, {
 	toString: function() {
 		return 'matrix('+this.svgMatrix.a.toFixed(4)+', '+this.svgMatrix.b.toFixed(4)+', '+this.svgMatrix.c.toFixed(4)+', '+this.svgMatrix.d.toFixed(4)+', '+this.svgMatrix.e.toFixed(4)+', '+this.svgMatrix.f.toFixed(4)+')';
@@ -77,6 +81,16 @@ Ui.Matrix.createRotate = function(angle) {
 	return matrix;
 };
 
+Ui.Matrix.createRotateAt = function(angle, centerX, centerY) {
+		// convert from degree to radian
+		angle = (angle % 360) * Math.PI / 180;
+		var sin = Math.sin(angle);
+		var cos = Math.cos(angle);
+		var offsetX = (centerX * (1.0 - cos)) + (centerY * sin);
+		var offsetY = (centerY * (1.0 - cos)) - (centerX * sin);
+		return Ui.Matrix.createMatrix(cos, -sin, sin, cos, offsetX, offsetY);
+};
+
 Ui.Matrix.createTranslate = function(x, y) {
 	var matrix = new Ui.Matrix();
 	matrix.translate(x, y);
@@ -87,6 +101,10 @@ Ui.Matrix.createScale = function(scaleX, scaleY) {
 	var matrix = new Ui.Matrix();
 	matrix.scale(scaleX, scaleY);
 	return matrix;
+};
+
+Ui.Matrix.createScaleAt = function(scaleX, scaleY, centerX, centerY) {
+	return Ui.Matrix.createMatrix(scaleX, 0, 0, scaleY, centerX - (scaleX * centerX), centerY - (scaleY * centerY));
 };
 
 Ui.Matrix.createMatrix = function(a, b, c, d, e, f) {
