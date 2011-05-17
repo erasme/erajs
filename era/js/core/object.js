@@ -31,6 +31,18 @@ Core.Object.prototype.dump = function(filter) {
 };
 
 //
+// Static method of any object
+//
+Core.Object.dump = function(obj) {
+	console.log(obj+':');
+	for(var prop in obj) {
+		try {
+			console.log(prop+' => '+obj[prop]);
+		} catch(err) {}
+	}
+};
+
+//
 // Serialize a javascript object into a string
 // to deserialize, just use JSON.parse
 //
