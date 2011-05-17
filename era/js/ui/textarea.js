@@ -36,10 +36,10 @@ Ui.Element.extend('Ui.TextArea', {
 		this.addEvents('change', 'scroll');
 
 		this.connect(this.textareaDrawing, 'scroll', function() {
-			console.log(this+' scroll event ('+this.textareaDrawing.scrollLeft+','+this.textareaDrawing.scrollTop+')');
+//			console.log(this+' scroll event ('+this.textareaDrawing.scrollLeft+','+this.textareaDrawing.scrollTop+')');
 
 			if((this.getMeasureWidth() != this.textareaDrawing.scrollWidth) || (this.getMeasureHeight() != this.textareaDrawing.scrollHeight)) {
-				console.log('invalidateMeasure');
+//				console.log('invalidateMeasure');
 				this.invalidateMeasure();
 			}
 
@@ -104,7 +104,7 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	setOffset: function(offsetX, offsetY) {
-		console.log(this+'.setOffset('+offsetX+','+offsetY+')');
+//		console.log(this+'.setOffset('+offsetX+','+offsetY+')');
 
 		this.textareaDrawing.scrollLeft = offsetX;
 		this.textareaDrawing.scrollTop = offsetY;
@@ -126,7 +126,7 @@ Ui.Element.extend('Ui.TextArea', {
 	},
 
 	onKeyUp: function(event) {
-		console.log(this+'.onKeyUp');
+//		console.log(this+'.onKeyUp');
 //		console.log(this+'.onKeyUp '+this.textareaDrawing.scrollHeight+' / '+this.getLayoutHeight());
 
 		if(this.textareaDrawing.value != this.value) {
@@ -166,13 +166,13 @@ Ui.Element.extend('Ui.TextArea', {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = '0px';
 
-		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollWidth+' x '+this.textareaDrawing.scrollHeight);
+//		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollWidth+' x '+this.textareaDrawing.scrollHeight);
 		return { width: this.textareaDrawing.scrollWidth, height: this.textareaDrawing.scrollHeight };
 //		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
-		console.log(this+'.arrangeCore('+width+','+height+')');
+//		console.log(this+'.arrangeCore('+width+','+height+')');
 
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = height+'px';

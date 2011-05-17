@@ -52,6 +52,15 @@ Ui.Container.extend('Ui.ListView', {
 		this.invalidateMeasure();
 	},
 
+	updateData: function(data) {
+		var row = this.findDataRow(data);
+		if(row != -1) {
+			for(var col = 0; col < this.headers.length; col++) {
+				this.headers[col].rows[row].setString(data[this.headers[col].key]);
+			}
+		}
+	},
+
 	removeData: function(data) {
 		var row = this.findDataRow(data);
 		if(row != -1)
@@ -74,8 +83,12 @@ Ui.Container.extend('Ui.ListView', {
 				this.rowContainer.removeChild(cell);
 				this.headers[col].rows.splice(position, 1);
 			}
-			if(this.selectedRow == position)
-				this.selectedRow = undefined;
+			if(this.selectedRow != undefined) {
+				if(this.selectedRow == position)
+					this.selectedRow = undefined;
+				else if(position < this.selectedRow)
+					this.selectedRow--;
+			}
 			this.invalidateMeasure();
 		}
 	},

@@ -200,3 +200,6 @@ if(window.console == undefined) {
 	};
 }
 
+if(window.debug == undefined)
+	window.debug = false;
+
