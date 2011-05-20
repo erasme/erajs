@@ -101,7 +101,7 @@ Ui.Container.extend('Ui.ProgressBar', {
 
 		this.barBox.measure(width, height);
 
-		return { width: minWidth, height: Math.max(minHeight, 12) };
+		return { width: Math.max(minWidth, 12), height: Math.max(minHeight, 12) };
 	},
 
 	arrangeCore: function(width, height) {
