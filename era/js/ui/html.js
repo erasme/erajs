@@ -18,7 +18,7 @@ Ui.Element.extend('Ui.Html', {
 }, {
 	render: function() {
 		this.htmlDrawing = document.createElementNS(htmlNS, 'div');
-		this.htmlDrawing.style.display = 'inline';
+		this.htmlDrawing.style.display = 'block';
 		if(navigator.isWebkit)
 			this.htmlDrawing.style.webkitUserSelect = 'none';
 		else if(navigator.isGecko)
@@ -30,6 +30,11 @@ Ui.Element.extend('Ui.Html', {
 		this.htmlDrawing.style.pointerEvents = 'none';
 		return this.htmlDrawing;
 	},
+
+	measureCore: function(width, height) {
+		return { width: this.htmlDrawing.clientWidth, height: this.htmlDrawing.clientHeight };
+	},
+
 
 	arrangeCore: function(width, height) {
 		this.htmlDrawing.style.width = width+'px';
