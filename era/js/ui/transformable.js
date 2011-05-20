@@ -9,6 +9,7 @@ Ui.LBox.extend('Ui.Transformable', {
 	speedComputed: false,
 	lastTranslateX: undefined,
 	lastTranslateY: undefined,
+	lastAngle: 0,
 	isDown: false,
 
 	touches: undefined,
@@ -24,6 +25,10 @@ Ui.LBox.extend('Ui.Transformable', {
 	startScale: 0,
 	startTranslateX: 0,
 	startTranslateY: 0,
+
+	speedX: 0,
+	speedY: 0,
+	speedAngle: 0,
 
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'transform');
@@ -281,7 +286,7 @@ Ui.LBox.extend('Ui.Transformable', {
 	},
 
 	onTouchEnter: function(touch) {
-//		console.log('touch enter id: '+touch.id);
+		console.log('touch enter id: '+touch.id);
 
 		if(this.touch1 == undefined) {
 			var start = new Ui.Point({ x: touch.x, y: touch.y });
@@ -311,7 +316,7 @@ Ui.LBox.extend('Ui.Transformable', {
 	},
 
 	onTouchLeave: function(touch) {
-//		console.log('touch leave id: '+touch.id);
+		console.log('touch leave id: '+touch.id);
 		if((this.touch1 != undefined) && (this.touch1.touch == touch)) {
 			this.touch1 = undefined;
 			if(this.touch2 != undefined) {
@@ -408,12 +413,16 @@ Ui.LBox.extend('Ui.Transformable', {
 		if(deltaTime < 0.025)
 			return;
 
+		var deltaAngle = this.angle - this.lastAngle;
 		var deltaTranslateX = this.translateX - this.lastTranslateX;
 		var deltaTranslateY = this.translateY - this.lastTranslateY;
 		this.speedX = deltaTranslateX / deltaTime;
 		this.speedY = deltaTranslateY / deltaTime;
+		this.speedAngle = deltaAngle / deltaTime;
+
 		this.lastTime = currentTime;
 
+		this.lastAngle = this.angle;
 		this.lastTranslateX = this.translateX;
 		this.lastTranslateY = this.translateY;
 		this.speedComputed = true;
@@ -430,6 +439,7 @@ Ui.LBox.extend('Ui.Transformable', {
 		this.lastTime = (new Date().getTime())/1000;
 		this.speedX = 0;
 		this.speedY = 0;
+		this.speedAngle = 0;
 		this.speedComputed = false;
 		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
 	},
@@ -443,10 +453,12 @@ Ui.LBox.extend('Ui.Transformable', {
 			// compute speed
 			var currentTime = (new Date().getTime())/1000;
 			var deltaTime = currentTime - this.lastTime;
+			var deltaAngle = this.angle - this.lastAngle;
 			var deltaTranslateX = this.translateX - this.lastTranslateX;
 			var deltaTranslateY = this.translateY - this.lastTranslateY;
 			this.speedX = deltaTranslateX / deltaTime;
 			this.speedY = deltaTranslateY / deltaTime;
+			this.speedAngle = deltaAngle / deltaTime;
 		}
 	},
 
@@ -462,7 +474,10 @@ Ui.LBox.extend('Ui.Transformable', {
 
 					var translateX = this.translateX + (this.speedX * delta);
 					var translateY = this.translateY + (this.speedY * delta);
-					this.setContentTransform(translateX, translateY, undefined, undefined);
+
+					var angle = this.angle + (this.speedAngle * delta);
+
+					this.setContentTransform(translateX, translateY, undefined, angle);
 
 					if((this.translateX == oldTranslateX) && (this.translateY == oldTranslateY)) {
 						this.stopInertia();
@@ -470,6 +485,9 @@ Ui.LBox.extend('Ui.Transformable', {
 					}
 					this.speedX -= this.speedX * delta * 3;
 					this.speedY -= this.speedY * delta * 3;
+
+					this.speedAngle -= this.speedAngle * delta * 3;
+
 					if(Math.abs(this.speedX) < 0.1)
 						this.speedX = 0;
 					if(Math.abs(this.speedY) < 0.1)
