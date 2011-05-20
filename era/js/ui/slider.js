@@ -10,13 +10,13 @@ Ui.Container.extend('Ui.Slider', {
 		if(config.value != undefined)
 			this.value = config.value;
 
-		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 7 });
+		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4 });
 		this.appendChild(this.lightShadow);
 
-		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 7 });
+		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4 });
 		this.appendChild(this.darkShadow);
 
-		this.background = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.85, g: 0.85, b: 0.85 }), radius: 7, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)' });
+		this.background = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.85, g: 0.85, b: 0.85 }), radius: 4, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)' });
 		this.appendChild(this.background);
 
 		this.barBox = new Ui.LBox();
@@ -35,15 +35,6 @@ Ui.Container.extend('Ui.Slider', {
 		this.connect(this.button, 'blur', this.updateColors);
 		this.connect(this.button, 'down', this.updateColors);
 		this.connect(this.button, 'up', this.updateColors);
-
-//		var buttonBox = new Ui.LBox();
-//		this.button.setContent(buttonBox);
-
-//		this.buttonContentBorder = new Ui.Rectangle({ radius: 20, fill: 'black' });
-//		buttonBox.append(this.buttonContentBorder);
-
-//		this.buttonContent = new Ui.Rectangle({ radius: 20, fill: 'lightblue', margin: 3 });
-//		buttonBox.append(this.buttonContent);
 
 		this.buttonContent = new Ui.SliderContentDrawing({ marginTop: 5, marginLeft: 10, marginRight: 10});
 		this.button.setContent(this.buttonContent);
@@ -91,7 +82,7 @@ Ui.Container.extend('Ui.Slider', {
 		var maxX = width - 44;
 		this.button.setPosition(maxX * this.value, undefined);
 		var y = (height - 44)/2;
-		this.barBox.arrange(18, y + 15, (width - 36) * this.value, 15);
+		this.barBox.arrange(18, y + 18, (width - 36) * this.value, 9);
 	},
 
 	getGradient: function() {
@@ -125,17 +116,6 @@ Ui.Container.extend('Ui.Slider', {
 	},
 
 	updateColors: function() {
-/*		this.rect1.setFill(this.getGradient());
-		if(this.icon1 != undefined)
-			this.icon1.setFill(this.getContentLightColor());
-		if(this.text1 != undefined)
-			this.text1.setColor(this.getContentLightColor());
-		if(this.icon2 != undefined)
-			this.icon2.setFill(this.getContentColor());
-		if(this.text2 != undefined)
-			this.text2.setColor(this.getContentColor());
-		this.rect2.setFill(this.getLightColor());*/
-
 		this.bar.setFill(this.getGradient());
 		this.barBackground.setFill(this.getBarBorderColor());
 		this.buttonContent.setFill(this.getButtonColor());
@@ -143,19 +123,19 @@ Ui.Container.extend('Ui.Slider', {
 
 }, {
 	measureCore: function(width, height) {
-		this.lightShadow.measure(width - 34, 16);
-		this.darkShadow.measure(width - 34, 16);
-		this.background.measure(width - 36, 16);
-		this.barBox.measure(width - 38, 12);
+		this.lightShadow.measure(width - 34, 10);
+		this.darkShadow.measure(width - 34, 10);
+		this.background.measure(width - 36, 10);
+		this.barBox.measure(width - 38, 9);
 		this.button.measure(40, 40);
 		return { width: 88, height: 44 };
 	},
 
 	arrangeCore: function(width, height) {
 		var y = (height - 44)/2;
-		this.lightShadow.arrange(17, y + 15, width - 34, 16);
-		this.darkShadow.arrange(17, y + 14, width - 34, 16);
-		this.background.arrange(18, y + 15, width - 36, 16);
+		this.lightShadow.arrange(17, y + 18, width - 34, 10);
+		this.darkShadow.arrange(17, y + 17, width - 34, 10);
+		this.background.arrange(18, y + 18, width - 36, 10);
 		this.button.arrange(2, y + 2, 40, 40);
 		this.updateValue();
 	},
