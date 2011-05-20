@@ -113,8 +113,8 @@ X - Fournir un ToolBarButton
 - pour Ui.Color faire un parser pour #rgb #rrggbb rgb(r,g,b) rgba(r,g,b,a)
   dans Ui.Color.create
 
-- a verifier le comportement de measure dans Box pour les Uniform
-  (la contrainte doit faire au plus petit possible)
+* - a verifier le comportement de measure dans Box pour les Uniform
+    (la contrainte doit faire au plus petit possible)
 
 - dans Scrollable, ne laisser la possiblité à l'utilisateur de fixer
   l'offset uniquement relatif (entre 0 et 1). Si l'offset est en relatif

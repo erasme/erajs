@@ -290,7 +290,7 @@ Core.Object.extend('Ui.Element', {
 
 	invalidateLayout: function() {
 		if(this.layoutValid) {
-			console.log('invalidateLayout enqueue ('+(new Date()).getTime()+')');
+//			console.log('invalidateLayout enqueue ('+(new Date()).getTime()+')');
 
 			this.layoutValid = false;
 			Ui.App.current.enqueueLayout(this);
