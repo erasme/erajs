@@ -33,11 +33,17 @@ Core.Object.prototype.dump = function(filter) {
 //
 // Static method of any object
 //
-Core.Object.dump = function(obj) {
+Core.Object.dump = function(obj, filter) {
+	if(filter != undefined)
+		filter = new RegExp(filter,'i');
 	console.log(obj+':');
 	for(var prop in obj) {
 		try {
-			console.log(prop+' => '+obj[prop]);
+			var test = true;
+			if(filter != undefined)
+				test = filter.test(prop);
+			if(test)
+				console.log(prop+' => '+obj[prop]);
 		} catch(err) {}
 	}
 };
