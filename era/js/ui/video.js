@@ -8,6 +8,8 @@ Ui.Element.extend('Ui.Video', {
 	videoDrawing: undefined,
 	playing: false,
 	paused: false,
+	naturalWidth: undefined,
+	naturalHeight: undefined,
 
 	constructor: function(config) {
 		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
@@ -120,10 +122,30 @@ Ui.Element.extend('Ui.Video', {
 	},
 
 	//
+	// Return the natural width of the image as defined
+	// in the image file. Return undefined if the image is
+	// not ready
+	//
+	getNaturalWidth: function() {
+		return this.naturalWidth;
+	},
+
+	//
+	// Return the natural height of the image as defined
+	// in the image file. Return undefined if the image is
+	// not ready
+	//
+	getNaturalHeight: function() {
+		return this.naturalHeight;
+	},
+
+	//
 	// Private
 	//
 
 	onReady: function() {
+		this.naturalWidth = this.videoDrawing.videoWidth;
+		this.naturalHeight = this.videoDrawing.videoHeight;
 		this.fireEvent('ready');
 	},
 

@@ -18,9 +18,6 @@ Ui.LBox.extend('Ui.TransitionBox', {
 			this.setTransition(config.transition);
 		else
 			this.setTransition('fade');
-
-		this.setClipToBounds(true);
-
 		this.connect(this, 'load', this.onTransitionBoxLoad);
 		this.connect(this, 'unload', this.onTransitionBoxUnload);
 		this.addEvents('change');
@@ -55,6 +52,10 @@ Ui.LBox.extend('Ui.TransitionBox', {
 				this.current = undefined;
 			this.next = this.getChildren()[position];
 			this.next.show();
+
+			if(this.current != undefined)
+				this.current.setClipToBounds(true);
+			this.next.setClipToBounds(true);
 
 			this.transition.run(this.current, this.next, 0);
 
@@ -93,8 +94,12 @@ Ui.LBox.extend('Ui.TransitionBox', {
 	},
 
 	onTransitionComplete: function(clock) {
-		if(this.current != undefined)
+		if(this.current != undefined) {
+			this.current.setClipToBounds(false);
 			this.current.hide();
+		}
+		this.next.setClipToBounds(false);
+		this.fireEvent('change', this, this.position);
 	},
 
 }, {
@@ -119,12 +124,14 @@ Ui.LBox.extend('Ui.TransitionBox', {
 		var content = new Ui.TransitionBoxContent();
 		content.append(child);
 		content.hide();
-		Ui.TransitionBox.base.prepend.call(this, content);
+		Ui.TransitionBox.base.prepend.call(this, this.position);
 	},
 
 	remove: function(child) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			if(this.getChildren()[i].getChildren()[0] == child) {
+				if(i < this.position)
+					this.position--;
 				this.getChildren()[i].remove(child);
 				Ui.TransitionBox.base.remove.call(this, this.getChildren()[i]);
 				break;
