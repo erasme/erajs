@@ -145,4 +145,6 @@ X - Fournir un ToolBarButton
 
 - Ui.ListView rame, optimiser tout cela
 
-
+- Prendre en compte le côté "utilise ou pas la contrainte" dans le mesure
+  des éléments afin d'éviter les measures multiples lorsqu'elles ne servent
+  à rien.

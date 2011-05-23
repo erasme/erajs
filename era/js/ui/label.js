@@ -7,6 +7,9 @@ Ui.Element.extend('Ui.Label', {
 	fontWeight: 'normal',
 	color: 'black',
 	labelDrawing: undefined,
+	textMeasureValid: false,
+	textWidth: 0,
+	textHeight: 0,
 
 	constructor: function(config) {
 		if(config.text != undefined)
@@ -33,6 +36,7 @@ Ui.Element.extend('Ui.Label', {
 		if(this.text != text) {
 			this.text = text;
 			this.labelDrawing.textContent = this.text;
+			this.textMeasureValid = false;
 			this.invalidateMeasure();
 		}
 	},
@@ -41,6 +45,7 @@ Ui.Element.extend('Ui.Label', {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
 			this.labelDrawing.style.fontSize = this.getFontSize()+'px';
+			this.textMeasureValid = false;
 			this.invalidateMeasure();
 		}
 	},
@@ -53,6 +58,7 @@ Ui.Element.extend('Ui.Label', {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
 			this.labelDrawing.style.fontFamily = this.getFontFamily();
+			this.textMeasureValid = false;
 			this.invalidateMeasure();
 		}
 	},
@@ -65,6 +71,7 @@ Ui.Element.extend('Ui.Label', {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
 			this.labelDrawing.style.fontWeight = this.getFontWeight();
+			this.textMeasureValid = false;
 			this.invalidateMeasure();
 		}
 	},
@@ -123,11 +130,17 @@ Ui.Element.extend('Ui.Label', {
 	},
 
 	measureCore: function(width, height) {
-		var size = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight);
+		if(!this.textMeasureValid) {
+			this.textMeasureValid = true;
+			var size = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight);
+			this.textWidth = size.width;
+			this.textHeight = size.height;
+//			console.log('label.measureCore('+width+','+height+') for \''+this.text+'\' = ('+size.width+' x '+size.height+')');
+		}
 		if(this.orientation == 'vertical')
-			return { width: size.height, height: size.width };
+			return { width: this.textHeight, height: this.textWidth };
 		else
-			return { width: size.width, height: size.height };
+			return { width: this.textWidth, height: this.textHeight };
 	},
 
 	arrangeCore: function(width, height) {
