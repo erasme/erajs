@@ -188,7 +188,6 @@ Ui.Container.extend('Ui.Scrollable', {
 	//
 
 	onContentBoxScroll: function(content, offsetX, offsetY) {
-
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		this.updateOffset();
@@ -256,6 +255,8 @@ Ui.Container.extend('Ui.Scrollable', {
 	onMouseWheel: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
+
+		this.stopInertia();
 
 		var deltaX = 0;
 		var deltaY = 0;

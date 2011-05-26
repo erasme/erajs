@@ -23,6 +23,8 @@ Ui.ScrollingArea.extend('Ui.IconList', {
 	},
 
 }, {
+}, {
+	style: Ui.ScrollingArea.style
 });
 
 Ui.Selectable.extend('Ui.IconListItem', {

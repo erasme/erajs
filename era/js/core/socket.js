@@ -71,7 +71,7 @@ Core.Object.extend('Core.Socket', {
 
 	send: function(msg) {
 		if(this.websocket != undefined) {
-			this.websocket.send(msg.serialize());
+			this.websocket.send(JSON.stringify(msg));
 		}
 		else {
 			if(this.emusendrequest == undefined) {
