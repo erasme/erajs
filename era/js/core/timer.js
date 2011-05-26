@@ -12,6 +12,8 @@ Core.Object.extend('Core.Timer', {
 			this.scope = config.scope;
 		if(config.arguments != undefined)
 			this.arguments = config.arguments;
+		else
+			this.arguments = [];
 		if(config.callback != undefined)
 			this.callback = config.callback;
 		else

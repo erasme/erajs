@@ -89,7 +89,7 @@ Core.Object.extend('Ui.Element', {
 		this.drawing = this.renderDrawing();
 
 		if(debug)
-			this.drawing.setAttributeNS(null, 'class', this.classType);
+			this.drawing.setAttribute('class', this.classType);
 
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';

@@ -148,7 +148,7 @@ Ui.Element.extend('Ui.Entry', {
 }, {
 	render: function() {
 		this.entryDrawing = document.createElementNS(htmlNS, 'input');
-		this.entryDrawing.setAttributeNS(null, 'type', 'text');
+		this.entryDrawing.setAttribute('type', 'text');
 		this.entryDrawing.style.border = '0px';
 		this.entryDrawing.style.margin = '0px';
 		this.entryDrawing.style.padding = '0px';

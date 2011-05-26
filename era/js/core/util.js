@@ -15,6 +15,34 @@ navigator.Android = (navigator.userAgent.match(/Android/i) != null);
 var svgNS = "http://www.w3.org/2000/svg";
 var htmlNS = "http://www.w3.org/1999/xhtml";
 
+navigator.supportSVG = false;
+try {
+	var test = document.createElementNS(svgNS, 'g');
+	if('ownerSVGElement' in test)
+		navigator.supportSVG = true;
+} catch(e) {}
+
+// provide createElementNS if dont exists
+if(!('createElementNS' in document)) {
+	HTMLDocument.prototype.createElementNS = function(ns, element) {
+		return this.createElement(element);
+	};
+}
+
+navigator.supportRgba = true;
+navigator.supportRgb = true;
+var test = document.createElementNS(htmlNS, 'div');
+try {
+	test.style.background = 'rgba(0, 0, 0, 0.5)';
+} catch(e) {
+	navigator.supportRgba = false;
+}
+try {
+	test.style.background = 'rgb(0, 0, 0)';
+} catch(e) {
+	navigator.supportRgb = false;
+}
+
 Core = {};
 Core.Util = {};
 Core.Util.idGenerator = 0;
@@ -116,36 +144,59 @@ String.prototype.fromBase64 = function() {
 	return res.utf8Decode();
 };
 
+//console.log('getPropertyValue: '+('getPropertyValue' in test.style));
+//console.log('getAttribute: '+('getAttribute' in test.style));
+
 // correct IE specific bugs
 if(navigator.isIE) {
-	SVGTextContentElement.prototype.__getStartPositionOfChar = SVGTextContentElement.prototype.getStartPositionOfChar;
-	SVGTextContentElement.prototype.getStartPositionOfChar = function(charnum) {
-		var point = this.__getStartPositionOfChar(charnum);
-		return point.matrixTransform(this.getScreenCTM().inverse());
-	};
-	SVGTextContentElement.prototype.__getEndPositionOfChar = SVGTextContentElement.prototype.getEndPositionOfChar;
-	SVGTextContentElement.prototype.getEndPositionOfChar = function(charnum) {
-		var point = this.__getEndPositionOfChar(charnum);
-		return point.matrixTransform(this.getScreenCTM().inverse());
-	};
 
-	SVGTextContentElement.prototype.__getCharNumAtPosition = SVGTextContentElement.prototype.getCharNumAtPosition;
-	SVGTextContentElement.prototype.getCharNumAtPosition = function(point) {
-		return this.getCharNumAtPositionHelper(point.x, 0, this.getNumberOfChars()-1);
-	};
-	SVGTextContentElement.prototype.getCharNumAtPositionHelper = function(x, start, end) {
-		startX = this.getStartPositionOfChar(start).x;
-		endX = this.getEndPositionOfChar(end).x;
-		if((x < startX) || (x > endX))
-			return -1;
-		if(start == end)
-			return start;
-		var middle = Math.floor((start + end)/2);
-		var res = this.getCharNumAtPositionHelper(x, start, middle);
-		if(res != -1)
-			return res;
-		return this.getCharNumAtPositionHelper(x, middle+1, end);
-	};
+	var test = document.createElementNS(htmlNS, 'div');
+	if(!('getPropertyValue' in test.style)) {
+		CSSStyleDeclaration.prototype.getPropertyValue = function(property) {
+			return this.getAttribute(property);
+		};
+	}
+	if(!('removeProperty' in test.style)) {
+		CSSStyleDeclaration.prototype.removeProperty = function(property) {
+			return this.removeAttribute(property);
+		};
+	}
+	if(!('setAttributeNS' in test)) {
+		HTMLDivElement.prototype.setAttributeNS = function(ns, attribute, value) {
+			return this.setAttribute(attribute, value);
+		};
+	}
+
+	if(navigator.supportSVG) {
+		SVGTextContentElement.prototype.__getStartPositionOfChar = SVGTextContentElement.prototype.getStartPositionOfChar;
+		SVGTextContentElement.prototype.getStartPositionOfChar = function(charnum) {
+			var point = this.__getStartPositionOfChar(charnum);
+			return point.matrixTransform(this.getScreenCTM().inverse());
+		};
+		SVGTextContentElement.prototype.__getEndPositionOfChar = SVGTextContentElement.prototype.getEndPositionOfChar;
+		SVGTextContentElement.prototype.getEndPositionOfChar = function(charnum) {
+			var point = this.__getEndPositionOfChar(charnum);
+			return point.matrixTransform(this.getScreenCTM().inverse());
+		};
+
+		SVGTextContentElement.prototype.__getCharNumAtPosition = SVGTextContentElement.prototype.getCharNumAtPosition;
+		SVGTextContentElement.prototype.getCharNumAtPosition = function(point) {
+			return this.getCharNumAtPositionHelper(point.x, 0, this.getNumberOfChars()-1);
+		};
+		SVGTextContentElement.prototype.getCharNumAtPositionHelper = function(x, start, end) {
+			startX = this.getStartPositionOfChar(start).x;
+			endX = this.getEndPositionOfChar(end).x;
+			if((x < startX) || (x > endX))
+				return -1;
+			if(start == end)
+				return start;
+			var middle = Math.floor((start + end)/2);
+			var res = this.getCharNumAtPositionHelper(x, start, middle);
+			if(res != -1)
+				return res;
+			return this.getCharNumAtPositionHelper(x, middle+1, end);
+		};
+	}
 }
 // correct Opera specific bugs
 if(navigator.isOpera) {

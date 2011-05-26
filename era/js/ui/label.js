@@ -148,25 +148,32 @@ Ui.Element.extend('Ui.Label', {
 		if(this.orientation == 'vertical') {
 			matrix = Ui.Matrix.createTranslate(this.labelDrawing.offsetHeight, 0);
 			matrix.rotate(90);
+			if(navigator.isIE) {
+				this.labelDrawing.style.msTransform = matrix.toString();
+				this.labelDrawing.style.msTransformOrigin = '0% 0%';
+			}
+			else if(navigator.isGecko) {
+				this.labelDrawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
+				this.labelDrawing.style.MozTransformOrigin = '0% 0%';
+			}
+			else if(navigator.isWebkit) {
+				this.labelDrawing.style.webkitTransform = matrix.toString();
+				this.labelDrawing.style.webkitTransformOrigin = '0% 0%';
+			}
+			else if(navigator.isOpera) {
+				this.labelDrawing.style.OTransform = matrix.toString();
+				this.labelDrawing.style.OTransformOrigin = '0% 0%';
+			}
 		}
-		else
-			matrix = new Ui.Matrix();
-
-		if(navigator.isIE) {
-			this.labelDrawing.style.msTransform = matrix.toString();
-			this.labelDrawing.style.msTransformOrigin = '0% 0%';
-		}
-		else if(navigator.isGecko) {
-			this.labelDrawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
-			this.labelDrawing.style.MozTransformOrigin = '0% 0%';
-		}
-		else if(navigator.isWebkit) {
-			this.labelDrawing.style.webkitTransform = matrix.toString();
-			this.labelDrawing.style.webkitTransformOrigin = '0% 0%';
-		}
-		else if(navigator.isOpera) {
-			this.labelDrawing.style.OTransform = matrix.toString();
-			this.labelDrawing.style.OTransformOrigin = '0% 0%';
+		else {
+			if(navigator.isIE)
+				this.labelDrawing.style.removeProperty('-ms-transform');
+			else if(navigator.isGecko)
+				this.labelDrawing.style.removeProperty('-moz-transform');
+			else if(navigator.isWebkit)
+				this.labelDrawing.style.removeProperty('-webkit-transform');
+			else if(navigator.isOpera)
+				this.labelDrawing.style.removeProperty('-o-transform');
 		}
 	},
 }, {
