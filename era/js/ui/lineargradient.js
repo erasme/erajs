@@ -39,7 +39,7 @@ Core.Object.extend('Ui.LinearGradient', {
 			}
 			this.image += ')';
 		}
-		else {
+		else if(navigator.supportCanvas) {
 			var canvas = document.createElementNS(htmlNS, 'canvas');
 			var context = canvas.getContext('2d');
 			if(this.orientation == 'vertical') {
@@ -65,6 +65,9 @@ Core.Object.extend('Ui.LinearGradient', {
 				context.fillRect(0, 0, 100, 1);
 			}
 			this.image = 'url('+canvas.toDataURL()+')';
+		}
+		else {
+			this.image = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAAXNSR0IArs4c6QAAAAZiS0dEAO8AUQBRItXOlAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9gJDxcIBl8Z3A0AAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAC0lEQVQI12NgwAUAABoAASRETuUAAAAASUVORK5CYII%3D)';
 		}
 	},
 

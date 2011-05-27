@@ -33,17 +33,11 @@ Core.Object.extend('Ui.Color', {
 	},
 
 	getCssRgba: function() {
-		if(navigator.supportRgba)
-			return 'rgba('+Math.round(this.r * 255)+','+Math.round(this.g * 255)+','+Math.round(this.b * 255)+','+this.a+')';
-		else
-			return this.getCssRgb();
+		return 'rgba('+Math.round(this.r * 255)+','+Math.round(this.g * 255)+','+Math.round(this.b * 255)+','+this.a+')';
 	},
 
 	getCssRgb: function() {
-		if(navigator.supportRgba)
-			return 'rgb('+Math.round(this.r * 255)+','+Math.round(this.g * 255)+','+Math.round(this.b * 255)+')';
-		else
-			return this.getCssHtml();
+		return 'rgb('+Math.round(this.r * 255)+','+Math.round(this.g * 255)+','+Math.round(this.b * 255)+')';
 	},
 
 	getCssHtml: function() {

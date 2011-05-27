@@ -204,7 +204,29 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	}
 	else if(obj.attachEvent != undefined) {
 		var wrapper = function() {
-			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+			// correct IE < 9 mouse button pb
+			if((arguments.length == 1) && ((arguments[0].type == 'mousedown') || (arguments[0].type == 'mousemove') || (arguments[0].type == 'mouseup'))) {
+				var newEvent = {};
+				for(var key in arguments[0])
+					newEvent[key] = arguments[0][key];
+				newEvent.preventDefault = function() {
+					this.defaultPrevented = true;
+					this.returnValue= false;
+				};
+				newEvent.stopPropagation = function() {
+					this.cancelBubble = true;
+				};
+				if(newEvent.button == 1)
+					newEvent.button = 0;
+				else if(newEvent.button == 4)
+					newEvent.button = 1;
+				var res = arguments.callee.callback.call(arguments.callee.scope, newEvent);
+				arguments[0].returnValue = newEvent.returnValue;
+				arguments[0].cancelBubble = newEvent.cancelBubble;
+				return res;
+			}
+			else
+				return arguments.callee.callback.apply(arguments.callee.scope, arguments);
 		}
 		wrapper.scope = this;
 		wrapper.callback = method;
@@ -232,6 +254,18 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 				if((method != undefined) && (wrapper.callback != method))
 					continue;
 				obj.removeEventListener(wrapper.eventName, wrapper, wrapper.capture);
+				obj.events.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	else if(obj.detachEvent != undefined) {
+		for(var i = 0; i < obj.events.length; i++) {
+			var wrapper = obj.events[i];
+			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
+				if((method != undefined) && (wrapper.callback != method))
+					continue;
+				obj.detachEvent(wrapper.eventName, wrapper);
 				obj.events.splice(i, 1);
 				i--;
 			}

@@ -132,8 +132,12 @@ Ui.Element.extend('Ui.Rectangle', {
 			else if(typeof(this.fill) == 'string')
 				this.getDrawing().style.background = this.fill;
 			else {
-				if(Ui.Color.hasInstance(this.fill))
-					this.getDrawing().style.background = this.fill.getCssRgba();
+				if(Ui.Color.hasInstance(this.fill)) {
+					if(navigator.supportRgba)
+						this.getDrawing().style.background = this.fill.getCssRgba();
+					else
+						this.getDrawing().style.background = this.fill.getCssHtml();
+				}
 				else if(Ui.LinearGradient.hasInstance(this.fill)) {
 					this.getDrawing().style.backgroundImage = this.fill.getBackgroundImage();
 					this.getDrawing().style.backgroundSize = '100% 100%';

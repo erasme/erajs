@@ -12,8 +12,17 @@ navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
 
 navigator.Android = (navigator.userAgent.match(/Android/i) != null);
 
+console.log(navigator.userAgent);
+
 var svgNS = "http://www.w3.org/2000/svg";
 var htmlNS = "http://www.w3.org/1999/xhtml";
+
+// provide createElementNS if dont exists
+if(!('createElementNS' in document)) {
+	HTMLDocument.prototype.createElementNS = function(ns, element) {
+		return this.createElement(element);
+	};
+}
 
 navigator.supportSVG = false;
 try {
@@ -22,12 +31,8 @@ try {
 		navigator.supportSVG = true;
 } catch(e) {}
 
-// provide createElementNS if dont exists
-if(!('createElementNS' in document)) {
-	HTMLDocument.prototype.createElementNS = function(ns, element) {
-		return this.createElement(element);
-	};
-}
+var test = document.createElementNS(htmlNS, 'canvas');
+navigator.supportCanvas = 'getContext' in test;
 
 navigator.supportRgba = true;
 navigator.supportRgb = true;
@@ -166,7 +171,17 @@ if(navigator.isIE) {
 			return this.setAttribute(attribute, value);
 		};
 	}
-
+	if(!('preventDefault' in Event.prototype)) {
+		Event.prototype.preventDefault = function() {
+			this.defaultPrevented = true;
+			this.returnValue= false;
+		};
+	}
+	if(!('stopPropagation' in Event.prototype)) {
+		Event.prototype.stopPropagation = function() {
+			this.cancelBubble = true;
+		};
+	}
 	if(navigator.supportSVG) {
 		SVGTextContentElement.prototype.__getStartPositionOfChar = SVGTextContentElement.prototype.getStartPositionOfChar;
 		SVGTextContentElement.prototype.getStartPositionOfChar = function(charnum) {

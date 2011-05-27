@@ -35,7 +35,10 @@ Ui.Element.extend('Ui.Label', {
 	setText: function(text) {
 		if(this.text != text) {
 			this.text = text;
-			this.labelDrawing.textContent = this.text;
+			if('textContent' in this.labelDrawing)
+				this.labelDrawing.textContent = this.text;
+			else
+				this.labelDrawing.innerText = this.text;
 			this.textMeasureValid = false;
 			this.invalidateMeasure();
 		}
@@ -83,7 +86,10 @@ Ui.Element.extend('Ui.Label', {
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = Ui.Color.create(color);
-			this.labelDrawing.style.color = this.color.getCssRgba();
+			if(navigator.supportRgba)
+				this.labelDrawing.style.color = this.color.getCssRgba();
+			else
+				this.labelDrawing.style.color = this.color.getCssHtml();
 		}
 	},
 
@@ -180,6 +186,27 @@ Ui.Element.extend('Ui.Label', {
 	measureBox: undefined,
 
 	constructor: function() {
+//		var dummy = new Core.Object();
+//		dummy.connect(window, 'load', Ui.Label.onWindowLoad);
+	},
+
+	measureText: function(text, fontSize, fontFamily, fontWeight) {
+		if(Ui.Label.measureBox == undefined)
+			this.onWindowLoad();
+
+		Ui.Label.measureBox.style.fontSize = fontSize+'px';
+		Ui.Label.measureBox.style.fontFamily = fontFamily;
+		Ui.Label.measureBox.style.fontWeight = fontWeight;
+		Ui.Label.measureBox.style.fontWeight = fontWeight;
+		if('textContent' in Ui.Label.measureBox)
+			Ui.Label.measureBox.textContent = text;
+		else
+			Ui.Label.measureBox.innerText = text;
+		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
+	},
+
+	onWindowLoad: function() {
+//		console.log(document.body);
 		if(document.body == undefined) {
 			var body = document.createElementNS(htmlNS, 'body');
 			document.body = body;
@@ -189,15 +216,6 @@ Ui.Element.extend('Ui.Label', {
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
 		document.body.appendChild(Ui.Label.measureBox);
-	},
-
-	measureText: function(text, fontSize, fontFamily, fontWeight) {
-		Ui.Label.measureBox.style.fontSize = fontSize+'px';
-		Ui.Label.measureBox.style.fontFamily = fontFamily;
-		Ui.Label.measureBox.style.fontWeight = fontWeight;
-		Ui.Label.measureBox.style.fontWeight = fontWeight;
-		Ui.Label.measureBox.textContent = text;
-		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
 	},
 });
 

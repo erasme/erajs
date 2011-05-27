@@ -30,6 +30,8 @@ Ui.LBox.extend('Ui.Pressable', {
 	//
 
 	onMouseDown: function(event) {
+		console.log(this+'.onMouseDown disable: '+this.getIsDisabled()+', button: '+event.button);
+
 		if((event.button != 0) || this.getIsDisabled())
 			return;
 
@@ -39,8 +41,12 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.mouseStartX = event.screenX;
 		this.mouseStartY = event.screenY;
 
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-		this.connect(window, 'mouseup', this.onMouseUp, true);
+//		this.connect(window, 'mousemove', this.onMouseMove, true);
+//		this.connect(window, 'mouseup', this.onMouseUp, true);
+
+		this.connect(document, 'mousemove', this.onMouseMove, true);
+		this.connect(document, 'mouseup', this.onMouseUp, true);
+
 		this.onDown();
 	},
 
@@ -56,16 +62,18 @@ Ui.LBox.extend('Ui.Pressable', {
 		if(delta > 10) {
 			this.onUp();
 
-			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
+			if('createEvent' in document) {
+				this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
-			var mouseDownEvent = document.createEvent('MouseEvents');
-			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-				event.clientX, event.clientY,
-				event.ctrlKey, event.altKey, event.shiftKey,
-				event.metaKey, 0, event.target);
-			event.target.dispatchEvent(mouseDownEvent);
+				var mouseDownEvent = document.createEvent('MouseEvents');
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
+					event.clientX, event.clientY,
+					event.ctrlKey, event.altKey, event.shiftKey,
+					event.metaKey, 0, event.target);
+				event.target.dispatchEvent(mouseDownEvent);
 
-			this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+				this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+			}
 		}
 	},
 
@@ -74,6 +82,7 @@ Ui.LBox.extend('Ui.Pressable', {
 	},
 
 	onMouseUp: function(event) {
+		console.log(this+'.onMouseUp');
 		if(!this.isDown)
 			return;
 
@@ -169,8 +178,12 @@ Ui.LBox.extend('Ui.Pressable', {
 	},
 
 	onUp: function() {
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
+//		this.disconnect(window, 'mousemove', this.onMouseMove);
+//		this.disconnect(window, 'mouseup', this.onMouseUp);
+
+		this.disconnect(document, 'mousemove', this.onMouseMove);
+		this.disconnect(document, 'mouseup', this.onMouseUp);
+
  		this.isDown = false;
 		this.fireEvent('up', this);
 	},
