@@ -119,8 +119,7 @@ Ui.Container.extend('Ui.Slider', {
 		this.bar.setFill(this.getGradient());
 		this.barBackground.setFill(this.getBarBorderColor());
 		this.buttonContent.setFill(this.getButtonColor());
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 		this.lightShadow.measure(width - 34, 10);
@@ -152,11 +151,11 @@ Ui.Container.extend('Ui.Slider', {
 	onEnable: function() {
 		Ui.Slider.base.onEnable.call(this);
 		this.button.setOpacity(1);
-	},
+	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-	},
+		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 })
+	}
 });
 
 
@@ -210,8 +209,7 @@ Ui.SVGElement.extend('Ui.SliderContentDrawing', {
 
 	genPath: function(width, height, radius) {
 		return 'M'+radius+',0 L'+(width-radius)+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+'  L'+width+','+(height*0.66)+' L'+(width/2)+','+height+' L0,'+(height*0.66)+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
-	},
-
+	}
 }, {
 	render: function() {
 		this.contentDrawing = document.createElementNS(svgNS, 'g');
@@ -231,7 +229,7 @@ Ui.SVGElement.extend('Ui.SliderContentDrawing', {
 		this.shadow.setAttributeNS(null, 'd', this.genPath(width, height, this.radius));
 		this.background.setAttributeNS(null, 'transform', 'translate(1,1)');
 		this.background.setAttributeNS(null, 'd', this.genPath(width-2, height-2, this.radius-1.4));
-	},
+	}
 });
 
 

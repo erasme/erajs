@@ -164,8 +164,7 @@ Ui.Togglable.extend('Ui.CheckBox', {
 			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 		else
 			return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
-	},
-
+	}
 }, {
 	onStyleChange: function() {
 		this.check.setFill(this.getStyleProperty('checkColor'));
@@ -192,13 +191,13 @@ Ui.Togglable.extend('Ui.CheckBox', {
 	onEnable: function() {
 		Ui.CheckBox.base.onEnable.call(this);
 		this.check.setOpacity(1);
-	},
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
 		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
-		radius: 4,
-	},
+		radius: 4
+	}
 });
 
 

@@ -20,8 +20,7 @@ Ui.ScrollingArea.extend('Ui.IconList', {
 		while(this.flow.getChildren().length > 0) {
 			this.flow.remove(this.flow.getChildren()[0]);
 		}
-	},
-
+	}
 }, {
 }, {
 	style: Ui.ScrollingArea.style
@@ -32,6 +31,6 @@ Ui.Selectable.extend('Ui.IconListItem', {
 		this.setPadding(10);
 		this.setVerticalAlign('top');
 		this.setHorizontalAlign('center');
-	},
+	}
 }, {
 });

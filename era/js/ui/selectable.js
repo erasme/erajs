@@ -244,7 +244,6 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.isSelected = false;
 			this.fireEvent('unselect', this);
 		}
-	},
-
+	}
 }, {
 });

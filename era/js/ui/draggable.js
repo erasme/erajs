@@ -107,6 +107,6 @@ Ui.LBox.extend('Ui.Draggable', {
 		event.stopPropagation();
 		// dropEffect give the operation done: [none|copy|link|move]
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
-	},
+	}
 }, {
 });

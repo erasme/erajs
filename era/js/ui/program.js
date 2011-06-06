@@ -27,6 +27,6 @@ Ui.IFrame.extend('Ui.Program', {
 			var msg = JSON.parse(event.data);
 			this.fireEvent('message', this, msg);
 		}
-	},
+	}
 });
 

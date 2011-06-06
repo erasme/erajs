@@ -106,14 +106,13 @@ Ui.Element.extend('Ui.Label', {
 			this.orientation = orientation;
 			this.invalidateMeasure();
 		}
-	},
-
+	}
 }, {
 	verticalAlign: 'center',
 	horizontalAlign: 'center',
 
 	render: function() {
-		this.labelDrawing = document.createElementNS(htmlNS, 'div');
+		this.labelDrawing = document.createElement('div');
 		this.labelDrawing.style.whiteSpace = 'nowrap';
 		this.labelDrawing.style.display = 'inline';
 		this.labelDrawing.style.position = 'absolute';
@@ -128,7 +127,7 @@ Ui.Element.extend('Ui.Label', {
 		else if(navigator.isGecko)
 			this.labelDrawing.style.MozUserSelect = 'none';
 		else if(navigator.isIE)
-			this.labelDrawing.onselectstart = function(event) { event.preventDefault(); };
+			this.connect(this.labelDrawing, 'selectstart', function(event) { event.preventDefault(); });
 		else if(navigator.isOpera)
 			this.labelDrawing.onmousedown = function(event) { event.preventDefault(); };
 		this.labelDrawing.style.pointerEvents = 'none';
@@ -172,7 +171,7 @@ Ui.Element.extend('Ui.Label', {
 			}
 		}
 		else {
-			if(navigator.isIE)
+			if(navigator.isIE && ('removeProperty' in this.labelDrawing))
 				this.labelDrawing.style.removeProperty('-ms-transform');
 			else if(navigator.isGecko)
 				this.labelDrawing.style.removeProperty('-moz-transform');
@@ -181,7 +180,7 @@ Ui.Element.extend('Ui.Label', {
 			else if(navigator.isOpera)
 				this.labelDrawing.style.removeProperty('-o-transform');
 		}
-	},
+	}
 }, {
 	measureBox: undefined,
 
@@ -192,7 +191,7 @@ Ui.Element.extend('Ui.Label', {
 
 	measureText: function(text, fontSize, fontFamily, fontWeight) {
 		if(Ui.Label.measureBox == undefined)
-			this.onWindowLoad();
+			this.createMeasure();
 
 		Ui.Label.measureBox.style.fontSize = fontSize+'px';
 		Ui.Label.measureBox.style.fontFamily = fontFamily;
@@ -205,10 +204,10 @@ Ui.Element.extend('Ui.Label', {
 		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
 	},
 
-	onWindowLoad: function() {
+	createMeasure: function() {
 //		console.log(document.body);
 		if(document.body == undefined) {
-			var body = document.createElementNS(htmlNS, 'body');
+			var body = document.createElement('body');
 			document.body = body;
 		}
 		Ui.Label.measureBox = document.createElement('div');
@@ -216,7 +215,7 @@ Ui.Element.extend('Ui.Label', {
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
 		document.body.appendChild(Ui.Label.measureBox);
-	},
+	}
 });
 
 

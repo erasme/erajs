@@ -9,10 +9,10 @@ Ui.Element.extend('Ui.CanvasElement', {
 	// Override this method to provide the Canvas rendering
 	//
 	updateCanvas: function(context) {
-	},
+	}
 }, {
 	renderDrawing: function() {
-		var canvas = document.createElementNS(htmlNS, 'canvas');
+		var canvas = document.createElement('canvas');
 		this.context = canvas.getContext('2d');
 		return canvas;
 	},
@@ -21,6 +21,6 @@ Ui.Element.extend('Ui.CanvasElement', {
 		this.getDrawing().setAttribute('width', width, null);
 		this.getDrawing().setAttribute('height', height, null);
 		this.updateCanvas(this.context);
-	},
+	}
 });
 

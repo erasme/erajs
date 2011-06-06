@@ -2,8 +2,7 @@
 Core.Object.extend('Ui.Transition', {
 	run: function(current, next, progress) {
 		throw('transition classes MUST override run method');
-	},
-
+	}
 }, /* override */ {
 }, /* static */ {
 	transitions: {},
@@ -27,6 +26,6 @@ Core.Object.extend('Ui.Transition', {
 			}
 		}
 		throw('invalid transition ('+transition+')');
-	},
+	}
 });
 

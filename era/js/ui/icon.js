@@ -25,8 +25,7 @@ Ui.SVGElement.extend('Ui.Icon', {
 			this.path = path;
 			this.iconDrawing.setAttributeNS(null, 'd', this.path, null);
 		}
-	},
-
+	}
 }, /* overrided */ {
 	render: function() {
 		this.iconDrawing = document.createElementNS(svgNS, 'path');
@@ -39,7 +38,7 @@ Ui.SVGElement.extend('Ui.Icon', {
 	arrangeCore: function(width, height) {
 		var scale = Math.min(width, height) / 48;
 		this.iconDrawing.setAttributeNS(null, 'transform', 'scale( '+scale.toFixed(4)+', '+scale.toFixed(4)+' )');
-	},
+	}
 }, /* static */ {
 	icons: {},
 
@@ -78,6 +77,6 @@ Ui.SVGElement.extend('Ui.Icon', {
 			width: (width != undefined)?width:48,
 			height: (height != undefined)?height:48,
 			fill: (fill != undefined)?fill:'black' });
-	},
+	}
 });
 

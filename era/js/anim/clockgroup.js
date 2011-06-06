@@ -11,8 +11,7 @@ Anim.Clock.extend('Anim.ClockGroup', {
 	appendChild: function(child) {
 		child.setParent(this);
 		this.children.push(child);
-	},
-
+	}
 }, {
 	begin: function() {
 		Anim.ClockGroup.base.begin.call(this);
@@ -58,5 +57,5 @@ Anim.Clock.extend('Anim.ClockGroup', {
 			if(this.getIsActive() && childStopped)
 				this.pendingState = 'stopped';
 		} while(this.pendingState != 'none');
-	},
+	}
 });

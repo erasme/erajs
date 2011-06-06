@@ -9,8 +9,7 @@ Ui.Transition.extend('Ui.Slide', {
 
 	setDirection: function(direction) {
 		this.direction = direction;
-	},
-
+	}
 }, {
 	run: function(current, next, progress) {
 		if(current != undefined) {
@@ -48,10 +47,10 @@ Ui.Transition.extend('Ui.Slide', {
 					next.setTransform(Ui.Matrix.createTranslate(0, next.getLayoutHeight() * (1 - progress)));
 			}
 		}
-	},
+	}
 }, {
 	constructor: function() {
 		Ui.Transition.register('slide', this);
-	},
+	}
 });
 

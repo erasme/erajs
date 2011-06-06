@@ -28,7 +28,7 @@ Ui.Element.extend('Ui.Image', {
 		this.naturalWidth = undefined;
 		this.naturalHeight = undefined;
 		this.src = src;
-		this.imageDrawing.setAttributeNS(null, 'src', src);
+		this.imageDrawing.setAttribute('src', src);
 	},
 
 	//
@@ -62,25 +62,31 @@ Ui.Element.extend('Ui.Image', {
 
 	onImageLoad: function(event) {
 		this.loaddone = true;
-		if((event.target.naturalWidth != undefined) && (event.target.naturalHeight != undefined)) {
+		if((event.target != undefined) && (event.target.naturalWidth != undefined) && (event.target.naturalHeight != undefined)) {
 			this.naturalWidth = event.target.naturalWidth;
 			this.naturalHeight = event.target.naturalHeight;
 		}
 		else {
-			this.imageDrawing.style.removeProperty('width');
-			this.imageDrawing.style.removeProperty('height');
-			this.naturalWidth = event.target.width;
-			this.naturalHeight = event.target.height;
+			if('removeProperty' in this.imageDrawing.style) {
+				this.imageDrawing.style.removeProperty('width');
+				this.imageDrawing.style.removeProperty('height');
+			}
+			else if('removeAttribute' in this.imageDrawing.style) {
+				this.imageDrawing.style.removeAttribute('width');
+				this.imageDrawing.style.removeAttribute('height');
+			}
+			this.naturalWidth = this.imageDrawing.width;
+			this.naturalHeight = this.imageDrawing.height;
 		}
 		this.fireEvent('ready', this);
 		this.invalidateMeasure();
-	},
+	}
 }, {
 	render: function() {
-		this.imageDrawing = document.createElementNS(htmlNS, 'img');
+		this.imageDrawing = document.createElement('img');
 		this.imageDrawing.style.width = '0px';
 		this.imageDrawing.style.height = '0px';
-		this.imageDrawing.setAttributeNS(null, 'draggable', false);
+		this.imageDrawing.setAttribute('draggable', false);
 		return this.imageDrawing;
 	},
 
@@ -110,5 +116,5 @@ Ui.Element.extend('Ui.Image', {
 	arrangeCore: function(width, height) {
 		this.imageDrawing.style.width = width+'px';
 		this.imageDrawing.style.height = height+'px';
-	},
+	}
 });

@@ -239,8 +239,7 @@ Ui.Container.extend('Ui.Fold', {
 			console.log('hide content');
 			this.contentBox.hide();
 		}
-	},
-
+	}
 }, {
 	//
 	// Return the required size for the current element
@@ -281,6 +280,6 @@ Ui.Container.extend('Ui.Fold', {
 			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight());
 			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
 		}
-	},
+	}
 });
 

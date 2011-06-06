@@ -98,8 +98,7 @@ Ui.Container.extend('Ui.Flow', {
 		this.uniformWidth = maxWidth;
 		this.uniformHeight = maxHeight;
 		return { width: maxWidth * countPerLine, height: nbLine * maxHeight };
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
@@ -129,6 +128,6 @@ Ui.Container.extend('Ui.Flow', {
 				child.arrange(child.flowLineX, child.flowLine.y, child.getMeasureWidth(), child.flowLine.height);
 			}
 		}
-	},
+	}
 });
 

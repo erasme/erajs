@@ -644,8 +644,7 @@ Ui.Container.extend('Ui.Scrollable', {
 //		this.disconnect(this.contentBox, 'scroll', this.onContentBoxScroll);
 //		this.contentBox.setOffset(this.offsetX, this.offsetY);
 //		this.connect(this.contentBox, 'scroll', this.onContentBoxScroll);
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 		if(this.contentBox == undefined)
@@ -806,7 +805,7 @@ Ui.Container.extend('Ui.Scrollable', {
 //		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
 
 		this.updateOffset();
-	},
+	}
 });
 
 Ui.Container.extend('Ui.ScrollableContent', {
@@ -848,8 +847,7 @@ Ui.Container.extend('Ui.ScrollableContent', {
 
 	getOffsetY: function() {
 		return this.getDrawing().scrollLeft;
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 		var size;
@@ -865,6 +863,6 @@ Ui.Container.extend('Ui.ScrollableContent', {
 	arrangeCore: function(width, height) {
 		if(this.content != undefined)
 			this.content.arrange(0, 0, Math.max(width, this.contentWidth), Math.max(height, this.contentHeight));
-	},
+	}
 });
 

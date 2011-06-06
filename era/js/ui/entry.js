@@ -143,11 +143,10 @@ Ui.Element.extend('Ui.Entry', {
 			event.stopPropagation();
 			this.fireEvent('validate', this);
 		}
-	},
-
+	}
 }, {
 	render: function() {
-		this.entryDrawing = document.createElementNS(htmlNS, 'input');
+		this.entryDrawing = document.createElement('input');
 		this.entryDrawing.setAttribute('type', 'text');
 		this.entryDrawing.style.border = '0px';
 		this.entryDrawing.style.margin = '0px';
@@ -179,5 +178,5 @@ Ui.Element.extend('Ui.Entry', {
 
 	onEnable: function() {
 		Ui.Entry.base.onEnable.call(this);
-	},
+	}
 });

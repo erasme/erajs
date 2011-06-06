@@ -505,7 +505,6 @@ Ui.LBox.extend('Ui.Transformable', {
 			this.inertiaClock.stop();
 			this.inertiaClock = undefined;
 		}
-	},
-
+	}
 }, {
 });

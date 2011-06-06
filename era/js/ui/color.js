@@ -144,19 +144,25 @@ Core.Object.extend('Ui.Color', {
 		this.r = Math.max(0, Math.min(y + 1.13983 * v, 1));
 		this.g = Math.max(0, Math.min(y - 0.39465 * u - 0.58060 * v, 1));
 		this.b = Math.max(0, Math.min(y + 2.03211 * u, 1));
-	},
-
+	}
 }, {
 	toString: function() {
 		return 'color('+this.r.toFixed(4)+', '+this.g.toFixed(4)+', '+this.b.toFixed(4)+', '+this.a.toFixed(4)+')';
-	},
+	}
 }, {
 	knownColor: {
 		white: { r: 1, g: 1, b: 1 },
 		black: { r: 0, g: 0, b: 0 },
 		red: { r: 1, g: 0, b: 0 },
-		green: { r: 0, g: 1, b: 0 },
+		green: { r: 0, g: 0.5, b: 0 },
 		blue: { r: 0, g: 0, b: 1 },
+		lightblue: { r: 0.678, g: 0.847, b: 0.902 },
+		lightgreen: { r: 0.565, g: 0.933, b: 0.565 },
+		orange: { r: 1, g: 0.647, b: 0 },
+		purple: { r: 0.5, g: 0, b: 0.5 },
+		lightgray: { r: 0.827, g: 0.827, b: 0.827 },
+		pink: { r: 1, g: 0.753, b: 0.796 },
+		brown: { r: 0.647, g: 0.165, b: 0.165 }
 	},
 
 	create: function(color) {
@@ -185,9 +191,8 @@ Core.Object.extend('Ui.Color', {
 		}
 		else if(Ui.Color.hasInstance(color))
 			return color;
-
 		throw('Unknown color format ('+color+')');
-	},
+	}
 });
 
 

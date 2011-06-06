@@ -52,8 +52,7 @@ Ui.Element.extend('Ui.Container', {
 	//
 	getChildren: function() {
 		return this.children;
-	},
-
+	}
 }, {
 	setIsLoaded: function(isLoaded) {
 		if(isLoaded != this.isLoaded) {
@@ -79,6 +78,6 @@ Ui.Element.extend('Ui.Container', {
 		Ui.Container.base.onInternalEnable.call(this);
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].setParentDisabled(false);
-	},
+	}
 });
 

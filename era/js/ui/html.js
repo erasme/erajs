@@ -13,11 +13,10 @@ Ui.Element.extend('Ui.Html', {
 
 	setHtml: function(html) {
 		this.htmlDrawing.innerHTML = html;
-	},
-
+	}
 }, {
 	render: function() {
-		this.htmlDrawing = document.createElementNS(htmlNS, 'div');
+		this.htmlDrawing = document.createElement('div');
 		this.htmlDrawing.style.display = 'block';
 		if(navigator.isWebkit)
 			this.htmlDrawing.style.webkitUserSelect = 'none';
@@ -39,6 +38,6 @@ Ui.Element.extend('Ui.Html', {
 	arrangeCore: function(width, height) {
 		this.htmlDrawing.style.width = width+'px';
 		this.htmlDrawing.style.height = height+'px';
-	},
+	}
 });
 

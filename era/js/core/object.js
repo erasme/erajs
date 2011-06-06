@@ -204,8 +204,8 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	}
 	else if(obj.attachEvent != undefined) {
 		var wrapper = function() {
-			// correct IE < 9 mouse button pb
-			if((arguments.length == 1) && ((arguments[0].type == 'mousedown') || (arguments[0].type == 'mousemove') || (arguments[0].type == 'mouseup'))) {
+			// correct IE < 9 event diff
+			if(arguments.length == 1) {
 				var newEvent = {};
 				for(var key in arguments[0])
 					newEvent[key] = arguments[0][key];
@@ -216,10 +216,14 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 				newEvent.stopPropagation = function() {
 					this.cancelBubble = true;
 				};
-				if(newEvent.button == 1)
-					newEvent.button = 0;
-				else if(newEvent.button == 4)
-					newEvent.button = 1;
+				newEvent.target = newEvent.srcElement;
+				// correct IE < 9 mouse button pb
+				if((arguments[0].type == 'mousedown') || (arguments[0].type == 'mousemove') || (arguments[0].type == 'mouseup')) {
+					if(newEvent.button == 1)
+						newEvent.button = 0;
+					else if(newEvent.button == 4)
+						newEvent.button = 1;
+				}
 				var res = arguments.callee.callback.call(arguments.callee.scope, newEvent);
 				arguments[0].returnValue = newEvent.returnValue;
 				arguments[0].cancelBubble = newEvent.cancelBubble;

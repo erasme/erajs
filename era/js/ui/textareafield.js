@@ -27,7 +27,7 @@ Ui.LBox.extend('Ui.TextAreaField', {
 
 	setValue: function(value) {
 		this.textarea.setValue(value);
-	},
+	}
 
 	//
 	// Private
@@ -42,6 +42,6 @@ Ui.LBox.extend('Ui.TextAreaField', {
 
 	onEnable: function() {
 		Ui.TextAreaField.base.onEnable.call(this);
-	},
+	}
 });
 

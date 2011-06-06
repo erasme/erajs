@@ -67,12 +67,11 @@ Core.Object.extend('Ui.Matrix', {
 
 	clone: function() {
 		return Ui.Matrix.createMatrix(this.svgMatrix.a, this.svgMatrix.b, this.svgMatrix.c, this.svgMatrix.d, this.svgMatrix.e, this.svgMatrix.f);
-	},
-
+	}
 }, {
 	toString: function() {
 		return 'matrix('+this.svgMatrix.a.toFixed(4)+', '+this.svgMatrix.b.toFixed(4)+', '+this.svgMatrix.c.toFixed(4)+', '+this.svgMatrix.d.toFixed(4)+', '+this.svgMatrix.e.toFixed(4)+', '+this.svgMatrix.f.toFixed(4)+')';
-	},
+	}
 });
 
 Ui.Matrix.createRotate = function(angle) {

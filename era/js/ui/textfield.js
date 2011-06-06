@@ -46,8 +46,7 @@ Ui.LBox.extend('Ui.TextField', {
 
 	onEntryValidate: function(entry) {
 		this.fireEvent('validate', this);
-	},
-
+	}
 }, {
 	onStyleChange: function() {
 	},
@@ -60,6 +59,6 @@ Ui.LBox.extend('Ui.TextField', {
 	onEnable: function() {
 		Ui.TextField.base.onEnable.call(this);
 		this.entry.setOpacity(1);
-	},
+	}
 });
 

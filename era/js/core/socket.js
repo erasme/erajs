@@ -75,13 +75,13 @@ Core.Object.extend('Core.Socket', {
 		}
 		else {
 			if(this.emusendrequest == undefined) {
-				this.emusendrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent(msg.serialize().toBase64()) });
+				this.emusendrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent((JSON.stringify(msg)).toBase64()) });
 				this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 				this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
 				this.emusendrequest.send();
 			}
 			else
-				this.emumessages.push(msg.serialize().toBase64());
+				this.emumessages.push((JSON.stringify(msg)).toBase64());
 		}
 	},
 
@@ -210,7 +210,7 @@ Core.Object.extend('Core.Socket', {
 			this.emusendrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent(messages) });
 			this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 			this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
-			this.emurequest.send();
+			this.emusendrequest.send();
 			this.emumessages = [];
 		}
 		else {
@@ -269,8 +269,7 @@ Core.Object.extend('Core.Socket', {
 		this.emupollrequest = undefined;
 		this.fireEvent('error', this);
 		this.close();
-	},
-
+	}
 });
 
 

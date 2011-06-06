@@ -36,7 +36,7 @@ Core.Object.extend('Anim.EasingFunction', {
 	//
 	easeInCore: function(normalizedTime) {
 		return normalizedTime;
-	},
+	}
 }, {
 }, /* static */ {
 	eases: {},
@@ -60,6 +60,6 @@ Core.Object.extend('Anim.EasingFunction', {
 			}
 		}
 		throw('invalid easing function ('+ease+')');
-	},
+	}
 });
 

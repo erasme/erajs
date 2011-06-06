@@ -18,8 +18,7 @@ Ui.LBox.extend('Ui.Loading', {
 
 	onTick: function(clock, progress) {
 		this.icon.setTransform(Ui.Matrix.createRotate(progress * 360));
-	},
-
+	}
 }, {
 	onLoad: function() {
 		Ui.Loading.base.onLoad.call(this);
@@ -33,11 +32,11 @@ Ui.LBox.extend('Ui.Loading', {
 
 	onStyleChange: function() {
 		this.icon.setFill(this.getStyleProperty('color'));
-	},
+	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.39, g: 0.39, b: 0.39 }),
-	},
+		color: new Ui.Color({ r: 0.39, g: 0.39, b: 0.39 })
+	}
 });
 
 

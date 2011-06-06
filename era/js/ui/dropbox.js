@@ -173,6 +173,6 @@ Ui.LBox.extend('Ui.DropBox', {
 //		if(data != undefined)
 //			console.log('drop url: '+data);
 		return false;
-	},
+	}
 }, {
 });

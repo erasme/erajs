@@ -167,8 +167,7 @@ Ui.Container.extend('Ui.Grid', {
 			}
 		}
 		return min;
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
@@ -360,6 +359,5 @@ Ui.Container.extend('Ui.Grid', {
 			
 			child.arrange(childX, childY, childWidth, childHeight);
 		}
-	},
-
+	}
 });

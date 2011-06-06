@@ -137,13 +137,12 @@ Ui.Element.extend('Ui.TextArea', {
 
 //		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
 			this.invalidateMeasure();
-	},
-
+	}
 }, {
 	render: function() {
-		this.textareaDrawing = document.createElementNS(htmlNS, 'textarea');
-		this.textareaDrawing.setAttributeNS(null, 'rows', 1);
-		this.textareaDrawing.setAttributeNS(null, 'cols', 1);
+		this.textareaDrawing = document.createElement('textarea');
+		this.textareaDrawing.setAttribute('rows', 1);
+		this.textareaDrawing.setAttribute('cols', 1);
 
 		this.textareaDrawing.style.display = 'block';
 		this.textareaDrawing.style.resize = 'none';
@@ -176,13 +175,13 @@ Ui.Element.extend('Ui.TextArea', {
 
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = height+'px';
-	},
+	}
 }, {
 /*	measureBox: undefined,
 
 	constructor: function() {
 		if(document.body == undefined) {
-			var body = document.createElementNS(htmlNS, 'body');
+			var body = document.createElement('body');
 			document.body = body;
 		}
 		Ui.TextArea.measureBox = document.createElement('textarea');

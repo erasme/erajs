@@ -116,8 +116,7 @@ Ui.Container.extend('Ui.LBox', {
 	//
 	remove: function(child) {
 		this.removeChild(child);
-	},
-
+	}
 }, {
 	//
 	// Return the required size for the current element
@@ -156,6 +155,6 @@ Ui.Container.extend('Ui.LBox', {
 		height -= top + bottom;
 		for(var i = 0; i < this.getChildren().length; i++)
 			this.getChildren()[i].arrange(left, top, width, height);
-	},
+	}
 });
 

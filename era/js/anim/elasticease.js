@@ -24,15 +24,14 @@ Anim.EasingFunction.extend('Anim.ElasticEase', {
 
 	getSpringiness: function() {
 		return this.springiness;
-	},
-
+	}
 }, {
 	easeInCore: function(normalizedTime) {
 		return Math.sin(normalizedTime * (this.oscillations * 2 + 0.5) * Math.PI) * Math.pow(normalizedTime, this.springiness);
-	},
+	}
 }, /* static */ {
 	constructor: function() {
 		Anim.EasingFunction.register('elastic', this);
-	},
+	}
 });
 

@@ -10,7 +10,7 @@ Core.Object.extend('Ui.LinearGradient', {
 			this.stops = config.stops;
 		else
 			this.stops = [
-				{ offset: 0, color: new Ui.Color({ r: 255, g: 255, b: 255, a: 1}) },
+				{ offset: 0, color: new Ui.Color({ r: 1, g: 1, b: 1, a: 1}) },
 				{ offset: 1, color: new Ui.Color({ r: 0, g: 0, b: 0, a: 1}) }];
 		if(config.orientation != undefined)
 			this.orientation = config.orientation;
@@ -40,7 +40,7 @@ Core.Object.extend('Ui.LinearGradient', {
 			this.image += ')';
 		}
 		else if(navigator.supportCanvas) {
-			var canvas = document.createElementNS(htmlNS, 'canvas');
+			var canvas = document.createElement('canvas');
 			var context = canvas.getContext('2d');
 			if(this.orientation == 'vertical') {
 				canvas.setAttribute('width', 1, null);
@@ -99,6 +99,29 @@ Core.Object.extend('Ui.LinearGradient', {
 		return gradient;
 	},
 
+	getVMLFill: function() {
+		var fill = document.createElement('vml:fill');
+		fill.type = 'gradient';
+		if(this.orientation == 'vertical')
+			fill.angle = 180;
+		else
+			fill.angle = 270;
+		fill.color = this.stops[0].color.getCssHtml();
+		fill.opacity = this.stops[0].color.getRgba().a;
+		fill.color2 = this.stops[this.stops.length - 1].color.getCssHtml();
+		fill.opacity2 = this.stops[0].color.getRgba().a;
+		fill.method = 'None';
+		if(this.stops.length > 2) {
+			var colors = '';
+			for(var i = 1; i < this.stops.length-1; i++) {
+				if(colors != '')
+					colors += ',';
+				colors += Math.round(this.stops[i].offset * 100)+'% '+this.stops[i].color.getCssHtml();
+			}
+			fill.colors = colors;
+		}
+		return fill;
+	}
 }, {
 });
 

@@ -345,7 +345,6 @@ Ui.LBox.extend('Ui.Movable', {
 			this.inertiaClock.stop();
 			this.inertiaClock = undefined;
 		}
-	},
-
+	}
 }, {
 });

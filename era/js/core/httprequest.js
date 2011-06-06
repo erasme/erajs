@@ -4,6 +4,7 @@ Core.Object.extend('Core.HttpRequest', {
 	url: undefined,
 	method: 'GET',
 	binary: false,
+	request: undefined,
 
 	constructor: function(config) {
 		if(config.url != undefined)
@@ -64,7 +65,11 @@ Core.Object.extend('Core.HttpRequest', {
 	},
 
 	send: function() {
-		this.request.send.apply(this.request, arguments);
+		this.request.send();
+//		if((arguments == undefined) || (arguments == null))
+//			this.request.send.apply(this.request, []);
+//		else
+//			this.request.send.apply(this.request, arguments);
 	},
 
 	getResponseText: function() {
@@ -123,8 +128,7 @@ Core.Object.extend('Core.HttpRequest', {
 			return xmlDoc;
 		} catch(e) {}
 		return undefined;
-	},
-
+	}
 });
 
 

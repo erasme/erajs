@@ -163,7 +163,7 @@ Core.Object.extend('Ui.Element', {
 	// Set a unique id for the current element
 	//
 	setId: function(id) {
-		this.drawing.setAttributeNS(null, 'id', id);
+		this.drawing.setAttribute('id', id);
 	},
 
 	//
@@ -179,9 +179,9 @@ Core.Object.extend('Ui.Element', {
 	setFocusable: function(focusable) {
 		this.focusable = focusable;
 		if(focusable && !this.getIsDisabled())
-			this.drawing.setAttributeNS(null, 'tabindex', 0);
+			this.drawing.setAttribute('tabindex', 0);
 		else
-			this.drawing.setAttributeNS(null, 'tabindex', -1);
+			this.drawing.setAttribute('tabindex', -1);
 	},
 
 	//
@@ -204,12 +204,14 @@ Core.Object.extend('Ui.Element', {
 	// the WAI-ARIA. To remove a role, use undefined
 	//
 	setRole: function(role) {
-		if(role == undefined) {
-			if(this.drawing.hasAttributeNS('http://www.w3.org/2005/07/aaa', 'role'))
-				this.drawing.removeAttributeNS('http://www.w3.org/2005/07/aaa', 'role');
+		if('setAttributeNS' in this.drawing) {
+			if(role == undefined) {
+				if(this.drawing.hasAttributeNS('http://www.w3.org/2005/07/aaa', 'role'))
+					this.drawing.removeAttributeNS('http://www.w3.org/2005/07/aaa', 'role');
+			}
+			else
+				this.drawing.setAttributeNS('http://www.w3.org/2005/07/aaa', 'role', role);
 		}
-		else
-			this.drawing.setAttributeNS('http://www.w3.org/2005/07/aaa', 'role', role);
 	},
 
 	//
@@ -404,7 +406,7 @@ Core.Object.extend('Ui.Element', {
 	// Return the HTML element of the rendering
 	//
 	renderDrawing: function() {
-		return document.createElementNS(htmlNS, 'div');
+		return document.createElement('div');
 	},
 
 	//
@@ -523,8 +525,12 @@ Core.Object.extend('Ui.Element', {
 			height = Math.round(this.clipHeight);
 			this.drawing.style.clip = 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)';
 		}
-		else
-			this.drawing.style.removeProperty('clip');
+		else {
+			if('removeProperty' in this.drawing.style)
+				this.drawing.style.removeProperty('clip');
+			else if('removeAttribute' in this.drawing.style)
+                                this.drawing.style.removeAttribute('clip');
+		}
 	},
 
 	//
@@ -617,7 +623,10 @@ Core.Object.extend('Ui.Element', {
 	setOpacity: function(opacity) {
 		if(this.opacity != opacity) {
 			this.opacity = opacity;
-			this.drawing.style.opacity = this.opacity;
+			if((navigator.userAgent.match(/MSIE 7/i) != null) ||	(navigator.userAgent.match(/MSIE 8/i) != null))
+				this.drawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity='+(Math.round(opacity * 100))+')';
+			else
+				this.drawing.style.opacity = this.opacity;
 		}
 	},
 
@@ -773,7 +782,12 @@ Core.Object.extend('Ui.Element', {
 			var matrix = new Ui.Matrix();
 			var current = this.drawing;
 			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-ms-transform');
+				var trans;
+				try {
+					trans = window.getComputedStyle(current, null).getPropertyValue('-ms-transform');
+				} catch(e) {
+					trans = 'none';
+				}
 				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
 					var splits = trans.split(' ');
 					var a = new Number(splits[0].slice(7, splits[0].length-1));
@@ -942,7 +956,7 @@ Core.Object.extend('Ui.Element', {
 
 	onInternalDisable: function() {
 		if(this.focusable)
-			this.drawing.setAttributeNS(null, 'tabindex', -1);
+			this.drawing.setAttribute('tabindex', -1);
 		this.onDisable();
 		this.fireEvent('disable', this);
 	},
@@ -952,7 +966,7 @@ Core.Object.extend('Ui.Element', {
 
 	onInternalEnable: function() {
 		if(this.focusable)
-			this.drawing.setAttributeNS(null, 'tabindex', 0);
+			this.drawing.setAttribute('tabindex', 0);
 		this.onEnable();
 		this.fireEvent('enable', this);
 	},
@@ -1214,7 +1228,7 @@ Core.Object.extend('Ui.Element', {
 			}
 		}
 		else {
-			if(navigator.isIE) {
+			if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
 				this.drawing.style.removeProperty('-ms-transform');
 				this.drawing.style.removeProperty('-ms-transform-origin');
 			}
@@ -1256,6 +1270,6 @@ Core.Object.extend('Ui.Element', {
 			this.animClock = undefined;
 		}
 		this.fireEvent('unload');
-	},
+	}
 });
 

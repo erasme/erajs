@@ -1,5 +1,5 @@
 
-Ui.SVGElement.extend('Ui.Text', {
+Ui.Element.extend('Ui.Text', {
 	text: '',
 	measureDrawing: undefined,
 	textDrawing: undefined,
@@ -44,8 +44,7 @@ Ui.SVGElement.extend('Ui.Text', {
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.textDrawing.setAttributeNS(null, 'font-size', this.fontSize);
-			this.measureDrawing.setAttributeNS(null, 'font-size', this.fontSize);
+			this.textDrawing.style.fontSize = this.fontSize+'px';
 			this.invalidateMeasure();
 		}
 	},
@@ -57,8 +56,7 @@ Ui.SVGElement.extend('Ui.Text', {
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.textDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
-			this.measureDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
+			this.textDrawing.style.fontFamily = this.fontFamily;
 			this.invalidateMeasure();
 		}
 	},
@@ -70,8 +68,7 @@ Ui.SVGElement.extend('Ui.Text', {
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.textDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
-			this.measureDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
+			this.textDrawing.style.fontWeight = this.fontWeight;
 			this.invalidateMeasure();
 		}
 	},
@@ -82,8 +79,11 @@ Ui.SVGElement.extend('Ui.Text', {
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
-			this.textDrawing.setAttributeNS(null, 'fill', this.color, null);
+			this.color = Ui.Color.create(color);
+			if(navigator.supportRgba)
+				this.textDrawing.style.color = this.color.getCssRgba();
+			else
+				this.textDrawing.style.color = this.color.getCssHtml();
 		}
 	},
 
@@ -96,10 +96,12 @@ Ui.SVGElement.extend('Ui.Text', {
 	//
 
 	addWord: function(word) {
-		var wordSize = this.measureText(word);
+		var wordSize = Ui.Label.measureText(word, this.fontSize, this.fontFamily, this.fontWeight).width;
+
 		if(wordSize > this.maxWidth)
 			this.maxWidth = wordSize;
 		var newOffsetX = this.offsetX + wordSize;
+
 		if(this.line != '')
 			newOffsetX += this.spaceWidth;
 		if(newOffsetX > this.maxWidth)
@@ -119,29 +121,21 @@ Ui.SVGElement.extend('Ui.Text', {
 
 	flushLine: function(lineWidth) {
 		if(this.flowRender && (this.line != '')) {
-			var tspan = document.createElementNS(svgNS, 'tspan');
-			tspan.setAttributeNS(null, 'x', 0);
-			tspan.setAttributeNS(null, 'y', this.offsetY);
-//			tspan.setAttributeNS(null, 'textLength', lineWidth);
-//			tspan.setAttributeNS(null, 'lengthAdjust', 'spacing');
-			tspan.textContent = this.line;
+			var tspan = document.createElement('div');
+			tspan.style.whiteSpace = 'nowrap';
+			tspan.style.display = 'inline';
+			tspan.style.position = 'absolute';
+			tspan.style.left = '0px';
+			tspan.style.top = this.offsetY+'px';
+			if('textContent' in tspan)
+				tspan.textContent = this.line;
+			else
+				tspan.innerText = this.line;
 			this.textDrawing.appendChild(tspan);
 		}
 		this.offsetX = 0;
 		this.offsetY += this.lineHeight;
 		this.line = '';
-	},
-
-	measureText: function(text) {
-		this.measureDrawing.textContent = text;
-		var width;
-		try {
-			width = this.measureDrawing.getComputedTextLength();
-		} catch(err) {
-			var bbox = this.measureDrawing.getBBox();
-			width = bbox.width;
-		}
-		return width;
 	},
 
 	updateFlow: function(width, render) {
@@ -150,14 +144,14 @@ Ui.SVGElement.extend('Ui.Text', {
 		this.maxWidth = width;
 		this.lineHeight = this.getFontSize();
 		this.offsetX = 0;
-		this.offsetY = this.lineHeight;
+		this.offsetY = 0;
 		this.line = '';
 		this.spaceWidth = undefined;
 		var startPos = 0;
 		var word = '';
 		var i = 0;
 
-		this.spaceWidth = this.measureText('x');
+		this.spaceWidth = Ui.Label.measureText('x', this.fontSize, this.fontFamily, this.fontWeight).width;
 
 		for(i = 0; i < this.text.length; i++) {
 			if((this.text[i] == ' ') || (this.text[i] == '\n')) {
@@ -175,21 +169,13 @@ Ui.SVGElement.extend('Ui.Text', {
 		if(word != '')
 			this.addWord(word);
 
-		if(this.line != '') {
-			this.lineHeight *= 0.33;
+		if(this.line != '')
 			this.newLine();
-		}
-	},
-
+	}
 }, {
 	render: function() {
-		var group = document.createElementNS(svgNS, 'g');
-		// create an hidden text to measure things
-		this.measureDrawing = document.createElementNS(svgNS, 'text');
-		this.measureDrawing.setAttributeNS(null, 'visibility', 'hidden');
-		group.appendChild(this.measureDrawing);
 		// create the container for all text rendering
-		this.textDrawing = document.createElementNS(svgNS, 'text');
+		this.textDrawing = document.createElement('div');
 		if(navigator.isWebkit)
 			this.textDrawing.style.webkitUserSelect = 'none';
 		else if(navigator.isGecko)
@@ -200,17 +186,12 @@ Ui.SVGElement.extend('Ui.Text', {
 			this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
 		this.textDrawing.style.pointerEvents = 'none';
 
-		this.textDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
-		this.textDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
-		this.textDrawing.setAttributeNS(null, 'font-size', this.fontSize);
-		this.textDrawing.setAttributeNS(null, 'fill', this.color, null);
+		this.textDrawing.style.fontFamily = this.fontFamily;
+		this.textDrawing.style.fontWeight = this.fontWeight;
+		this.textDrawing.style.fontSize = this.fontSize+'px';
+		this.textDrawing.style.color = this.color;
 
-		this.measureDrawing.setAttributeNS(null, 'font-family', this.fontFamily);
-		this.measureDrawing.setAttributeNS(null, 'font-weight', this.fontWeight);
-		this.measureDrawing.setAttributeNS(null, 'font-size', this.fontSize);
-
-		group.appendChild(this.textDrawing);
-		return group;
+		return this.textDrawing;
 	},
 
 	measureCore: function(width, height) {
@@ -229,5 +210,5 @@ Ui.SVGElement.extend('Ui.Text', {
 		while(this.textDrawing.hasChildNodes())
 			this.textDrawing.removeChild(this.textDrawing.firstChild);
 		this.updateFlow(width, true);
-	},
+	}
 });

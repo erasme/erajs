@@ -12,10 +12,10 @@ Ui.Transition.extend('Ui.Fade', {
 		}
 		if(next != undefined)
 			next.setOpacity(progress);
-	},
+	}
 }, {
 	constructor: function() {
 		Ui.Transition.register('fade', this);
-	},
+	}
 });
 

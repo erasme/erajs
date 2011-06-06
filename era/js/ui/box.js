@@ -401,7 +401,7 @@ Ui.Container.extend('Ui.Box', {
 			this.star = star;
 		}
 		return { width: minWidth, height: minHeight };
-	},
+	}
 }, {
 	measureCore: function(width, height) {
 		var left = this.getPaddingLeft();
@@ -466,18 +466,18 @@ Ui.Container.extend('Ui.Box', {
 				}
 			}
 		}
-	},
+	}
 });
 
 
 Ui.Box.extend('Ui.VBox', {
 	constructor: function(config) {
 		this.setOrientation('vertical');
-	},
+	}
 });
 
 Ui.Box.extend('Ui.HBox', {
 	constructor: function(config) {
 		this.setOrientation('horizontal');
-	},
+	}
 });

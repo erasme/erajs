@@ -100,8 +100,7 @@ Ui.LBox.extend('Ui.TransitionBox', {
 		}
 		this.next.setClipToBounds(false);
 		this.fireEvent('change', this, this.position);
-	},
-
+	}
 }, {
 	arrangeCore: function(width, height) {
 		Ui.TransitionBox.base.arrangeCore.call(this, width, height);
@@ -137,12 +136,12 @@ Ui.LBox.extend('Ui.TransitionBox', {
 				break;
 			}
 		}
-	},
+	}
 });
 
 
 Ui.LBox.extend('Ui.TransitionBoxContent', {
 	constructor: function(config) {
-	},
+	}
 });
 

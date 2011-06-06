@@ -324,7 +324,7 @@ Ui.Pressable.extend('Ui.Button', {
 
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 + deltaY, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 + deltaY, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -384,7 +384,7 @@ Ui.Pressable.extend('Ui.Button', {
 		if(this.text2 != undefined)
 			this.text2.setColor(this.getContentColor());
 		this.rect2.setFill(this.getLightColor());
-	},
+	}
 }, {
 	onStyleChange: function() {
 		var radius = this.getStyleProperty('radius');
@@ -405,14 +405,13 @@ Ui.Pressable.extend('Ui.Button', {
 	onEnable: function() {
 		Ui.Button.base.onEnable.call(this);
 		this.contentBox.setOpacity(1);
-	},
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 //		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
 		radius: 4,
-		spacing: 3,
-	},
-
+		spacing: 3
+	}
 });
 

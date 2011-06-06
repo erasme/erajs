@@ -19,7 +19,7 @@ Ui.LBox.extend('Ui.Downloadable', {
 	},
 
 	setSrc: function(src) {
-		this.getDrawing().setAttributeNS(null, 'href', src);
+		this.getDrawing().setAttribute('href', src);
 	},
 
 	setContent: function(content) {
@@ -34,13 +34,13 @@ Ui.LBox.extend('Ui.Downloadable', {
 
 	onClick: function(event) {
 		this.fireEvent('download', this);
-	},
+	}
 }, {
 	renderDrawing: function() {
-		var linkDrawing = document.createElementNS(htmlNS, 'a');
+		var linkDrawing = document.createElement('a');
 		linkDrawing.style.display = 'block';
 		linkDrawing.style.textDecoration = 'none';
 		return linkDrawing;
-	},
+	}
 });
 

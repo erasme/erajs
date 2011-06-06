@@ -35,7 +35,7 @@ Ui.Element.extend('Ui.Audio', {
 		this.src = src;
 
 		if(Ui.Audio.htmlAudio)
-			this.audioDrawing.setAttributeNS(null, 'src', src);
+			this.audioDrawing.setAttribute('src', src);
 	},
 
 	//
@@ -130,8 +130,7 @@ Ui.Element.extend('Ui.Audio', {
 	onEnded: function() {
 		this.playing = false;
 		this.fireEvent('ended');
-	},
-
+	}
 }, {
 	verticalAlign: 'top',
 	horizontalAlign: 'left',
@@ -139,17 +138,17 @@ Ui.Element.extend('Ui.Audio', {
 	render: function() {
 		var drawing;
 		if(Ui.Audio.htmlAudio) {
-			this.audioDrawing = document.createElementNS(htmlNS, 'audio');
+			this.audioDrawing = document.createElement('audio');
 			this.audioDrawing.style.display = 'none';
 			this.connect(this.audioDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.audioDrawing, 'ended', this.onEnded);
 			this.connect(this.audioDrawing, 'timeupdate', this.onTimeupdate);
-			this.audioDrawing.setAttributeNS(null, 'preload', 'auto');
+			this.audioDrawing.setAttribute('preload', 'auto');
 			this.audioDrawing.load();
 			drawing = this.audioDrawing;
 		}
 		return drawing;
-	},
+	}
 });
 
 // detect what audio system is supported
@@ -160,7 +159,7 @@ Ui.Audio.supportMp3 = false;
 Ui.Audio.supportWav = false;
 
 // check for HTMLAudioElement
-Ui.Audio.audioTest = document.createElementNS(htmlNS, 'audio');
+Ui.Audio.audioTest = document.createElement('audio');
 if(Ui.Audio.audioTest.play != undefined) {
 	Ui.Audio.htmlAudio = true;
 	Ui.Audio.supportWav = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/wav');

@@ -34,7 +34,7 @@ Ui.VBox.extend('Ui.ToolBar', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -46,8 +46,7 @@ Ui.VBox.extend('Ui.ToolBar', {
 	getDarkColor: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-	},
-
+	}
 }, {
 	append: function(child, resizable) {
 		this.hbox.append(child, resizable);
@@ -64,7 +63,7 @@ Ui.VBox.extend('Ui.ToolBar', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		gradient = new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 		lightColor = new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
 		darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
@@ -76,20 +75,19 @@ Ui.VBox.extend('Ui.ToolBar', {
 		this.hbox.setMargin(spacing);
 		this.hbox.setSpacing(spacing);
 
-	},
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
 		spacing: 3,
 
 		"Ui.Button": {
-			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
+			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
 		},
 
 		"Ui.TextButtonField": {
-			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
-		},
-
-	},
+			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
+		}
+	}
 });
 

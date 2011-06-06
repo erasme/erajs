@@ -77,8 +77,7 @@ Ui.Container.extend('Ui.Popup', {
 	onContentTouchStart: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-	},
-
+	}
 }, {
 	onStyleChange: function() {
 		this.background.setFill(this.getStyleProperty('color'));
@@ -164,11 +163,11 @@ Ui.Container.extend('Ui.Popup', {
 			this.background.arrange(x - 10, y, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		}
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-	},
+	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 }),
-	},
+		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 })
+	}
 });
 
 
@@ -252,8 +251,7 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 			var v2 = height - this.radius;
 			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+(radius+arrowSize)+','+height+' A'+radius+','+radius+' 0 0,1 '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' A'+radius+','+radius+' 0 0,1 '+(radius+arrowSize)+',0 z';
 		}
-	},
-
+	}
 }, {
 	render: function() {
 		this.popupDrawing = document.createElementNS(svgNS, 'g');
@@ -305,7 +303,7 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 			this.lightShadow.setAttributeNS(null, 'd', this.genPath(width-3, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
 			this.background.setAttributeNS(null, 'd', this.genPath(width-5.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
 		}
-	},
+	}
 });
 
 

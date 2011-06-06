@@ -208,5 +208,5 @@ Ui.LBox.extend('Ui.Togglable', {
 
 	untoggle: function() {
 		this.onUntoggle();
-	},
+	}
 });

@@ -18,8 +18,7 @@ Ui.Container.extend('Ui.Fixed', {
 		child.fixedX = x;
 		child.fixedY = y;
 		this.appendChild(child);
-	},
-
+	}
 }, {
 	//
 	// Return the required size for the current element
@@ -47,6 +46,6 @@ Ui.Container.extend('Ui.Fixed', {
 
 	onChildInvalidateArrange: function(child) {
 		child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
-	},
+	}
 });
 

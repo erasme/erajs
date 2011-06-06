@@ -122,9 +122,7 @@ Ui.Container.extend('Ui.Locator', {
 
 	onPathUp: function(pathItem) {
 		this.backgrounds[pathItem.locatorPos].getChildren()[0].setFill('lightblue');
-	},
-
-
+	}
 }, {
 	//
 	// Return the required size for the current element
@@ -177,7 +175,7 @@ Ui.Container.extend('Ui.Locator', {
 				bg.arrange(x - height/2, 0, fgWidth + height, height);
 			x += fgWidth + height/2 + this.spacing;
 		}
-	},
+	}
 });
 
 Ui.SVGElement.extend('Ui.LocatorRightArrow', {
@@ -199,8 +197,7 @@ Ui.SVGElement.extend('Ui.LocatorRightArrow', {
 	setFill: function(fill) {
 		this.fill = fill;
 		this.arrowDrawing.style.fill = this.fill;
-	},
-
+	}
 }, {
 	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
@@ -215,7 +212,7 @@ Ui.SVGElement.extend('Ui.LocatorRightArrow', {
 		var v2 = height/2;
 		var v3 = height-this.radius;
 		this.arrowDrawing.setAttributeNS(null, 'd', 'M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' A'+this.radius+','+this.radius+' 0 0,1 0,'+v3+' L0,'+this.radius+' A'+this.radius+','+this.radius+' 0 0,1 '+this.radius+',0 z');
-	},
+	}
 });
 
 Ui.SVGElement.extend('Ui.LocatorLeftArrow', {
@@ -237,8 +234,7 @@ Ui.SVGElement.extend('Ui.LocatorLeftArrow', {
 	setFill: function(fill) {
 		this.fill = fill;
 		this.arrowDrawing.style.fill = this.fill;
-	},
-
+	}
 }, {
 	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
@@ -253,7 +249,7 @@ Ui.SVGElement.extend('Ui.LocatorLeftArrow', {
 		var v3 = height - this.radius;
 		var v4 = height/2;
 		this.arrowDrawing.setAttributeNS(null, 'd', 'M0,0 L'+v2+',0 A'+this.radius+','+this.radius+' 0 0,1 '+width+','+this.radius+' L'+width+','+v3+' A'+this.radius+','+this.radius+' 0 0,1 '+v2+','+height+' L0,'+height+' L'+v4+','+v4+' z');
-	},
+	}
 });
 
 Ui.SVGElement.extend('Ui.LocatorLeftRightArrow', {
@@ -275,8 +271,7 @@ Ui.SVGElement.extend('Ui.LocatorLeftRightArrow', {
 	setFill: function(fill) {
 		this.fill = fill;
 		this.arrowDrawing.style.fill = this.fill;
-	},
-
+	}
 }, {
 	render: function() {
 		this.arrowDrawing = document.createElementNS(svgNS, 'path');
@@ -290,7 +285,7 @@ Ui.SVGElement.extend('Ui.LocatorLeftRightArrow', {
 		var v1 = width - height/2;
 		var v2 = height/2;
 		this.arrowDrawing.setAttributeNS(null, 'd', 'M0,0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L0,'+height+' L'+v2+','+v2+' z');
-	},
+	}
 });
 
 
@@ -306,8 +301,7 @@ Ui.SVGElement.extend('Ui.LocatorHome', {
 	setFill: function(fill) {
 		this.fill = fill;
 		this.homeDrawing.style.fill = this.fill;
-	},
-
+	}
 }, {
 	render: function() {
 		this.homeDrawing = document.createElementNS(svgNS, 'path');
@@ -321,6 +315,6 @@ Ui.SVGElement.extend('Ui.LocatorHome', {
 	arrangeCore: function(width, height) {
 		var scale = Math.min(width, height) / 48;
 		this.homeDrawing.setAttributeNS(null, 'transform', 'scale( '+scale.toFixed(4)+', '+scale.toFixed(4)+' )');
-	},
+	}
 });
 

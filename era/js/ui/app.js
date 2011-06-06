@@ -45,7 +45,8 @@ Ui.LBox.extend('Ui.App', {
 		document.documentElement.style.width = '100%';
 		document.documentElement.style.height = '100%';
 
-		this.svgRoot = document.createElementNS(svgNS, 'svg');
+		if(navigator.supportSVG)
+			this.svgRoot = document.createElementNS(svgNS, 'svg');
 
 		this.setTransformOrigin(0, 0);
 
@@ -57,10 +58,10 @@ Ui.LBox.extend('Ui.App', {
 
 		this.addEvents('resize', 'ready', 'parentmessage');
 
-/*		if(config.style != undefined)
-			this.setStyle(config.style);
-		else
-			this.setStyle(this.style);*/
+//		if(config.style != undefined)
+//			this.setStyle(config.style);
+//		else
+//			this.setStyle(this.style);
 
 //		this.connect(window, 'keypress', this.onWindowKeyPress, true);
 //		this.connect(window, 'keydown', this.onWindowKeyDown, true);
@@ -152,17 +153,17 @@ Ui.LBox.extend('Ui.App', {
 	onWindowLoad: function() {
 		if(navigator.iPad || navigator.iPhone || navigator.Android) {
 			// support app mode for iPad, iPod and iPhone
-			var meta = document.createElementNS(htmlNS, 'meta');
+			var meta = document.createElement('meta');
 			meta.name = 'apple-mobile-web-app-capable';
 			meta.content = 'yes';
 			document.getElementsByTagName("head")[0].appendChild(meta);
 			// black status bar for iPhone
-			meta = document.createElementNS(htmlNS, 'meta');
+			meta = document.createElement('meta');
 			meta.name = 'apple-mobile-web-app-status-bar-style';
 			meta.content = 'black';
 			document.getElementsByTagName("head")[0].appendChild(meta);
 			// stop the scaling of the page
-			meta = document.createElementNS(htmlNS, 'meta');
+			meta = document.createElement('meta');
 			meta.name = 'viewport';
 			meta.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no';
 			document.getElementsByTagName("head")[0].appendChild(meta);
@@ -443,7 +444,7 @@ Ui.LBox.extend('Ui.App', {
 			this.ready = true;
 
 			if(document.body == undefined) {
-				this.htmlRoot = document.createElementNS(htmlNS, 'body');
+				this.htmlRoot = document.createElement('body');
 				document.body = this.htmlRoot;
 			}
 			document.body.style.padding = '0px';
@@ -454,7 +455,7 @@ Ui.LBox.extend('Ui.App', {
 			document.body.style.height = '100%';
 /*
 			this.forceKeyboard = document.createElement('input');
-			this.forceKeyboard.setAttributeNS(null, 'type', 'text');
+			this.forceKeyboard.setAttribute('type', 'text');
 //			this.forceKeyboard.style.clip = 'rect(0px 0px 0px 0px)';
 			this.forceKeyboard.style.position = 'fixed';
 			this.forceKeyboard.style.right = '0px';
@@ -606,8 +607,7 @@ Ui.LBox.extend('Ui.App', {
 		this.layoutList = element;
 		if((this.updateTask == undefined) && this.ready)
 			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-	},
-
+	}
 }, {
 	invalidateMeasure: function() {
 //		if(this.measureValid) {
@@ -628,7 +628,7 @@ Ui.LBox.extend('Ui.App', {
 			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 //		}
-	},
+	}
 });
 
 Ui.App.current = undefined;

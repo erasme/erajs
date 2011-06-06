@@ -5,6 +5,6 @@
 Ui.Element.extend('Ui.SVGElement', {}, {
 	renderDrawing: function() {
 		return document.createElementNS(svgNS, 'svg');
-	},
+	}
 });
 

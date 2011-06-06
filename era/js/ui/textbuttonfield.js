@@ -311,10 +311,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 
 	onEntryValidate: function(entry) {
 		this.fireEvent('validate', this);
-	},
-
-
-
+	}
 }, {
 	onStyleChange: function() {
 		var gradient;
@@ -386,12 +383,12 @@ Ui.LBox.extend('Ui.TextButtonField', {
 
 	onEnable: function() {
 		Ui.TextField.base.onEnable.call(this);
-	},
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		radius: 4,
-		spacing: 3,
-	},
+		spacing: 3
+	}
 });
 

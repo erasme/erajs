@@ -44,6 +44,6 @@ Core.Object.extend('Core.Timer', {
 			clearTimeout(this.handle);
 			this.handle = undefined;
 		}
-	},
+	}
 });
 

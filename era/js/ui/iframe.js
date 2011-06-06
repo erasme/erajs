@@ -32,11 +32,10 @@ Ui.Element.extend('Ui.IFrame', {
 			}
 			this.fireEvent('ready', this);
 		}
-	},
-
+	}
 }, {
 	render: function() {
-		this.iframeDrawing = document.createElementNS(htmlNS, 'iframe');
+		this.iframeDrawing = document.createElement('iframe');
 		this.iframeDrawing.style.border = '0px';
 		return this.iframeDrawing;
 	},
@@ -52,6 +51,6 @@ Ui.Element.extend('Ui.IFrame', {
 			this.iframeDrawing.style.width = width+'px';
 			this.iframeDrawing.style.height = height+'px';
 		}
-	},
+	}
 });
 

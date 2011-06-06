@@ -19,7 +19,7 @@ for(var i = 0; i < scripts.length; i++) {
 }
 
 function include(fileName) {
-	document.write("<script type='text/javascript' src='"+fileName+"'></script>");
+    document.write("<script type='text/javascript' src='"+fileName+"'></script>");
 }
 
 //
@@ -27,6 +27,7 @@ function include(fileName) {
 //
 include(eraBaseDirectory+'core/util.js');
 include(eraBaseDirectory+'core/object.js');
+//include(eraBaseDirectory+'core/event.js');
 include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');

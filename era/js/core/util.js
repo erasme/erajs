@@ -12,17 +12,16 @@ navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
 
 navigator.Android = (navigator.userAgent.match(/Android/i) != null);
 
-console.log(navigator.userAgent);
-
 var svgNS = "http://www.w3.org/2000/svg";
 var htmlNS = "http://www.w3.org/1999/xhtml";
 
-// provide createElementNS if dont exists
-if(!('createElementNS' in document)) {
-	HTMLDocument.prototype.createElementNS = function(ns, element) {
-		return this.createElement(element);
-	};
-}
+
+//if(navigator.userAgent.match(/MSIE 9/i) != null) {
+//	meta = document.createElement('meta');
+//	meta['http-equiv'] = 'X-UA-Compatible';
+//	meta.content = 'IE=IE9';
+//	document.getElementsByTagName("head")[0].insertBefore(meta,document.getElementsByTagName("head")[0].firstChild);
+//}
 
 navigator.supportSVG = false;
 try {
@@ -31,12 +30,12 @@ try {
 		navigator.supportSVG = true;
 } catch(e) {}
 
-var test = document.createElementNS(htmlNS, 'canvas');
+var test = document.createElement('canvas');
 navigator.supportCanvas = 'getContext' in test;
 
 navigator.supportRgba = true;
 navigator.supportRgb = true;
-var test = document.createElementNS(htmlNS, 'div');
+var test = document.createElement('div');
 try {
 	test.style.background = 'rgba(0, 0, 0, 0.5)';
 } catch(e) {
@@ -149,39 +148,10 @@ String.prototype.fromBase64 = function() {
 	return res.utf8Decode();
 };
 
-//console.log('getPropertyValue: '+('getPropertyValue' in test.style));
-//console.log('getAttribute: '+('getAttribute' in test.style));
+navigator.supportVML = false;
 
 // correct IE specific bugs
 if(navigator.isIE) {
-
-	var test = document.createElementNS(htmlNS, 'div');
-	if(!('getPropertyValue' in test.style)) {
-		CSSStyleDeclaration.prototype.getPropertyValue = function(property) {
-			return this.getAttribute(property);
-		};
-	}
-	if(!('removeProperty' in test.style)) {
-		CSSStyleDeclaration.prototype.removeProperty = function(property) {
-			return this.removeAttribute(property);
-		};
-	}
-	if(!('setAttributeNS' in test)) {
-		HTMLDivElement.prototype.setAttributeNS = function(ns, attribute, value) {
-			return this.setAttribute(attribute, value);
-		};
-	}
-	if(!('preventDefault' in Event.prototype)) {
-		Event.prototype.preventDefault = function() {
-			this.defaultPrevented = true;
-			this.returnValue= false;
-		};
-	}
-	if(!('stopPropagation' in Event.prototype)) {
-		Event.prototype.stopPropagation = function() {
-			this.cancelBubble = true;
-		};
-	}
 	if(navigator.supportSVG) {
 		SVGTextContentElement.prototype.__getStartPositionOfChar = SVGTextContentElement.prototype.getStartPositionOfChar;
 		SVGTextContentElement.prototype.getStartPositionOfChar = function(charnum) {
@@ -212,7 +182,23 @@ if(navigator.isIE) {
 			return this.getCharNumAtPositionHelper(x, middle+1, end);
 		};
 	}
+	// else, add support for VML
+	else {
+		if(!document.namespaces['vml']) {
+			if(navigator.userAgent.match(/MSIE 8/i) != null)
+				document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml', '#default#VML');
+			else
+				document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml');
+		}
+		var styleSheet = (document.styleSheets.length > 0) ? document.styleSheets[0] : document.createStyleSheet();
+		styleSheet.addRule('vml\\:shape', 'behavior:url(#default#VML)');
+		styleSheet.addRule('vml\\:fill', 'behavior:url(#default#VML)');
+		styleSheet.addRule('vml\\:rect', 'behavior:url(#default#VML)');
+		styleSheet.addRule('vml\\:roundrect', 'behavior:url(#default#VML)');
+		navigator.supportVML = true;
+	}
 }
+
 // correct Opera specific bugs
 if(navigator.isOpera) {
 	CanvasRenderingContext2D.prototype.arcTo = function(x1, y1, x2, y2, r) {

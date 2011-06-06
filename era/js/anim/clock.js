@@ -234,5 +234,5 @@ Core.Object.extend('Anim.Clock', {
 		// check if clock completed (= root and no more active)
 		if((this.parent == undefined) && !this.isActive)
 			this.onComplete();
-	},
+	}
 });

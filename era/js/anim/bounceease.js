@@ -24,18 +24,17 @@ Anim.EasingFunction.extend('Anim.BounceEase', {
 
 	getBounciness: function() {
 		return this.bounciness;
-	},
-	
+	}
 }, {
 	easeInCore: function(normalizedTime) {
 		var sq = Math.exp((1.0 / this.bounciness) * Math.log(normalizedTime));
 		var step = Math.floor(sq * (this.bounces + 0.5));
 		var sinstep = (sq * (this.bounces + 0.5)) - step;
 		return Math.sin(sinstep * Math.PI) / Math.exp(this.bounces - step);
-	},
+	}
 }, /* static */ {
 	constructor: function() {
 		Anim.EasingFunction.register('bounce', this);
-	},
+	}
 });
 

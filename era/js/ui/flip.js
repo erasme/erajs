@@ -9,8 +9,7 @@ Ui.Transition.extend('Ui.Flip', {
 
 	setOrientation: function(orientation) {
 		this.orientation = orientation;
-	},
-
+	}
 }, {
 	run: function(current, next, progress) {
 		if(progress < 0.5) {
@@ -46,10 +45,10 @@ Ui.Transition.extend('Ui.Flip', {
 				}
 			}
 		}
-	},
+	}
 }, {
 	constructor: function() {
 		Ui.Transition.register('flip', this);
-	},
+	}
 });
 

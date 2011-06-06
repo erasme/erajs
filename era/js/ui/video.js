@@ -37,7 +37,7 @@ Ui.Element.extend('Ui.Video', {
 		this.src = src;
 
 		if(Ui.Video.htmlVideo)
-			this.videoDrawing.setAttributeNS(null, 'src', src);
+			this.videoDrawing.setAttribute('src', src);
 	},
 
 	//
@@ -156,16 +156,16 @@ Ui.Element.extend('Ui.Video', {
 	onEnded: function() {
 		this.playing = false;
 		this.fireEvent('ended');
-	},
+	}
 }, {
 	render: function() {
 		var drawing;
 		if(Ui.Video.htmlVideo) {
-			this.videoDrawing = document.createElementNS(htmlNS, 'video');
+			this.videoDrawing = document.createElement('video');
 			this.connect(this.videoDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.videoDrawing, 'ended', this.onEnded);
 			this.connect(this.videoDrawing, 'timeupdate', this.onTimeupdate);
-			this.videoDrawing.setAttributeNS(null, 'preload', 'auto');
+			this.videoDrawing.setAttribute('preload', 'auto');
 			this.videoDrawing.load();
 			this.videoDrawing.style.position = 'absolute';
 			this.videoDrawing.style.left = '0px';
@@ -177,8 +177,8 @@ Ui.Element.extend('Ui.Video', {
 
 	arrangeCore: function(width, height) {
 		if(Ui.Video.htmlVideo) {
-			this.videoDrawing.setAttributeNS(null, 'width', width);
-			this.videoDrawing.setAttributeNS(null, 'height', height);
+			this.videoDrawing.setAttribute('width', width);
+			this.videoDrawing.setAttribute('height', height);
 			// correct webkit bug
 //			if(navigator.isWebkit) {
 //				var matrix = this.foreignObject.getScreenCTM();
@@ -192,7 +192,7 @@ Ui.Element.extend('Ui.Video', {
 //				this.videoDrawing.style.top = matrix.f+'px';
 //			}
 		}
-	},
+	}
 });
 
 // detect what video system is supported
@@ -203,7 +203,7 @@ Ui.Video.supportMp4 = false;
 Ui.Video.supportWebm = false;
 
 // check for HTMLVideoElement
-Ui.Video.videoTest = document.createElementNS(htmlNS, 'video');
+Ui.Video.videoTest = document.createElement('video');
 if(Ui.Video.videoTest.play != undefined) {
 	Ui.Video.htmlVideo = true;
 	Ui.Video.supportMp4 = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');

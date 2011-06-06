@@ -63,7 +63,7 @@ Ui.Container.extend('Ui.ProgressBar', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -75,8 +75,7 @@ Ui.Container.extend('Ui.ProgressBar', {
 	getLightBorderColor: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 		var minHeight = 0;
@@ -125,12 +124,12 @@ Ui.Container.extend('Ui.ProgressBar', {
 		this.bar.setFill(this.getGradient());
 		this.barBackground.setRadius(radius);
 		this.barBackground.setFill(this.getBarBorderColor());
-	},
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.39, g: 0.92, b: 0.39 }),
-		radius: 4,
-	},
+		radius: 4
+	}
 });
 
 

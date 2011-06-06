@@ -34,6 +34,6 @@ Core.Object.extend('Core.DelayedTask', {
 			clearTimeout(this.handle);
 			this.handle = undefined;
 		}
-	},
+	}
 });
 

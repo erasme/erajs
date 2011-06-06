@@ -51,7 +51,7 @@ Core.Object.extend('Ui.Keyboard', {
 
 	getMetaKey: function() {
 		return this.metaKey;
-	},
+	}
 });
 
 //

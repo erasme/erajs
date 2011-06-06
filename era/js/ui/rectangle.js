@@ -10,10 +10,16 @@ Ui.Element.extend('Ui.Rectangle', {
 	radiusBottomRight: 0,
 	shadow: undefined,
 
+	vml: undefined,
+	vmlFill: undefined,
+	vmlOpacity: 1,
+
 	constructor: function(config) {
-		this.getDrawing().style.boxSizing = 'border-box';
-		this.getDrawing().style.borderStyle = 'solid';
-		this.getDrawing().style.borderWidth = '0px';
+		if(this.vml == undefined) {
+			this.getDrawing().style.boxSizing = 'border-box';
+			this.getDrawing().style.borderStyle = 'solid';
+			this.getDrawing().style.borderWidth = '0px';
+		}
 
 		if(config.radius != undefined)
 			this.setRadius(config.radius);
@@ -127,20 +133,41 @@ Ui.Element.extend('Ui.Rectangle', {
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = fill;
-			if(this.fill == undefined)
-				this.getDrawing().style.barkground = 'none';
-			else if(typeof(this.fill) == 'string')
-				this.getDrawing().style.background = this.fill;
+			if(this.fill == undefined) {
+				if(this.vml != undefined)
+					this.vml.fillcolor = '';
+				else
+					this.getDrawing().style.background = 'none';
+			}
 			else {
+				if(typeof(this.fill) == 'string')
+					this.fill = Ui.Color.create(this.fill);
+
 				if(Ui.Color.hasInstance(this.fill)) {
-					if(navigator.supportRgba)
-						this.getDrawing().style.background = this.fill.getCssRgba();
-					else
-						this.getDrawing().style.background = this.fill.getCssHtml();
+					if(this.vml != undefined) {
+						this.vmlFill.type = 'solid';
+						this.vmlFill.color = this.fill.getCssHtml();
+						this.vmlFill.opacity = this.fill.getRgba().a * this.vmlOpacity;
+					}
+					else {
+						if(navigator.supportRgba)
+							this.getDrawing().style.background = this.fill.getCssRgba();
+						else
+							this.getDrawing().style.background = this.fill.getCssHtml();
+					}
 				}
 				else if(Ui.LinearGradient.hasInstance(this.fill)) {
-					this.getDrawing().style.backgroundImage = this.fill.getBackgroundImage();
-					this.getDrawing().style.backgroundSize = '100% 100%';
+					if(this.vml != undefined) {
+						this.vml.removeChild(this.vmlFill);
+						this.vmlFill = this.fill.getVMLFill();
+						this.vmlFill.opacity *= this.vmlOpacity;
+						this.vmlFill.opacity2 *= this.vmlOpacity;
+						this.vml.appendChild(this.vmlFill);
+					}
+					else {
+						this.getDrawing().style.backgroundImage = this.fill.getBackgroundImage();
+						this.getDrawing().style.backgroundSize = '100% 100%';
+					}
 				}
 			}
 		}
@@ -170,57 +197,115 @@ Ui.Element.extend('Ui.Rectangle', {
 			this.getDrawing().style.borderWidth = this.strokeWidth+'px';
 		}
 	},
-	
+
+	updateVml: function() {
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
+		this.vml.path = 'm '+this.radiusTopLeft+',0 l '+(width-this.radiusTopRight)+',0 qx '+width+','+this.radiusTopRight+
+			' l '+width+','+(height-this.radiusBottomRight)+' qy '+(width-this.radiusBottomRight)+','+height+
+			' l '+this.radiusBottomLeft+','+height+' qx 0,'+(height-this.radiusBottomLeft)+' l 0,'+this.radiusTopLeft+
+			' qy '+this.radiusTopLeft+',0 x e';
+	}
+
 }, {
+	arrangeCore: function(width, height) {
+		if(this.vml != undefined) {
+			this.vml.style.width = width+'px';
+			this.vml.style.height = height+'px';
+			this.vml.coordorigin = '0 0';
+			this.vml.coordsize = width+' '+height;
+			this.updateVml();
+		}
+	},
+
+	render: function() {
+		if(!Ui.Rectangle.supportBorderRadius && !Ui.Rectangle.supportMozBorderRadius && !Ui.Rectangle.supportWebkitBorderRadius && navigator.supportVML) {
+//			this.vml = document.createElement('vml:roundrect');
+			this.vml = document.createElement('vml:shape');
+			this.vml.style.position = 'absolute';
+			this.vml.style.left = '0px';
+			this.vml.style.top = '0px';
+			this.vml.stroked = false;
+			this.vmlFill = document.createElement('vml:fill');
+			this.vmlFill.type = 'solid';
+			this.vmlFill.color = 'black';
+			this.vml.appendChild(this.vmlFill);
+			return this.vml;
+		}
+		else
+			return undefined;
+	},
+
+	setOpacity: function(opacity) {
+		if(this.vml == undefined) {
+			Ui.Rectangle.base.setOpacity.call(this, opacity);
+		}
+		else {
+			this.vmlOpacity = opacity;
+			var fill = this.fill;
+			this.fill = undefined;
+			this.setFill(fill);
+		}
+	},
+
+	getOpacity: function() {
+		if(this.vml != undefined)
+			return this.vmlOpacity;
+		else
+			return Ui.Rectangle.base.getOpacity.call(this);
+	}
 });
 
 Ui.Rectangle.supportBorderRadius = false;
 Ui.Rectangle.supportMozBorderRadius = false;
 Ui.Rectangle.supportWebkitBorderRadius = false;
 
-var test = document.createElementNS(htmlNS, 'div');
+var test = document.createElement('div');
 test.style.borderTopLeftRadius = '8px';
-var res = test.style.getPropertyValue('border-top-left-radius');
-if((res != null) && (res != undefined) && (res != ''))
-	Ui.Rectangle.supportBorderRadius = true;
-else {
-	test.style.MozBorderRadiusTopleft = '8px';
-	res = test.style.getPropertyValue('-moz-border-radius-topleft');
-	if((res != null) && (res != undefined) && (res != '')) {
-		Ui.Rectangle.supportMozBorderRadius = true;
-	}
+if('getPropertyValue' in test.style) {
+	var res = test.style.getPropertyValue('border-top-left-radius');
+	if((res != null) && (res != undefined) && (res != ''))
+		Ui.Rectangle.supportBorderRadius = true;
 	else {
-		test.style.webkitBorderTopLeftRadius = '8px';
-		res = test.style.getPropertyValue('-webkit-border-top-left-radius');
+		test.style.MozBorderRadiusTopleft = '8px';
+		res = test.style.getPropertyValue('-moz-border-radius-topleft');
 		if((res != null) && (res != undefined) && (res != '')) {
-			Ui.Rectangle.supportWebkitBorderRadius = true;
+			Ui.Rectangle.supportMozBorderRadius = true;
+		}
+		else {
+			test.style.webkitBorderTopLeftRadius = '8px';
+			res = test.style.getPropertyValue('-webkit-border-top-left-radius');
+			if((res != null) && (res != undefined) && (res != '')) {
+				Ui.Rectangle.supportWebkitBorderRadius = true;
+			}
 		}
 	}
 }
-
 
 Ui.Rectangle.supportBoxShadow = false;
 Ui.Rectangle.supportMozBoxShadow = false;
 Ui.Rectangle.supportWebkitBoxShadow = false;
 
 test.style.boxShadow = '0px 0px 4px black';
-var res = test.style.getPropertyValue('box-shadow');
-if((res != null) && (res != undefined) && (res != ''))
-	Ui.Rectangle.supportBoxShadow = true;
-else {
-	test.style.MozBoxShadow = '0px 0px 4px black';
-	res = test.style.getPropertyValue('-moz-box-shadow');
-	if((res != null) && (res != undefined) && (res != '')) {
-		Ui.Rectangle.supportMozBoxShadow = true;
-	}
+if('getPropertyValue' in test.style) {
+	var res = test.style.getPropertyValue('box-shadow');
+	if((res != null) && (res != undefined) && (res != ''))
+		Ui.Rectangle.supportBoxShadow = true;
 	else {
-		test.style.webkitBoxShadow = '0px 0px 4px black';
-		res = test.style.getPropertyValue('-webkit-box-shadow');
+		test.style.MozBoxShadow = '0px 0px 4px black';
+		res = test.style.getPropertyValue('-moz-box-shadow');
 		if((res != null) && (res != undefined) && (res != '')) {
-			Ui.Rectangle.supportWebkitBoxShadow = true;
+			Ui.Rectangle.supportMozBoxShadow = true;
+		}
+		else {
+			test.style.webkitBoxShadow = '0px 0px 4px black';
+			res = test.style.getPropertyValue('-webkit-box-shadow');
+			if((res != null) && (res != undefined) && (res != '')) {
+				Ui.Rectangle.supportWebkitBoxShadow = true;
+			}
 		}
 	}
 }
-
+	
 test = undefined;
 

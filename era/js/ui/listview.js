@@ -181,8 +181,7 @@ Ui.Container.extend('Ui.ListView', {
 		var row = this.findCellRow(cell);
 		if(row != -1)
 			this.fireEvent('activate', this, row, cell.getKey());
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 		for(var col = 0; col < this.headers.length; col++)
@@ -292,8 +291,7 @@ Ui.Container.extend('Ui.ListView', {
 			y += data.rowHeight;
 		}
 		this.rowContainer.arrange(0, this.headersHeight, width, height - this.headersHeight);
-	},
-
+	}
 });
 
 Ui.Pressable.extend('Ui.ListViewHeader', {
@@ -359,7 +357,7 @@ Ui.Pressable.extend('Ui.ListViewHeader', {
 
 	onListViewHeaderUp: function() {
 		this.background.setFill(this.getGradient());
-	},
+	}
 }, {
 	onStyleChange: function() {
 		var gradient;
@@ -375,12 +373,11 @@ Ui.Pressable.extend('Ui.ListViewHeader', {
 
 		var spacing = this.getStyleProperty('spacing');
 		this.uiTitle.setMargin(spacing + 2);
-	},
-
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
-		spacing: 5,
+		spacing: 5
 	}
 });
 
@@ -469,7 +466,7 @@ Ui.Selectable.extend('Ui.ListViewCellString', {
 
 	onCellUnselect: function() {
 		this.background.setFill(this.getBackgroundColor());
-	},
+	}
 }, {
 	onStyleChange: function() {
 		var color = this.getStyleProperty('color');
@@ -480,12 +477,12 @@ Ui.Selectable.extend('Ui.ListViewCellString', {
 
 		var spacing = this.getStyleProperty('spacing');
 		this.ui.setMargin(spacing + 2);
-	},
+	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99 }),
 		selectColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-		spacing: 5,
+		spacing: 5
 	}
 });
 

@@ -39,7 +39,7 @@ Core.Object.extend('Anim.TimeManager', {
 		for(var i = 0; i < this.clocks.length; i++)
 			this.clocks[i].update(current);
 		this.fireEvent('tick');
-	},
+	}
 });
 
 Anim.TimeManager.current = new Anim.TimeManager();

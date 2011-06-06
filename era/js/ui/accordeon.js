@@ -192,8 +192,7 @@ Ui.Container.extend('Ui.Accordeon', {
 		}
 		this.headersSize = minHeaders;
 		return { width: minWidth, height: minHeaders + minContent };
-	},
-
+	}
 }, {
 	measureCore: function(width, height) {
 		if(this.orientation == 'horizontal')
@@ -221,7 +220,7 @@ Ui.Container.extend('Ui.Accordeon', {
 				y += child.getHeader().getMeasureHeight();
 			}
 		}
-	},
+	}
 });
 
 //
@@ -351,7 +350,7 @@ Ui.Container.extend('Ui.AccordeonPage', {
 
 	onHeaderPress: function() {
 		this.fireEvent('select', this);
-	},
+	}
 }, {
 	//
 	// Return the required size for the current element
@@ -391,6 +390,6 @@ Ui.Container.extend('Ui.AccordeonPage', {
 				this.content.arrange(0, this.headerBox.getMeasureHeight(), width, height - this.headerBox.getMeasureHeight());
 		}
 		this.setOffset(this.offset);
-	},
+	}
 });
 
