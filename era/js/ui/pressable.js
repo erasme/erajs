@@ -16,10 +16,6 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-//		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
-
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
 		// handle keyboard
@@ -97,65 +93,6 @@ Ui.LBox.extend('Ui.Pressable', {
 		}
 	},
 
-/*
-	onTouchStart: function(event) {
-		if(this.getIsDisabled())
-			return;
-		if(this.isDown) {
-			this.onUp();
-			return;
-		}
-		if(event.targetTouches.length != 1)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.touchStartX = event.targetTouches[0].screenX;
-		this.touchStartY = event.targetTouches[0].screenY;
-		this.onDown();
-	},
-
-	onTouchMove: function(event) {
-		if(!this.isDown)
-			return;
-		
-		var deltaX = event.targetTouches[0].screenX - this.touchStartX;
-		var deltaY = event.targetTouches[0].screenY - this.touchStartY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-		// if the user move to much, release the touch event
-		if(delta > 10) {
-			this.onUp();
-
-			this.disconnect(this.getDrawing(), 'touchstart', this.onTouchStart);
-
-			var touchStartEvent = document.createEvent('TouchEvent');
-			touchStartEvent.initTouchEvent('touchstart', true, true, window, 0, 0, 0, 0, 0,
-				event.ctrlKey, event.altKey, event.shiftKey,
-				event.metaKey, event.touches,
-				event.targetTouches, event.changedTouches, event.scale, event.rotation);
-			event.target.dispatchEvent(touchStartEvent);
-
-			this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		}
-
-		event.preventDefault();
-		event.stopPropagation();
-	},
-	
-	onTouchEnd: function(event) {
-		if(!this.isDown)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-		this.onUp();
-		this.fireEvent('press', this);
-		this.focus();
-	},*/
-
-////
 	onFingerDown: function(event) {
 		if(this.getIsDisabled() || this.isDown)
 			return;
@@ -201,8 +138,6 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.fireEvent('press', this);
 		this.focus();
 	},
-
-////
 
 	onKeyDown: function(event) {
 		var key = event.which;

@@ -42,9 +42,8 @@ Ui.LBox.extend('Ui.Movable', {
 		this.contentBox.getDrawing().style.cursor = 'move';
 
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
-		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.contentBox.getDrawing(), 'touchend', this.onTouchEnd);
+
+		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -204,19 +203,16 @@ Ui.LBox.extend('Ui.Movable', {
 		}
 	},
 
-	onTouchStart: function(event) {
-		if(this.lock || this.getIsDisabled())
+	onFingerDown: function(event) {
+		if(this.isMoving || this.lock || this.getIsDisabled())
 			return;
-
-		if(event.targetTouches.length != 1)
-			return;
-
-		if(this.isMoving)
-			return;
-
-		this.touchId = event.targetTouches[0].identifier;
 
 		this.isMoving = true;
+
+		this.connect(event.finger, 'fingermove', this.onFingerMove);
+		this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -225,23 +221,19 @@ Ui.LBox.extend('Ui.Movable', {
 
 		this.onDown();
 
-		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
+		this.touchStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
 		if(this.inertia)
 			this.startComputeInertia();
 	},
 
-	onTouchMove: function(event) {
-		if(!this.isMoving)
-			return;
-		if(event.targetTouches[0].identifier != this.touchId)
-			return;
+	onFingerMove: function(event) {
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
+		var touchPos = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		var deltaX = touchPos.x - this.touchStart.x;
 		var deltaY = touchPos.y - this.touchStart.y;
 		posX = this.startPosX + deltaX;
@@ -250,9 +242,9 @@ Ui.LBox.extend('Ui.Movable', {
 		this.hasMoved = true;
 	},
 
-	onTouchEnd: function(event) {
-		if(!this.isMoving)
-			return;
+	onFingerUp: function(event) {
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 
 		event.preventDefault();
 		event.stopPropagation();
