@@ -16,9 +16,11 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+//		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
+//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+
+		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -95,6 +97,7 @@ Ui.LBox.extend('Ui.Pressable', {
 		}
 	},
 
+/*
 	onTouchStart: function(event) {
 		if(this.getIsDisabled())
 			return;
@@ -150,7 +153,56 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.onUp();
 		this.fireEvent('press', this);
 		this.focus();
+	},*/
+
+////
+	onFingerDown: function(event) {
+		if(this.getIsDisabled() || this.isDown)
+			return;
+
+		this.connect(event.finger, 'fingermove', this.onFingerMove);
+		this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.finger.capture(this.getDrawing());
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.touchStartX = event.finger.getX();
+		this.touchStartY = event.finger.getY();
+		this.onDown();
 	},
+
+	onFingerMove: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var deltaX = event.finger.getX() - this.touchStartX;
+		var deltaY = event.finger.getY() - this.touchStartY;
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		// if the user move to much, release the touch event
+		if(delta > 10) {
+			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+			this.onUp();
+			event.finger.release();
+		}
+	},
+	
+	onFingerUp: function(event) {
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.onUp();
+		this.fireEvent('press', this);
+		this.focus();
+	},
+
+////
 
 	onKeyDown: function(event) {
 		var key = event.which;

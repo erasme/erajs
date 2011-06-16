@@ -28,17 +28,18 @@ Core.Object.extend('Core.Finger', {
 	captureElement: undefined,
 
 	constructor: function(config) {
+		this.addEvents('fingermove', 'fingerup');
+
 		this.id = config.id;
 		this.x = config.x;
 		this.y = config.y;
 
-//		console.log('Finger start');
-
 		var target = document.elementFromPoint(this.x, this.y);
-
-		var fingerEvent = document.createEvent('FingerEvent');
-		fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
-		target.dispatchEvent(fingerEvent);
+		if(target != undefined) {
+			var fingerEvent = document.createEvent('FingerEvent');
+			fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
+			target.dispatchEvent(fingerEvent);
+		}
 	},
 
 	getX: function() {
@@ -58,19 +59,19 @@ Core.Object.extend('Core.Finger', {
 		if((this.x != x) || (this.y != y)) {
 			this.x = x;
 			this.y = y;
-			// handle move
-//			console.log('Finger move');
 
 			var target;
-
 			if(this.captureElement != undefined)
 				target = this.captureElement;
 			else
 				target = document.elementFromPoint(this.x, this.y);
-
-			var fingerEvent = document.createEvent('FingerEvent');
-			fingerEvent.initFingerEvent('fingermove', true, true, event.window, this);
-			target.dispatchEvent(fingerEvent);
+			if(target != undefined) {
+				var fingerEvent = document.createEvent('FingerEvent');
+				fingerEvent.initFingerEvent('fingermove', (this.captureElement == undefined), true, event.window, this);
+				this.fireEvent('fingermove', fingerEvent);
+				if(!fingerEvent.defaultPrevented)
+					target.dispatchEvent(fingerEvent);
+			}
 		}
 	},
 
@@ -79,7 +80,14 @@ Core.Object.extend('Core.Finger', {
 	},
 
 	release: function() {
-		this.captureElement = undefined;
+		if(this.captureElement != undefined) {
+			// resend the up event
+			var fingerEvent = document.createEvent('FingerEvent');
+			fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
+			this.captureElement.offsetParent.dispatchEvent(fingerEvent);
+
+			this.captureElement = undefined;
+		}
 	},
 
 	end: function() {
@@ -89,12 +97,14 @@ Core.Object.extend('Core.Finger', {
 			target = this.captureElement;
 		else
 			target = document.elementFromPoint(this.x, this.y);
+		if(target != undefined) {
+			var fingerEvent = document.createEvent('FingerEvent');
+			fingerEvent.initFingerEvent('fingerup', (this.captureElement == undefined), true, event.window, this);
 
-//		console.log('Finger.end target: '+target);
-
-		var fingerEvent = document.createEvent('FingerEvent');
-		fingerEvent.initFingerEvent('fingerup', true, true, event.window, this);
-		target.dispatchEvent(fingerEvent);
+			this.fireEvent('fingerup', fingerEvent);
+			if(!fingerEvent.defaultPrevented)
+				target.dispatchEvent(fingerEvent);
+		}
 	}
 });
 
@@ -103,13 +113,10 @@ Core.Object.extend('Core.FingerManager', {
 
 	constructor: function(config) {
 		this.touches = {};
-//		console.log('new Core.FingerManager');
-
 		this.connect(window, 'load', this.onWindowLoad);
 	},
 
 	onWindowLoad: function() {
-//		console.log('onWindowLoad');
 		this.connect(document.body, 'touchstart', this.updateTouches);
 		this.connect(document.body, 'touchmove', this.updateTouches);
 		this.connect(document.body, 'touchend', this.updateTouches);
@@ -134,6 +141,8 @@ Core.Object.extend('Core.FingerManager', {
 				this.touches[event.targetTouches[i].identifier] = new Core.Finger({ id: event.targetTouches[i].identifier, x: event.targetTouches[i].clientX, y: event.targetTouches[i].clientY });
 			}
 		}
+		event.preventDefault();
+		event.stopPropagation();
 	}
 });
 
