@@ -12,9 +12,9 @@ Ui.LBox.extend('Ui.Transformable', {
 	lastAngle: 0,
 	isDown: false,
 
-	touches: undefined,
-	touch1: undefined,
-	touch2: undefined,
+//	touches: undefined,
+	finger1: undefined,
+	finger2: undefined,
 
 	angle: 0,
 	scale: 1,
@@ -39,12 +39,15 @@ Ui.LBox.extend('Ui.Transformable', {
 
 		this.contentBox.getDrawing().style.cursor = 'move';
 
-		this.touches = {};
+//		this.touches = {};
 
 //		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
-		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onNativeTouchStart);
-		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onNativeTouchMove);
-		this.connect(this.contentBox.getDrawing(), 'touchend', this.onNativeTouchEnd);
+
+		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
+
+//		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onNativeTouchStart);
+//		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onNativeTouchMove);
+//		this.connect(this.contentBox.getDrawing(), 'touchend', this.onNativeTouchEnd);
 	},
 
 	getIsDown: function() {
@@ -135,162 +138,10 @@ Ui.LBox.extend('Ui.Transformable', {
 		this.fireEvent('up', this);
 	},
 
-/*	onMouseDown: function(event) {
-		if(this.getIsDisabled())
-			return;
-
-		if(event.button != 0)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.onDown();
-
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-
-		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-		this.startPosX = this.posX;
-		this.startPosY = this.posY;
-		if(this.inertia)
-			this.startComputeInertia();
-	},
-
-	onMouseMove: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-		var deltaX = mousePos.x - this.mouseStart.x;
-		var deltaY = mousePos.y - this.mouseStart.y;
-		this.setPosition(this.startPosX + deltaX, this.startPosY + deltaY);
-	},
-
-	onMouseUp: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		if(event.button != 0)
-			return;
-
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
-
-		this.onUp();
-
-		if(this.measureSpeedTimer != undefined) {
-			this.stopComputeInertia();
-			this.startInertia();
-		}
-	},*/
-
-	updateTouches: function(event) {
-		for(var id in this.touches) {
-			var found = false;
-			for(var i = 0; (i < event.touches.length) && !found; i++) {
-				if(id == event.touches[i].identifier) {
-					found = true;
-					if((this.touches[id].x != event.touches[i].clientX) || (this.touches[id].y != event.touches[i].clientY)) {
-						this.touches[id].x = event.touches[i].clientX;
-						this.touches[id].y = event.touches[i].clientY;
-						this.onTouchMove(this.touches[id]);
-					}
-				}
-			}
-			if(!found) {
-				this.onTouchLeave(this.touches[id]);
-				delete(this.touches[id]);
-			}
-		}
-		for(var i = 0; i < event.targetTouches.length; i++) {
-			if(this.touches[event.targetTouches[i].identifier] == undefined) {
-				this.touches[event.targetTouches[i].identifier] = { id: event.targetTouches[i].identifier, x: event.targetTouches[i].clientX, y: event.targetTouches[i].clientY };
-				this.onTouchEnter(this.touches[event.targetTouches[i].identifier]);
-			}
-		}
-	},
-
-	onNativeTouchStart: function(event) {
-		if(this.getIsDisabled())
-			return;
-
-		this.updateTouches(event);
-
-/*		console.log('onTouchStart '+Object.keys(this.touches).length);
-
-		for(var id in this.touches)
-			console.log('touch id: '+id+', pos: '+this.touches[id].x+','+this.touches[id].y);
-
-		return;
-
-		if(event.targetTouches.length != 1)
-			return;
-
-		if(this.isMoving)
-			return;
-
-		this.touchId = event.targetTouches[0].identifier;
-
-		this.isMoving = true;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.stopInertia();
-
-		this.onDown();
-
-		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
-		this.startPosX = this.posX;
-		this.startPosY = this.posY;*/
-	},
-
-	onNativeTouchMove: function(event) {
-		this.updateTouches(event);
-/*
-		if(!this.isMoving)
-			return;
-		if(event.targetTouches[0].identifier != this.touchId)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
-		var deltaX = touchPos.x - this.touchStart.x;
-		var deltaY = touchPos.y - this.touchStart.y;
-		posX = this.startPosX + deltaX;
-		posY = this.startPosY + deltaY;*/
-	},
-
-	onNativeTouchEnd: function(event) {
-
-		this.updateTouches(event);
-
-/*		console.log('onTouchEnd '+Object.keys(this.touches).length);
-
-		for(var id in this.touches)
-			console.log('touch id: '+id);
-
-
-		if(!this.isMoving)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.isMoving = false;
-
-		this.onUp();*/
-	},
-
-	onTouchEnter: function(touch) {
-		console.log('touch enter id: '+touch.id);
-
-		if(this.touch1 == undefined) {
-			var start = new Ui.Point({ x: touch.x, y: touch.y });
-			this.touch1 = { touch: touch, start: start };
+	onFingerDown: function(event) {
+		if(this.finger1 == undefined) {
+			var start = new Ui.Point({ x: event.finger.getX(), y: event.finger.getY() });
+			this.finger1 = { finger: event.finger, start: start };
 
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
@@ -298,61 +149,47 @@ Ui.LBox.extend('Ui.Transformable', {
 			this.startTranslateY = this.translateY;
 
 			this.startComputeInertia();
-		}
-		else if(this.touch2 == undefined) {
-			this.touch1.start = new Ui.Point({ x: this.touch1.touch.x, y: this.touch1.touch.y });
 
-			var start = new Ui.Point({ x: touch.x, y: touch.y });
-			this.touch2 = { touch: touch, start: start };
+			event.preventDefault();
+			event.stopPropagation();
+			
+			this.connect(event.finger, 'fingermove', this.onFingerMove);
+			this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+			event.finger.capture(this.getDrawing());
+		}
+		else if(this.finger2 == undefined) {
+			this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+
+			var start = new Ui.Point({ x: event.finger.getX(), y: event.finger.getY() });
+			this.finger2 = { finger: event.finger, start: start };
 
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
 			this.startTranslateX = this.translateX;
 			this.startTranslateY = this.translateY;
-		}
-		else {
-			console.log('too many touches');
+
+			event.preventDefault();
+			event.stopPropagation();
+			
+			this.connect(event.finger, 'fingermove', this.onFingerMove);
+			this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+			event.finger.capture(this.getDrawing());
 		}
 	},
 
-	onTouchLeave: function(touch) {
-		console.log('touch leave id: '+touch.id);
-		if((this.touch1 != undefined) && (this.touch1.touch == touch)) {
-			this.touch1 = undefined;
-			if(this.touch2 != undefined) {
-				this.touch1 = this.touch2;
-				this.touch2 = undefined;
-				this.touch1.start = new Ui.Point({ x: this.touch1.touch.x, y: this.touch1.touch.y });
-				this.startAngle = this.angle;
-				this.startScale = this.scale;
-				this.startTranslateX = this.translateX;
-				this.startTranslateY = this.translateY;
-			}
-			else {
-				this.stopComputeInertia();
-				this.startInertia();
-			}
-		}
-		if((this.touch2 != undefined) && (this.touch2.touch == touch)) {
-			this.touch2 = undefined;
-			this.touch1.start = new Ui.Point({ x: this.touch1.touch.x, y: this.touch1.touch.y });
-			this.startAngle = this.angle;
-			this.startScale = this.scale;
-			this.startTranslateX = this.translateX;
-			this.startTranslateY = this.translateY;
-		}
-	},
-
-	onTouchMove: function(touch) {
-//		console.log('touch move id: '+touch.id+' ('+touch.x+','+touch.y+')');
+	onFingerMove: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
 
 		// 2 fingers
-		if((this.touch1 != undefined) && (this.touch2 != undefined)) {
-			var pos1 = this.pointFromWindow({ x: this.touch1.touch.x, y: this.touch1.touch.y });
-			var pos2 = this.pointFromWindow({ x: this.touch2.touch.x, y: this.touch2.touch.y });
+		if((this.finger1 != undefined) && (this.finger2 != undefined)) {
+			var pos1 = this.pointFromWindow({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+			var pos2 = this.pointFromWindow({ x: this.finger2.finger.getX(), y: this.finger2.finger.getY() });
 
-			var start1 = this.pointFromWindow({ x: this.touch1.start.x, y: this.touch1.start.y });
-			var start2 = this.pointFromWindow({ x: this.touch2.start.x, y: this.touch2.start.y });
+			var start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
+			var start2 = this.pointFromWindow({ x: this.finger2.start.x, y: this.finger2.start.y });
 
 			var startVector = { x: start2.x - start1.x, y: start2.y - start1.y };
 			var endVector = { x: pos2.x - pos1.x, y: pos2.y - pos1.y };
@@ -396,12 +233,46 @@ Ui.LBox.extend('Ui.Transformable', {
 				this.startScale * scale, this.startAngle + angle);
 		}
 		// 1 finger
-		else if(this.touch1 != undefined) {
-			var pos1 = this.pointFromWindow({ x: this.touch1.touch.x, y: this.touch1.touch.y });
-			var start1 = this.pointFromWindow({ x: this.touch1.start.x, y: this.touch1.start.y });
+		else if(this.finger1 != undefined) {
+			var pos1 = this.pointFromWindow({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+			var start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
 
 			this.setContentTransform(this.startTranslateX + (pos1.x - start1.x), this.startTranslateY + (pos1.y - start1.y),
 				this.startScale, this.startAngle);
+		}
+	},
+
+
+	onFingerUp: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+		if((this.finger1 != undefined) && (this.finger1.finger == event.finger)) {
+			this.finger1 = undefined;
+			if(this.finger2 != undefined) {
+				this.finger1 = this.finger2;
+				this.finger2 = undefined;
+				this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+				this.startAngle = this.angle;
+				this.startScale = this.scale;
+				this.startTranslateX = this.translateX;
+				this.startTranslateY = this.translateY;
+			}
+			else {
+				this.stopComputeInertia();
+				this.startInertia();
+			}
+		}
+		if((this.finger2 != undefined) && (this.finger2.finger == event.finger)) {
+			this.finger2 = undefined;
+			this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+			this.startAngle = this.angle;
+			this.startScale = this.scale;
+			this.startTranslateX = this.translateX;
+			this.startTranslateY = this.translateY;
 		}
 	},
 
@@ -506,5 +377,4 @@ Ui.LBox.extend('Ui.Transformable', {
 			this.inertiaClock = undefined;
 		}
 	}
-}, {
 });
