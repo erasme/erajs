@@ -23,6 +23,7 @@ Ui.LBox.extend('Ui.Movable', {
 	touchId: undefined,
 	touchStart: undefined,
 	isDown: false,
+	lock: false,
 
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
@@ -47,6 +48,16 @@ Ui.LBox.extend('Ui.Movable', {
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+	},
+
+	setLock: function(lock) {
+		this.lock = lock;
+		if(lock)
+			this.stopInertia();
+	},
+
+	getLock: function() {
+		return this.lock;
 	},
 
 	getIsDown: function() {
@@ -144,7 +155,7 @@ Ui.LBox.extend('Ui.Movable', {
 	},
 
 	onMouseDown: function(event) {
-		if(this.getIsDisabled())
+		if(this.lock || this.getIsDisabled())
 			return;
 
 		if(event.button != 0)
@@ -194,7 +205,7 @@ Ui.LBox.extend('Ui.Movable', {
 	},
 
 	onTouchStart: function(event) {
-		if(this.getIsDisabled())
+		if(this.lock || this.getIsDisabled())
 			return;
 
 		if(event.targetTouches.length != 1)
@@ -347,4 +358,9 @@ Ui.LBox.extend('Ui.Movable', {
 		}
 	}
 }, {
+	arrangeCore: function(width, height) {
+		this.getDrawing().style.width = '0px';
+		this.getDrawing().style.height = '0px';
+		Ui.Movable.base.arrangeCore.call(this, width, height);
+	}
 });

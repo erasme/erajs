@@ -161,6 +161,7 @@ Core.Object.extend('Ui.Color', {
 		orange: { r: 1, g: 0.647, b: 0 },
 		purple: { r: 0.5, g: 0, b: 0.5 },
 		lightgray: { r: 0.827, g: 0.827, b: 0.827 },
+		darkgray: { r: 0.66, g: 0.66, b: 0.66 },
 		pink: { r: 1, g: 0.753, b: 0.796 },
 		brown: { r: 0.647, g: 0.165, b: 0.165 }
 	},

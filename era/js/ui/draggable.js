@@ -16,7 +16,7 @@ Ui.LBox.extend('Ui.Draggable', {
 		if(config.downloadUrl != undefined)
 			this.setDownloadUrl(config.downloadUrl, config.downloadMimetype, config.downloadFilename);
 
-		this.drawing.setAttributeNS(null, 'draggable', true);
+		this.drawing.setAttribute('draggable', true);
 		this.connect(this.drawing, 'dragstart', this.onDragStart, true);
 		this.connect(this.drawing, 'dragend', this.onDragEnd, true);
 
@@ -77,6 +77,8 @@ Ui.LBox.extend('Ui.Draggable', {
 	//
 
 	onDragStart: function(event) {
+		console.log('onDragStart');
+
 		event.stopPropagation();
 		event.dataTransfer.effectAllowed = this.allowedMode;
 
@@ -104,6 +106,8 @@ Ui.LBox.extend('Ui.Draggable', {
 	},
 
 	onDragEnd: function(event) {
+		console.log('onDragEnd');
+
 		event.stopPropagation();
 		// dropEffect give the operation done: [none|copy|link|move]
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);

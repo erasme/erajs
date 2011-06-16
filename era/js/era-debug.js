@@ -27,7 +27,9 @@ function include(fileName) {
 //
 include(eraBaseDirectory+'core/util.js');
 include(eraBaseDirectory+'core/object.js');
-//include(eraBaseDirectory+'core/event.js');
+include(eraBaseDirectory+'core/event.js');
+include(eraBaseDirectory+'core/fingerevent.js');
+include(eraBaseDirectory+'core/dragevent.js');
 include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');
@@ -97,6 +99,7 @@ include(eraBaseDirectory+'ui/pressable.js');
 include(eraBaseDirectory+'ui/togglable.js');
 include(eraBaseDirectory+'ui/selectable.js');
 include(eraBaseDirectory+'ui/downloadable.js');
+include(eraBaseDirectory+'ui/uploadable.js');
 include(eraBaseDirectory+'ui/movable.js');
 include(eraBaseDirectory+'ui/transformable.js');
 include(eraBaseDirectory+'ui/scrollable.js');
@@ -113,6 +116,8 @@ include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/entry2.js');
 include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
+include(eraBaseDirectory+'ui/togglebutton.js');
+include(eraBaseDirectory+'ui/uploadbutton.js');
 include(eraBaseDirectory+'ui/checkbox.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');

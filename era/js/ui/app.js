@@ -85,8 +85,8 @@ Ui.LBox.extend('Ui.App', {
 		this.connect(window, 'mousedown', function(event) {
 //			console.log('window mousedown');
 			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
-				event.preventDefault();
-				event.stopPropagation();
+//				event.preventDefault();
+//				event.stopPropagation();
 //				if((this.focusElement != undefined) && (this.focusElement != window))
 //					this.focusElement.blur();
 //				this.focusElement = undefined;
@@ -96,17 +96,17 @@ Ui.LBox.extend('Ui.App', {
 		});
 		this.connect(window, 'mouseup', function(event) {
 			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
-				event.preventDefault();
-				event.stopPropagation();
+//				event.preventDefault();
+//				event.stopPropagation();
 			}
 		});
 		this.connect(window, 'mousemove', function(event) {
 			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
-				event.preventDefault();
-				event.stopPropagation();
+//				event.preventDefault();
+//				event.stopPropagation();
 			}
 		});
-//		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
+		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });
 		this.connect(window, 'dragover', function(event) { event.dataTransfer.dropEffect = 'none';
@@ -168,7 +168,7 @@ Ui.LBox.extend('Ui.App', {
 			meta.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no';
 			document.getElementsByTagName("head")[0].appendChild(meta);
 			// prevent Safari to handle touch event
-			this.connect(this.getDrawing(), 'touchstart', function(event) {
+/*			this.connect(this.getDrawing(), 'touchstart', function(event) {
 				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
 					event.preventDefault();
 					event.stopPropagation();
@@ -192,7 +192,7 @@ Ui.LBox.extend('Ui.App', {
 					event.preventDefault();
 					event.stopPropagation();
 				}
-			}, false);
+			}, false);*/
 		}
 		this.loaded = true;
 		this.onReady();
@@ -415,32 +415,9 @@ Ui.LBox.extend('Ui.App', {
 			this.invalidateMeasure();
 		}
 	},
-/*
-	setStyle: function(style) {
-		if(this.stylerequest != undefined)
-			this.stylerequest.abort();
-		this.style = style;
-		this.stylerequest = new Core.HttpRequest({ url: this.style });
-		this.connect(this.stylerequest, 'done', this.onStyleLoaded);
-		this.stylerequest.send();
-	},
 
-	onStyleLoaded: function() {
-		var s = this.stylerequest.getResponseText();
-		this.stylerequest = undefined;
-		if(this.currentStyle == undefined) {
-			this.currentStyle = document.createElement('style');
-			this.currentStyle.innerHTML = s;
-			document.getElementsByTagName("head")[0].appendChild(this.currentStyle);
-		}
-		else
-			this.currentStyle.innerHTML = s;
-		this.styleloaded = true;
-		this.onReady();
-	},
-*/
 	onReady: function() {
-		if(this.loaded) { /* && this.styleloaded) {*/
+		if(this.loaded) {
 			this.ready = true;
 
 			if(document.body == undefined) {

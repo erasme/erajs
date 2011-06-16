@@ -691,139 +691,7 @@ Core.Object.extend('Ui.Element', {
 	// coordinate system
 	//
 	transformToWindow: function() {
-		if(navigator.isWebkit) {
-			var matrix = new Ui.Matrix();
-			var current = this.drawing;
-			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-webkit-transform');
-				if(trans != 'none') {
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
-					var originX = 0;
-					var originY = 0;
-					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
-					}
-					var cssMatrix = new WebKitCSSMatrix(trans);
-					var localMatrix = Ui.Matrix.createMatrix(cssMatrix.a, cssMatrix.b, cssMatrix.c, cssMatrix.d, cssMatrix.e, cssMatrix.f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
-				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				current = current.offsetParent;
-			}
-			return matrix;
-		}
-		else if(navigator.isGecko) {
-			var matrix = new Ui.Matrix();
-			var current = this.drawing;
-			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-moz-transform');
-				if(trans != 'none') {
-					var splits = trans.split(' ');
-					var a = new Number(splits[0].slice(7, splits[0].length-1));
-					var b = new Number(splits[1].slice(0, splits[1].length-1));
-					var c = new Number(splits[2].slice(0, splits[2].length-1));
-					var d = new Number(splits[3].slice(0, splits[3].length-1));
-					var e = new Number(splits[4].slice(0, splits[4].length-3));
-					var f = new Number(splits[5].slice(0, splits[5].length-3));
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-moz-transform-origin');
-					var originX = 0;
-					var originY = 0;
-					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
-					}
-					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
-				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				current = current.offsetParent;
-			}
-			return matrix;
-		}
-		else if(navigator.isOpera) {
-			var matrix = new Ui.Matrix();
-			var current = this.drawing;
-			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-o-transform');
-				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
-					var splits = trans.split(' ');
-					var a = new Number(splits[0].slice(7, splits[0].length-1));
-					var b = new Number(splits[1].slice(0, splits[1].length-1));
-					var c = new Number(splits[2].slice(0, splits[2].length-1));
-					var d = new Number(splits[3].slice(0, splits[3].length-1));
-					var e = new Number(splits[4].slice(0, splits[4].length-1));
-					var f = new Number(splits[5].slice(0, splits[5].length-1));
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-o-transform-origin');
-					var originX = 0;
-					var originY = 0;
-					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
-					}
-					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
-				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				current = current.offsetParent;
-			}
-			return matrix;
-		}
-		else if(navigator.isIE) {
-			var matrix = new Ui.Matrix();
-			var current = this.drawing;
-			while(current != undefined) {
-				var trans;
-				try {
-					trans = window.getComputedStyle(current, null).getPropertyValue('-ms-transform');
-				} catch(e) {
-					trans = 'none';
-				}
-				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
-					var splits = trans.split(' ');
-					var a = new Number(splits[0].slice(7, splits[0].length-1));
-					var b = new Number(splits[1].slice(0, splits[1].length-1));
-					var c = new Number(splits[2].slice(0, splits[2].length-1));
-					var d = new Number(splits[3].slice(0, splits[3].length-1));
-					var e = new Number(splits[4].slice(0, splits[4].length-1));
-					var f = new Number(splits[5].slice(0, splits[5].length-1));
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-ms-transform-origin');
-					var originX = 0;
-					var originY = 0;
-					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
-					}
-					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
-				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				current = current.offsetParent;
-			}
-			return matrix;
-		}
-		else {
-			var svg = document.createElementNS(svgNS, 'svg');
-			if(this.drawing.firstChild == undefined)
-				this.drawing.appendChild(svg);
-			else
-				this.drawing.insertBefore(svg, this.drawing.firstChild);
-			var svgMatrix = svg.getScreenCTM();
-			this.drawing.removeChild(svg);
-			return Ui.Matrix.createMatrix(svgMatrix.a, svgMatrix.b, svgMatrix.c, svgMatrix.d, svgMatrix.e, svgMatrix.f);
-		}
+		return Ui.Element.transformToWindow(this.drawing);
 	},
 
 	//
@@ -853,13 +721,7 @@ Core.Object.extend('Ui.Element', {
 	// coordinate system to the page coordinate system
 	//
 	pointToWindow: function(point) {
-		if(navigator.isWebkit)
-			return window.webkitConvertPointFromNodeToPage(this.drawing, new WebKitPoint(point.x, point.y));
-		else {
-			point = new Ui.Point({point: point });
-			point.matrixTransform(this.transformToWindow());
-			return point;
-		}
+		return Ui.Element.pointToWindow(this.drawing, point);
 	},
 
 	//
@@ -1270,6 +1132,162 @@ Core.Object.extend('Ui.Element', {
 			this.animClock = undefined;
 		}
 		this.fireEvent('unload');
+	}
+}, {}, {
+
+	//
+	// Return the transform matrix to convert coordinates
+	// from the given element coordinate system to the page
+	// coordinate system
+	//
+	transformToWindow: function(element) {
+		if(navigator.isWebkit) {
+			var matrix = new Ui.Matrix();
+			var current = element;
+			while(current != undefined) {
+				var trans = window.getComputedStyle(current, null).getPropertyValue('-webkit-transform');
+				if(trans != 'none') {
+					var origin = window.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
+					var originX = 0;
+					var originY = 0;
+					if(origin != '0px 0px') {
+						var origins = origin.split(' ');
+						originX = new Number(origins[0].replace(/px$/, ''));
+						originY = new Number(origins[1].replace(/px$/, ''));
+					}
+					var cssMatrix = new WebKitCSSMatrix(trans);
+					var localMatrix = Ui.Matrix.createMatrix(cssMatrix.a, cssMatrix.b, cssMatrix.c, cssMatrix.d, cssMatrix.e, cssMatrix.f);
+					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.multiply(localMatrix);
+					matrix.translate(originX, originY);
+				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
+				current = current.offsetParent;
+			}
+			return matrix;
+		}
+		else if(navigator.isGecko) {
+			var matrix = new Ui.Matrix();
+			var current = element;
+			while(current != undefined) {
+				var trans = window.getComputedStyle(current, null).getPropertyValue('-moz-transform');
+				if(trans != 'none') {
+					var splits = trans.split(' ');
+					var a = new Number(splits[0].slice(7, splits[0].length-1));
+					var b = new Number(splits[1].slice(0, splits[1].length-1));
+					var c = new Number(splits[2].slice(0, splits[2].length-1));
+					var d = new Number(splits[3].slice(0, splits[3].length-1));
+					var e = new Number(splits[4].slice(0, splits[4].length-3));
+					var f = new Number(splits[5].slice(0, splits[5].length-3));
+					var origin = window.getComputedStyle(current, null).getPropertyValue('-moz-transform-origin');
+					var originX = 0;
+					var originY = 0;
+					if(origin != '0px 0px') {
+						var origins = origin.split(' ');
+						originX = new Number(origins[0].replace(/px$/, ''));
+						originY = new Number(origins[1].replace(/px$/, ''));
+					}
+					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
+					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.multiply(localMatrix);
+					matrix.translate(originX, originY);
+				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
+				current = current.offsetParent;
+			}
+			return matrix;
+		}
+		else if(navigator.isOpera) {
+			var matrix = new Ui.Matrix();
+			var current = element;
+			while(current != undefined) {
+				var trans = window.getComputedStyle(current, null).getPropertyValue('-o-transform');
+				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
+					var splits = trans.split(' ');
+					var a = new Number(splits[0].slice(7, splits[0].length-1));
+					var b = new Number(splits[1].slice(0, splits[1].length-1));
+					var c = new Number(splits[2].slice(0, splits[2].length-1));
+					var d = new Number(splits[3].slice(0, splits[3].length-1));
+					var e = new Number(splits[4].slice(0, splits[4].length-1));
+					var f = new Number(splits[5].slice(0, splits[5].length-1));
+					var origin = window.getComputedStyle(current, null).getPropertyValue('-o-transform-origin');
+					var originX = 0;
+					var originY = 0;
+					if(origin != '0px 0px') {
+						var origins = origin.split(' ');
+						originX = new Number(origins[0].replace(/px$/, ''));
+						originY = new Number(origins[1].replace(/px$/, ''));
+					}
+					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
+					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.multiply(localMatrix);
+					matrix.translate(originX, originY);
+				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
+				current = current.offsetParent;
+			}
+			return matrix;
+		}
+		else if(navigator.isIE) {
+			var matrix = new Ui.Matrix();
+			var current = element;
+			while(current != undefined) {
+				var trans;
+				try {
+					trans = window.getComputedStyle(current, null).getPropertyValue('-ms-transform');
+				} catch(e) {
+					trans = 'none';
+				}
+				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
+					var splits = trans.split(' ');
+					var a = new Number(splits[0].slice(7, splits[0].length-1));
+					var b = new Number(splits[1].slice(0, splits[1].length-1));
+					var c = new Number(splits[2].slice(0, splits[2].length-1));
+					var d = new Number(splits[3].slice(0, splits[3].length-1));
+					var e = new Number(splits[4].slice(0, splits[4].length-1));
+					var f = new Number(splits[5].slice(0, splits[5].length-1));
+					var origin = window.getComputedStyle(current, null).getPropertyValue('-ms-transform-origin');
+					var originX = 0;
+					var originY = 0;
+					if(origin != '0px 0px') {
+						var origins = origin.split(' ');
+						originX = new Number(origins[0].replace(/px$/, ''));
+						originY = new Number(origins[1].replace(/px$/, ''));
+					}
+					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
+					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.multiply(localMatrix);
+					matrix.translate(originX, originY);
+				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
+				current = current.offsetParent;
+			}
+			return matrix;
+		}
+		else {
+			var svg = document.createElementNS(svgNS, 'svg');
+			if(element.firstChild == undefined)
+				element.appendChild(svg);
+			else
+				element.insertBefore(svg, element.firstChild);
+			var svgMatrix = svg.getScreenCTM();
+			element.removeChild(svg);
+			return Ui.Matrix.createMatrix(svgMatrix.a, svgMatrix.b, svgMatrix.c, svgMatrix.d, svgMatrix.e, svgMatrix.f);
+		}
+	},
+
+	//
+	// Return the given point converted from the givent element
+	// coordinate system to the page coordinate system
+	//
+	pointToWindow: function(element, point) {
+		if(navigator.isWebkit)
+			return window.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
+		else {
+			point = new Ui.Point({point: point });
+			point.matrixTransform(this.transformToWindow(element));
+			return point;
+		}
 	}
 });
 

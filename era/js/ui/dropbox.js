@@ -107,7 +107,7 @@ Ui.LBox.extend('Ui.DropBox', {
 		// accept the drop
 		event.preventDefault();
 		event.stopPropagation();
-//		console.log('onDrop');
+		console.log('onDrop');
 
 //		console.log('drop Files: '+((event.dataTransfer.files == undefined)?0:event.dataTransfer.files.length));
 
@@ -117,6 +117,8 @@ Ui.LBox.extend('Ui.DropBox', {
 		}
 		else {
 			var data = event.dataTransfer.getData('Text');
+			console.log('onDrop data Text: '+data);
+
 			if(data != undefined) {
 				var pos = data.indexOf(':');
 				if(pos != -1) {

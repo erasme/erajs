@@ -31,6 +31,8 @@ Ui.Container.extend('Ui.Scrollable', {
 	scrollbarVerticalBox: undefined,
 	scrollbarVertical: undefined,
 
+	lock: false,
+
 	constructor: function(config) {
 		if(config.scrollHorizontal != undefined)
 			this.setScrollHorizontal(config.scrollHorizontal);
@@ -68,6 +70,17 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchend', this.onVerticalTouchEnd);
 
 //		this.connect(this, 'keydown', this.onKeyDown);
+	},
+
+	setLock: function(lock) {
+		this.lock = lock;
+		if(lock) {
+			this.stopInertia();
+		}
+	},
+
+	getLock: function() {
+		return this.lock;
 	},
 
 	setContent: function(content) {
@@ -201,6 +214,9 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	onMouseDown: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
+
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
 			return;
 
@@ -273,6 +289,9 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	onTouchStart: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
+
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
 			return;
 
@@ -448,6 +467,9 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	onVerticalMouseDown: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
+
 		if(event.button != 0)
 			return;
 
@@ -510,6 +532,9 @@ Ui.Container.extend('Ui.Scrollable', {
 
 
 	onVerticalTouchStart: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
+
 		if(event.targetTouches.length != 1)
 			return;
 
@@ -563,6 +588,9 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	onHorizontalMouseDown: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
+
 		if(event.button != 0)
 			return;
 

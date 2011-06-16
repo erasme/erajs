@@ -32,7 +32,7 @@ Core.Object.extend('Ui.LinearGradient', {
 			if(this.orientation == 'vertical')
 				this.image += '-90deg';
 			else
-				this.image += '-180deg';
+				this.image += '0deg';
 			for(var i = 0; i < this.stops.length; i++) {
 				var stop = this.stops[i];
 				this.image += ', '+stop.color.getCssRgba()+' '+Math.round(stop.offset * 100)+'%';
@@ -59,7 +59,7 @@ Core.Object.extend('Ui.LinearGradient', {
 				var gradient = context.createLinearGradient(0, 0, 100, 0);
 				for(var i = 0; i < this.stops.length; i++) {
 					var stop = this.stops[i];
-					gradient.addColorStop(stop.offset, stop.color.getCssRgbaTo());
+					gradient.addColorStop(stop.offset, stop.color.getCssRgba());
 				}
 				context.fillStyle = gradient;
 				context.fillRect(0, 0, 100, 1);
