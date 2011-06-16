@@ -19,9 +19,7 @@ Ui.LBox.extend('Ui.Selectable', {
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -123,18 +121,20 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.fireEvent('menu', this, event.clientX, event.clientY);
 	},
 
-	onTouchStart: function(event) {
-		if(this.isDown)
+	onFingerDown: function(event) {
+		if(this.getIsDisabled() || this.isDown)
 			return;
 
-		if(event.targetTouches.length != 1)
-			return;
+		this.connect(event.finger, 'fingermove', this.onFingerMove);
+		this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.touchStartX = event.targetTouches[0].screenX;
-		this.touchStartY = event.targetTouches[0].screenY;
+		this.touchStartX = event.finger.getX();
+		this.touchStartY = event.finger.getY();
 
 		this.onDown();
 
@@ -142,16 +142,16 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.menuTimer.abort();
 
 		this.menuTimer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onMenuTimer });
-		this.menuPosX = event.targetTouches[0].clientX;
-		this.menuPosY = event.targetTouches[0].clientY;
+		this.menuPosX = event.finger.getX();
+		this.menuPosY = event.finger.getY();
 	},
 
-	onTouchMove: function(event) {
-		if(!this.isDown)
-			return;
-		
-		var deltaX = event.targetTouches[0].screenX - this.touchStartX;
-		var deltaY = event.targetTouches[0].screenY - this.touchStartY;
+	onFingerMove: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var deltaX = event.finger.getX() - this.touchStartX;
+		var deltaY = event.finger.getY() - this.touchStartY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		// if the user move to much, release the touch event
@@ -163,30 +163,21 @@ Ui.LBox.extend('Ui.Selectable', {
 				this.menuTimer = undefined;
 			}
 
-			this.disconnect(this.getDrawing(), 'touchstart', this.onTouchStart);
-
-			var touchStartEvent = document.createEvent('TouchEvent');
-			touchStartEvent.initTouchEvent('touchstart', true, true, window, 0, 0, 0, 0, 0,
-				event.ctrlKey, event.altKey, event.shiftKey,
-				event.metaKey, event.touches,
-				event.targetTouches, event.changedTouches, event.scale, event.rotation);
-			event.target.dispatchEvent(touchStartEvent);
-
-			this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
+			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+			this.onUp();
+			event.finger.release();
 		}
-
-		event.preventDefault();
-		event.stopPropagation();
 	},
 	
-	onTouchEnd: function(event) {
-		if(!this.isDown)
-			return;
+	onFingerUp: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
 
 		this.onUp();
 
-		event.preventDefault();
-		event.stopPropagation();
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 
 		if(this.menuTimer != undefined) {
 			this.menuTimer.abort();
