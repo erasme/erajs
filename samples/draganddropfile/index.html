@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Drag and Drop File</title>
+    <script src='../../era/js/era-debug.js'></script>
+<script>
+//
+// WARNING: this sample only work if file drag and drop from the
+// desktop work in your browser. Known browser to work:
+// - Firefox 4.0
+// - Chrome 12
+//
+
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 20 });
+app.setContent(vbox);
+
+//
+// Define a DropBox. The DropBox is a possible target for a drag element.
+//
+var dropbox = new Ui.DropBox({ width: 200, height: 200 });
+// allow drop of files
+dropbox.addMimetype('files');
+
+// fill with content to see something
+dropbox.append(new Ui.Rectangle({ fill: 'lightgreen', radius: 8 }));
+var droplabel = new Ui.Text({ text: 'drop file here', verticalAlign: 'center', margin: 10 });
+dropbox.append(droplabel);
+vbox.append(dropbox);
+
+//
+// Connect to the dropfiles event called when files are
+// dropped in the box.
+//
+app.connect(dropbox, 'dropfiles', function(dropbox, files) {
+	var msg = 'files:\n';
+	for(var i = 0; i < files.length; i++) {
+		var file = files[i];
+		msg += file.name+'\n';
+	}
+	droplabel.setText(msg);
+});
+
+</script>
+  </head>
+</html>
