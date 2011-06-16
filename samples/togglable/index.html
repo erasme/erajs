@@ -25,14 +25,14 @@ app.connect(togglable, 'down', function() {
 });
 app.connect(togglable, 'up', function() {
 	if(togglable.getIsToggled())
-		rectangle.setFill('darkblue');
+		rectangle.setFill('blue');
 	else
 		rectangle.setFill('lightblue');
 });
 
 app.connect(togglable, 'toggle', function() {
 	label.setText('toggle count: '+(++count));
-	rectangle.setFill('darkblue');
+	rectangle.setFill('blue');
 });
 app.connect(togglable, 'untoggle', function() {
 	rectangle.setFill('lightblue');
