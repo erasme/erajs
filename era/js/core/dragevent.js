@@ -227,8 +227,9 @@ Core.Object.extend('Core.DragManager', {
 	}
 });
 
-navigator.supportDrag = false;
+navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
+  !navigator.isIE && !navigator.iPad && !navigator.iPhone && !navigator.Android;
 
-if(!navigator.supportDrag) {
+if(!navigator.supportDrag)
 	new Core.DragManager();
-}
+

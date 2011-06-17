@@ -52,6 +52,28 @@ Ui.Element.extend('Ui.Container', {
 	//
 	getChildren: function() {
 		return this.children;
+	},
+
+	//
+	// Return the first child or undefined
+	// if the container has no children
+	//
+	getFirstChild: function() {
+		if(this.children.length > 0)
+			return this.children[0];
+		else
+			return undefined;
+	},
+
+	//
+	// Return the last child or undefined
+	// if the container has no children
+	//
+	getLastChild: function() {
+		if(this.children.length > 0)
+			return this.children[this.children.length - 1];
+		else
+			return undefined;
 	}
 }, {
 	setIsLoaded: function(isLoaded) {
