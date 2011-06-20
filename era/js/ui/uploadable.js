@@ -223,8 +223,8 @@ Ui.LBox.extend('Ui.Uploadable', {
 			this.input.select();
 	},
 
-	onFile: function(fileWrapper, files) {
-		this.fireEvent('file', this, files);
+	onFile: function(fileWrapper, file) {
+		this.fireEvent('file', this, file);
 	}
 });
 
@@ -297,9 +297,20 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 	onChange: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		Core.Object.dump(this.inputDrawing);
+
+		if('files' in this.inputDrawing) {
+			for(var i = 0; i < this.inputDrawing.files.length; i++)
+				this.fireEvent('file', this, new Core.File({ fileApi: this.inputDrawing.files[i] }));
+		}
+		else {
+			this.disconnect(this.inputDrawing, 'change', this.onChange);
+			this.fireEvent('file', this, new Core.File({ iframe: this.iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing }));
+			this.createInput();
+		}
+
+//		Core.Object.dump(this.inputDrawing);
 //		Core.Object.dump(this.getDrawing().files);
-		this.fireEvent('file', this, this.inputDrawing.files);
+//		this.fireEvent('file', this, this.inputDrawing.files);
 	}
 }, {
 	onLoad: function() {
@@ -378,7 +389,17 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 	},
 
 	onChange: function(event) {
-		this.fireEvent('file', this, this.inputDrawing.files);
+		if('files' in this.inputDrawing) {
+			for(var i = 0; i < this.inputDrawing.files.length; i++)
+				this.fireEvent('file', this, new Core.File({ fileApi: this.inputDrawing.files[i] }));
+		}
+		else {
+			this.disconnect(this.inputDrawing, 'change', this.onChange);
+			this.fireEvent('file', this, new Core.File({ iframe: this.iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing }));
+			this.createInput();
+		}
+
+//		this.fireEvent('file', this, this.inputDrawing.files);
 	}
 }, {
 	render: function() {

@@ -13,7 +13,7 @@ Ui.LBox.extend('Ui.DropBox', {
 		this.connect(this.drawing, 'dragover', this.onDragOver);
 		this.connect(this.drawing, 'drop', this.onDrop);
 
-		this.addEvents('drop', 'dropfiles');
+		this.addEvents('drop', 'dropfile');
 	},
 
 	//
@@ -36,7 +36,6 @@ Ui.LBox.extend('Ui.DropBox', {
 
 	onDragEnter: function(event) {
 //		console.log('onDragEnter allowText: '+this.allowText+', allowFiles: '+this.allowFiles);
-
 		if(event.dataTransfer.types != undefined) {
 //			console.log('onDragEnter: '+event.dataTransfer.types);
 			var foundFiles = false;
@@ -113,7 +112,8 @@ Ui.LBox.extend('Ui.DropBox', {
 
 		if((event.dataTransfer.files != undefined) && (event.dataTransfer.files.length > 0)) {
 //			console.log('drop files');
-			this.fireEvent('dropfiles', this, event.dataTransfer.files);
+			for(var i = 0; i < event.dataTransfer.files.length; i++)
+				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }));
 		}
 		else {
 			var data = event.dataTransfer.getData('Text');

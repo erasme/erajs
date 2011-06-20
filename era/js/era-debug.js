@@ -34,6 +34,8 @@ include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');
 include(eraBaseDirectory+'core/socket.js');
+include(eraBaseDirectory+'core/file.js');
+include(eraBaseDirectory+'core/filepostuploader.js');
 
 //
 // Animations

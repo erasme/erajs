@@ -35,13 +35,8 @@ vbox.append(dropbox);
 // Connect to the dropfiles event called when files are
 // dropped in the box.
 //
-app.connect(dropbox, 'dropfiles', function(dropbox, files) {
-	var msg = 'files:\n';
-	for(var i = 0; i < files.length; i++) {
-		var file = files[i];
-		msg += file.name+'\n';
-	}
-	droplabel.setText(msg);
+app.connect(dropbox, 'dropfile', function(dropbox, file) {
+	droplabel.setText('file: '+file.getFileName());
 });
 
 </script>
