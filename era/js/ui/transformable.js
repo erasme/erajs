@@ -12,7 +12,6 @@ Ui.LBox.extend('Ui.Transformable', {
 	lastAngle: 0,
 	isDown: false,
 
-//	touches: undefined,
 	finger1: undefined,
 	finger2: undefined,
 
@@ -39,15 +38,7 @@ Ui.LBox.extend('Ui.Transformable', {
 
 		this.contentBox.getDrawing().style.cursor = 'move';
 
-//		this.touches = {};
-
-//		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
-
 		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
-
-//		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onNativeTouchStart);
-//		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onNativeTouchMove);
-//		this.connect(this.contentBox.getDrawing(), 'touchend', this.onNativeTouchEnd);
 	},
 
 	getIsDown: function() {

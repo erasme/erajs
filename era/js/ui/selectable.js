@@ -51,6 +51,8 @@ Ui.LBox.extend('Ui.Selectable', {
 	},
 
 	onMouseDown: function(event) {
+		if(this.getIsDisabled())
+			return;
 		if((event.button != 0) && (event.button != 2))
 			return;
 

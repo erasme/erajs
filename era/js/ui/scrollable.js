@@ -17,13 +17,14 @@ Ui.Container.extend('Ui.Scrollable', {
 	hasMoved: false,
 	mouseStart: undefined,
 	touchStart: undefined,
+	verticalFingerStart: undefined,
+	horizontalFingerStart: undefined,
 	touchId: undefined,
 
 	scrollHorizontal: true,
 	scrollVertical: true,
 
 	contentBox: undefined,
-//	content: undefined,
 
 	scrollbarHorizontalBox: undefined,
 	scrollbarHorizontal: undefined,
@@ -39,12 +40,6 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(config.scrollVertical != undefined)
 			this.setScrollVertical(config.scrollVertical);
 
-//		this.contentBox = new Ui.ScrollableContent();
-//		this.appendChild(this.contentBox);
-//		this.connect(this.contentBox, 'scroll', function(content, offsetX, offsetY) {
-//			this.setOffset(offsetX, offsetY, true);
-//		});
-
 		this.scrollbarHorizontalBox = new Ui.LBox();
 		this.scrollbarHorizontalBox.getDrawing().style.cursor = 'move';
 		this.appendChild(this.scrollbarHorizontalBox);
@@ -58,16 +53,18 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDownCtrl, true);
 		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
 		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
-		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+
+		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
+//		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
+//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
 
 		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'mousedown', this.onHorizontalMouseDown);
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'mousedown', this.onVerticalMouseDown);
 
-		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchstart', this.onVerticalTouchStart);
-		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchmove', this.onVerticalTouchMove);
-		this.connect(this.scrollbarVerticalBox.getDrawing(), 'touchend', this.onVerticalTouchEnd);
+		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'fingerdown', this.onHorizontalFingerDown);
+		this.connect(this.scrollbarVerticalBox.getDrawing(), 'fingerdown', this.onVerticalFingerDown);
 
 //		this.connect(this, 'keydown', this.onKeyDown);
 	},
@@ -288,58 +285,44 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);
 	},
 
-	onTouchStart: function(event) {
-		if(this.lock || this.getIsDisabled())
+	onFingerDown: function(event) {
+		if(this.lock || this.getIsDisabled() || this.isMoving)
 			return;
-
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
 			return;
 
-		if(event.targetTouches.length != 1)
-			return;
-
-		if(this.isMoving)
-			return;
-
-		this.touchId = event.targetTouches[0].identifier;
+		this.connect(event.finger, 'fingermove', this.onFingerMove);
+		this.connect(event.finger, 'fingerup', this.onFingerUp);
 
 		this.isMoving = true;
+
+		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
 		event.stopPropagation();
 
 		this.stopInertia();
 
-		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
+		this.touchStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.startComputeInertia();
 	},
 
-	onTouchMove: function(event) {
-		if(!this.isMoving)
-			return;
-		if(event.targetTouches[0].identifier != this.touchId)
-			return;
-
+	onFingerMove: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
+		var touchPos = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		var deltaX = touchPos.x - this.touchStart.x;
 		var deltaY = touchPos.y - this.touchStart.y;
 		offsetX = this.startOffsetX - deltaX;
 		offsetY = this.startOffsetY - deltaY;
 		this.setOffset(offsetX, offsetY, true);
 		this.hasMoved = true;
-
-//		console.log('onTouchMove offsetY: '+offsetY);
 	},
 
-	onTouchEnd: function(event) {
-		if(!this.isMoving)
-			return;
-
+	onFingerUp: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -347,6 +330,9 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		this.stopComputeInertia();
 		this.startInertia();
+
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 	},
 
 	onKeyDown: function(keyboard, key) {
@@ -501,7 +487,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetY = this.startOffsetY + deltaY * this.contentHeight / this.viewHeight;
-		this.setOffset(this.startOffsetX, offsetY, true);
+		this.setOffset(undefined, offsetY, true);
 	},
 
 	onVerticalMouseUp: function(event) {
@@ -530,54 +516,40 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.startInertia();
 	},
 
-
-	onVerticalTouchStart: function(event) {
-		if(this.lock || this.getIsDisabled())
+	onVerticalFingerDown: function(event) {
+		if(this.lock || this.getIsDisabled() || this.isVerticalMoving)
 			return;
-
-		if(event.targetTouches.length != 1)
-			return;
-
-		if(this.isVerticalMoving)
-			return;
-
-		this.verticalTouchId = event.targetTouches[0].identifier;
 
 		this.isVerticalMoving = true;
+
+		this.connect(event.finger, 'fingermove', this.onVerticalFingerMove);
+		this.connect(event.finger, 'fingerup', this.onVerticalFingerUp);
+
+		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
 		event.stopPropagation();
 
 		this.stopInertia();
 
-		this.touchStart = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
+
+		this.verticalFingerStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.startComputeInertia();
 	},
 
-	onVerticalTouchMove: function(event) {
-		if(!this.isVerticalMoving)
-			return;
-		if(event.targetTouches[0].identifier != this.verticalTouchId)
-			return;
-
+	onVerticalFingerMove: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var touchPos = this.pointFromWindow({ x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY });
-		var deltaY = touchPos.y - this.touchStart.y;
+		var touchPos = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
+		var deltaY = touchPos.y - this.verticalFingerStart.y;
 		offsetY = this.startOffsetY + deltaY * this.contentHeight / this.viewHeight;
-		console.log(this+'.onVerticalTouchMove deltaY: '+deltaY);
 		this.setOffset(this.startOffsetX, offsetY, true);
 	},
 
-	onVerticalTouchEnd: function(event) {
-		console.log('onVerticalTouchEnd event: '+event);
-
-		if(!this.isVerticalMoving)
-			return;
-
+	onVerticalFingerUp: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -585,6 +557,9 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		this.stopComputeInertia();
 		this.startInertia();
+
+		this.disconnect(event.finger, 'fingermove', this.onVerticalFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onVerticalFingerUp);
 	},
 
 	onHorizontalMouseDown: function(event) {
@@ -649,6 +624,51 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.speedY = deltaOffsetY / deltaTime;
 		}
 		this.startInertia();
+	},
+
+	onHorizontalFingerDown: function(event) {
+		if(this.lock || this.getIsDisabled() || this.isHorizontalMoving)
+			return;
+
+		this.isHorizontalMoving = true;
+
+		this.connect(event.finger, 'fingermove', this.onHorizontalFingerMove);
+		this.connect(event.finger, 'fingerup', this.onHorizontalFingerUp);
+
+		event.finger.capture(this.getDrawing());
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.stopInertia();
+
+		this.horizontalFingerStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
+		this.startOffsetX = this.offsetX;
+		this.startOffsetY = this.offsetY;
+		this.startComputeInertia();
+	},
+
+	onHorizontalFingerMove: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var touchPos = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
+		var deltaX = touchPos.x - this.horizontalFingerStart.x;
+		offsetX = this.startOffsetX + deltaX * this.contentWidth / this.viewWidth;
+		this.setOffset(offsetX, undefined, true);
+	},
+
+	onHorizontalFingerUp: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.isHorizontalMoving = false;
+
+		this.stopComputeInertia();
+		this.startInertia();
+
+		this.disconnect(event.finger, 'fingermove', this.onHorizontalFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onHorizontalFingerUp);
 	},
 
 	updateOffset: function() {

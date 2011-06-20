@@ -9,6 +9,7 @@ Ui.LBox.extend('Ui.Draggable', {
 	allowedMode: 'copyMove',
 	mimetype: undefined,
 	data: undefined,
+	lock: false,
 
 	constructor: function(config) {
 		if(config.data != undefined) 
@@ -21,6 +22,15 @@ Ui.LBox.extend('Ui.Draggable', {
 		this.connect(this.drawing, 'dragend', this.onDragEnd, true);
 
 		this.addEvents('dragstart', 'dragend');
+	},
+     
+	setLock: function(lock) {
+    	this.lock = lock;
+		this.drawing.setAttribute('draggable', !lock && !this.getIsDisabled());
+	},
+
+	getLock: function() {
+		return this.lock;
 	},
 
 	//
@@ -113,4 +123,11 @@ Ui.LBox.extend('Ui.Draggable', {
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
 	}
 }, {
+	onDisable: function() {
+		this.drawing.setAttribute('draggable', !this.lock && !this.getIsDisabled());
+	},
+
+	onEnable: function() {
+		this.drawing.setAttribute('draggable', !this.lock && !this.getIsDisabled());
+	}
 });
