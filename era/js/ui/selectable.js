@@ -168,7 +168,10 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 			this.onUp();
+
+			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 			event.finger.release();
+			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 		}
 	},
 	

@@ -30,7 +30,7 @@ Core.Object.extend('Core.DragDataTransfer', {
 	startY: 0,
 	startImagePoint: undefined,
 	overElement: undefined,
-
+	hasStarted: false,
 
 	dropEffect: 'none',
 	type: undefined,
@@ -43,35 +43,35 @@ Core.Object.extend('Core.DragDataTransfer', {
 		this.startX = config.x;
 		this.startY = config.y;
 		this.data = {};
-		if(config.mouse != undefined)
+		if(config.mouse != undefined) {
 			this.mouse = config.mouse;
-		if(config.finger != undefined)
+			config.event.preventDefault();
+			config.event.stopPropagation();
+			this.connect(window, 'mouseup', this.onMouseUp, true);
+			this.connect(window, 'mousemove', this.onMouseMove, true);
+		}
+		if(config.finger != undefined) {
 			this.finger = config.finger;
 
-		var dragEvent = document.createEvent('DragEvent');
-		dragEvent.initDragEvent('dragstart', false, true, config.event.window, this, this.startX, this.startY, this.startX, this.startY, config.event.ctrlKey, config.event.altKey, config.event.shiftKey, config.event.metaKey);
-		this.draggable.dispatchEvent(dragEvent);
+			var dragEvent = document.createEvent('DragEvent');
+			dragEvent.initDragEvent('dragstart', false, true, event.window, this, this.startX, this.startY, this.startX, this.startY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			this.draggable.dispatchEvent(dragEvent);
 
-		if(this.hasData()) {
-			this.image = this.draggable.cloneNode(true);
-			document.body.appendChild(this.image);
+			if(this.hasData()) {
+				this.hasStarted = true;
 
-			this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
-			this.image.style.left = this.startImagePoint.x+'px';
-			this.image.style.top = this.startImagePoint.y+'px';
+				this.image = this.draggable.cloneNode(true);
+				document.body.appendChild(this.image);
 
-			if(this.mouse) {
-				config.event.preventDefault();
-				config.event.stopPropagation();
-				this.connect(window, 'mouseup', this.onMouseUp, true);
-				this.connect(window, 'mousemove', this.onMouseMove, true);
-			}
-			else if(this.finger != undefined) {
-				config.event.preventDefault();
-				config.event.stopPropagation();
-				this.finger.capture(this.draggable);
-				this.connect(this.finger, 'fingerup', this.onFingerUp);
-				this.connect(this.finger, 'fingermove', this.onFingerMove);
+				this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
+				this.image.style.left = this.startImagePoint.x+'px';
+				this.image.style.top = this.startImagePoint.y+'px';
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				this.connect(config.event.finger, 'fingermove', this.onFingerMove);
+				this.connect(config.event.finger, 'fingerup', this.onFingerUp);
 			}
 		}
 	},
@@ -95,51 +95,75 @@ Core.Object.extend('Core.DragDataTransfer', {
 	// Private
 	//
 	onMouseMove: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		document.body.removeChild(this.image);
-		var overElement = document.elementFromPoint(event.clientX, event.clientY);
-		document.body.appendChild(this.image);
-
 		var deltaX = event.clientX - this.startX;
 		var deltaY = event.clientY - this.startY;
 
-		this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
-		this.image.style.top = (this.startImagePoint.y + deltaY)+'px';
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-		if(overElement != undefined) {
+		if(!this.hasStarted && (delta > 10)) {
 			var dragEvent = document.createEvent('DragEvent');
-			if(this.overElement != overElement)
-				dragEvent.initDragEvent('dragenter', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
-			else
-				dragEvent.initDragEvent('dragover', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
-			overElement.dispatchEvent(dragEvent);
+			dragEvent.initDragEvent('dragstart', false, true, event.window, this, this.startX, this.startY, this.startX, this.startY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			this.draggable.dispatchEvent(dragEvent);
+
+			if(this.hasData()) {
+				this.hasStarted = true;
+
+				this.image = this.draggable.cloneNode(true);
+				document.body.appendChild(this.image);
+
+				this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
+				this.image.style.left = this.startImagePoint.x+'px';
+				this.image.style.top = this.startImagePoint.y+'px';
+
+				event.preventDefault();
+				event.stopPropagation();
+			}
 		}
-		this.overElement = overElement;
+		else if(this.hasStarted) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			document.body.removeChild(this.image);
+			var overElement = document.elementFromPoint(event.clientX, event.clientY);
+			document.body.appendChild(this.image);
+
+			this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
+			this.image.style.top = (this.startImagePoint.y + deltaY)+'px';
+
+			if(overElement != undefined) {
+				var dragEvent = document.createEvent('DragEvent');
+				if(this.overElement != overElement)
+					dragEvent.initDragEvent('dragenter', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				else
+					dragEvent.initDragEvent('dragover', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				overElement.dispatchEvent(dragEvent);
+			}
+			this.overElement = overElement;
+		}
 	},
 
 	onMouseUp: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
 		if(event.button != 0)
 			return;
 
+		if(this.hasStarted) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			document.body.removeChild(this.image);
+
+			if(this.overElement != undefined) {
+				var dragEvent = document.createEvent('DragEvent');
+				dragEvent.initDragEvent('drop', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				this.overElement.dispatchEvent(dragEvent);
+			}
+
+			var dragEvent = document.createEvent('DragEvent');
+			dragEvent.initDragEvent('dragend', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			this.draggable.dispatchEvent(dragEvent);
+		}
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-
-		document.body.removeChild(this.image);
-
-		if(this.overElement != undefined) {
-			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('drop', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
-			this.overElement.dispatchEvent(dragEvent);
-		}
-
-		var dragEvent = document.createEvent('DragEvent');
-		dragEvent.initDragEvent('dragend', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
-		this.draggable.dispatchEvent(dragEvent);
 	},
 
 	onFingerMove: function(event) {

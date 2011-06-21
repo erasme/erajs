@@ -139,5 +139,6 @@ include(eraBaseDirectory+'ui/fade.js');
 include(eraBaseDirectory+'ui/flip.js');
 include(eraBaseDirectory+'ui/slide.js');
 include(eraBaseDirectory+'ui/transitionbox.js');
+include(eraBaseDirectory+'ui/highlighter.js');
 
 

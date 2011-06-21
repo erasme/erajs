@@ -81,11 +81,14 @@ Core.Object.extend('Core.Finger', {
 
 	release: function() {
 		if(this.captureElement != undefined) {
-			// resend the up event
-			var fingerEvent = document.createEvent('FingerEvent');
-			fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
-			this.captureElement.offsetParent.dispatchEvent(fingerEvent);
 
+			var target = document.elementFromPoint(this.x, this.y);
+			if(target != undefined) {
+				// resend the up event
+				var fingerEvent = document.createEvent('FingerEvent');
+				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
+				target.dispatchEvent(fingerEvent);
+			}
 			this.captureElement = undefined;
 		}
 	},

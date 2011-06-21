@@ -123,7 +123,10 @@ Ui.LBox.extend('Ui.Pressable', {
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 			this.onUp();
+
+			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 			event.finger.release();
+			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 		}
 	},
 	
@@ -170,8 +173,8 @@ Ui.LBox.extend('Ui.Pressable', {
 			this.disconnect(this.getDrawing(), 'mouseup', this.onMouseUp);
 		}
 		else {
-			this.disconnect(window, 'mousemove', this.onMouseMove);
-			this.disconnect(window, 'mouseup', this.onMouseUp);
+			this.disconnect(window, 'mousemove', this.onMouseMove, true);
+			this.disconnect(window, 'mouseup', this.onMouseUp, true);
 		}
  		this.isDown = false;
 		this.fireEvent('up', this);
