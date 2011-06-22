@@ -48,11 +48,6 @@ Ui.LBox.extend('Ui.Uploadable', {
 		}
 	},
 
-	getFilePostUploader: function() {
-		return this.input.getFilePostUploader();
-	},
-
-
 	//
 	// Private
 	//
@@ -244,42 +239,10 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 		this.inputDrawing.click();
 	},
 
-	getFilePostUploader: function() {
-		this.disconnect(this.inputDrawing, 'change', this.onChange);
-		var form = this.formDrawing;
-		var iframe = this.iframeDrawing;
-		this.createInput();
-		return new Ui.FilePostUploader({ form: form, iframe: iframe });
-	},
-
 	//
 	// Private
 	//
 	createInput: function() {
-		this.iframeDrawing = document.createElement('iframe');
-		this.iframeDrawing.style.position = 'absolute';
-		this.iframeDrawing.style.top = '0px';
-		this.iframeDrawing.style.left = '0px';
-		this.iframeDrawing.style.width = '0px';
-		this.iframeDrawing.style.height = '0px';
-		this.iframeDrawing.style.clip = 'rect(0px 0px 0px 0px)';
-
-		document.body.appendChild(this.iframeDrawing);
-
-		this.iframeDrawing.contentWindow.document.write("<!DOCTYPE html><html><body></body></html>");
-
-		this.formDrawing = document.createElement('form');
-		this.formDrawing.method = 'POST';
-		this.formDrawing.enctype = 'multipart/form-data';
-		this.formDrawing.style.display = 'block';
-		this.formDrawing.style.position = 'absolute';
-		this.formDrawing.style.left = '0px';
-		this.formDrawing.style.top = '0px';
-		this.formDrawing.style.width = '0px';
-		this.formDrawing.style.height = '0px';
-
-		this.iframeDrawing.contentWindow.document.body.appendChild(this.formDrawing);
-
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
 		this.inputDrawing.name = 'file';
@@ -289,7 +252,37 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 		this.inputDrawing.style.top = '0px';
 		this.inputDrawing.style.width = '0px';
 		this.inputDrawing.style.height = '0px';
-		this.formDrawing.appendChild(this.inputDrawing);
+
+		if('files' in this.inputDrawing) {
+			this.getDrawing().appendChild(this.inputDrawing);
+		}
+		else {
+			this.iframeDrawing = document.createElement('iframe');
+			this.iframeDrawing.style.position = 'absolute';
+			this.iframeDrawing.style.top = '0px';
+			this.iframeDrawing.style.left = '0px';
+			this.iframeDrawing.style.width = '0px';
+			this.iframeDrawing.style.height = '0px';
+			this.iframeDrawing.style.clip = 'rect(0px 0px 0px 0px)';
+
+			document.body.appendChild(this.iframeDrawing);
+
+			this.iframeDrawing.contentWindow.document.write("<!DOCTYPE html><html><body></body></html>");
+
+			this.formDrawing = document.createElement('form');
+			this.formDrawing.method = 'POST';
+			this.formDrawing.enctype = 'multipart/form-data';
+			this.formDrawing.style.display = 'block';
+			this.formDrawing.style.position = 'absolute';
+			this.formDrawing.style.left = '0px';
+			this.formDrawing.style.top = '0px';
+			this.formDrawing.style.width = '0px';
+			this.formDrawing.style.height = '0px';
+
+			this.iframeDrawing.contentWindow.document.body.appendChild(this.formDrawing);
+
+			this.formDrawing.appendChild(this.inputDrawing);
+		}
 
 		this.connect(this.inputDrawing, 'change', this.onChange);
 	},
@@ -334,33 +327,11 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 		this.addEvents('file');
 	},
 
-	getFilePostUploader: function() {
-		this.disconnect(this.inputDrawing, 'change', this.onChange);
-		var form = this.formDrawing;
-		this.getDrawing().removeChild(this.formDrawing);
-
-		var iframe = document.createElement('iframe');
-		iframe.style.position = 'absolute';
-		iframe.style.top = '0px';
-		iframe.style.left = '0px';
-		iframe.style.width = '0px';
-		iframe.style.height = '0px';
-		iframe.style.clip = 'rect(0px 0px 0px 0px)';
-
-		document.body.appendChild(iframe);
-
-		iframe.contentWindow.document.write("<!DOCTYPE html><html><body></body></html>");
-		iframe.contentWindow.document.body.appendChild(form);
-
-		this.getDrawing().appendChild(this.createInput());
-
-		return new Ui.FilePostUploader({ form: form, iframe: iframe });
-	},
-
 	//
 	// Private
 	//
 	createInput: function() {
+
 		this.formDrawing = document.createElement('form');
 		this.formDrawing.method = 'POST';
 		this.formDrawing.enctype = 'multipart/form-data';
