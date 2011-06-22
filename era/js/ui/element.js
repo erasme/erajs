@@ -519,10 +519,10 @@ Core.Object.extend('Ui.Element', {
 
 	updateClipRectangle: function() {
 		if(this.clipX != undefined) {
-			x = Math.round(this.clipX);
-			y = Math.round(this.clipY);
-			width = Math.round(this.clipWidth);
-			height = Math.round(this.clipHeight);
+			var x = Math.round(this.clipX);
+			var y = Math.round(this.clipY);
+			var width = Math.round(this.clipWidth);
+			var height = Math.round(this.clipHeight);
 			this.drawing.style.clip = 'rect('+y+'px '+(x+width)+'px '+(y+height)+'px '+x+'px)';
 		}
 		else {
