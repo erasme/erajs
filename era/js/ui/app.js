@@ -305,14 +305,14 @@ Ui.LBox.extend('Ui.App', {
 
 //		console.log('window.update inner: '+window.innerWidth+' x '+window.innerHeight+', client: '+document.body.clientWidth+' x '+document.body.clientHeight);
 
-		window.scrollTo(0, 0);
+//		window.scrollTo(0, 0);
 
 		// update measure
-//		var innerWidth = window.innerWidth;
-//		var innerHeight = window.innerHeight;
+		var innerWidth = window.innerWidth;
+		var innerHeight = window.innerHeight;
 
-		var innerWidth = document.body.clientWidth;
-		var innerHeight = document.body.clientHeight;
+//		var innerWidth = document.body.clientWidth;
+//		var innerHeight = document.body.clientHeight;
 
 //		console.log('window.update('+innerWidth+' x '+innerHeight+') '+document.body.clientWidth+' x '+document.body.clientHeight);
 

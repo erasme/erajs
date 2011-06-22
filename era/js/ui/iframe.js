@@ -41,16 +41,23 @@ Ui.Element.extend('Ui.IFrame', {
 	},
 
 	arrangeCore: function(width, height) {
+		console.log('iframe.arrangeCore('+width+','+height+')');
+
+		var tmpWidth = width;
+		var tmpHeight = height;
 		// correct a bug in Chrome
 		if(navigator.isChrome) {
 			var matrix = this.transformFromWindow();
-			this.iframeDrawing.style.width = (width*matrix.getA())+'px';
-			this.iframeDrawing.style.height = (height*matrix.getD())+'px';
+			tmpWidth = (width*matrix.getA());
+			tmpHeight = (height*matrix.getD());
 		}
-		else {
-			this.iframeDrawing.style.width = width+'px';
-			this.iframeDrawing.style.height = height+'px';
-		}
+		// correct a bug in Safari iOS if possible
+		try {
+			this.iframeDrawing.contentWindow.innerWidth = tmpWidth;
+			this.iframeDrawing.contentWindow.innerHeight = tmpHeight;
+		} catch(e) {}
+		this.iframeDrawing.style.width = tmpWidth+'px';
+		this.iframeDrawing.style.height = tmpHeight+'px';
 	}
 });
 
