@@ -226,7 +226,7 @@ Ui.Container.extend('Ui.ListView', {
 					var availableWidth = width;
 					for(var col = 0; col < this.headers.length; col++) {
 						var header = this.headers[col];
-						cell = this.headers[col].rows[dataRow];
+						var cell = this.headers[col].rows[dataRow];
 						var colWidth = header.minWidth;
 						if(col == this.headers.length - 1)
 							colWidth = Math.max(availableWidth, colWidth);
