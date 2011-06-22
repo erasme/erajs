@@ -168,10 +168,10 @@ Ui.Container.extend('Ui.ListView', {
 			}
 			this.selectedRow = row;
 			for(var col = 0; col < this.headers.length; col++) {
-				var cell = this.headers[col].rows[row];
-				this.disconnect(cell, 'select', this.onCellSelect);
-				this.headers[col].rows[row].select();
-				this.connect(cell, 'select', this.onCellSelect);
+				var tmpCell = this.headers[col].rows[row];
+				this.disconnect(tmpCell, 'select', this.onCellSelect);
+				tmpCell.select();
+				this.connect(tmpCell, 'select', this.onCellSelect);
 			}
 			this.fireEvent('select', this, this.selectedRow);
 		}
