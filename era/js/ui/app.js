@@ -115,6 +115,11 @@ Ui.LBox.extend('Ui.App', {
 		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 
+		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); });
+
+		if('onorientationchange' in window)
+			this.connect(window, 'orientationchange', this.onOrientationChange);
+
 		// handle messages
 		this.connect(window, 'message', this.onMessage);
 
@@ -208,6 +213,11 @@ Ui.LBox.extend('Ui.App', {
 //		console.log(this+'.onWindowResize end updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 	},
 
+	onOrientationChange: function() {
+		this.fireEvent('resize', this);
+		this.invalidateMeasure();
+	},
+
 /*	onWindowKeyPress: function(event) {
 		console.log('onWindowKeyPress '+event.which+', focus: '+this.focusElement);
 
@@ -292,6 +302,10 @@ Ui.LBox.extend('Ui.App', {
 
 	update: function() {
 //		console.log(this+'.update start ('+(new Date()).getTime()+')');
+
+//		console.log('window.update inner: '+window.innerWidth+' x '+window.innerHeight+', client: '+document.body.clientWidth+' x '+document.body.clientHeight);
+
+		window.scrollTo(0, 0);
 
 		// update measure
 //		var innerWidth = window.innerWidth;

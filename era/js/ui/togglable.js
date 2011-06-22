@@ -19,10 +19,6 @@ Ui.LBox.extend('Ui.Togglable', {
 		// handle touches
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
-//		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
-
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
