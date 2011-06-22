@@ -477,7 +477,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.speedY = 0;
 		this.speedComputed = false;
 
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
+//		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
 	},
 
 	onVerticalMouseMove: function(event) {
@@ -497,23 +497,23 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(event.button != 0)
 			return;
 
-		if(this.measureSpeedTimer != undefined) {
-			this.measureSpeedTimer.abort();
-			this.measureSpeedTimer = undefined;
-		}
+//		if(this.measureSpeedTimer != undefined) {
+//			this.measureSpeedTimer.abort();
+//			this.measureSpeedTimer = undefined;
+//		}
 
 		this.disconnect(window, 'mousemove', this.onVerticalMouseMove);
 		this.disconnect(window, 'mouseup', this.onVerticalMouseUp);
-		if(!this.speedComputed) {
-			// compute speed
-			var currentTime = (new Date().getTime())/1000;
-			var deltaTime = currentTime - this.lastTime;
-			var deltaOffsetX = this.offsetX - this.lastOffsetX;
-			var deltaOffsetY = this.offsetY - this.lastOffsetY;
-			this.speedX = deltaOffsetX / deltaTime;
-			this.speedY = deltaOffsetY / deltaTime;
-		}
-		this.startInertia();
+//		if(!this.speedComputed) {
+//			// compute speed
+//			var currentTime = (new Date().getTime())/1000;
+//			var deltaTime = currentTime - this.lastTime;
+//			var deltaOffsetX = this.offsetX - this.lastOffsetX;
+//			var deltaOffsetY = this.offsetY - this.lastOffsetY;
+//			this.speedX = deltaOffsetX / deltaTime;
+//			this.speedY = deltaOffsetY / deltaTime;
+//		}
+//		this.startInertia();
 	},
 
 	onVerticalFingerDown: function(event) {
@@ -536,7 +536,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.verticalFingerStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
-		this.startComputeInertia();
+//		this.startComputeInertia();
 	},
 
 	onVerticalFingerMove: function(event) {
@@ -555,8 +555,8 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		this.isVerticalMoving = false;
 
-		this.stopComputeInertia();
-		this.startInertia();
+//		this.stopComputeInertia();
+//		this.startInertia();
 
 		this.disconnect(event.finger, 'fingermove', this.onVerticalFingerMove);
 		this.disconnect(event.finger, 'fingerup', this.onVerticalFingerUp);
@@ -587,7 +587,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.speedY = 0;
 		this.speedComputed = false;
 
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
+//		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
 	},
 
 	onHorizontalMouseMove: function(event) {
@@ -607,23 +607,23 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(event.button != 0)
 			return;
 
-		if(this.measureSpeedTimer != undefined) {
-			this.measureSpeedTimer.abort();
-			this.measureSpeedTimer = undefined;
-		}
+//		if(this.measureSpeedTimer != undefined) {
+//			this.measureSpeedTimer.abort();
+//			this.measureSpeedTimer = undefined;
+//		}
 
 		this.disconnect(window, 'mousemove', this.onHorizontalMouseMove);
 		this.disconnect(window, 'mouseup', this.onHorizontalMouseUp);
-		if(!this.speedComputed) {
-			// compute speed
-			var currentTime = (new Date().getTime())/1000;
-			var deltaTime = currentTime - this.lastTime;
-			var deltaOffsetX = this.offsetX - this.lastOffsetX;
-			var deltaOffsetY = this.offsetY - this.lastOffsetY;
-			this.speedX = deltaOffsetX / deltaTime;
-			this.speedY = deltaOffsetY / deltaTime;
-		}
-		this.startInertia();
+//		if(!this.speedComputed) {
+//			// compute speed
+//			var currentTime = (new Date().getTime())/1000;
+//			var deltaTime = currentTime - this.lastTime;
+//			var deltaOffsetX = this.offsetX - this.lastOffsetX;
+//			var deltaOffsetY = this.offsetY - this.lastOffsetY;
+//			this.speedX = deltaOffsetX / deltaTime;
+//			this.speedY = deltaOffsetY / deltaTime;
+//		}
+//		this.startInertia();
 	},
 
 	onHorizontalFingerDown: function(event) {
@@ -645,7 +645,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.horizontalFingerStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
-		this.startComputeInertia();
+//		this.startComputeInertia();
 	},
 
 	onHorizontalFingerMove: function(event) {
@@ -664,8 +664,8 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		this.isHorizontalMoving = false;
 
-		this.stopComputeInertia();
-		this.startInertia();
+//		this.stopComputeInertia();
+//		this.startInertia();
 
 		this.disconnect(event.finger, 'fingermove', this.onHorizontalFingerMove);
 		this.disconnect(event.finger, 'fingerup', this.onHorizontalFingerUp);
