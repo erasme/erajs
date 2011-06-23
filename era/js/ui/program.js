@@ -8,7 +8,7 @@ Ui.IFrame.extend('Ui.Program', {
 			throw("location config parameter is NEEDED");
 		var location = config.location;
 		if(config.arguments != undefined)
-			location += '?base64='+encodeURIComponent(config.arguments.serialize().toBase64());
+			location += '?base64='+encodeURIComponent(JSON.stringify(config.arguments).toBase64());
 		this.setSrc(location);
 		this.addEvents('message');
 	},

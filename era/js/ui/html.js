@@ -12,7 +12,10 @@ Ui.Element.extend('Ui.Html', {
 	},
 
 	setHtml: function(html) {
+		console.log('html.setHtml');
+
 		this.htmlDrawing.innerHTML = html;
+		this.invalidateMeasure();
 	}
 }, {
 	render: function() {
@@ -31,7 +34,19 @@ Ui.Element.extend('Ui.Html', {
 	},
 
 	measureCore: function(width, height) {
-		return { width: this.htmlDrawing.clientWidth, height: this.htmlDrawing.clientHeight };
+		var div = document.createElement('div');
+		div.style.display = 'block';
+		div.style.visibility = 'hidden';
+		div.style.position = 'absolute';
+		div.style.left = '0px';
+		div.style.top = '0px';
+		div.innerHTML = this.htmlDrawing.innerHTML;
+		document.body.appendChild(div);
+		var needWidth = div.clientWidth;
+		var needHeight = div.clientHeight;
+		document.body.removeChild(div);
+
+		return { width: needWidth, height: needHeight };
 	},
 
 

@@ -25,11 +25,11 @@ Ui.Element.extend('Ui.IFrame', {
 	onIFrameLoad: function() {
 		if(!this.isReady) {
 			this.isReady = true;
-			if(navigator.iPad) {
-				console.log('onIFrameLoad, setSize: '+this.getLayoutWidth()+' x '+this.getLayoutHeight());
-				this.iframeDrawing.style.width = this.getLayoutWidth()+'px';
-				this.iframeDrawing.style.height = this.getLayoutHeight()+'px';
-			}
+//			if(navigator.iPad) {
+//				console.log('onIFrameLoad, setSize: '+this.getLayoutWidth()+' x '+this.getLayoutHeight());
+//				this.iframeDrawing.style.width = this.getLayoutWidth()+'px';
+//				this.iframeDrawing.style.height = this.getLayoutHeight()+'px';
+//			}
 			this.fireEvent('ready', this);
 		}
 	}
@@ -37,11 +37,13 @@ Ui.Element.extend('Ui.IFrame', {
 	render: function() {
 		this.iframeDrawing = document.createElement('iframe');
 		this.iframeDrawing.style.border = '0px';
+		this.iframeDrawing.style.margin = '0px';
+		this.iframeDrawing.style.padding = '0px';
 		return this.iframeDrawing;
 	},
 
 	arrangeCore: function(width, height) {
-		console.log('iframe.arrangeCore('+width+','+height+')');
+//		console.log('iframe.arrangeCore('+width+','+height+')');
 
 		var tmpWidth = width;
 		var tmpHeight = height;

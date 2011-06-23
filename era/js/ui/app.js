@@ -115,7 +115,7 @@ Ui.LBox.extend('Ui.App', {
 		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 
-		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); });
+//		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); });
 
 		if('onorientationchange' in window)
 			this.connect(window, 'orientationchange', this.onOrientationChange);
@@ -307,16 +307,33 @@ Ui.LBox.extend('Ui.App', {
 
 //		window.scrollTo(0, 0);
 
+//		console.log(window);
+//		Core.Object.dump(window, 'scroll');
+
 		// update measure
-		var innerWidth = window.innerWidth;
-		var innerHeight = window.innerHeight;
+//		var innerWidth = window.innerWidth;
+//		var innerHeight = window.innerHeight;
 
-//		var innerWidth = document.body.clientWidth;
-//		var innerHeight = document.body.clientHeight;
+		var innerWidth = document.body.clientWidth;
+		var innerHeight = document.body.clientHeight;
 
-//		console.log('window.update('+innerWidth+' x '+innerHeight+') '+document.body.clientWidth+' x '+document.body.clientHeight);
 
-//		window.dump('height');
+
+//		console.log('window.update('+innerWidth+' x '+innerHeight+') '+document.body.clientWidth+' x '+document.body.clientHeight+' '+window.title+', iframe ? '+(window.parent != window));
+
+		// check if were are an iframe. Get the size from our parent if possible
+		if(window.parent != window) {
+			try {
+				var frames = window.parent.document.getElementsByTagName("IFRAME");
+				for(var i = 0; i < frames.length; i++) {
+					if(frames[i].contentWindow === window) {
+						innerWidth = new Number(frames[i].style.width.replace(/px$/, ''));
+						innerHeight = new Number(frames[i].style.height.replace(/px$/, ''));
+						break;
+					}
+				}
+			} catch(e) {}
+		}
 
 		var size;
 		if(this.autoscale) {

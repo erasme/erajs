@@ -10,6 +10,25 @@
 // The Sample browser
 //
 
+Ui.Html.extend('SampleBrowser.CodeHighlighter', {
+	request: undefined,
+
+	constructor: function(config) {
+	},
+
+	setSrc: function(src) {
+		this.request = new Core.HttpRequest({ url: 'highlight.php?file='+encodeURIComponent(src) });
+		this.connect(this.request, 'done', this.onRequestDone);
+		this.request.send();
+	},
+
+	onRequestDone: function() {
+		var text = this.request.getResponseText();
+		this.request = undefined;
+		this.setHtml(text);
+	}
+});
+
 Ui.App.extend('SampleBrowser.App', {
 	samples: undefined,
 	request: undefined,
@@ -74,7 +93,7 @@ Ui.App.extend('SampleBrowser.App', {
 		this.scroll = new Ui.ScrollingArea();
 		this.transbox.append(this.scroll);
 
-		this.highlighter = new Ui.Highlighter({ margin: 10 });
+		this.highlighter = new SampleBrowser.CodeHighlighter({ margin: 10 });
 		this.scroll.setContent(this.highlighter);
 	},
 
