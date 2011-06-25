@@ -170,7 +170,9 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.onUp();
 
 			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
 			event.finger.release();
+
 			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 		}
 	},

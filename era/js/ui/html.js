@@ -12,8 +12,6 @@ Ui.Element.extend('Ui.Html', {
 	},
 
 	setHtml: function(html) {
-		console.log('html.setHtml');
-
 		this.htmlDrawing.innerHTML = html;
 		this.invalidateMeasure();
 	}

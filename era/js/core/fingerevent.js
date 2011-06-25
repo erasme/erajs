@@ -89,6 +89,13 @@ Core.Object.extend('Core.Finger', {
 				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
 				target.dispatchEvent(fingerEvent);
 			}
+
+/*			if(this.captureElement.offsetParent != undefined) {
+				// resend the up event
+				var fingerEvent = document.createEvent('FingerEvent');
+				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
+				this.captureElement.offsetParent.dispatchEvent(fingerEvent);
+			}*/
 			this.captureElement = undefined;
 		}
 	},

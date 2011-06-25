@@ -72,13 +72,11 @@ Ui.App.extend('SampleBrowser.App', {
 		toolbar = new Ui.ToolBar();
 		vbox.append(toolbar);
 
-		toolbar.append(new Ui.Label({ text: 'Content', color: 'white', fontWeight: 'bold', margin: 5 }));
-
-		toolbar.append(new Ui.Spacer(), true);
-
 		button = new Ui.Button({ text: 'demo' });
 		toolbar.append(button);
 		this.connect(button, 'press', this.onDemoPress);
+
+		toolbar.append(new Ui.Label({ text: 'Content', color: 'white', fontWeight: 'bold', margin: 5 }), true);
 
 		button = new Ui.Button({ text: 'source' });
 		toolbar.append(button);
@@ -99,10 +97,13 @@ Ui.App.extend('SampleBrowser.App', {
 
 	onListDone: function() {
 		var response = this.request.getResponseJSON();
+//		response.samples.sort();
 		for(var i = 0; i < response.samples.length; i++) {
-			var sample = new SampleBrowser.SampleItem({ sample: response.samples[i] });
-			this.connect(sample, 'select', this.onSampleSelect);
-			this.samples.append(sample);
+			var sample = response.samples[i];
+
+			var sampleItem = new SampleBrowser.SampleItem({ sample: sample.dir });
+			this.connect(sampleItem, 'select', this.onSampleSelect);
+			this.samples.append(sampleItem);
 		}
 	},
 

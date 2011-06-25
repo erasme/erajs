@@ -25,11 +25,6 @@ Ui.Element.extend('Ui.IFrame', {
 	onIFrameLoad: function() {
 		if(!this.isReady) {
 			this.isReady = true;
-//			if(navigator.iPad) {
-//				console.log('onIFrameLoad, setSize: '+this.getLayoutWidth()+' x '+this.getLayoutHeight());
-//				this.iframeDrawing.style.width = this.getLayoutWidth()+'px';
-//				this.iframeDrawing.style.height = this.getLayoutHeight()+'px';
-//			}
 			this.fireEvent('ready', this);
 		}
 	}
