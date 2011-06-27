@@ -108,24 +108,66 @@ Core.Object.extend('Core.DragDataTransfer', {
 			if(this.hasData()) {
 				this.hasStarted = true;
 
-				this.image = this.draggable.cloneNode(true);
-				document.body.appendChild(this.image);
+//				this.rootWindow = window;
+//				while(this.rootWindow.parent != this.rootWindow) {
+//					console.log('step');
+//					this.rootWindow = this.rootWindow.parent;
+//				}
 
-				this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
+				this.rootWindow = window;
+//				var iframe = Ui.App.getWindowIFrame();
+//				console.log(iframe.ownerDocument.defaultView);
+
+				var matrix = Ui.Element.transformToWindow(this.draggable);
+//				var iframe;
+//				while((iframe = Ui.App.getWindowIFrame(this.rootWindow)) != undefined) {
+//					this.rootWindow = iframe.ownerDocument.defaultView;
+//					matrix.multiply(Ui.Element.transformToWindow(iframe));
+//				}
+
+				this.image = this.draggable.cloneNode(true);
+//				document.body.appendChild(this.image);
+				this.rootWindow.document.body.appendChild(this.image);
+
+				this.startImagePoint = new Ui.Point({ x: 0, y: 0 });
+				this.startImagePoint.matrixTransform(matrix);
+
+//				this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
 				this.image.style.left = this.startImagePoint.x+'px';
 				this.image.style.top = this.startImagePoint.y+'px';
 
 				event.preventDefault();
 				event.stopPropagation();
+
+				if(this.rootWindow != window) {
+					this.disconnect(window, 'mouseup', this.onMouseUp, true);
+					this.disconnect(window, 'mousemove', this.onMouseMove, true);
+
+					this.catcher = document.createElement('div');
+					this.catcher.style.position = 'absolute';
+					this.catcher.style.left = '0px';
+					this.catcher.style.right = '0px';
+					this.catcher.style.top = '0px';
+					this.catcher.style.bottom = '0px';
+					this.catcher.zIndex = 1000;
+					this.rootWindow.document.body.appendChild(this.catcher);
+
+					this.connect(this.rootWindow, 'mouseup', this.onMouseUp, true);
+					this.connect(this.rootWindow, 'mousemove', this.onMouseMove, true);
+				}
 			}
 		}
 		else if(this.hasStarted) {
 			event.preventDefault();
 			event.stopPropagation();
 
-			document.body.removeChild(this.image);
-			var overElement = document.elementFromPoint(event.clientX, event.clientY);
-			document.body.appendChild(this.image);
+			this.rootWindow.document.body.removeChild(this.image);
+//			document.body.removeChild(this.image);
+			var overElement = this.rootWindow.document.elementFromPoint(event.clientX, event.clientY);
+//			document.body.appendChild(this.image);
+			this.rootWindow.document.body.appendChild(this.image);
+
+//			console.log('dragover: '+overElement.className);
 
 			this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
 			this.image.style.top = (this.startImagePoint.y + deltaY)+'px';
@@ -150,11 +192,17 @@ Core.Object.extend('Core.DragDataTransfer', {
 			event.preventDefault();
 			event.stopPropagation();
 
-			document.body.removeChild(this.image);
+			if(this.rootWindow != window)
+				this.rootWindow.document.body.removeChild(this.catcher);
+
+			this.rootWindow.document.body.removeChild(this.image);
+//			document.body.removeChild(this.image);
 
 			if(this.overElement != undefined) {
+				console.log('drag mouseup over: '+this.overElement.className);
+
 				var dragEvent = document.createEvent('DragEvent');
-				dragEvent.initDragEvent('drop', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				dragEvent.initDragEvent('drop', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 				this.overElement.dispatchEvent(dragEvent);
 			}
 
@@ -162,8 +210,8 @@ Core.Object.extend('Core.DragDataTransfer', {
 			dragEvent.initDragEvent('dragend', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			this.draggable.dispatchEvent(dragEvent);
 		}
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(this.rootWindow, 'mouseup', this.onMouseUp, true);
+		this.disconnect(this.rootWindow, 'mousemove', this.onMouseMove, true);
 	},
 
 	onFingerMove: function(event) {
@@ -202,7 +250,7 @@ Core.Object.extend('Core.DragDataTransfer', {
 
 		if(this.overElement != undefined) {
 			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('drop', false, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			dragEvent.initDragEvent('drop', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			this.overElement.dispatchEvent(dragEvent);
 		}
 

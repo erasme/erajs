@@ -474,6 +474,15 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		this.stopInertia();
 
+		this.catcher = document.createElement('div');
+		this.catcher.style.position = 'absolute';
+		this.catcher.style.left = '0px';
+		this.catcher.style.right = '0px';
+		this.catcher.style.top = '0px';
+		this.catcher.style.bottom = '0px';
+		this.catcher.zIndex = 1000;
+		document.body.appendChild(this.catcher);
+
 		this.connect(window, 'mouseup', this.onVerticalMouseUp, true);
 		this.connect(window, 'mousemove', this.onVerticalMouseMove, true);
 
@@ -511,6 +520,8 @@ Ui.Container.extend('Ui.Scrollable', {
 //			this.measureSpeedTimer.abort();
 //			this.measureSpeedTimer = undefined;
 //		}
+
+		document.body.removeChild(this.catcher);
 
 		this.disconnect(window, 'mousemove', this.onVerticalMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onVerticalMouseUp, true);

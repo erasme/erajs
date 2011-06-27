@@ -1061,6 +1061,8 @@ Core.Object.extend('Ui.Element', {
 
 	updateTransform: function() {
 		if(this.transform != undefined) {
+//			console.log('updateTransform');
+
 			var matrix = new Ui.Matrix();
 			var x = this.transformOriginX;
 			var y = this.transformOriginY;
@@ -1068,7 +1070,13 @@ Core.Object.extend('Ui.Element', {
 				x *= this.layoutWidth;
 				y *= this.layoutHeight;
 			}
+
+//			console.log('updateTransform trans: '+this.transform);
+
 			matrix.translate(x, y);
+
+//			console.log('updateTransform step1: '+matrix);
+
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
@@ -1077,7 +1085,7 @@ Core.Object.extend('Ui.Element', {
 				this.drawing.style.msTransformOrigin = '0% 0%';
 			}
 			else if(navigator.isGecko) {
-				this.drawing.style.MozTransform = 'matrix('+matrix.svgMatrix.a.toFixed(4)+', '+matrix.svgMatrix.b.toFixed(4)+', '+matrix.svgMatrix.c.toFixed(4)+', '+matrix.svgMatrix.d.toFixed(4)+', '+matrix.svgMatrix.e.toFixed(0)+'px, '+matrix.svgMatrix.f.toFixed(0)+'px)';
+				this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(0)+'px, '+matrix.getF().toFixed(0)+'px)';
 				this.drawing.style.MozTransformOrigin = '0% 0%';
 			}
 			else if(navigator.isWebkit) {

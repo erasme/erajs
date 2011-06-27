@@ -142,7 +142,7 @@ Ui.LBox.extend('Ui.Draggable', {
 		if(this.getIsDisabled() || (event.button != 0))
 			return;
 
-		console.log('onMouseDown');
+//		console.log('onMouseDown');
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 
@@ -150,7 +150,7 @@ Ui.LBox.extend('Ui.Draggable', {
 	},
 
 	onMouseMove: function(event) {
-		console.log('onMouseMove');
+//		console.log('onMouseMove');
 //		event.stopPropagation();
 	},
 
@@ -158,8 +158,8 @@ Ui.LBox.extend('Ui.Draggable', {
 		if(event.button != 0)
 			return;
 
-		event.stopPropagation();
-		console.log('onMouseUp');
+//		event.stopPropagation();
+//		console.log('onMouseUp');
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 

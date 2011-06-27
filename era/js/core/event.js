@@ -92,25 +92,54 @@ Core.Object.extend('Core.Event', {
 	},
 });
 
+/*var htmlElements = [ 'HTMLButtonElement', 'HTMLTableColElement', 'HTMLOptionElement',
+	'HTMLInputElement', 'HTMLMetaElement', 'HTMLTableElement', 'HTMLHRElement',
+	'HTMLProgressElement', 'HTMLDivElement', 'HTMLTitleElement', 'HTMLQuoteElement',
+	'HTMLLegendElement', 'HTMLObjectElement', 'HTMLFontElement', 'HTMLHeadElement', 
+	'HTMLFieldSetElement', 'HTMLVideoElement', 'HTMLTableRowElement', 'HTMLDListElement',
+	'HTMLAllCollection', 'HTMLParamElement', 'HTMLModElement', 'HTMLOutputElement', 
+	'HTMLStyleElement', 'HTMLBaseElement', 'HTMLBRElement', 'HTMLHtmlElement',
+	'HTMLTextAreaElement', 'HTMLBaseFontElement', 'HTMLCanvasElement', 'HTMLFrameElement',
+	'HTMLElement', 'HTMLSelectElement', 'HTMLIsIndexElement', 'HTMLDocument', 'HTMLCollection',
+	'HTMLDirectoryElement', 'HTMLScriptElement', 'HTMLOptGroupElement', 'HTMLKeygenElement',
+	'HTMLAreaElement', 'HTMLFrameSetElement', 'HTMLIFrameElement', 'HTMLPreElement', 'HTMLOListElement',
+	'HTMLFormElement', 'HTMLMediaElement', 'HTMLHeadingElement', 'HTMLMeterElement',
+	'HTMLAppletElement', 'HTMLMarqueeElement', 'HTMLTableSectionElement', 'HTMLTableCellElement',
+	'HTMLMapElement', 'HTMLLIElement', 'HTMLParagraphElement', 'HTMLBlockquoteElement',
+	'HTMLUListElement', 'HTMLEmbedElement', 'HTMLBodyElement', 'HTMLAudioElement',
+	'HTMLTableCaptionElement', 'HTMLMenuElement', 'HTMLImageElement', 'HTMLLabelElement',
+	'HTMLAnchorElement', 'HTMLLinkElement'];*/
 
-HTMLElement.prototype.__dispatchEvent = HTMLElement.prototype.dispatchEvent;
-HTMLElement.prototype.dispatchEvent = function(event) {
+HTMLDivElement.prototype.__dispatchEvent = HTMLDivElement.prototype.dispatchEvent;
+HTMLDivElement.prototype.dispatchEvent = function(event) {
 	if(Core.Event.hasInstance(event))
 		return event.dispatchEvent(this);
 	else
 		return this.__dispatchEvent(event);
 };
 
-SVGElement.prototype.__dispatchEvent = SVGElement.prototype.dispatchEvent;
-SVGElement.prototype.dispatchEvent = function(event) {
-	if(Core.Event.hasInstance(event))
-		return event.dispatchEvent(this);
-	else
-		return this.__dispatchEvent(event);
-};
+try {
+	HTMLElement.prototype.__dispatchEvent = HTMLElement.prototype.dispatchEvent;
+	HTMLElement.prototype.dispatchEvent = function(event) {
+		if(Core.Event.hasInstance(event))
+			return event.dispatchEvent(this);
+		else
+			return this.__dispatchEvent(event);
+	};
+} catch(e) {}
 
-HTMLElement.prototype.__addEventListener = HTMLElement.prototype.addEventListener;
-HTMLElement.prototype.addEventListener = function(eventName, callback, capture) {
+try {
+	SVGElement.prototype.__dispatchEvent = SVGElement.prototype.dispatchEvent;
+	SVGElement.prototype.dispatchEvent = function(event) {
+		if(Core.Event.hasInstance(event))
+			return event.dispatchEvent(this);
+		else
+			return this.__dispatchEvent(event);
+	};
+} catch(e) {}
+
+HTMLDivElement.prototype.__addEventListener = HTMLDivElement.prototype.addEventListener;
+HTMLDivElement.prototype.addEventListener = function(eventName, callback, capture) {
 	if(Core.Event.getType(eventName) != undefined) {
 		if(capture) {
 			if(this.__extendCaptureEvents == undefined)
@@ -131,8 +160,32 @@ HTMLElement.prototype.addEventListener = function(eventName, callback, capture) 
 		return this.__addEventListener(eventName, callback, capture);
 };
 
-HTMLElement.prototype.__removeEventListener = HTMLElement.prototype.removeEventListener;
-HTMLElement.prototype.removeEventListener = function(eventName, callback, capture) {
+try {
+	HTMLElement.prototype.__addEventListener = HTMLElement.prototype.addEventListener;
+	HTMLElement.prototype.addEventListener = function(eventName, callback, capture) {
+		if(Core.Event.getType(eventName) != undefined) {
+			if(capture) {
+				if(this.__extendCaptureEvents == undefined)
+					this.__extendCaptureEvents = {};
+				if(this.__extendCaptureEvents[eventName] == undefined)
+					this.__extendCaptureEvents[eventName] = [];
+				this.__extendCaptureEvents[eventName].push(callback);
+			}
+			else {
+				if(this.__extendEvents == undefined)
+					this.__extendEvents = {};
+				if(this.__extendEvents[eventName] == undefined)
+					this.__extendEvents[eventName] = [];
+				this.__extendEvents[eventName].push(callback);
+			}
+		}
+		else
+			return this.__addEventListener(eventName, callback, capture);
+	};
+} catch(e) {}
+
+HTMLDivElement.prototype.__removeEventListener = HTMLDivElement.prototype.removeEventListener;
+HTMLDivElement.prototype.removeEventListener = function(eventName, callback, capture) {
 	if(Core.Event.getType(eventName) != undefined) {
 		if(capture) {
 			if(this.__extendCaptureEvents != undefined) {
@@ -158,6 +211,36 @@ HTMLElement.prototype.removeEventListener = function(eventName, callback, captur
 	else
 		return this.__removeEventListener(eventName, callback, capture);
 };
+
+try {
+	HTMLElement.prototype.__removeEventListener = HTMLElement.prototype.removeEventListener;
+	HTMLElement.prototype.removeEventListener = function(eventName, callback, capture) {
+		if(Core.Event.getType(eventName) != undefined) {
+			if(capture) {
+				if(this.__extendCaptureEvents != undefined) {
+					for(var i = 0; i < this.__extendCaptureEvents[eventName].length; i++) {
+						if(this.__extendCaptureEvents[eventName][i] == callback) {
+							this.__extendCaptureEvents[eventName].splice(i, 1);
+							break;
+						}
+					}
+				}
+			}
+			else {
+				if(this.__extendEvents != undefined) {
+					for(var i = 0; i < this.__extendEvents[eventName].length; i++) {
+						if(this.__extendEvents[eventName][i] == callback) {
+							this.__extendEvents[eventName].splice(i, 1);
+							break;
+						}
+					}
+				}
+			}
+		}
+		else
+			return this.__removeEventListener(eventName, callback, capture);
+	};
+} catch(e) {}
 
 if('HTMLDocument' in window) {
 	HTMLDocument.prototype.__createEvent = HTMLDocument.prototype.createEvent;
