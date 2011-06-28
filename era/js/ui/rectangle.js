@@ -199,8 +199,8 @@ Ui.Element.extend('Ui.Rectangle', {
 	},
 
 	updateVml: function() {
-		var width = this.getLayoutWidth();
-		var height = this.getLayoutHeight();
+		var width = Math.round(this.getLayoutWidth());
+		var height = Math.round(this.getLayoutHeight());
 		this.vml.path = 'm '+this.radiusTopLeft+',0 l '+(width-this.radiusTopRight)+',0 qx '+width+','+this.radiusTopRight+
 			' l '+width+','+(height-this.radiusBottomRight)+' qy '+(width-this.radiusBottomRight)+','+height+
 			' l '+this.radiusBottomLeft+','+height+' qx 0,'+(height-this.radiusBottomLeft)+' l 0,'+this.radiusTopLeft+
@@ -210,6 +210,8 @@ Ui.Element.extend('Ui.Rectangle', {
 }, {
 	arrangeCore: function(width, height) {
 		if(this.vml != undefined) {
+			width = Math.round(width);
+			height = Math.round(height);
 			this.vml.style.width = width+'px';
 			this.vml.style.height = height+'px';
 			this.vml.coordorigin = '0 0';

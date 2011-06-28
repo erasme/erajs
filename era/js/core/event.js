@@ -69,7 +69,7 @@ Core.Object.extend('Core.Event', {
 			}
 		}
 		return this.defaultPrevented;
-	},
+	}
 }, {}, {
 	events: {},
 
@@ -89,7 +89,7 @@ Core.Object.extend('Core.Event', {
 
 	getType: function(eventType) {
 		return Core.Event.types[eventType];
-	},
+	}
 });
 
 /*var htmlElements = [ 'HTMLButtonElement', 'HTMLTableColElement', 'HTMLOptionElement',
@@ -110,13 +110,15 @@ Core.Object.extend('Core.Event', {
 	'HTMLTableCaptionElement', 'HTMLMenuElement', 'HTMLImageElement', 'HTMLLabelElement',
 	'HTMLAnchorElement', 'HTMLLinkElement'];*/
 
-HTMLDivElement.prototype.__dispatchEvent = HTMLDivElement.prototype.dispatchEvent;
-HTMLDivElement.prototype.dispatchEvent = function(event) {
-	if(Core.Event.hasInstance(event))
-		return event.dispatchEvent(this);
-	else
-		return this.__dispatchEvent(event);
-};
+try {
+	HTMLDivElement.prototype.__dispatchEvent = HTMLDivElement.prototype.dispatchEvent;
+	HTMLDivElement.prototype.dispatchEvent = function(event) {
+		if(Core.Event.hasInstance(event))
+			return event.dispatchEvent(this);
+		else
+			return this.__dispatchEvent(event);
+	};
+} catch(e) {}
 
 try {
 	HTMLElement.prototype.__dispatchEvent = HTMLElement.prototype.dispatchEvent;
@@ -138,27 +140,29 @@ try {
 	};
 } catch(e) {}
 
-HTMLDivElement.prototype.__addEventListener = HTMLDivElement.prototype.addEventListener;
-HTMLDivElement.prototype.addEventListener = function(eventName, callback, capture) {
-	if(Core.Event.getType(eventName) != undefined) {
-		if(capture) {
-			if(this.__extendCaptureEvents == undefined)
-				this.__extendCaptureEvents = {};
-			if(this.__extendCaptureEvents[eventName] == undefined)
-				this.__extendCaptureEvents[eventName] = [];
-			this.__extendCaptureEvents[eventName].push(callback);
+try {
+	HTMLDivElement.prototype.__addEventListener = HTMLDivElement.prototype.addEventListener;
+	HTMLDivElement.prototype.addEventListener = function(eventName, callback, capture) {
+		if(Core.Event.getType(eventName) != undefined) {
+			if(capture) {
+				if(this.__extendCaptureEvents == undefined)
+					this.__extendCaptureEvents = {};
+				if(this.__extendCaptureEvents[eventName] == undefined)
+					this.__extendCaptureEvents[eventName] = [];
+				this.__extendCaptureEvents[eventName].push(callback);
+			}
+			else {
+				if(this.__extendEvents == undefined)
+					this.__extendEvents = {};
+				if(this.__extendEvents[eventName] == undefined)
+					this.__extendEvents[eventName] = [];
+				this.__extendEvents[eventName].push(callback);
+			}
 		}
-		else {
-			if(this.__extendEvents == undefined)
-				this.__extendEvents = {};
-			if(this.__extendEvents[eventName] == undefined)
-				this.__extendEvents[eventName] = [];
-			this.__extendEvents[eventName].push(callback);
-		}
-	}
-	else
-		return this.__addEventListener(eventName, callback, capture);
-};
+		else if(this.__addEventListener != undefined)
+			return this.__addEventListener(eventName, callback, capture);
+	};
+} catch(e) {}
 
 try {
 	HTMLElement.prototype.__addEventListener = HTMLElement.prototype.addEventListener;
@@ -184,33 +188,35 @@ try {
 	};
 } catch(e) {}
 
-HTMLDivElement.prototype.__removeEventListener = HTMLDivElement.prototype.removeEventListener;
-HTMLDivElement.prototype.removeEventListener = function(eventName, callback, capture) {
-	if(Core.Event.getType(eventName) != undefined) {
-		if(capture) {
-			if(this.__extendCaptureEvents != undefined) {
-				for(var i = 0; i < this.__extendCaptureEvents[eventName].length; i++) {
-					if(this.__extendCaptureEvents[eventName][i] == callback) {
-						this.__extendCaptureEvents[eventName].splice(i, 1);
-						break;
+try {
+	HTMLDivElement.prototype.__removeEventListener = HTMLDivElement.prototype.removeEventListener;
+	HTMLDivElement.prototype.removeEventListener = function(eventName, callback, capture) {
+		if(Core.Event.getType(eventName) != undefined) {
+			if(capture) {
+				if(this.__extendCaptureEvents != undefined) {
+					for(var i = 0; i < this.__extendCaptureEvents[eventName].length; i++) {
+						if(this.__extendCaptureEvents[eventName][i] == callback) {
+							this.__extendCaptureEvents[eventName].splice(i, 1);
+							break;
+						}
+					}
+				}
+			}
+			else {
+				if(this.__extendEvents != undefined) {
+					for(var i = 0; i < this.__extendEvents[eventName].length; i++) {
+						if(this.__extendEvents[eventName][i] == callback) {
+							this.__extendEvents[eventName].splice(i, 1);
+							break;
+						}
 					}
 				}
 			}
 		}
-		else {
-			if(this.__extendEvents != undefined) {
-				for(var i = 0; i < this.__extendEvents[eventName].length; i++) {
-					if(this.__extendEvents[eventName][i] == callback) {
-						this.__extendEvents[eventName].splice(i, 1);
-						break;
-					}
-				}
-			}
-		}
-	}
-	else
-		return this.__removeEventListener(eventName, callback, capture);
-};
+		else
+			return this.__removeEventListener(eventName, callback, capture);
+	};
+} catch(e) {}
 
 try {
 	HTMLElement.prototype.__removeEventListener = HTMLElement.prototype.removeEventListener;

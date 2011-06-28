@@ -20,7 +20,7 @@ Core.Event.extend('Core.DragEvent', {
 		this.altKey = altKey;
 		this.shiftKey = shiftKey;
 		this.metaKey = metaKey
-	},
+	}
 });
 
 Core.Object.extend('Core.DragDataTransfer', {
