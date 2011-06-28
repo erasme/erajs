@@ -1,34 +1,28 @@
 
 
 Core.Object.extend('Ui.Point', {
-	svgPoint: undefined,
 	x: 0,
 	y: 0,
 
 	constructor: function(config) {
-		if(config.SVGPoint != undefined)
-			this.svgPoint = config.SVGPoint;
-		else
-			this.svgPoint = Ui.App.current.svgRoot.createSVGPoint();
-		if(config.point != undefined) {
-			this.setX(config.point.x);
-			this.setY(config.point.y);
+		if('point' in config) {
+			this.x = config.point.x;
+			this.y = config.point.y;
 		}
-		if(config.x != undefined)
-			this.setX(config.x);
-		if(config.y != undefined)
-			this.setY(config.y);
+		if('x' in config)
+			this.x = config.x;
+		if('y' in config)
+			this.y = config.y;
 	},
 
 	matrixTransform: function(matrix) {
-		this.svgPoint = this.svgPoint.matrixTransform(matrix.svgMatrix);
-		this.x = this.svgPoint.x;
-		this.y = this.svgPoint.y;
+		var x = this.x * matrix.a + this.y * matrix.c + matrix.e;
+		var y = this.x * matrix.b + this.y * matrix.d + matrix.f;
+		this.x = x;
+		this.y = y;
 	},
 
 	setPoint: function(x, y) {
-		this.svgPoint.x = x;
-		this.svgPoint.y = y;
 		this.x = x;
 		this.y = y;
 	},
@@ -38,7 +32,6 @@ Core.Object.extend('Ui.Point', {
 	},
 
 	setX: function(x) {
-		this.svgPoint.x = x;
 		this.x = x;
 	},
 
@@ -47,7 +40,6 @@ Core.Object.extend('Ui.Point', {
 	},
 
 	setY: function(y) {
-		this.svgPoint.y = y;
 		this.y = y;
 	},
 

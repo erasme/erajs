@@ -1,114 +1,130 @@
 
 
 Core.Object.extend('Ui.Matrix', {
-	svgMatrix: undefined,
+	a: 1,
+	b: 0,
+	c: 0,
+	d: 1,
+	e: 0,
+	f: 0,
 
 	constructor: function(config) {
-		if(config.SVGMatrix != undefined)
-			this.svgMatrix = config.SVGMatrix;
-		else
-			this.svgMatrix = Ui.App.current.svgRoot.createSVGMatrix();
 	},
 
 	translate: function(x, y) {
-		this.svgMatrix = this.svgMatrix.translate(x, y);
+		this.multiply(Ui.Matrix.createTranslate(x, y));
 	},
 
 	rotate: function(angle) {
-		this.svgMatrix = this.svgMatrix.rotate(angle);
+		this.multiply(Ui.Matrix.createRotate(angle));
 	},
 
 	scale: function(scaleX, scaleY) {
 		if(scaleY == undefined)
 			scaleY = scaleX;
-		this.svgMatrix = this.svgMatrix.scaleNonUniform(scaleX, scaleY);
+		this.multiply(Ui.Matrix.createScale(scaleX, scaleY));
 	},
 
 	multiply: function(matrix) {
-		this.svgMatrix = this.svgMatrix.multiply(matrix.svgMatrix);
+		var a = matrix.a * this.a + matrix.b * this.c;
+		var c = matrix.c * this.a + matrix.d * this.c;
+		var e = matrix.e * this.a + matrix.f * this.c + this.e;
+
+		var b = matrix.a * this.b + matrix.b * this.d;
+		var d = matrix.c * this.b + matrix.d * this.d;
+		var f = matrix.e * this.b + matrix.f * this.d + this.f;
+
+		this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f;
+	},
+
+	getDeterminant: function() {
+		return ((this.a * this.d) - (this.b * this.c));
 	},
 
 	inverse: function() {
-		this.svgMatrix = this.svgMatrix.inverse();
+		var determinant = this.getDeterminant();
+		if(determinant == 0)
+			throw("Matrix not invertible");
+
+		var invd = 1 / determinant;
+		var ta =  this.d * invd;
+		var tb = -this.b * invd;
+		var tc = -this.c * invd;
+		var td =  this.a * invd;
+		var te = ((this.c * this.f) - (this.e * this.d)) * invd;
+		var tf = ((this.e * this.b) - (this.a * this.f)) * invd;
+		this.a = ta; this.b = tb; this.c = tc; this.d = td;
+		this.e = te; this.f = tf;
 	},
 
 	setMatrix: function(a, b, c, d, e, f) {
-		this.svgMatrix.a = a;
-		this.svgMatrix.b = b;
-		this.svgMatrix.c = c;
-		this.svgMatrix.d = d;
-		this.svgMatrix.e = e;
-		this.svgMatrix.f = f;
+		this.a = a; this.b = b;
+		this.c = c; this.d = d;
+		this.e = e; this.f = f;
 	},
 	
 	getA: function() {
-		return this.svgMatrix.a;
+		return this.a;
 	},
 
 	getB: function() {
-		return this.svgMatrix.b;
+		return this.b;
 	},
 
 	getC: function() {
-		return this.svgMatrix.c;
+		return this.c;
 	},
 
 	getD: function() {
-		return this.svgMatrix.d;
+		return this.d;
 	},
 
 	getE: function() {
-		return this.svgMatrix.e;
+		return this.e;
 	},
 
 	getF: function() {
-		return this.svgMatrix.f;
+		return this.f;
 	},
 
 	clone: function() {
-		return Ui.Matrix.createMatrix(this.svgMatrix.a, this.svgMatrix.b, this.svgMatrix.c, this.svgMatrix.d, this.svgMatrix.e, this.svgMatrix.f);
+		return Ui.Matrix.createMatrix(this.a, this.b, this.c, this.d, this.e, this.f);
 	}
 }, {
 	toString: function() {
-		return 'matrix('+this.svgMatrix.a.toFixed(4)+', '+this.svgMatrix.b.toFixed(4)+', '+this.svgMatrix.c.toFixed(4)+', '+this.svgMatrix.d.toFixed(4)+', '+this.svgMatrix.e.toFixed(4)+', '+this.svgMatrix.f.toFixed(4)+')';
+		return 'matrix('+this.a.toFixed(4)+', '+this.b.toFixed(4)+', '+this.c.toFixed(4)+', '+this.d.toFixed(4)+', '+this.e.toFixed(4)+', '+this.f.toFixed(4)+')';
 	}
-});
+}, {
+	createMatrix: function(a, b, c, d, e, f) {
+		var matrix = new Ui.Matrix();
+		matrix.setMatrix(a, b, c, d, e, f);
+		return matrix;
+	},
 
-Ui.Matrix.createRotate = function(angle) {
-	var matrix = new Ui.Matrix();
-	matrix.rotate(angle);
-	return matrix;
-};
+	createTranslate: function(x, y) {
+		return Ui.Matrix.createMatrix(1, 0, 0, 1, x, y);
+	},
 
-Ui.Matrix.createRotateAt = function(angle, centerX, centerY) {
+	createScaleAt: function(scaleX, scaleY, centerX, centerY) {
+		return Ui.Matrix.createMatrix(scaleX, 0, 0, scaleY, centerX - (scaleX * centerX), centerY - (scaleY * centerY));
+	},
+
+	createScale: function(scaleX, scaleY) {
+		return Ui.Matrix.createScaleAt(scaleX, scaleY, 0, 0);
+	},
+
+	createRotateAt: function(angle, centerX, centerY) {
 		// convert from degree to radian
 		angle = (angle % 360) * Math.PI / 180;
 		var sin = Math.sin(angle);
 		var cos = Math.cos(angle);
 		var offsetX = (centerX * (1.0 - cos)) + (centerY * sin);
 		var offsetY = (centerY * (1.0 - cos)) - (centerX * sin);
-		return Ui.Matrix.createMatrix(cos, -sin, sin, cos, offsetX, offsetY);
-};
+		return Ui.Matrix.createMatrix(cos, sin, -sin, cos, offsetX, offsetY);
+	},
 
-Ui.Matrix.createTranslate = function(x, y) {
-	var matrix = new Ui.Matrix();
-	matrix.translate(x, y);
-	return matrix;
-};
-
-Ui.Matrix.createScale = function(scaleX, scaleY) {
-	var matrix = new Ui.Matrix();
-	matrix.scale(scaleX, scaleY);
-	return matrix;
-};
-
-Ui.Matrix.createScaleAt = function(scaleX, scaleY, centerX, centerY) {
-	return Ui.Matrix.createMatrix(scaleX, 0, 0, scaleY, centerX - (scaleX * centerX), centerY - (scaleY * centerY));
-};
-
-Ui.Matrix.createMatrix = function(a, b, c, d, e, f) {
-	var matrix = new Ui.Matrix();
-	matrix.setMatrix(a, b, c, d, e, f);
-	return matrix;
-};
+	createRotate: function(angle) {
+		return Ui.Matrix.createRotateAt(angle, 0, 0);
+	}
+});
 
