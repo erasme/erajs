@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/js/era-debug.js'></script>
+<script>
+//
+// Play with Core.HttpRequest
+//
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var request;
+
+var sendButton = new Ui.Button({ text: 'send' });
+toolbar.append(sendButton);
+app.connect(sendButton, 'press', function() {
+	request = new Core.HttpRequest({ url: 'service.php' });
+	app.connect(request, 'done', onRequestDone);
+	request.send();
+});
+
+var text = new Ui.Text();
+vbox.append(text, true);
+
+function onRequestDone() {
+	text.setText(request.getResponseText());
+}
+
+</script>
+  </head>
+</html>
