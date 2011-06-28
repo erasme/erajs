@@ -313,7 +313,9 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 
 	onUnload: function() {
 		this.disconnect(this.inputDrawing, 'change', this.onChange);
-		document.body.removeChild(this.iframeDrawing);
+        if(this.iframeDrawing != undefined) {
+            document.body.removeChild(this.iframeDrawing);
+        }
 		Ui.UploadableFileWrapper.base.onUnload.call(this);
 	}
 });
