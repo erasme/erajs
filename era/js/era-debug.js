@@ -59,6 +59,7 @@ include(eraBaseDirectory+'ui/keyboard.js');
 include(eraBaseDirectory+'ui/element.js');
 include(eraBaseDirectory+'ui/svgelement.js');
 include(eraBaseDirectory+'ui/canvaselement.js');
+include(eraBaseDirectory+'ui/shape.js');
 include(eraBaseDirectory+'ui/container.js');
 
 //

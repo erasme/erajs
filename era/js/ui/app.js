@@ -82,9 +82,9 @@ Ui.LBox.extend('Ui.App', {
 //		}, true);
 
 		// prevent bad event handling
-		this.connect(window, 'mousedown', function(event) {
+//		this.connect(window, 'mousedown', function(event) {
 //			console.log('window mousedown');
-			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+//			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
 //				event.preventDefault();
 //				event.stopPropagation();
 //				if((this.focusElement != undefined) && (this.focusElement != window))
@@ -92,20 +92,19 @@ Ui.LBox.extend('Ui.App', {
 //				this.focusElement = undefined;
 //			} else {
 //				console.log('bad target '+event.target);
-			}
-		});
-		this.connect(window, 'mouseup', function(event) {
-			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+//			}
+//		});
+//		this.connect(window, 'mouseup', function(event) {
+//			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
 //				event.preventDefault();
 //				event.stopPropagation();
-			}
-		});
-		this.connect(window, 'mousemove', function(event) {
-			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
+//		});
+//		this.connect(window, 'mousemove', function(event) {
+//			if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
 //				event.preventDefault();
 //				event.stopPropagation();
-			}
-		});
+//			}
+//		});
 		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });

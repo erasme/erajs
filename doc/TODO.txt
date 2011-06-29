@@ -149,5 +149,11 @@ X - Fournir un ToolBarButton
   des éléments afin d'éviter les measures multiples lorsqu'elles ne servent
   à rien.
 
+- faire Ui.Shape pour du dessin vectoriel simple cross plateform
+
+- Faire un composant pour intégrer le framework non pas dans une page
+  mais dans un DIV
+
+- Faire de la documentation automatique (voir le functionnement de Doxygen)
 
 
