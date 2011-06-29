@@ -1,7 +1,13 @@
-
-Ui.Element.extend('Ui.Container', {
+Ui.Element.extend('Ui.Container', 
+/** @lends Ui.Container#*/
+{
 	children: undefined,
 
+    /**
+    *   @constructs
+	*	@class
+    *   @extends Ui.Element
+	*/
 	constructor: function(config) {
 		this.children = [];
 	},
@@ -46,18 +52,18 @@ Ui.Element.extend('Ui.Container', {
 		child.setIsLoaded(false);
 	},
 
-	//
-	// Return an array of children.
-	// ATTENTION: use it only in READ ONLY
-	//
+	/**
+	* @return An array of children.
+	* ATTENTION: use it only in READ ONLY
+	*/
 	getChildren: function() {
 		return this.children;
 	},
 
-	//
-	// Return the first child or undefined
-	// if the container has no children
-	//
+	/**
+	* @return the first child or undefined
+	* if the container has no children
+	*/
 	getFirstChild: function() {
 		if(this.children.length > 0)
 			return this.children[0];
@@ -65,17 +71,22 @@ Ui.Element.extend('Ui.Container', {
 			return undefined;
 	},
 
-	//
-	// Return the last child or undefined
-	// if the container has no children
-	//
+	/**
+	* @return the last child or undefined
+	* if the container has no children
+	*/
 	getLastChild: function() {
 		if(this.children.length > 0)
 			return this.children[this.children.length - 1];
 		else
 			return undefined;
 	}
-}, {
+}, 
+/** @lends Ui.Container#*/
+{
+	/**#@+
+	 * @private
+	 */
 	setIsLoaded: function(isLoaded) {
 		if(isLoaded != this.isLoaded) {
 			for(var i = 0; i < this.children.length; i++)
@@ -101,5 +112,6 @@ Ui.Element.extend('Ui.Container', {
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].setParentDisabled(false);
 	}
+	/**#@-*/
 });
 

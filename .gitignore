@@ -1,3 +1,6 @@
 version/
 tests/
 *copie*
+doc/jsdoc/*.html
+doc/jsdoc/symbols/
+
