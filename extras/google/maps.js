@@ -81,7 +81,9 @@ Ui.Fixed.extend('Extras.Ui.Google.Map', {
 	},
 
 	updateSize: function() {
+        var center = this.getMap().getCenter();
 		google.maps.event.trigger(this.getMap(), 'resize');
+        this.getMap().setCenter(center);
 	}
 });
 
