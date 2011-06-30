@@ -100,6 +100,18 @@ Ui.Element.extend('Ui.Container', {
 		Ui.Container.base.onInternalEnable.call(this);
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].setParentDisabled(false);
+	},
+
+	onInternalVisible: function() {
+		Ui.Container.base.onInternalVisible.call(this);
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].setParentVisible(true);
+	},
+
+	onInternalHidden: function() {
+		Ui.Container.base.onInternalHidden.call(this);
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].setParentVisible(false);
 	}
 });
 

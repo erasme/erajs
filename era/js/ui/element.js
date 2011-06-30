@@ -57,6 +57,10 @@ Core.Object.extend('Ui.Element', {
 	clipWidth: undefined,
 	clipHeight: undefined,
 
+	// handle visible
+	visible: undefined,
+	parentVisible: undefined,
+
 	// whether or not the current element can get focus
 	focusable: false,
 	hasFocus: false,
@@ -132,7 +136,8 @@ Core.Object.extend('Ui.Element', {
 		this.connect(this.drawing, 'focus', this.onFocus);
 		this.connect(this.drawing, 'blur', this.onBlur);
 
-		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur', 'load', 'unload', 'enable', 'disable');
+		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur',
+			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
 	},
 
 	//
@@ -529,7 +534,7 @@ Core.Object.extend('Ui.Element', {
 			if('removeProperty' in this.drawing.style)
 				this.drawing.style.removeProperty('clip');
 			else if('removeAttribute' in this.drawing.style)
-                                this.drawing.style.removeAttribute('clip');
+	                            this.drawing.style.removeAttribute('clip');
 		}
 	},
 
@@ -768,12 +773,62 @@ Core.Object.extend('Ui.Element', {
 		return this.measureHeight;
 	},
 
+	hide: function() {
+		if((this.visible == undefined) || this.visible) {
+			var old = this.getIsVisible();
+			this.visible = false;
+			this.drawing.style.display = 'none';
+			if(old)
+				this.onInternalHidden();
+		}
+	},
+	
 	show: function() {
-		this.drawing.style.display = 'block';
+		if((this.visible == undefined) || !this.visible) {
+			var old = this.getIsVisible();
+			this.visible = true;
+			this.drawing.style.display = 'block';
+			if(!old)
+				this.onInternalVisible();
+		}
 	},
 
-	hide: function() {
-		this.drawing.style.display = 'none';
+	getIsVisible: function() {
+		if(this.visible != undefined)
+			return this.visible;
+		else {
+			if(this.parentVisible != undefined)
+				return this.parentVisible;
+			else
+				return true;
+		}
+	},
+
+	setParentVisible: function(visible) {
+		var old = this.getIsVisible();
+		this.parentVisible = visible;
+		if(old != this.getIsVisible()) {
+			if(this.getIsVisible())
+				this.onInternalVisible();
+			else
+				this.onInternalHidden();
+		}
+	},
+
+	onInternalHidden: function() {
+		this.onHidden();
+		this.fireEvent('hidden', this);
+	},
+
+	onHidden: function() {
+	},
+
+	onInternalVisible: function() {
+		this.onVisible();
+		this.fireEvent('visible', this);
+	},
+
+	onVisible: function() {
 	},
 
 	disable: function() {
@@ -1130,6 +1185,7 @@ Core.Object.extend('Ui.Element', {
 		if(this.parent != undefined) {
 			this.setParentStyle(this.parent.mergeStyle);
 			this.setParentDisabled(this.getIsDisabled());
+			this.setParentVisible(this.getIsVisible());
 		}
 		this.fireEvent('load');
 	},
