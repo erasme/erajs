@@ -7,7 +7,7 @@
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript">
 
-Ui.Element.extend('Sample.GoogleMap', {
+Ui.Fixed.extend('Sample.GoogleMap', {
 	map: undefined,
 
 	constructor: function(config) {
@@ -24,6 +24,10 @@ Ui.Element.extend('Sample.GoogleMap', {
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		this.map = new google.maps.Map(this.getDrawing(), myOptions);
+
+		this.connect(this, 'load', this.updateSize);
+		this.connect(this, 'resize', this.updateSize);
+		this.connect(this, 'visible', this.updateSize);
 	},
 
 	setLatLng: function(latitude, longitude) {
@@ -36,6 +40,10 @@ Ui.Element.extend('Sample.GoogleMap', {
 
 	setZoom: function(zoom) {
 		this.map.setZoom(zoom);
+	},
+
+	updateSize: function() {
+		google.maps.event.trigger(this.map, 'resize');
 	}
 });
 
