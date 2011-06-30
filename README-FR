@@ -1,0 +1,30 @@
+Description:
+
+Era est un framework JavaScript développé par Daniel Lacroix au sein du service Erasme (www.erasme.org) du département du Rhône.
+
+Ses principals caractéristiques sont :
+- Le développement d'application se fait exclusivement en JavaScript. Pas d'html, de CSS ou autre.
+- Pensé pour les appareils multi-touch (iPad, Android). Toute application développé avec Era à une ergonomie compatible avec ces appareils.
+- Utilisation massive des nouvelles propriétés des navigateurs (Drag&Drop, audio, vidéo, animation).
+- Un fonctionnement identique d'un navigateur à l'autre. Ex : Gradient et bord arrondis même sous IE 8, système d'évènement recoder pour être générique.
+- Une compatibilité assurée pour Firefox 3.6+, Chrome 6+, Safari 5+, IE8+ et Opera 10+. Ainsi que pour iOs 4+ et Android 2.2+
+- Un système de layout avancé similaire à GTK ou autre framework natif
+- Une gestion du redimensionnement
+- Un système d'animation haut de gamme
+- Des composants réutilisable et stylables sans passer par CSS
+
+Sources du projet :
+
+git clone git@forge.erasme.org:era
+
+Commande pour générer la doc :
+$ cd <path_to_jsdoc-toolkit>
+$ java -jar jsrun.jar app/run.js -a -t=<path_to_era>/doc/jsdoc/templates <path_to_era>/era/js/ui/*.js -d=<path_to_era>/doc/jsdoc
+
+
+Licence MIT ?
+
+Copyright:
+
+Departement du Rhone
+Erasme <support@erasme.org>

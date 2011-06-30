@@ -1,9 +1,14 @@
-//
-// Define the Pressable class.
-//
-Ui.LBox.extend('Ui.Pressable', {
+Ui.LBox.extend('Ui.Pressable', 
+/** @lends Ui.Pressable#*/
+{
 	isDown: false,
 
+    /**
+    *   @constructs   
+    *   @class A pressable is a container which can be pressed   
+    *   @extends Ui.LBox
+	*	@param {mixed} [config] see {@link Ui.LBox} constructor for more options.  
+    */
 	constructor: function(config) {
 		this.getDrawing().style.cursor = 'pointer';
 
@@ -23,10 +28,7 @@ Ui.LBox.extend('Ui.Pressable', {
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
-	//
-	// Private
-	//
-
+    /** @private */
 	onMouseDown: function(event) {
 		if((event.button != 0) || this.getIsDisabled())
 			return;
@@ -48,7 +50,9 @@ Ui.LBox.extend('Ui.Pressable', {
 
 		this.onDown();
 	},
-
+	/**#@+
+	 * @private
+	 */
 	onMouseMove: function(event) {
 		var deltaX = event.screenX - this.mouseStartX;
 		var deltaY = event.screenY - this.mouseStartY;
@@ -179,4 +183,5 @@ Ui.LBox.extend('Ui.Pressable', {
  		this.isDown = false;
 		this.fireEvent('up', this);
 	}
+	/**#@-*/
 });
