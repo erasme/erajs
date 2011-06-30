@@ -154,17 +154,17 @@ Ui.Element.extend('Ui.Text', {
 		this.spaceWidth = Ui.Label.measureText('x', this.fontSize, this.fontFamily, this.fontWeight).width;
 
 		for(i = 0; i < this.text.length; i++) {
-			if((this.text[i] == ' ') || (this.text[i] == '\n')) {
+			if((this.text.charAt(i) == ' ') || (this.text.charAt(i) == '\n')) {
 
 				if(word != '') {
 					this.addWord(word);
 					word = '';
 				}
-				if(this.text[i] == '\n')
+				if(this.text.charAt(i) == '\n')
 					this.newLine();
 			}
 			else
-				word += this.text[i];
+				word += this.text.charAt(i);
 		}
 		if(word != '')
 			this.addWord(word);
