@@ -6,26 +6,38 @@ Ui.Element.extend('Ui.Shape', {
 
 	fill: 'black',
 	path: undefined,
+	scale: 1,
 
 	constructor: function(config) {
 		if(config.fill != undefined)
 			this.setFill(config.fill);
 		if(config.path != undefined)
 			this.setPath(config.path);
+		if(config.scale != undefined)
+			this.setScale(config.scale);
+	},
+
+	setScale: function(scale) {
+		if(this.scale != scale) {
+			this.scale = scale;
+			if(navigator.supportSVG)
+				this.svgPath.setAttribute('transform', 'scale( '+scale.toFixed(4)+', '+scale.toFixed(4)+' )');
+			else if(navigator.supportVML)
+				this.shapeDrawing.coordsize = (this.getLayoutWidth() * 100 / scale)+' '+(this.getLayoutHeight() * 100 / scale);
+		}
 	},
 
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = fill;
 			if(navigator.supportSVG) {
-				if(Ui.Color.hasInstance(fill))
-					fill = fill.getCssHtml();
+				fill = Ui.Color.create(fill);
+				fill = fill.getCssHtml();
 				this.svgPath.style.fill = fill;
 			}
 			else if(navigator.supportVML) {
-				console.log('setFill for VML');
-				if(Ui.Color.hasInstance(fill))
-					fill = fill.getCssHtml();
+				fill = Ui.Color.create(fill);
+				fill = fill.getCssHtml();
 				this.vmlFill.type = 'solid';
 				this.vmlFill.color = fill;
 			}
@@ -35,28 +47,74 @@ Ui.Element.extend('Ui.Shape', {
 	setPath: function(path) {
 		if(this.path != path) {
 			this.path = path;
-			if(navigator.supportSVG) {
+			if(navigator.supportSVG)
 				this.svgPath.setAttributeNS(null, 'd', this.path, null);
-			}
-			else if(navigator.supportVML) {
+			else if(navigator.supportVML)
 				this.shapeDrawing.path = this.pathToVML(path);
-			}
 		}
 	},
 
 	pathToVML: function(path) {
-//		this.vml.path = 'm '+this.radiusTopLeft+',0 l '+(width-this.radiusTopRight)+',0 qx '+width+','+this.radiusTopRight+
-//			' l '+width+','+(height-this.radiusBottomRight)+' qy '+(width-this.radiusBottomRight)+','+height+
-//			' l '+this.radiusBottomLeft+','+height+' qx 0,'+(height-this.radiusBottomLeft)+' l 0,'+this.radiusTopLeft+
-//			' qy '+this.radiusTopLeft+',0 x e';
+		var x = 0;
+		var y = 0;
 
-//		shape.setPath('m 9.1916229,24 7.0000001,-7 7,7 14,-14 7,7 -21,21 z');
+		var parser = new Ui.SvgParser({ path: path });
+		parser.next();
 
-		path = 'm 9,24 l 16,17 l 23,24 l 37,10 l 44,17 l 23,38 x e';
+		var vml = '';
+		while(!parser.isEnd()) {
+			var cmd = parser.getCmd();
+			if(parser.isCmd())
+				parser.next();
 
-		return path;
+			if(cmd == 'm') {
+				parser.setCmd('l');
+				x += parser.getCurrent(); parser.next(); 
+				y += parser.getCurrent(); parser.next();
+				vml += 'm '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'M') {
+				parser.setCmd('L');
+				x = parser.getCurrent(); parser.next();
+				y = parser.getCurrent(); parser.next();
+				vml += 'm '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'l') {
+				x += parser.getCurrent(); parser.next();
+				y += parser.getCurrent(); parser.next();
+				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'L') {
+				x = parser.getCurrent(); parser.next();
+				y = parser.getCurrent(); parser.next();
+				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'c') {
+				var x1 = x + parser.getCurrent(); parser.next();
+				var y1 = y + parser.getCurrent(); parser.next();
+				var x2 = x + parser.getCurrent(); parser.next();
+				var y2 = y + parser.getCurrent(); parser.next();
+				x += parser.getCurrent(); parser.next();
+				y += parser.getCurrent(); parser.next();
+				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'C') {
+				var x1 = parser.getCurrent(); parser.next();
+				var y1 = parser.getCurrent(); parser.next();
+				var x2 = parser.getCurrent(); parser.next();
+				var y2 = parser.getCurrent(); parser.next();
+				x = parser.getCurrent(); parser.next();
+				y = parser.getCurrent(); parser.next();
+				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'z')
+				vml += 'x ';
+			else
+				throw('Invalid SVG path');
+		}
+		vml += 'e';
+		return vml;
 	}
-
 }, {
 	render: function() {
 		if(navigator.supportSVG) {
@@ -71,7 +129,7 @@ Ui.Element.extend('Ui.Shape', {
 			this.shapeDrawing.stroked = false;
 			this.vmlFill = document.createElement('vml:fill');
 			this.vmlFill.type = 'solid';
-			this.vmlFill.color = 'black';
+			this.vmlFill.color = '#000000';
 			this.shapeDrawing.appendChild(this.vmlFill);
 		}
 		this.shapeDrawing.style.display = 'block';
@@ -88,8 +146,63 @@ Ui.Element.extend('Ui.Shape', {
 		this.shapeDrawing.style.height = height+'px';
 		if((!navigator.supportSVG) && (navigator.supportVML)) {
 			this.shapeDrawing.coordorigin = '0 0';
-			this.shapeDrawing.coordsize = width+' '+height;
+			this.shapeDrawing.coordsize = (width * 100 / this.scale)+' '+(height * 100 / this.scale);
 		}
 	}
 });
+
+Core.Object.extend('Ui.SvgParser', {
+	path: undefined,
+	pos: 0,
+	cmd: undefined,
+	current: undefined,
+	value: false,
+	end: false,
+
+	constructor: function(config) {
+		this.path = config.path;
+	},
+
+	isEnd: function() {
+		return this.end;
+	},
+
+	next: function() {
+		this.end = this.pos >= this.path.length;
+		if(!this.end) {
+			while((this.pos < this.path.length) && ((this.path.charAt(this.pos) == ' ') || (this.path.charAt(this.pos) == ',') || (this.path.charAt(this.pos) == ';')))
+				this.pos++;
+			this.current = '';
+			while((this.pos < this.path.length) && (this.path.charAt(this.pos) != ' ') && (this.path.charAt(this.pos) != ',') && (this.path.charAt(this.pos) != ';'))
+				this.current += this.path.charAt(this.pos++);
+			var value = new Number(this.current);
+			this.value = !isNaN(value);
+			if(this.value)
+				this.current = value;
+			else
+				this.cmd = this.current;
+		}
+	},
+
+	setCmd: function(cmd) {
+		this.cmd = cmd;
+	},
+
+	getCmd: function() {
+		return this.cmd;
+	},
+
+	getCurrent: function() {
+		return this.current;
+	},
+
+	isCmd: function() {
+		return !this.value;
+	},
+
+	isValue: function() {
+		return this.value;
+	}
+});
+
 
