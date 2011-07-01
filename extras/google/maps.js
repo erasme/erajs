@@ -8,10 +8,8 @@ Ui.Fixed.extend('Extras.Ui.Google.Map', {
 		var zoom = 10;
         var maptype = google.maps.MapTypeId.ROADMAP;
 
-		if(('latitude' in config) && ('longitude' in config)) {
+		if(('latitude' in config) && ('longitude' in config))
 			latlng = new google.maps.LatLng(config.latitude, config.longitude);
-            console.log('lat' + config.latitude + ', lon' + config.longitude);
-        }
 		if('zoom' in config)
 			zoom = config.zoom;
 		if('maptype' in config)
@@ -81,7 +79,9 @@ Ui.Fixed.extend('Extras.Ui.Google.Map', {
 	},
 
 	updateSize: function() {
+        var center = this.getMap().getCenter();
 		google.maps.event.trigger(this.getMap(), 'resize');
+        this.getMap().setCenter(center);
 	}
 });
 
