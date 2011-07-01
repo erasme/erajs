@@ -32,8 +32,6 @@ Ui.LBox.extend('Ui.Pressable',
 	 * @private
 	 */
 	onMouseDown: function(event) {
-		console.log('Ui.Pressable.onMouseDown '+event.button);
-
 		if((event.button != 0) || this.getIsDisabled())
 			return;
 

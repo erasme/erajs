@@ -1182,7 +1182,11 @@ Core.Object.extend('Ui.Element',
 			}
 		}
 		else {
-			if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
+			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
+				this.drawing.style.left = Math.round(this.layoutX)+'px';
+				this.drawing.style.top = Math.round(this.layoutY)+'px';
+			}
+			else if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
 				this.drawing.style.removeProperty('-ms-transform');
 				this.drawing.style.removeProperty('-ms-transform-origin');
 			}

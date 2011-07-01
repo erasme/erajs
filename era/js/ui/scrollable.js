@@ -41,11 +41,9 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.setScrollVertical(config.scrollVertical);
 
 		this.scrollbarHorizontalBox = new Ui.LBox();
-		this.scrollbarHorizontalBox.getDrawing().style.cursor = 'move';
 		this.appendChild(this.scrollbarHorizontalBox);
 
 		this.scrollbarVerticalBox = new Ui.LBox();
-		this.scrollbarVerticalBox.getDrawing().style.cursor = 'move';
 		this.appendChild(this.scrollbarVerticalBox);
 
 //		this.setFocusable(true);

@@ -29,6 +29,7 @@ Ui.Element.extend('Ui.Html', {
 		this.selectable = selectable;
 
 		if(selectable) {
+			this.htmlDrawing.style.cursor = 'text';
 			if(navigator.isWebkit)
 				this.htmlDrawing.style.removeProperty('-webkit-user-select');
 			else if(navigator.isGecko)
@@ -37,12 +38,9 @@ Ui.Element.extend('Ui.Html', {
 				this.disconnect(this.htmlDrawing, 'selectstart', this.onSelectStart);
 			else if(navigator.isOpera)
 				this.htmlDrawing.onmousedown = undefined;
-			if('removeProperty' in this.htmlDrawing)
-				this.htmlDrawing.style.removeProperty('pointerEvents');
-			else
-				this.htmlDrawing.style.pointerEvents = '';
 		}
 		else {
+			this.htmlDrawing.style.cursor = 'inherit';
 			if(navigator.isWebkit)
 				this.htmlDrawing.style.webkitUserSelect = 'none';
 			else if(navigator.isGecko)
@@ -51,7 +49,6 @@ Ui.Element.extend('Ui.Html', {
 				this.connect(this.htmlDrawing, 'selectstart', this.onSelectStart);
 			else if(navigator.isOpera)
 				this.htmlDrawing.onmousedown = function(event) { event.preventDefault(); };
-			this.htmlDrawing.style.pointerEvents = 'none';
 		}
 	},
 
@@ -84,7 +81,6 @@ Ui.Element.extend('Ui.Html', {
 
 		return { width: needWidth, height: needHeight };
 	},
-
 
 	arrangeCore: function(width, height) {
 		this.htmlDrawing.style.width = width+'px';

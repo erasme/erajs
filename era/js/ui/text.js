@@ -19,16 +19,20 @@ Ui.Element.extend('Ui.Text', {
 	selectable: false,
 
 	constructor: function(config) {
-		if(config.text != undefined)
+		if('text' in config)
 			this.setText(config.text);
-		if(config.fontSize != undefined)
+		if('fontSize' in config)
 			this.setFontSize(config.fontSize);
-		if(config.fontFamily != undefined)
+		if('fontFamily' in config)
 			this.setFamilySize(config.fontFamily);
-		if(config.fontWeight != undefined)
+		if('fontWeight' in config)
 			this.setFontWeight(config.fontWeight);
-		if(config.color != undefined)
+		if('color' in config)
 			this.setColor(config.color);
+		if('selectable' in config)
+			this.setSelectable(config.selectable);
+		else
+			this.setSelectable(this.selectable);
 	},
 
 	getText: function() {
@@ -100,6 +104,7 @@ Ui.Element.extend('Ui.Text', {
 		this.selectable = selectable;
 
 		if(selectable) {
+			this.textDrawing.style.cursor = 'text';
 			if(navigator.isWebkit)
 				this.textDrawing.style.removeProperty('-webkit-user-select');
 			else if(navigator.isGecko)
@@ -108,12 +113,9 @@ Ui.Element.extend('Ui.Text', {
 				this.disconnect(this.textDrawing, 'selectstart', this.onSelectStart);
 			else if(navigator.isOpera)
 				this.textDrawing.onmousedown = undefined;
-			if('removeProperty' in this.textDrawing)
-				this.textDrawing.style.removeProperty('pointerEvents');
-			else
-				this.textDrawing.style.pointerEvents = '';
 		}
 		else {
+			this.textDrawing.style.cursor = 'inherit';
 			if(navigator.isWebkit)
 				this.textDrawing.style.webkitUserSelect = 'none';
 			else if(navigator.isGecko)
@@ -122,7 +124,6 @@ Ui.Element.extend('Ui.Text', {
 				this.connect(this.textDrawing, 'selectstart', this.onSelectStart);
 			else if(navigator.isOpera)
 				this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
-			this.textDrawing.style.pointerEvents = 'none';
 		}
 	},
 
@@ -215,21 +216,13 @@ Ui.Element.extend('Ui.Text', {
 	render: function() {
 		// create the container for all text rendering
 		this.textDrawing = document.createElement('div');
-		if(navigator.isWebkit)
-			this.textDrawing.style.webkitUserSelect = 'none';
-		else if(navigator.isGecko)
-			this.textDrawing.style.MozUserSelect = 'none';
-		else if(navigator.isIE)
-			this.textDrawing.onselectstart = function(event) { event.preventDefault(); };
-		else if(navigator.isOpera)
-			this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
-		this.textDrawing.style.pointerEvents = 'none';
-
 		this.textDrawing.style.fontFamily = this.fontFamily;
 		this.textDrawing.style.fontWeight = this.fontWeight;
 		this.textDrawing.style.fontSize = this.fontSize+'px';
 		this.textDrawing.style.color = this.color;
-
+		this.textDrawing.style.position = 'absolute';
+		this.textDrawing.style.left = '0px';
+		this.textDrawing.style.top = '0px';
 		return this.textDrawing;
 	},
 
