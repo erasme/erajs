@@ -1154,7 +1154,11 @@ Core.Object.extend('Ui.Element', {
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
-			if(navigator.isIE) {
+			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
+				this.drawing.style.left = Math.round(this.layoutX + matrix.getE())+'px';
+				this.drawing.style.top = Math.round(this.layoutY + matrix.getF())+'px';
+			}
+			else if(navigator.isIE) {
 				this.drawing.style.msTransform = matrix.toString();
 				this.drawing.style.msTransformOrigin = '0% 0%';
 			}
