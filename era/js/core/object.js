@@ -225,7 +225,7 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 		}
 	}
 	else {
-		for(var i = 0; i < obj.events[eventName].length; i++) {
+		for(var i = 0; (obj.events != undefined) && (i < obj.events[eventName].length); i++) {
 			var signal = obj.events[eventName][i];
 			if(signal.scope == this) {
 				if((method != undefined) && (signal.method != method))

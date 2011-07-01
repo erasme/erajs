@@ -130,7 +130,6 @@ Ui.Element.extend('Ui.Label', {
 			this.connect(this.labelDrawing, 'selectstart', function(event) { event.preventDefault(); });
 		else if(navigator.isOpera)
 			this.labelDrawing.onmousedown = function(event) { event.preventDefault(); };
-		this.labelDrawing.style.pointerEvents = 'none';
 		return this.labelDrawing;
 	},
 

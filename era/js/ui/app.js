@@ -27,6 +27,7 @@ Ui.LBox.extend('Ui.App', {
 
 	constructor: function(config) {
 		Ui.App.current = this;
+		this.getDrawing().style.cursor = 'default';
 
 //		this.setFocusable(true);
 
