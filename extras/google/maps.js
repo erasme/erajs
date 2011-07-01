@@ -1,4 +1,4 @@
-document.write("<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>"); // v=3 ?
+document.write("<script type='text/javascript' src='http://maps.google.com/maps/api/js?v=3.5&sensor=false'></script>"); // v=3 ?
 
 Ui.Fixed.extend('Extras.Ui.Google.Map', {
 	map: undefined,
@@ -20,17 +20,22 @@ Ui.Fixed.extend('Extras.Ui.Google.Map', {
 			center: latlng,
 			mapTypeId: maptype,
 		};
-		this.map = new google.maps.Map(this.getDrawing(), myOptions);
 
 		// when the map object is alive
 		if ('panControl' in config)
-			this.showPanControl(config.panControl);
+//			this.showPanControl(config.panControl);
+            myOptions.panControl = config.panControl;
 		if ('zoomControl' in config)
-			this.showZoomControl(config.zoomControl);
+//			this.showZoomControl(config.zoomControl);
+            myOptions.zoomControl = config.zoomControl;
 		if ('mapTypeControl' in config)
-			this.showMapTypeControl(config.mapTypeControl);
+//			this.showMapTypeControl(config.mapTypeControl);$
+            myOptions.mapTypeControl = config.mapTypeControl;
 		if ('streetViewControl' in config)
-			this.showStreetViewControl(config.streetViewControl);
+//			this.showStreetViewControl(config.streetViewControl);
+			myOptions.streetViewControl = config.streetViewControl;
+
+		this.map = new google.maps.Map(this.getDrawing(), myOptions);
 
         // Connect some events to tell google that the div has to be repainted
 		this.connect(this, 'load', this.updateSize);
@@ -38,24 +43,37 @@ Ui.Fixed.extend('Extras.Ui.Google.Map', {
 		this.connect(this, 'visible', this.updateSize);
 	},
 
+    showAllTools: function(val) {
+        console.log('showallTools:' + val);
+        this.showPanControl(val);
+        this.showZoomControl(val);
+        this.showStreetViewControl(val);
+    },
+
 	showPanControl: function(val) {
-		this.map.panControl = val;
+		this.map.setOptions({ panControl: val });
 	},
 	
 	showZoomControl: function(val) {
-		this.map.zoomControl = val;
+		this.map.setOptions({ zoomControl: val});
 	},
 	
 	showMapTypeControl: function(val) {
-				this.map.mapTypeControl = val;
+		this.map.setOptions({ mapTypeControl: val});
 	},
 	
 	showStreetViewControl: function(val) {
-		this.map.streetViewControl = val;
+		this.map.setOptions({ streetViewControl: val});
 	},
 	
 	setLatLng: function(latitude, longitude) {
 		this.map.setCenter(new google.maps.LatLng(latitude, longitude));
+	},
+
+	getLatLng: function() {
+		var ll =  this.map.getCenter();
+        console.log('googlemaps ll :' + ll.lat() + ',' + ll.lng());
+        return [ll.lat(), ll.lng()];
 	},
 
 	setMapType: function(type) {
