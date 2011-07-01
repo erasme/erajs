@@ -1,43 +1,12 @@
 
-Ui.SVGElement.extend('Ui.Icon', {
-	iconDrawing: undefined,
-	fill: 'black',
-	path: undefined,
-
+Ui.Shape.extend('Ui.Icon', {
 	constructor: function(config) {
-		if(config.fill != undefined)
-			this.setFill(config.fill);
-		if(config.path != undefined)
-			this.setPath(config.path);
-	},
-
-	setFill: function(fill) {
-		if(this.fill != fill) {
-			this.fill = fill;
-			if(Ui.Color.hasInstance(fill))
-				fill = fill.getCssHtml();
-			this.iconDrawing.style.fill = fill;
-		}
-	},
-
-	setPath: function(path) {
-		if(this.path != path) {
-			this.path = path;
-			this.iconDrawing.setAttributeNS(null, 'd', this.path, null);
-		}
 	}
 }, /* overrided */ {
-	render: function() {
-		this.iconDrawing = document.createElementNS(svgNS, 'path');
-		this.iconDrawing.style.fill = this.fill;
-		this.iconDrawing.style.fillOpacity = '1';
-		this.iconDrawing.style.stroke = 'none';
-		return this.iconDrawing;
-	},
-
 	arrangeCore: function(width, height) {
+		Ui.Icon.base.arrangeCore.call(this, width, height);
 		var scale = Math.min(width, height) / 48;
-		this.iconDrawing.setAttributeNS(null, 'transform', 'scale( '+scale.toFixed(4)+', '+scale.toFixed(4)+' )');
+		this.setScale(scale);
 	}
 }, /* static */ {
 	icons: {},
@@ -63,19 +32,27 @@ Ui.SVGElement.extend('Ui.Icon', {
 		this.register('savecloud', 'M 21.9375 3.8125 L 21.9375 17.1875 L 18.625 13.8125 L 15.28125 17.1875 L 25.28125 27.1875 L 35.28125 17.1875 L 31.9375 13.8125 L 28.625 17.1875 L 28.625 3.8125 L 21.9375 3.8125 z M 15.1875 20.28125 C 13.209285 21.36075 11.604359 23.011 10.59375 25.0625 C 6.8454548 26.2652 4.09375 29.6762 4.09375 33.8125 C 4.09375 38.9391 8.2797172 43.125 13.40625 43.125 C 20.743081 43.095 27.938701 43.03125 35.28125 43.03125 C 39.54139 43.03125 43.03125 39.54135 43.03125 35.28125 C 43.03125 31.64315 40.426505 28.72105 37.03125 27.90625 C 36.146814 25.82585 34.408457 24.2103 32.25 23.5625 L 28.15625 27.6875 L 29.09375 27.40625 C 29.429018 27.30195 29.779124 27.25 30.15625 27.25 C 31.886675 27.25 33.262207 28.4157 33.625 30 L 33.96875 31.46875 L 35.46875 31.5625 C 37.488443 31.6695 39.03125 33.23065 39.03125 35.28125 C 39.03125 37.40205 37.40213 39.03125 35.28125 39.03125 C 27.926002 39.03125 20.719684 39.095 13.40625 39.125 C 13.39551 39.125 13.38572 39.1251 13.375 39.125 C 10.404867 39.108 8.09375 36.7874 8.09375 33.8125 C 8.09375 31.1963 9.8983864 29.1112 12.34375 28.625 L 13.4375 28.40625 L 13.8125 27.375 C 14.559974 25.4264 16.147884 23.91675 18.125 23.21875 L 15.1875 20.28125 z');
 	},
 
+	getNames: function() {
+		var names = [];
+		for(var tmp in Ui.Icon.icons)
+			names.push(tmp);
+		return names;
+	},
+
 	register: function(iconName, iconPath) {
-		if(this.icons[iconName] != undefined)
+		if(Ui.Icon.icons[iconName] != undefined)
 			throw('Icon \''+iconName+'\' is already registered. To change it, use override');
-		this.icons[iconName] = iconPath;
+		Ui.Icon.icons[iconName] = iconPath;
 	},
 
 	override: function(iconName, iconPath) {
-		this.icons[iconName] = iconPath;
+		Ui.Icon.icons[iconName] = iconPath;
 	},
 
 	create: function(iconName, width, height, fill) {
+		console.log('Ui.Icon.create '+iconName);
 		return new Ui.Icon({
-			path: this.icons[iconName],
+			path: Ui.Icon.icons[iconName],
 			width: (width != undefined)?width:48,
 			height: (height != undefined)?height:48,
 			fill: (fill != undefined)?fill:'black' });

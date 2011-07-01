@@ -11,11 +11,11 @@ Ui.Element.extend('Ui.IFrame', {
 	},
 
 	getSrc: function() {
-		return this.iframeDrawing.getAttributeNS(null, 'src');
+		return this.iframeDrawing.getAttribute('src');
 	},
 
 	setSrc: function(src) {
-		this.iframeDrawing.setAttributeNS(null, 'src', src);
+		this.iframeDrawing.setAttribute('src', src);
 	},
 
 	getIFrame: function() {
@@ -31,9 +31,12 @@ Ui.Element.extend('Ui.IFrame', {
 }, {
 	render: function() {
 		this.iframeDrawing = document.createElement('iframe');
+		this.iframeDrawing.style.position = 'absolute';
 		this.iframeDrawing.style.border = '0px';
 		this.iframeDrawing.style.margin = '0px';
 		this.iframeDrawing.style.padding = '0px';
+		this.iframeDrawing.style.left = '0px';
+		this.iframeDrawing.style.top = '0px';
 		return this.iframeDrawing;
 	},
 

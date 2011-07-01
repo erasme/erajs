@@ -4,7 +4,6 @@
 Ui.Container.extend('Ui.Popup', {
 	background: undefined,
 	contentBox: undefined,
-	visible: false,
 	posX: undefined,
 	posY: undefined,
 	lbox: undefined,
@@ -79,6 +78,8 @@ Ui.Container.extend('Ui.Popup', {
 		event.stopPropagation();
 	}
 }, {
+	visible: false,
+
 	onStyleChange: function() {
 		this.background.setFill(this.getStyleProperty('color'));
 	},

@@ -11,19 +11,10 @@ var fbox = new Ui.Flow({ margin: 40 });
 app.setContent(fbox);
 
 fbox.append(Ui.Icon.create('home', 48, 48, 'lightblue'));
-fbox.append(Ui.Icon.create('search', 48, 48, 'pink'));
-fbox.append(Ui.Icon.create('close', 48, 48, 'lightgreen'));
-fbox.append(Ui.Icon.create('arrowleft', 48, 48, 'lightblue'));
-fbox.append(Ui.Icon.create('arrowright', 48, 48, 'pink'));
-fbox.append(Ui.Icon.create('refresh', 48, 48, 'lightgreen'));
-fbox.append(Ui.Icon.create('deny', 48, 48, 'lightblue'));
-fbox.append(Ui.Icon.create('warning', 48, 48, 'pink'));
-fbox.append(Ui.Icon.create('trash', 48, 48, 'lightgreen'));
-fbox.append(Ui.Icon.create('star', 48, 48, 'lightblue'));
-fbox.append(Ui.Icon.create('exit', 48, 48, 'lightgreen'));
-fbox.append(Ui.Icon.create('upload', 48, 48, 'pink'));
-fbox.append(Ui.Icon.create('lock', 48, 48, 'lightblue'));
-fbox.append(Ui.Icon.create('savecloud', 48, 48, 'lightgreen'));
+
+var colors = ['lightblue', 'pink', 'lightgreen' ];
+for(var i = 0; i < Ui.Icon.getNames().length; i++)
+	fbox.append(Ui.Icon.create(Ui.Icon.getNames()[i], 48, 48, colors[i % colors.length]));
 
 </script>
   </head>

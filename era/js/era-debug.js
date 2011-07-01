@@ -28,6 +28,7 @@ function include(fileName) {
 include(eraBaseDirectory+'core/util.js');
 include(eraBaseDirectory+'core/object.js');
 include(eraBaseDirectory+'core/event.js');
+include(eraBaseDirectory+'core/mouseevent.js');
 include(eraBaseDirectory+'core/fingerevent.js');
 include(eraBaseDirectory+'core/dragevent.js');
 include(eraBaseDirectory+'core/delayedtask.js');

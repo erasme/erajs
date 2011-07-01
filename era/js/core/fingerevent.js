@@ -148,9 +148,11 @@ Core.Object.extend('Core.FingerManager',
 	},
 
 	onWindowLoad: function() {
-		this.connect(document.body, 'touchstart', this.updateTouches);
-		this.connect(document.body, 'touchmove', this.updateTouches);
-		this.connect(document.body, 'touchend', this.updateTouches);
+		try {
+			this.connect(document.body, 'touchstart', this.updateTouches);
+			this.connect(document.body, 'touchmove', this.updateTouches);
+			this.connect(document.body, 'touchend', this.updateTouches);
+		} catch(e) {}
 	},
 
 	updateTouches: function(event) {

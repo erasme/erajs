@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<title>Test</title>
+	<script src='../../era/js/era-debug.js'></script>
+	<script src='../../extras/extras-debug.js'></script>
+
+	<script type="text/javascript">
+
+Extras.Ui.IGN.Geoportal.Key = '1244054277973706333';
+
+var showLayers = [ true, true];
+var showTools =  [ true, true];
+
+var app = new Ui.App();
+
+var map = [ 
+	new Extras.Ui.Google.Map({
+		latitude: 45.741616, longitude: 4.468981, zoom: 5, maptype: google.maps.MapTypeId.SATELLITE,
+		panControl: true, zoomControl: true, mapTypeControl: false,  streetViewControl: false,
+	}), 
+	new Extras.Ui.IGN.Geoportal({
+		latitude: 48.741616, longitude: 5.468981, zoom: 5, maptype: 'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC'
+	}), ];
+
+var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
+var transbox = new Ui.TransitionBox({ transition: 'flip', orientation: 'horizontal' });
+
+var buttontrans = new Ui.Button({ text: 'Swap Map' });
+var buttonroad = new Ui.Button({ text: 'Roadmap' });
+var buttonsat = new Ui.Button({ text: 'Sat' });
+var buttonhyb = new Ui.Button({ text: 'Hybrid' });
+var buttonterr = new Ui.Button({ text: 'Terrain' });
+
+var buttontoggle = new Ui.Button({ text: 'Toogle Tools' });
+var buttonlayers = new Ui.Button({ text: 'Toogle Layers' });
+
+var buttonp = new Ui.Button({ text: '+' });
+var buttonm = new Ui.Button({ text: '-' });
+
+toolbar.append(buttontrans);
+toolbar.append(new Ui.Spacer(), true);
+toolbar.append(buttontoggle);
+toolbar.append(buttonlayers);
+toolbar.append(new Ui.Spacer(), true);
+toolbar.append(buttonroad);
+toolbar.append(buttonsat);
+toolbar.append(buttonhyb);
+toolbar.append(buttonterr);
+toolbar.append(new Ui.Spacer(), true);
+toolbar.append(buttonm);
+toolbar.append(buttonp);
+
+// no getCurrent 
+// selection dans label si possible
+// scroll pgup/pgdown scrollable
+
+current = 0;
+app.connect(buttontrans, 'press',
+            function() { 
+                var pos = map[current].getLatLng();
+                if (current == 0) {
+		            current = 1;
+                    buttonhyb.disable();
+                    buttonterr.disable();
+	            } else {
+		            current = 0;
+                    buttonhyb.enable();
+                    buttonterr.enable();
+	            }
+                console.log(pos);
+                map[current].setLatLng(pos[0], pos[1]);
+	            transbox.setCurrent(map[current]);
+            });
+
+app.connect(buttontoggle, 'press', function() { showTools[current] = !showTools[current]; map[current].showAllTools(showTools[current]); });
+app.connect(buttonlayers, 'press', function() { showLayers[current] = !showLayers[current]; map[current].showMapTypeControl(showLayers[current]); });
+
+app.connect(buttonroad, 'press', function() { map[current].setMapType(google.maps.MapTypeId.ROADMAP); });
+app.connect(buttonsat,  'press', function() { map[current].setMapType(google.maps.MapTypeId.SATELLITE); });
+app.connect(buttonhyb,  'press', function() { map[current].setMapType(google.maps.MapTypeId.HYBRID); });
+app.connect(buttonterr, 'press', function() { map[current].setMapType(google.maps.MapTypeId.TERRAIN); });
+
+app.connect(buttonm, 'press', function() { map[current].setZoom(map[current].getZoom() - 1); });
+app.connect(buttonp, 'press', function() { map[current].setZoom(map[current].getZoom() + 1); });
+
+transbox.append(map[0]);
+transbox.append(map[1]);
+
+var vbox1 = new Ui.VBox();
+vbox1.append(toolbar);
+vbox1.append(transbox, true);
+
+transbox.setCurrent(map[0]);
+app.setContent(vbox1);
+
+</script>
+	</head>
+	
+</html>
+	
+

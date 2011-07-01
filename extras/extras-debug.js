@@ -25,3 +25,4 @@ function include(fileName) {
 // Includes 
 //
 include(extrasBaseDirectory+'google/maps.js');
+include(extrasBaseDirectory+'ign/geoportal.js');
