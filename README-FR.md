@@ -34,7 +34,7 @@ Commande pour générer la doc :
 
 # Licence
 
-Copyright © Departement du Rhone Erasme <support@erasme.org>
+Copyright (c) Departement du Rhone Erasme <support@erasme.org>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
