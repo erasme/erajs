@@ -1,36 +1,39 @@
-//
-// Define the Accordeon class.
-// The accordeon is a layout element to present only one element (page)
-// visible at a time. The header of a page is used to control which
-// page is visible.
-//
-Ui.Container.extend('Ui.Accordeon', {
+Ui.Container.extend('Ui.Accordeon', 
+/**@lends Ui.Accordeon#*/
+{
 	current: 0,
 	clock: undefined,
 	headersSize: 0,
 	contentSize: 0,
 	orientation: 'horizontal',
 
+	/**
+	*	@constructs
+	*	@class The accordeon is a layout element to present only one element (page)
+	* visible at a time. The header of a page is used to control which
+	* page is visible.
+	*	@extends Ui.Container
+	*/
 	constructor: function(config) {
 		if(config.orientation != undefined)
 			this.setOrientation(config.orientation);
 		this.setClipToBounds(true);
 	},
 
-	//
-	// Return the orientation of the accordeon
-	// possibles values: [horizontal|vertical]
-	// default value: horizontal
-	//
+	/**
+	* @return the orientation of the accordeon
+	* possibles values: [horizontal|vertical]
+	* default value: horizontal
+	*/
 	getOrientation: function() {
 		return this.orientation;
 	},
 
-	//
-	// Set the orientation of the accordeon
-	// possibles values: [horizontal|vertical]
-	// default value: horizontal
-	//
+	/**
+	* Set the orientation of the accordeon
+	* possibles values: [horizontal|vertical]
+	* default value: horizontal
+	*/
 	setOrientation: function(orientation) {
 		if(this.orientation != orientation) {
 			this.orientation = orientation;
@@ -40,9 +43,9 @@ Ui.Container.extend('Ui.Accordeon', {
 		}
 	},
 
-	//
-	// Set the given page as the current opened page
-	//
+	/**
+	* Set the given page as the current opened page
+	*/
 	setCurrentPage: function(page) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			if(this.getChildren()[i] == page) {
@@ -52,10 +55,10 @@ Ui.Container.extend('Ui.Accordeon', {
 		}
 	},
 
-	//
-	// Set the page at the given position as the
-	// current opened page 
-	//
+	/**
+	* Set the page at the given position as the
+	* current opened page 
+	*/
 	setCurrentPosition: function(pos) {
 		this.current = pos;
 		if(this.clock != undefined)
@@ -65,10 +68,10 @@ Ui.Container.extend('Ui.Accordeon', {
 		this.clock.begin();
 	},
 
-	//
-	// Append a new AccordeonPage in the current
-	// accordeon
-	//
+	/**
+	* Append a new AccordeonPage in the current
+	* accordeon
+	*/
 	appendPage: function(page) {
 		this.appendChild(page);
 		page.setOffset(1);
@@ -78,10 +81,10 @@ Ui.Container.extend('Ui.Accordeon', {
 		this.setCurrentPage(page);
 	},
 
-	//
-	// Remove the given AccordeonPage from the current
-	// accordeon
-	//
+	/**
+	* Remove the given AccordeonPage from the current
+	* accordeon
+	*/
 	removePage: function(page) {
 		var pos = -1;
 		for(var i = 0; i < this.getChildren().length; i++) {
@@ -103,9 +106,9 @@ Ui.Container.extend('Ui.Accordeon', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	* @private
+	*/
 
 	onClockTick: function(clock, progress) {
 		for(var i = 0; i < this.getChildren().length; i++) {
@@ -193,7 +196,10 @@ Ui.Container.extend('Ui.Accordeon', {
 		this.headersSize = minHeaders;
 		return { width: minWidth, height: minHeaders + minContent };
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.Accordeon#*/
+{
 	measureCore: function(width, height) {
 		if(this.orientation == 'horizontal')
 			return this.measureHorizontal(width, height);
@@ -223,16 +229,20 @@ Ui.Container.extend('Ui.Accordeon', {
 	}
 });
 
-//
-// Define a page for an Accordeon element
-//
-Ui.Container.extend('Ui.AccordeonPage', {
+Ui.Container.extend('Ui.AccordeonPage', 
+/**@lends Ui.AccordeonPage#*/
+{
 	headerBox: undefined,
 	header: undefined,
 	content: undefined,
 	offset: 0,
 	orientation: 'horizontal',
 
+	/**
+	*	@constructs
+	*	@class A page for an Accordeon element
+	*	@extends Ui.Container
+	*/
 	constructor: function(config) {
 		if(config.orientation != undefined)
 			this.setOrientation(config.orientation);
@@ -249,9 +259,9 @@ Ui.Container.extend('Ui.AccordeonPage', {
 		this.addEvents('select', 'close', 'orientationchange');
 	},
 
-	//
-	// Signal that the current page need to be closed
-	//
+	/**
+	* Signal that the current page need to be closed
+	*/
 	close: function() {
 		this.fireEvent('close', this);
 	},
@@ -268,18 +278,19 @@ Ui.Container.extend('Ui.AccordeonPage', {
 		}
 	},
 
-	//
-	// Return the header element
-	//
+	/**
+	* @return the header element
+	*/
 	getHeader: function() {
 		return this.header;
 	},
 
-	//
-	// Set the header element. The header element
-	// correspond to the bar that can be pressed to
-	// set the content visible
-	//
+	/**
+	* Set the header element. 
+	*	@param header Element
+	* corresponding to the bar that can be pressed to
+	* set the content visible
+	*/
 	setHeader: function(header) {
 		if(header != this.header) {
 			if(this.header != undefined)
@@ -290,16 +301,16 @@ Ui.Container.extend('Ui.AccordeonPage', {
 		}
 	},
 
-	//
-	// Return the content element of the page
-	//
+	/**
+	* @return the content element of the page
+	*/
 	getContent: function() {
 		return this.content;
 	},
 
-	//
-	// Set the content element of the page
-	//
+	/**
+	* Set the content element of the page
+	*/
 	setContent: function(content) {
 		if(this.content != content) {
 			if(this.content != undefined)
@@ -310,20 +321,20 @@ Ui.Container.extend('Ui.AccordeonPage', {
 		}
 	},
 
-	//
-	// Return the orientation of the accordeon
-	// possibles values: [horizontal|vertical]
-	// default value: horizontal
-	//
+	/**
+	* @return The orientation of the accordeon
+	* possibles values: [horizontal|vertical]
+	* default value: horizontal
+	*/
 	getOrientation: function() {
 		return this.orientation;
 	},
 
-	//
-	// Set the orientation of the accordeon
-	// possibles values: [horizontal|vertical]
-	// default value: horizontal
-	//
+	/**
+	* Set the orientation of the accordeon
+	* 	@param orientation Possibles values: [horizontal|vertical]
+	* default value: horizontal
+	*/
 	setOrientation: function(orientation) {
 		if(this.orientation != orientation) {
 			this.orientation = orientation;
@@ -332,9 +343,9 @@ Ui.Container.extend('Ui.AccordeonPage', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	* @private
+	*/
 
 	getOffset: function() {
 		return this.offset;
@@ -351,10 +362,13 @@ Ui.Container.extend('Ui.AccordeonPage', {
 	onHeaderPress: function() {
 		this.fireEvent('select', this);
 	}
-}, {
-	//
-	// Return the required size for the current element
-	//
+	/**#@-*/
+}, 
+/**@lends Ui.AccordeonPage#*/
+{
+	/**
+	* @return The required size for the current element
+	*/
 	measureCore: function(width, height) {
 		var size = this.headerBox.measure(width, height);
 		var contentSize = { width: 0, height: 0 };
@@ -375,9 +389,9 @@ Ui.Container.extend('Ui.AccordeonPage', {
 		return size;
 	},
 
-	//
-	// Arrange children
-	//
+	/**
+	* Arrange children
+	*/
 	arrangeCore: function(width, height) {
 		if(this.orientation == 'horizontal') {
 			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);

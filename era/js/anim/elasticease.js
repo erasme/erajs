@@ -1,10 +1,14 @@
-//
-// Define the ElasticEase class.
-//
-Anim.EasingFunction.extend('Anim.ElasticEase', {
+Anim.EasingFunction.extend('Anim.ElasticEase', 
+/**@lends Anim.ElasticEase#*/
+{
 	oscillations: 3,
 	springiness: 3.0,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Anim.EasingFunction
+	*/
 	constructor: function(config) {
 		if(config.oscillations != undefined)
 			this.setOscillations(config.oscillations);
@@ -25,11 +29,15 @@ Anim.EasingFunction.extend('Anim.ElasticEase', {
 	getSpringiness: function() {
 		return this.springiness;
 	}
-}, {
+}, 
+/**@lends Anim.ElasticEase#*/
+{
 	easeInCore: function(normalizedTime) {
 		return Math.sin(normalizedTime * (this.oscillations * 2 + 0.5) * Math.PI) * Math.pow(normalizedTime, this.springiness);
 	}
-}, /* static */ {
+},
+/**@lends Anim.ElasticEase*/
+{
 	constructor: function() {
 		Anim.EasingFunction.register('elastic', this);
 	}

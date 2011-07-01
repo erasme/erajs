@@ -1,7 +1,6 @@
-//
-// Define the CheckBox class.
-//
-Ui.Togglable.extend('Ui.CheckBox', {
+Ui.Togglable.extend('Ui.CheckBox', 
+/**Ui.CheckBox#*/
+{
 	check: undefined,
 	checkBox: undefined,
 	contentBox: undefined,
@@ -15,6 +14,11 @@ Ui.Togglable.extend('Ui.CheckBox', {
 	content: undefined,
 	text: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Ui.Togglable
+	*/
 	constructor: function(config) {
 		this.setPadding(3);
 
@@ -165,7 +169,9 @@ Ui.Togglable.extend('Ui.CheckBox', {
 		else
 			return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
 	}
-}, {
+}, 
+/**Ui.CheckBox#*/
+{
 	onStyleChange: function() {
 		this.check.setFill(this.getStyleProperty('checkColor'));
 		if(this.getIsDown()) {
@@ -192,7 +198,9 @@ Ui.Togglable.extend('Ui.CheckBox', {
 		Ui.CheckBox.base.onEnable.call(this);
 		this.check.setOpacity(1);
 	}
-}, {
+}, 
+/**Ui.CheckBox*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
 		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),

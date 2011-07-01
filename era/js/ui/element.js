@@ -1,4 +1,11 @@
-Core.Object.extend('Ui.Element', {
+/**
+*	@name Ui
+*	@namespace Regroup all the Ui related classes : element, button, container etc. 
+*/
+
+Core.Object.extend('Ui.Element', 
+/**@lends Ui.Element#*/
+{
 	marginTop: 0,
 	marginBottom: 0,
 	marginLeft: 0,
@@ -1046,10 +1053,9 @@ Core.Object.extend('Ui.Element', {
 		return this.hasFocus;
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+
+	* @private
+	*/
 	onFocus: function(event) {
 		if(this.focusable && !this.getIsDisabled()) {
 			event.preventDefault();
@@ -1160,13 +1166,14 @@ Core.Object.extend('Ui.Element', {
 		}
 		this.fireEvent('unload');
 	}
+	/**#@-*/
 }, {}, {
 
-	//
-	// Return the transform matrix to convert coordinates
-	// from the given element coordinate system to the page
-	// coordinate system
-	//
+	/**
+	* @return Return the transform matrix to convert coordinates
+	* from the given element coordinate system to the page
+	* coordinate system
+	*/
 	transformToWindow: function(element) {
 		if(navigator.isWebkit) {
 			var matrix = new Ui.Matrix();
@@ -1303,10 +1310,10 @@ Core.Object.extend('Ui.Element', {
 		}
 	},
 
-	//
-	// Return the given point converted from the givent element
-	// coordinate system to the page coordinate system
-	//
+	/**
+	* @return the given point converted from the givent element
+	* coordinate system to the page coordinate system
+	*/
 	pointToWindow: function(element, point) {
 		if(navigator.isWebkit)
 			return window.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));

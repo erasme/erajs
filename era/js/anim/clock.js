@@ -1,7 +1,6 @@
-//
-// Define the Clock class.
-//
-Core.Object.extend('Anim.Clock', {
+Core.Object.extend('Anim.Clock', 
+/**@lends Anim.Clock#*/
+{
 	parent: undefined,
 	time: undefined,
 	iteration: undefined,
@@ -26,7 +25,22 @@ Core.Object.extend('Anim.Clock', {
 	callback: undefined,
 	ease: undefined,
 
-
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*	@param config.parent
+	*	@param config.beginTime
+	*	@param config.autoReverse
+	*	@param config.duration
+	*	@param config.repeat
+	*	@param config.speed
+	*	@param config.callback
+	*	@param config.target
+	*	@param config.scope
+	*	@param config.ease
+	*	@param config.duration
+	*/
 	constructor: function(config) {
 		if(config.parent != undefined)
 			this.parent = config.parent;

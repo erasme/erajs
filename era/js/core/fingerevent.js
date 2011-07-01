@@ -1,7 +1,12 @@
+Core.Event.extend('Core.FingerEvent', 
+/**@lends Core.FingerEvent#*/
+{
 
-
-Core.Event.extend('Core.FingerEvent', {
-
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Event
+	*/
 	constructor: function(config) {
 	},
 
@@ -12,7 +17,9 @@ Core.Event.extend('Core.FingerEvent', {
 		this.view = view;
 		this.finger = finger;
 	}
-}, {}, {
+}, {}, 
+/**@lends Core.FingerEvent*/
+{
 	constructor: function() {
 		Core.Event.registerEvent('FingerEvent', Core.FingerEvent);
 		Core.Event.register('fingerdown', Core.FingerEvent);
@@ -21,12 +28,19 @@ Core.Event.extend('Core.FingerEvent', {
 	}
 });
 
-Core.Object.extend('Core.Finger', {
+Core.Object.extend('Core.Finger', 
+/**@lends Core.Finger#*/
+{
 	id: undefined,
 	x: undefined,
 	y: undefined,
 	captureElement: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		this.addEvents('fingermove', 'fingerup');
 
@@ -118,9 +132,16 @@ Core.Object.extend('Core.Finger', {
 	}
 });
 
-Core.Object.extend('Core.FingerManager', {
+Core.Object.extend('Core.FingerManager', 
+/**@lends Core.FingerManager#*/
+{
 	touches: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		this.touches = {};
 		this.connect(window, 'load', this.onWindowLoad);

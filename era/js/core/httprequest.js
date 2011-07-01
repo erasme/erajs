@@ -1,11 +1,16 @@
-
-
-Core.Object.extend('Core.HttpRequest', {
+Core.Object.extend('Core.HttpRequest', 
+/**@lends Core.HttpRequest#*/
+{
 	url: undefined,
 	method: 'GET',
 	binary: false,
 	request: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		if(config.url != undefined)
 			this.url = config.url;

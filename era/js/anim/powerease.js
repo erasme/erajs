@@ -1,9 +1,13 @@
-//
-// Define the PowerEase class.
-//
-Anim.EasingFunction.extend('Anim.PowerEase', {
+Anim.EasingFunction.extend('Anim.PowerEase', 
+/**@lends Anim.PowerEase#*/
+{	
 	power: 2,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Anim.EasingFunction
+	*/
 	constructor: function(config) {
 		if(config.power != undefined)
 			this.setPower(config.power);
@@ -16,11 +20,15 @@ Anim.EasingFunction.extend('Anim.PowerEase', {
 	getPower: function() {
 		return this.power;
 	}
-}, {
+}, 
+/**@lends Anim.PowerEase#*/
+{
 	easeInCore: function(normalizedTime) {
 		return Math.pow(normalizedTime, this.power);
 	}
-}, /* static */ {
+},
+/**@lends Anim.PowerEase*/
+{
 	constructor: function() {
 		Anim.EasingFunction.register('power', this);
 	}

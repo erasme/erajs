@@ -1,11 +1,16 @@
-
 Core.Object.extend('Core.File', {
+/**@lends Core.File#*/
 	iframe: undefined,
 	form: undefined,
 	fileInput: undefined,
 
 	fileApi: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		if(config.form != undefined)
 			this.form = config.form;

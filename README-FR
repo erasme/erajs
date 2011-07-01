@@ -18,9 +18,9 @@ Sources du projet :
 git clone git@forge.erasme.org:era
 
 Commande pour générer la doc :
-$ cd <path_to_jsdoc-toolkit>
-$ java -jar jsrun.jar app/run.js -a -t=<path_to_era>/doc/jsdoc/templates <path_to_era>/era/js/ui/*.js -d=<path_to_era>/doc/jsdoc
-
+$ export JSDOCDIR=<path_to_jsdoc-toolkit>
+$ cd <path-to-era-repo>/era/js
+$ java -jar $JSDOCDIR/jsrun.jar $JSDOCDIR/app/run.js -c=../../doc/jsdoc/conf/era.conf
 
 Licence MIT ?
 

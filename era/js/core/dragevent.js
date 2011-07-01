@@ -1,8 +1,12 @@
-
-
-Core.Event.extend('Core.DragEvent', {
+Core.Event.extend('Core.DragEvent', 
+/**@lends Core.DragEvent#*/
+{
 	dataTransfer: undefined,
-
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Event
+	*/
 	constructor: function(config) {
 	},
 
@@ -23,7 +27,9 @@ Core.Event.extend('Core.DragEvent', {
 	}
 });
 
-Core.Object.extend('Core.DragDataTransfer', {
+Core.Object.extend('Core.DragDataTransfer', 
+/**@lends Core.DragDataTransfer#*/
+{
 	draggable: undefined,
 	image: undefined,
 	startX: 0,
@@ -38,6 +44,11 @@ Core.Object.extend('Core.DragDataTransfer', {
 	finger: undefined,
 	mouse: false,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*/
 	constructor: function(config) {
 		this.draggable = config.draggable;
 		this.startX = config.x;
@@ -91,9 +102,9 @@ Core.Object.extend('Core.DragDataTransfer', {
 		return check;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	* @private
+	*/
 	onMouseMove: function(event) {
 		var deltaX = event.clientX - this.startX;
 		var deltaY = event.clientY - this.startY;
@@ -258,11 +269,18 @@ Core.Object.extend('Core.DragDataTransfer', {
 		dragEvent.initDragEvent('dragend', false, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 		this.draggable.dispatchEvent(dragEvent);
 	}
+	/**#@-*/
 });
 
 
 Core.Object.extend('Core.DragManager', {
+/**@lends Core.DragManager#*/
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*/	
 	constructor: function(config) {
 		this.connect(window, 'mousedown', this.onMouseDown);
 

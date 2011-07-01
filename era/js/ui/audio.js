@@ -1,5 +1,6 @@
-
-Ui.Element.extend('Ui.Audio', {
+Ui.Element.extend('Ui.Audio', 
+/**@lends Ui.Audio#*/
+{
 	src: undefined,
 	oggSrc: undefined,
 	mp3Src: undefined,
@@ -9,6 +10,11 @@ Ui.Element.extend('Ui.Audio', {
 	playing: false,
 	paused: false,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Ui.Element
+	*/
 	constructor: function(config) {
 		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.wavSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Audio.supportOgg))
@@ -27,9 +33,9 @@ Ui.Element.extend('Ui.Audio', {
 		this.addEvents('ready', 'ended', 'timeupdate');
 	},
 
-	//
-	// Set the file URL for the current audio element
-	//
+	/**
+	* Set the file URL for the current audio element
+	*/
 	setSrc: function(src) {
 		this.loaddone = false;
 		this.src = src;
@@ -38,10 +44,10 @@ Ui.Element.extend('Ui.Audio', {
 			this.audioDrawing.setAttribute('src', src);
 	},
 
-	//
-	// Play the audio element. If the element is already playing
-	// stop it and restart from the begining.
-	//
+	/**
+	* Play the audio element. If the element is already playing
+	* stop it and restart from the begining.
+	*/
 	play: function() {
 		if(Ui.Audio.htmlAudio) {
 			try {
@@ -54,10 +60,10 @@ Ui.Element.extend('Ui.Audio', {
 		this.paused = false;
 	},
 
-	//
-	// Pause the audio element. If the element is not
-	// currently playing, do nothing.
-	//
+	/**
+	* Pause the audio element. If the element is not
+	* currently playing, do nothing.
+	*/
 	pause: function() {
 		if(!this.playing || this.paused)
 			return;
@@ -66,9 +72,9 @@ Ui.Element.extend('Ui.Audio', {
 			this.audioDrawing.pause();
 	},
 
-	//
-	// Stop the sound if playing.
-	//
+	/**
+	* Stop the sound if playing.
+	*/
 	stop: function() {
 		if(!this.playing)
 			return;
@@ -77,10 +83,10 @@ Ui.Element.extend('Ui.Audio', {
 		this.onEnded();
 	},
 
-	//
-	// Resume the audio element if in paused else
-	// do nothing.
-	//
+	/**
+	* Resume the audio element if in paused else
+	* do nothing.
+	*/
 	resume: function() {
 		if(!this.playing || !this.paused)
 			return;
@@ -89,36 +95,35 @@ Ui.Element.extend('Ui.Audio', {
 			this.audioDrawing.play();
 	},
 
-	//
-	// Set the audio volume between 0 and 1
-	//
+	/**
+	* Set the audio volume between 0 and 1
+	*/
 	setVolume: function(volume) {
 		if(Ui.Audio.htmlAudio)
 			this.audioDrawing.volume = volume;
 	},
 
-	//
-	// Get the audio volume between 0 and 1
-	//
+	/**
+	* Get the audio volume between 0 and 1
+	*/
 	getVolume: function() {
 		if(Ui.Audio.htmlAudio)
 			return this.audioDrawing.volume;
 		return 1;
 	},
 
-	//
-	// Return the duration in seconds of the audio file
-	// or undefined if unknown. This value is only known
-	// after the ready event.
-	//
+	/**
+	* @return the duration in seconds of the audio file
+	* or undefined if unknown. This value is only known
+	* after the ready event.
+	*/
 	getDuration: function() {
 		return this.audioDrawing.duration;
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+
+	* @private
+	*/
 	onReady: function() {
 		this.fireEvent('ready');
 	},
@@ -131,7 +136,10 @@ Ui.Element.extend('Ui.Audio', {
 		this.playing = false;
 		this.fireEvent('ended');
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.Audio#*/
+{
 	verticalAlign: 'top',
 	horizontalAlign: 'left',
 

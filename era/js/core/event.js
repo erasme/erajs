@@ -1,4 +1,6 @@
-Core.Object.extend('Core.Event', {
+Core.Object.extend('Core.Event', 
+/** @lends Core.Event#*/
+{
 	defaultPrevented: false,
 	type: undefined,
 	bubbles: true,
@@ -7,6 +9,11 @@ Core.Object.extend('Core.Event', {
 	target: undefined,
 	cancelBubble: false,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*/
 	constructor: function(config) {
 		if(config.type != undefined)
 			this.type = config.type;
@@ -70,7 +77,10 @@ Core.Object.extend('Core.Event', {
 		}
 		return this.defaultPrevented;
 	}
-}, {}, {
+}, 
+{},
+/** @lends Core.Event*/
+{
 	events: {},
 
 	types: {},
@@ -110,6 +120,7 @@ Core.Object.extend('Core.Event', {
 	'HTMLTableCaptionElement', 'HTMLMenuElement', 'HTMLImageElement', 'HTMLLabelElement',
 	'HTMLAnchorElement', 'HTMLLinkElement'];*/
 
+/**#nocode+ Avoid Jsdoc warnings...*/
 try {
 	HTMLDivElement.prototype.__dispatchEvent = HTMLDivElement.prototype.dispatchEvent;
 	HTMLDivElement.prototype.dispatchEvent = function(event) {
@@ -268,3 +279,4 @@ else {
 			return this.__createEvent(eventName);
 	};
 }
+/**#nocode-*/ 
