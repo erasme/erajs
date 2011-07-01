@@ -28,8 +28,12 @@ Ui.LBox.extend('Ui.Pressable',
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
-    /** @private */
+	/**#@+
+	 * @private
+	 */
 	onMouseDown: function(event) {
+		console.log('Ui.Pressable.onMouseDown '+event.button);
+
 		if((event.button != 0) || this.getIsDisabled())
 			return;
 
@@ -39,20 +43,12 @@ Ui.LBox.extend('Ui.Pressable',
 		this.mouseStartX = event.screenX;
 		this.mouseStartY = event.screenY;
 
-		if('attachEvent' in this.getDrawing()) {
-			this.connect(this.getDrawing(), 'mousemove', this.onMouseMove, true);
-			this.connect(this.getDrawing(), 'mouseup', this.onMouseUp, true);
-		}
-		else {
-			this.connect(window, 'mousemove', this.onMouseMove, true);
-			this.connect(window, 'mouseup', this.onMouseUp, true);
-		}
+		this.connect(window, 'mousemove', this.onMouseMove, true);
+		this.connect(window, 'mouseup', this.onMouseUp, true);
 
 		this.onDown();
 	},
-	/**#@+
-	 * @private
-	 */
+
 	onMouseMove: function(event) {
 		var deltaX = event.screenX - this.mouseStartX;
 		var deltaY = event.screenY - this.mouseStartY;
@@ -172,14 +168,9 @@ Ui.LBox.extend('Ui.Pressable',
 	},
 
 	onUp: function() {
-		if('attachEvent' in this.getDrawing()) {
-			this.disconnect(this.getDrawing(), 'mousemove', this.onMouseMove);
-			this.disconnect(this.getDrawing(), 'mouseup', this.onMouseUp);
-		}
-		else {
-			this.disconnect(window, 'mousemove', this.onMouseMove, true);
-			this.disconnect(window, 'mouseup', this.onMouseUp, true);
-		}
+		this.disconnect(window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(window, 'mouseup', this.onMouseUp, true);
+
  		this.isDown = false;
 		this.fireEvent('up', this);
 	}

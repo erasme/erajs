@@ -105,12 +105,14 @@ Ui.LBox.extend('Ui.App', {
 //				event.stopPropagation();
 //			}
 //		});
+
 		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });
 		this.connect(window, 'dragover', function(event) { event.dataTransfer.dropEffect = 'none';
 			event.preventDefault();	return false; });
 		this.connect(window, 'drop', function(event) { event.preventDefault(); return false; });
+
 		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 

@@ -265,8 +265,7 @@ Core.Object.extend('Core.DragManager', {
 
 	constructor: function(config) {
 		this.connect(window, 'mousedown', this.onMouseDown);
-
-		this.connect(window, 'load', this.onWindowLoad);
+		this.connect(window, 'fingerdown', this.onFingerDown);
 
 		Core.Event.registerEvent('DragEvent', Core.DragEvent);
 		Core.Event.register('dragstart', Core.DragEvent);
@@ -274,10 +273,6 @@ Core.Object.extend('Core.DragManager', {
 		Core.Event.register('dragenter', Core.DragEvent);
 		Core.Event.register('dragover', Core.DragEvent);
 		Core.Event.register('drop', Core.DragEvent);
-	},
-
-	onWindowLoad: function() {
-		this.connect(document.body, 'fingerdown', this.onFingerDown);
 	},
 
 	onDragDown: function(target, x, y, event, mouse, finger) {

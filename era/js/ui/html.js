@@ -1,10 +1,15 @@
 
 Ui.Element.extend('Ui.Html', {
 	htmlDrawing: undefined,
+	selectable: false,
 
 	constructor: function(config) {
-		if(config.html != undefined)
+		if('html' in config)
 			this.setHtml(config.html);
+		if('selectable' in config)
+			this.setSelectable(config.selectable);
+		else
+			this.setSelectable(this.selectable);
 	},
 
 	getHtml: function() {
@@ -14,20 +19,53 @@ Ui.Element.extend('Ui.Html', {
 	setHtml: function(html) {
 		this.htmlDrawing.innerHTML = html;
 		this.invalidateMeasure();
+	},
+
+	getSelectable: function() {
+		return this.selectable;
+	},
+
+	setSelectable: function(selectable) {
+		this.selectable = selectable;
+
+		if(selectable) {
+			if(navigator.isWebkit)
+				this.htmlDrawing.style.removeProperty('-webkit-user-select');
+			else if(navigator.isGecko)
+				this.htmlDrawing.style.removeProperty('-moz-user-select');
+			else if(navigator.isIE)
+				this.disconnect(this.htmlDrawing, 'selectstart', this.onSelectStart);
+			else if(navigator.isOpera)
+				this.htmlDrawing.onmousedown = undefined;
+			if('removeProperty' in this.htmlDrawing)
+				this.htmlDrawing.style.removeProperty('pointerEvents');
+			else
+				this.htmlDrawing.style.pointerEvents = '';
+		}
+		else {
+			if(navigator.isWebkit)
+				this.htmlDrawing.style.webkitUserSelect = 'none';
+			else if(navigator.isGecko)
+				this.htmlDrawing.style.MozUserSelect = 'none';
+			else if(navigator.isIE)
+				this.connect(this.htmlDrawing, 'selectstart', this.onSelectStart);
+			else if(navigator.isOpera)
+				this.htmlDrawing.onmousedown = function(event) { event.preventDefault(); };
+			this.htmlDrawing.style.pointerEvents = 'none';
+		}
+	},
+
+	onSelectStart: function(event) {
+		event.preventDefault();
 	}
+
 }, {
 	render: function() {
 		this.htmlDrawing = document.createElement('div');
 		this.htmlDrawing.style.display = 'block';
-		if(navigator.isWebkit)
-			this.htmlDrawing.style.webkitUserSelect = 'none';
-		else if(navigator.isGecko)
-			this.htmlDrawing.style.MozUserSelect = 'none';
-		else if(navigator.isIE)
-			this.htmlDrawing.onselectstart = function(event) { event.preventDefault(); };
-		else if(navigator.isOpera)
-			this.htmlDrawing.onmousedown = function(event) { event.preventDefault(); };
-		this.htmlDrawing.style.pointerEvents = 'none';
+		this.htmlDrawing.style.position = 'absolute';
+		this.htmlDrawing.style.left = '0px';
+		this.htmlDrawing.style.top = '0px';
 		return this.htmlDrawing;
 	},
 

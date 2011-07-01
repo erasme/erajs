@@ -32,9 +32,11 @@ Core.Object.extend('Core.Event', {
 
 			var current = this.target;
 			while(current != undefined) {
-				stack.push(current);
+				if('dispatchEvent' in current)
+					stack.push(current);
 				current = current.offsetParent;
 			}
+			stack.push(window);
 
 			// mode capture
 			for(var i = stack.length - 1; (i >= 0) && (!this.cancelBubble); i--) {
@@ -89,60 +91,16 @@ Core.Object.extend('Core.Event', {
 
 	getType: function(eventType) {
 		return Core.Event.types[eventType];
-	}
-});
+	},
 
-/*var htmlElements = [ 'HTMLButtonElement', 'HTMLTableColElement', 'HTMLOptionElement',
-	'HTMLInputElement', 'HTMLMetaElement', 'HTMLTableElement', 'HTMLHRElement',
-	'HTMLProgressElement', 'HTMLDivElement', 'HTMLTitleElement', 'HTMLQuoteElement',
-	'HTMLLegendElement', 'HTMLObjectElement', 'HTMLFontElement', 'HTMLHeadElement', 
-	'HTMLFieldSetElement', 'HTMLVideoElement', 'HTMLTableRowElement', 'HTMLDListElement',
-	'HTMLAllCollection', 'HTMLParamElement', 'HTMLModElement', 'HTMLOutputElement', 
-	'HTMLStyleElement', 'HTMLBaseElement', 'HTMLBRElement', 'HTMLHtmlElement',
-	'HTMLTextAreaElement', 'HTMLBaseFontElement', 'HTMLCanvasElement', 'HTMLFrameElement',
-	'HTMLElement', 'HTMLSelectElement', 'HTMLIsIndexElement', 'HTMLDocument', 'HTMLCollection',
-	'HTMLDirectoryElement', 'HTMLScriptElement', 'HTMLOptGroupElement', 'HTMLKeygenElement',
-	'HTMLAreaElement', 'HTMLFrameSetElement', 'HTMLIFrameElement', 'HTMLPreElement', 'HTMLOListElement',
-	'HTMLFormElement', 'HTMLMediaElement', 'HTMLHeadingElement', 'HTMLMeterElement',
-	'HTMLAppletElement', 'HTMLMarqueeElement', 'HTMLTableSectionElement', 'HTMLTableCellElement',
-	'HTMLMapElement', 'HTMLLIElement', 'HTMLParagraphElement', 'HTMLBlockquoteElement',
-	'HTMLUListElement', 'HTMLEmbedElement', 'HTMLBodyElement', 'HTMLAudioElement',
-	'HTMLTableCaptionElement', 'HTMLMenuElement', 'HTMLImageElement', 'HTMLLabelElement',
-	'HTMLAnchorElement', 'HTMLLinkElement'];*/
-
-try {
-	HTMLDivElement.prototype.__dispatchEvent = HTMLDivElement.prototype.dispatchEvent;
-	HTMLDivElement.prototype.dispatchEvent = function(event) {
+	dispatchEvent: function(event) {
 		if(Core.Event.hasInstance(event))
 			return event.dispatchEvent(this);
-		else
+		else if(this.__dispatchEvent != undefined)
 			return this.__dispatchEvent(event);
-	};
-} catch(e) {}
+	},
 
-try {
-	HTMLElement.prototype.__dispatchEvent = HTMLElement.prototype.dispatchEvent;
-	HTMLElement.prototype.dispatchEvent = function(event) {
-		if(Core.Event.hasInstance(event))
-			return event.dispatchEvent(this);
-		else
-			return this.__dispatchEvent(event);
-	};
-} catch(e) {}
-
-try {
-	SVGElement.prototype.__dispatchEvent = SVGElement.prototype.dispatchEvent;
-	SVGElement.prototype.dispatchEvent = function(event) {
-		if(Core.Event.hasInstance(event))
-			return event.dispatchEvent(this);
-		else
-			return this.__dispatchEvent(event);
-	};
-} catch(e) {}
-
-try {
-	HTMLDivElement.prototype.__addEventListener = HTMLDivElement.prototype.addEventListener;
-	HTMLDivElement.prototype.addEventListener = function(eventName, callback, capture) {
+	addEventListener: function(eventName, callback, capture) {
 		if(Core.Event.getType(eventName) != undefined) {
 			if(capture) {
 				if(this.__extendCaptureEvents == undefined)
@@ -161,110 +119,149 @@ try {
 		}
 		else if(this.__addEventListener != undefined)
 			return this.__addEventListener(eventName, callback, capture);
-	};
-} catch(e) {}
+		else if(this.attachEvent != undefined) {
+			var wrapper = function() {
+				// correct IE < 9 event diff
+				if(arguments.length == 1) {
+					var newEvent = {};
+					for(var key in arguments[0])
+						newEvent[key] = arguments[0][key];
+					newEvent.preventDefault = function() {
+						this.defaultPrevented = true;
+						this.returnValue= false;
+					};
+					newEvent.stopPropagation = function() {
+						this.cancelBubble = true;
+					};
+					newEvent.target = newEvent.srcElement;
+					var res = arguments.callee.callback.call(arguments.callee.scope, newEvent);
+					arguments[0].returnValue = newEvent.returnValue;
+					arguments[0].cancelBubble = newEvent.cancelBubble;
+					return res;
+				}
+				else
+					return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+			}
+			wrapper.scope = this;
+			wrapper.callback = callback;
+			wrapper.eventName = eventName;
+			wrapper.capture = capture;
+			this.attachEvent('on'+eventName, wrapper);
+			if(this.__ieevents == undefined)
+				this.__ieevents = [];
+			this.__ieevents.push(wrapper);
+		}
+	},
 
-try {
+	removeEventListener: function(eventName, callback, capture) {
+		if(Core.Event.getType(eventName) != undefined) {
+			if(capture) {
+				if(this.__extendCaptureEvents != undefined) {
+					for(var i = 0; i < this.__extendCaptureEvents[eventName].length; i++) {
+						if(this.__extendCaptureEvents[eventName][i] == callback) {
+							this.__extendCaptureEvents[eventName].splice(i, 1);
+							break;
+						}
+					}
+				}
+			}
+			else {
+				if(this.__extendEvents != undefined) {
+					for(var i = 0; i < this.__extendEvents[eventName].length; i++) {
+						if(this.__extendEvents[eventName][i] == callback) {
+							this.__extendEvents[eventName].splice(i, 1);
+							break;
+						}
+					}
+				}
+			}
+		}
+		else if(this.__removeEventListener != undefined)
+			return this.__removeEventListener(eventName, callback, capture);
+		else if(this.detachEvent != undefined) {
+			for(var i = 0; i < this.__ieevents.length; i++) {
+				var wrapper = this.__ieevents[i];
+				if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
+					if((callback != undefined) && (wrapper.callback != callback))
+						continue;
+					this.detachEvent(wrapper.eventName, wrapper);
+					this.__ieevents.splice(i, 1);
+					i--;
+				}
+			}
+		}
+	},
+
+	createEvent: function(eventName) {
+		var type = Core.Event.getEvent(eventName);
+		if(type != undefined)
+			return new type();
+		else if(document.__createEvent != undefined)
+			return document.__createEvent.call(document, eventName);
+	},
+
+	createElement: function(elementName) {
+		var element = document.__createElement.call(document, elementName);
+		if(element.dispatchEvent != Core.Event.dispatchEvent) {
+			element.__dispatchEvent = element.dispatchEvent;
+			element.dispatchEvent = Core.Event.dispatchEvent;
+		}
+		if(element.addEventListener != Core.Event.addEventListener) {
+			element.__addEventListener = element.addEventListener;
+			element.addEventListener = Core.Event.addEventListener;
+		}
+		if(element.removeEventListener != Core.Event.removeEventListener) {
+			element.__removeEventListener = element.removeEventListener;
+			element.removeEventListener = Core.Event.removeEventListener;
+		}
+		return element;
+	},
+
+	cleanTarget: function(target) {
+		var current = target;
+		while(current != undefined) {
+			if('dispatchEvent' in current)
+				return current;
+			current = current.offsetParent;
+		}
+		return window;
+	}
+});
+
+if('HTMLElement' in window) {
+	HTMLElement.prototype.__dispatchEvent = HTMLElement.prototype.dispatchEvent;
+	HTMLElement.prototype.dispatchEvent = Core.Event.dispatchEvent;
 	HTMLElement.prototype.__addEventListener = HTMLElement.prototype.addEventListener;
-	HTMLElement.prototype.addEventListener = function(eventName, callback, capture) {
-		if(Core.Event.getType(eventName) != undefined) {
-			if(capture) {
-				if(this.__extendCaptureEvents == undefined)
-					this.__extendCaptureEvents = {};
-				if(this.__extendCaptureEvents[eventName] == undefined)
-					this.__extendCaptureEvents[eventName] = [];
-				this.__extendCaptureEvents[eventName].push(callback);
-			}
-			else {
-				if(this.__extendEvents == undefined)
-					this.__extendEvents = {};
-				if(this.__extendEvents[eventName] == undefined)
-					this.__extendEvents[eventName] = [];
-				this.__extendEvents[eventName].push(callback);
-			}
-		}
-		else
-			return this.__addEventListener(eventName, callback, capture);
-	};
-} catch(e) {}
-
-try {
-	HTMLDivElement.prototype.__removeEventListener = HTMLDivElement.prototype.removeEventListener;
-	HTMLDivElement.prototype.removeEventListener = function(eventName, callback, capture) {
-		if(Core.Event.getType(eventName) != undefined) {
-			if(capture) {
-				if(this.__extendCaptureEvents != undefined) {
-					for(var i = 0; i < this.__extendCaptureEvents[eventName].length; i++) {
-						if(this.__extendCaptureEvents[eventName][i] == callback) {
-							this.__extendCaptureEvents[eventName].splice(i, 1);
-							break;
-						}
-					}
-				}
-			}
-			else {
-				if(this.__extendEvents != undefined) {
-					for(var i = 0; i < this.__extendEvents[eventName].length; i++) {
-						if(this.__extendEvents[eventName][i] == callback) {
-							this.__extendEvents[eventName].splice(i, 1);
-							break;
-						}
-					}
-				}
-			}
-		}
-		else
-			return this.__removeEventListener(eventName, callback, capture);
-	};
-} catch(e) {}
-
-try {
+	HTMLElement.prototype.addEventListener = Core.Event.addEventListener;
 	HTMLElement.prototype.__removeEventListener = HTMLElement.prototype.removeEventListener;
-	HTMLElement.prototype.removeEventListener = function(eventName, callback, capture) {
-		if(Core.Event.getType(eventName) != undefined) {
-			if(capture) {
-				if(this.__extendCaptureEvents != undefined) {
-					for(var i = 0; i < this.__extendCaptureEvents[eventName].length; i++) {
-						if(this.__extendCaptureEvents[eventName][i] == callback) {
-							this.__extendCaptureEvents[eventName].splice(i, 1);
-							break;
-						}
-					}
-				}
-			}
-			else {
-				if(this.__extendEvents != undefined) {
-					for(var i = 0; i < this.__extendEvents[eventName].length; i++) {
-						if(this.__extendEvents[eventName][i] == callback) {
-							this.__extendEvents[eventName].splice(i, 1);
-							break;
-						}
-					}
-				}
-			}
-		}
-		else
-			return this.__removeEventListener(eventName, callback, capture);
-	};
-} catch(e) {}
+	HTMLElement.prototype.removeEventListener = Core.Event.removeEventListener;
+}
+if('SVGElement' in window) {
+	SVGElement.prototype.__dispatchEvent = SVGElement.prototype.dispatchEvent;
+	SVGElement.prototype.dispatchEvent = Core.Event.dispatchEvent;
+	SVGElement.prototype.__addEventListener = HTMLElement.prototype.addEventListener;
+	SVGElement.prototype.addEventListener = Core.Event.addEventListener;
+	SVGElement.prototype.__removeEventListener = HTMLElement.prototype.removeEventListener;
+	SVGElement.prototype.removeEventListener = Core.Event.removeEventListener;
+}
+
+window.__dispatchEvent = window.dispatchEvent;
+window.dispatchEvent = Core.Event.dispatchEvent;
+window.__addEventListener = window.addEventListener;
+window.addEventListener = Core.Event.addEventListener;
+window.__removeEventListener = window.removeEventListener;
+window.removeEventListener = Core.Event.removeEventListener;
 
 if('HTMLDocument' in window) {
 	HTMLDocument.prototype.__createEvent = HTMLDocument.prototype.createEvent;
-	HTMLDocument.prototype.createEvent = function(eventName) {
-		var type = Core.Event.getEvent(eventName);
-		if(type != undefined)
-			return new type();
-		else
-			return this.__createEvent(eventName);
-	};
+	HTMLDocument.prototype.createEvent = Core.Event.createEvent;
+	HTMLDocument.prototype.__createElement = HTMLDocument.prototype.createElement;
+	HTMLDocument.prototype.createElement = Core.Event.createElement;
 }
 else {
 	document.__createEvent = document.createEvent;
-	document.createEvent = function(eventName) {
-		var type = Core.Event.getEvent(eventName);
-		if(type != undefined)
-			return new type();
-		else
-			return this.__createEvent(eventName);
-	};
+	document.createEvent = Core.Event.createEvent;
+	document.__createElement = document.createElement;
+	document.createElement = Core.Event.createElement;
 }
+
