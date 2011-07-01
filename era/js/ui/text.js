@@ -16,6 +16,7 @@ Ui.Element.extend('Ui.Text', {
 	fontFamily: 'Sans-serif',
 	fontWeight: 'normal',
 	color: 'black',
+	selectable: false,
 
 	constructor: function(config) {
 		if(config.text != undefined)
@@ -91,9 +92,47 @@ Ui.Element.extend('Ui.Text', {
 		return this.color;
 	},
 
+	getSelectable: function() {
+		return this.selectable;
+	},
+
+	setSelectable: function(selectable) {
+		this.selectable = selectable;
+
+		if(selectable) {
+			if(navigator.isWebkit)
+				this.textDrawing.style.removeProperty('-webkit-user-select');
+			else if(navigator.isGecko)
+				this.textDrawing.style.removeProperty('-moz-user-select');
+			else if(navigator.isIE)
+				this.disconnect(this.textDrawing, 'selectstart', this.onSelectStart);
+			else if(navigator.isOpera)
+				this.textDrawing.onmousedown = undefined;
+			if('removeProperty' in this.textDrawing)
+				this.textDrawing.style.removeProperty('pointerEvents');
+			else
+				this.textDrawing.style.pointerEvents = '';
+		}
+		else {
+			if(navigator.isWebkit)
+				this.textDrawing.style.webkitUserSelect = 'none';
+			else if(navigator.isGecko)
+				this.textDrawing.style.MozUserSelect = 'none';
+			else if(navigator.isIE)
+				this.connect(this.textDrawing, 'selectstart', this.onSelectStart);
+			else if(navigator.isOpera)
+				this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
+			this.textDrawing.style.pointerEvents = 'none';
+		}
+	},
+
 	//
 	// Private
 	//
+
+	onSelectStart: function(event) {
+		event.preventDefault();
+	},
 
 	addWord: function(word) {
 		var wordSize = Ui.Label.measureText(word, this.fontSize, this.fontFamily, this.fontWeight).width;

@@ -10,8 +10,25 @@
 
 var app = new Ui.App();
 
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var button = new Ui.CheckBox({ text: 'selectable' });
+toolbar.append(button);
+
+app.connect(button, 'toggle', function() {
+	text.setSelectable(true);
+});
+
+app.connect(button, 'untoggle', function() {
+	text.setSelectable(false);
+});
+
 var lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'stretch', margin: 100 });
-app.setContent(lbox);
+vbox.append(lbox, true);
 
 lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
 
