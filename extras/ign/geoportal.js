@@ -1,54 +1,57 @@
-document.write("<script type='text/javascript' src='http://api.ign.fr/geoportail/api?v=1.2&key=1244054277973706333&'></script>");
 
-Ui.Element.extend('Extras.Ui.IGN.Geoportal', {
+Ui.Fixed.extend('Extras.Ui.IGN.Geoportal', {
 	latlng: undefined,
 	map: undefined,
 	zoom: 10,
+	waitGeoportal: undefined,
+	viewer: undefined,
 
 	constructor: function(config) {
-        this.waitForGeoportal();
+		this.waitForGeoportal();
 	},
 
     // Private
     completeInitialization: function() {
-        viewer = new Geoportal.Viewer.Default(           // Default viewer (one could use Geoportal.Viewer.Standard)
-            this.getDrawing(),
-            OpenLayers.Util.extend({ mode:'normal',
+		// Default viewer (one could use Geoportal.Viewer.Standard)
+		this.viewer = new Geoportal.Viewer.Default(
+			this.getDrawing(),
+			OpenLayers.Util.extend({ mode:'normal',
                                      territory:'FXX',
                                      projection:'IGNF:GEOPORTALFXX',
                                      displayProjection:'IGNF:RGF93G',
-
                                      nameInstance:'viewer'},
                                    gGEOPORTALRIGHTSMANAGEMENT          // API configuration with regard to the API key
-                                  ));
+			)
+		);    
+        this.viewer.addGeoportalLayers(
+			[ 'ORTHOIMAGERY.ORTHOPHOTOS:WMSC',
+			  'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC'],
+            {}
+		);
+		this.viewer.getMap().setCenter(this.viewer.viewerOptions.defaultCenter, this.viewer.viewerOptions.defaultZoom);
 
-        if (!viewer) {
-            alert('failed loading viewer');
-            return;
-        }
-    
-        viewer.addGeoportalLayers(
-            [ 'ORTHOIMAGERY.ORTHOPHOTOS:WMSC',
-              'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC'],
-            {});
-    
-        viewer.getMap().setCenter(viewer.viewerOptions.defaultCenter,viewer.viewerOptions.defaultZoom);
+		this.connect(this, 'load', this.updateSize);
+		this.connect(this, 'resize', this.updateSize);
+		this.connect(this, 'visible', this.updateSize);
+
+		console.log(this.viewer);
     },
 
     waitForGeoportal: function() {
-        if (__Geoportal$timer!=null) {
-            window.clearTimeout(__Geoportal$timer);
-            __Geoportal$timer= null;
-        }
-    
-        if (typeof(OpenLayers)=='undefined'              ||
-            typeof(Geoportal)=='undefined'               ||
-            typeof(Geoportal.Viewer)=='undefined'        ||
-            typeof(Geoportal.Viewer.Default)=='undefined') {
-            __Geoportal$timer= window.setTimeout(this.waitForGeoportal(), 300);
-            return;
-        }
-
-        this.completeInitialization();
+		if((typeof(OpenLayers) == 'undefined') || (typeof(Geoportal) == 'undefined') ||
+			(typeof(Geoportal.Viewer) == 'undefined') || (typeof(Geoportal.Viewer.Default) == 'undefined'))
+			this.waitGeoportal = new Core.DelayedTask({	delay: 0.3, scope: this, callback: this.waitForGeoportal });
+		else
+			this.completeInitialization();
     },
+
+	updateSize: function() {
+		this.viewer.render(this.getDrawing());
+	}
+}, {}, {
+	Key: '1244054277973706333',
+
+	constructor: function() {
+		document.write("<script type='text/javascript' src='http://api.ign.fr/geoportail/api?v=1.2&key="+Extras.Ui.IGN.Geoportal.Key+"&'></script>");
+	}
 });

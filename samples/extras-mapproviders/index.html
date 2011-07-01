@@ -9,22 +9,18 @@
 
 	<script type="text/javascript">
 
-console.log('I was here');
+Extras.Ui.IGN.Geoportal.Key = '1244054277973706333';
 
 var app = new Ui.App();
 
 var map = [ 
 	new Extras.Ui.Google.Map({
-		width: 500, height: 500, horizontalAlign: 'center', verticalAlign: 'center',
 		latitude: 45.741616, longitude: 4.468981, zoom: 1, maptype: google.maps.MapTypeId.SATELLITE,
 		panControl: false, zoomControl: false, mapTypeControl: false,  streetViewControl: false,
 	}), 
 	new Extras.Ui.IGN.Geoportal({
-		width: 500, height: 500, horizontalAlign: 'center', verticalAlign: 'center', 
 		latitude: 48.741616, longitude: 5.468981, zoom: 5, maptype: 'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC'
 	}), ];
-
-console.log('I was here 2 ');
 
 var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
 var transbox = new Ui.TransitionBox({ transition: 'flip', orientation: 'horizontal' });
@@ -61,11 +57,11 @@ app.connect(buttontrans, 'press', function() {
 	}
 	transbox.setCurrent(map[current]);
 
-    if (current == 0) {
-	    // Dirty hack to make it work
-	    setTimeout("google.maps.event.trigger(map[current].getMap(), 'resize')", 2000);
-	    console.log('resize triggered');
-    }
+//    if (current == 0) {
+//	    // Dirty hack to make it work
+//	    setTimeout("google.maps.event.trigger(map[current].getMap(), 'resize')", 2000);
+//	    console.log('resize triggered');
+//    }
 });
 
 /*
