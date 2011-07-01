@@ -33,8 +33,6 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal', {
 		this.connect(this, 'load', this.updateSize);
 		this.connect(this, 'resize', this.updateSize);
 		this.connect(this, 'visible', this.updateSize);
-
-		console.log(this.viewer);
     },
 
     waitForGeoportal: function() {
