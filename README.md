@@ -1,10 +1,34 @@
 # Description
 
-Era is a javascript library for webapp development. 
+Era is a JavaScript framework written by Daniel Lacroix at ERASME
+(http://www.erasme.org) in the departement of Rhône.
 
-# Source of the project
+The main features of the framework are :
+
+- Application development is done exclusively in Javascript. No HTML or CSS* needed.
+- Built the ground up with multitouch devices (iPad, Android) in
+  mind. Every application written with the framework will have an the
+  best ergonomy possible across all devices.
+- Massive sue of new browsers properties (drag'n drop, audio, video,
+  animations, ...)
+- Identical behavior from one browser to another. For instance,
+  gradients and rounded corners even under IE 8 et bord arrondis même
+  sous IE 8, event system fully rewritten to work on all platforms.
+- Compatible with Firefox 3.6+, Chrome 6+, Safari 5+, IE8+, Opera 10+, iOs 4+ et Android 2.2+
+- GTK+-like advanced layout managers (hboxes, vboxes, grids, ...).
+- Resize event handling
+- Awesome animation features.
+- Reusable and stylable components withous using CSS
+
+# Project's sources
 
 > git clone git@forge.erasme.org:era
+
+You can generate the documention using JSDoc :
+
+> $ export JSDOCDIR=<path_to_jsdoc-toolkit> 
+> $ cd <path-to-era-repo>
+> $ java -jar $JSDOCDIR/jsrun.jar $JSDOCDIR/app/run.js -c=doc/jsdoc/conf/era.conf
 
 # Licence
 
