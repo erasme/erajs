@@ -22,7 +22,7 @@ Sample = {};
 /**
  * @constant This is a constant declaration which will be displayed in the _global_ section of the jsdoc
  */
-const acceleration = 9.80665;
+var acceleration = 9.80665;
 
 Core.Object.extend('Sample.MyObject',
 /**
@@ -65,7 +65,7 @@ Core.Object.extend('Sample.MyObject',
 	 * This one is a field treated as a function
 	 * @function
 	 */
-	myvar3: Sample.MyObject.myStaticMethod();
+	myvar3: Sample.MyObject.myStaticMethod(),
 
 	//This on will be documented with the property tag
 	documentedInConsctructor: 24,
@@ -152,7 +152,7 @@ Core.Object.extend('Sample.MyObject',
 	 * This is a defacto private method cause it's prefixed by an underscore.
 	 */
 	_nativeJsDocPrivateMethod: function(){
-	}
+	},
 	
 	/** @private This method won't be include in the doc unless we use the option -p at the jsdoc generation.*/
 	singlePrivateMethod: function(){
@@ -165,7 +165,8 @@ Core.Object.extend('Sample.MyObject',
 	},
 
 	andAnotherOnePrivateMethod: function(){
-	}
+	},
+
 	/**#@- meta tag closure*/
 
   	/**
@@ -175,7 +176,7 @@ Core.Object.extend('Sample.MyObject',
 	 */
   	fullName: function() {
     	return this.myvar + this.myvar2;
- 	}.property()
+ 	}
 },
 /**
  * Function override are also part of the object prototype
