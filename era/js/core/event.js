@@ -239,9 +239,9 @@ if('HTMLElement' in window) {
 if('SVGElement' in window) {
 	SVGElement.prototype.__dispatchEvent = SVGElement.prototype.dispatchEvent;
 	SVGElement.prototype.dispatchEvent = Core.Event.dispatchEvent;
-	SVGElement.prototype.__addEventListener = HTMLElement.prototype.addEventListener;
+	SVGElement.prototype.__addEventListener = SVGElement.prototype.addEventListener;
 	SVGElement.prototype.addEventListener = Core.Event.addEventListener;
-	SVGElement.prototype.__removeEventListener = HTMLElement.prototype.removeEventListener;
+	SVGElement.prototype.__removeEventListener = SVGElement.prototype.removeEventListener;
 	SVGElement.prototype.removeEventListener = Core.Event.removeEventListener;
 }
 

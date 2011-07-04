@@ -21,6 +21,8 @@ Ui.LBox.extend('Ui.TransitionBox', {
 		this.connect(this, 'load', this.onTransitionBoxLoad);
 		this.connect(this, 'unload', this.onTransitionBoxUnload);
 		this.addEvents('change');
+
+		this.setClipToBounds(true);
 	},
 
 	setDuration: function(duration) {

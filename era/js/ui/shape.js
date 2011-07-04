@@ -3,6 +3,7 @@ Ui.Element.extend('Ui.Shape', {
 	shapeDrawing: undefined,
 	vmlFill: undefined,
 	svgPath: undefined,
+	svgGradient: undefined,
 
 	fill: 'black',
 	path: undefined,
@@ -30,16 +31,41 @@ Ui.Element.extend('Ui.Shape', {
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = fill;
-			if(navigator.supportSVG) {
+			if(typeof(fill) == 'string')
 				fill = Ui.Color.create(fill);
-				fill = fill.getCssHtml();
-				this.svgPath.style.fill = fill;
+			if(navigator.supportSVG) {
+				if(this.svgGradient != undefined) {
+					this.shapeDrawing.removeChild(this.svgGradient);
+					this.svgGradient = undefined;
+				}
+				if(Ui.Color.hasInstance(fill)) {
+					fill = fill.getCssHtml();
+					this.svgPath.style.fill = fill;
+				}
+				else if(Ui.LinearGradient.hasInstance(fill)) {
+					this.svgGradient = fill.getSVGGradient();
+					var gradId = 'grad'+Core.Util.generateId();
+					this.svgGradient.setAttributeNS(null, 'id', gradId);
+					this.shapeDrawing.insertBefore(this.svgGradient, this.shapeDrawing.firstChild);
+					this.svgPath.style.fill = 'url(#'+gradId+')';
+				}
 			}
 			else if(navigator.supportVML) {
-				fill = Ui.Color.create(fill);
-				fill = fill.getCssHtml();
-				this.vmlFill.type = 'solid';
-				this.vmlFill.color = fill;
+				if(this.vmlFill != undefined) {
+					this.shapeDrawing.removeChild(this.vmlFill);
+					this.vmlFill = undefined;
+				}
+				if(Ui.Color.hasInstance(fill)) {
+					fill = fill.getCssHtml();
+					this.vmlFill = document.createElement('vml:fill');
+					this.vmlFill.type = 'solid';
+					this.vmlFill.color = fill;
+					this.shapeDrawing.appendChild(this.vmlFill);
+				}
+				else if(Ui.LinearGradient.hasInstance(fill)) {
+					this.vmlFill = fill.getVMLFill();
+					this.shapeDrawing.appendChild(this.vmlFill);
+				}
 			}
 		}
 	},
@@ -107,12 +133,27 @@ Ui.Element.extend('Ui.Shape', {
 				y = parser.getCurrent(); parser.next();
 				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
 			}
+			else if(cmd == 'q') {
+				var x1 = x + parser.getCurrent(); parser.next();
+				var y1 = y + parser.getCurrent(); parser.next();
+				x += parser.getCurrent(); parser.next();
+				y += parser.getCurrent(); parser.next();
+				vml += 'qb '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'Q') {
+				var x1 = parser.getCurrent(); parser.next();
+				var y1 = parser.getCurrent(); parser.next();
+				x = parser.getCurrent(); parser.next();
+				y = parser.getCurrent(); parser.next();
+				vml += 'qb '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
 			else if(cmd == 'z')
 				vml += 'x ';
 			else
 				throw('Invalid SVG path');
 		}
 		vml += 'e';
+		console.log(vml);
 		return vml;
 	}
 }, {
@@ -173,8 +214,18 @@ Core.Object.extend('Ui.SvgParser', {
 			while((this.pos < this.path.length) && ((this.path.charAt(this.pos) == ' ') || (this.path.charAt(this.pos) == ',') || (this.path.charAt(this.pos) == ';')))
 				this.pos++;
 			this.current = '';
-			while((this.pos < this.path.length) && (this.path.charAt(this.pos) != ' ') && (this.path.charAt(this.pos) != ',') && (this.path.charAt(this.pos) != ';'))
-				this.current += this.path.charAt(this.pos++);
+			var lastIsText = undefined;
+			while((this.pos < this.path.length) && (this.path.charAt(this.pos) != ' ') && (this.path.charAt(this.pos) != ',') && (this.path.charAt(this.pos) != ';')) {
+				var c = this.path.charAt(this.pos);
+				var isText = ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
+				if((lastIsText == undefined) || (lastIsText == isText)) {
+					lastIsText = isText;
+					this.current += c;
+					this.pos++;
+				}
+				else
+					break;
+			}
 			var value = new Number(this.current);
 			this.value = !isNaN(value);
 			if(this.value)
