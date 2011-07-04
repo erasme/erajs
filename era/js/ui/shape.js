@@ -153,7 +153,6 @@ Ui.Element.extend('Ui.Shape', {
 				throw('Invalid SVG path');
 		}
 		vml += 'e';
-		console.log(vml);
 		return vml;
 	}
 }, {

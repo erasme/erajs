@@ -89,7 +89,7 @@ Ui.Container.extend('Ui.Slider', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -158,7 +158,7 @@ Ui.Container.extend('Ui.Slider', {
 	}
 });
 
-
+/*
 Ui.SVGElement.extend('Ui.SliderContentDrawing', {
 	contentDrawing: undefined,
 
@@ -229,6 +229,79 @@ Ui.SVGElement.extend('Ui.SliderContentDrawing', {
 		this.shadow.setAttributeNS(null, 'd', this.genPath(width, height, this.radius));
 		this.background.setAttributeNS(null, 'transform', 'translate(1,1)');
 		this.background.setAttributeNS(null, 'd', this.genPath(width-2, height-2, this.radius-1.4));
+	}
+});
+*/
+
+Ui.LBox.extend('Ui.SliderContentDrawing', {
+	contentDrawing: undefined,
+
+	svgGradient: undefined,
+	shadow: undefined,
+	background: undefined,
+
+	radius: 8,
+	fill: 'black',
+
+	constructor: function(config) {
+		this.shadow = new Ui.Shape();
+		this.append(this.shadow);
+
+		this.background = new Ui.Shape({ margin: 1 });
+		this.append(this.background);
+
+		if(config.radius != undefined)
+			this.setRadius(config.radius);
+		if(config.fill != undefined)
+			this.setFill(config.fill);
+	},
+
+	setRadius: function(radius) {
+		if(this.radius != radius) {
+			this.radius = radius;
+		}
+	},
+
+	setFill: function(fill) {
+		if(this.fill != fill) {
+			this.fill = Ui.Color.create(fill);
+//			if(this.svgGradient != undefined)
+//				this.contentDrawing.removeChild(this.svgGradient);
+
+			var yuv = this.fill.getYuv();
+			var gradient = new Ui.LinearGradient({ stops: [
+				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
+				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
+			] });
+//			this.svgGradient = gradient.getSVGGradient();
+//			var gradId = 'grad'+Core.Util.generateId();
+//			this.svgGradient.setAttributeNS(null, 'id', gradId);
+//			this.contentDrawing.insertBefore(this.svgGradient, this.contentDrawing.firstChild);
+			this.background.setFill(gradient);
+//			this.background.style.fill = 'url(#'+gradId+')';
+//			this.shadow.style.fill = (new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v })).getCssHtml();
+			this.shadow.setFill((new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v })).getCssHtml());
+		}
+	},
+
+	//
+	// Private
+	//
+
+	genPath: function(width, height, radius) {
+		return 'M'+radius+',0 L'+(width-radius)+',0 Q'+width+',0 '+width+','+radius+'  L'+width+','+(height*0.66)+' L'+(width/2)+','+height+' L0,'+(height*0.66)+' L0,'+radius+' Q0,0 '+radius+',0 z';
+//		return 'M'+radius+',0 L'+(width-radius)+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+'  L'+width+','+(height*0.66)+' L'+(width/2)+','+height+' L0,'+(height*0.66)+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
+	}
+}, {
+	arrangeCore: function(width, height) {
+		Ui.SliderContentDrawing.base.arrangeCore.call(this, width, height);
+
+		this.shadow.setPath(this.genPath(width, height, this.radius));
+		this.background.setPath(this.genPath(width-2, height-2, this.radius-1.4));
+
+//		this.shadow.setAttributeNS(null, 'd', this.genPath(width, height, this.radius));
+//		this.background.setAttributeNS(null, 'transform', 'translate(1,1)');
+//		this.background.setAttributeNS(null, 'd', this.genPath(width-2, height-2, this.radius-1.4));
 	}
 });
 

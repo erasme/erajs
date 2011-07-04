@@ -229,7 +229,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -237,7 +237,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -324,11 +324,11 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		gradient = new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 		gradientDown = new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) }
 		] });
 		if(yuv.y < 0.4) {
 			contentColor = new Ui.Color({ y: yuv.y + 0.60, u: yuv.u, v: yuv.v });
@@ -366,12 +366,6 @@ Ui.LBox.extend('Ui.TextButtonField', {
 			this.icon2.setFill(contentColor);
 		if(this.text2 != undefined)
 			this.text2.setColor(contentColor);
-
-//		var radius = this.getStyleProperty('radius');
-//		this.lightShadow.setRadius(radius);
-//		this.darkShadow.setRadius(radius);
-//		this.rect2.setRadius(radius);
-//		this.rect1.setRadius(radius - 1);
 
 		this.updateSizes();
 	},

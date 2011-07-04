@@ -28,6 +28,9 @@ while(($file = readdir($handle)) !== false) {
 }
 closedir($handle);
 
+header('Cache-Control: no-cache, must-revalidate');
+header('Content-type: application/x-javascript');
+
 echo "{ \"samples\": [ $res ] }";
 
 

@@ -171,7 +171,130 @@ Ui.Container.extend('Ui.Popup', {
 	}
 });
 
+Ui.Fixed.extend('Ui.PopupBackground', {
+	darkShadow: undefined,
+	lightShadow: undefined,
+	background: undefined,
 
+	radius: 8,
+	fill: 'black',
+	// [left|right|top|bottom]
+	arrowBorder: 'left',
+	arrowOffset: 30,
+	arrowSize: 10,
+
+	constructor: function(config) {
+
+		this.darkShadow = new Ui.Shape({ fill: '#010002', opacity: 0.8 });
+		this.append(this.darkShadow);
+
+		this.lightShadow = new Ui.Shape({ fill: '#5f625b' });
+		this.append(this.lightShadow);
+
+		var yuv = (new Ui.Color({ r: 0.50, g: 0.50, b: 0.50 })).getYuv();
+		var gradient = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: new Ui.Color({ y: 0.25, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: 0.16, u: yuv.u, v: yuv.v }) }
+		] });
+
+		this.background = new Ui.Shape({ fill: gradient });
+		this.append(this.background);
+
+		if(config.radius != undefined)
+			this.setRadius(config.radius);
+		if(config.fill != undefined)
+			this.setFill(config.fill);
+		if(config.arrowBorder != undefined)
+			this.setArrowBorder(config.arrowBorder);
+
+		this.connect(this, 'resize', this.onResize);
+	},
+
+	setArrowBorder: function(arrowBorder) {
+		if(this.arrowBorder != arrowBorder) {
+			this.arrowBorder = arrowBorder;
+			this.invalidateArrange();
+		}
+	},
+
+	setArrowOffset: function(offset) {
+		if(this.arrowOffset != offset) {
+			this.arrowOffset = offset;
+			this.invalidateArrange();
+		}
+	},
+
+	setRadius: function(radius) {
+		if(this.radius != radius) {
+			this.radius = radius;
+			this.invalidateArrange();
+		}
+	},
+
+	setFill: function(fill) {
+		if(this.fill != fill) {
+			this.fill = Ui.Color.create(fill);
+			var yuv = this.fill.getYuv();
+			var gradient = new Ui.LinearGradient({ stops: [
+				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
+				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
+			] });
+			this.background.setFill(gradient);
+			this.darkShadow.setFill(new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v }));
+			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.3, u: yuv.u, v: yuv.v }));
+		}
+	},
+
+	//
+	// Private
+	//
+
+	genPath: function(width, height, radius, arrowBorder, arrowSize, arrowOffset) {
+		if(arrowBorder == 'none') {
+			var v1 = width - radius;
+			var v2 = height - radius;
+			return 'M'+radius+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
+//			return 'M'+radius+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+radius+','+height+' A'+radius+','+radius+' 0 0,1 0,'+v2+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
+		}
+		else if(arrowBorder == 'left') {
+			var v1 = width - this.radius;
+			var v2 = height - this.radius;
+			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+(radius+arrowSize)+','+height+' Q'+arrowSize+','+height+' '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' Q'+arrowSize+',0 '+(radius+arrowSize)+',0 z';
+//			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+(radius+arrowSize)+','+height+' A'+radius+','+radius+' 0 0,1 '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' A'+radius+','+radius+' 0 0,1 '+(radius+arrowSize)+',0 z';
+		}
+	},
+
+	onResize: function(popup, width, height) {
+		this.darkShadow.setWidth(width);
+		this.darkShadow.setHeight(height);
+		this.darkShadow.setPath(this.genPath(width, height, this.radius, this.arrowBorder, this.arrowSize, this.arrowOffset));
+
+		if(this.arrowBorder == 'none') {
+			this.lightShadow.setWidth(width - 2);
+			this.lightShadow.setHeight(height - 2);
+			this.setPosition(this.lightShadow, 1, 1);
+			this.lightShadow.setPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder));
+
+			this.background.setWidth(width - 4);
+			this.background.setHeight(height - 4);
+			this.setPosition(this.background, 2, 2);
+			this.background.setPath(this.genPath(width-4, height-4, this.radius-1.4, this.arrowBorder));
+		}
+		else {
+			this.lightShadow.setWidth(width - 2);
+			this.lightShadow.setHeight(height - 2);
+			this.setPosition(this.lightShadow, 1.6, 1);
+			this.lightShadow.setPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
+			
+			this.background.setWidth(width - 4.7);
+			this.background.setHeight(height - 3.7);
+			this.setPosition(this.background, 3.2, 2);
+			this.background.setPath(this.genPath(width-4.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
+		}
+	}
+});
+
+/*
 Ui.SVGElement.extend('Ui.PopupBackground', {
 	popupDrawing: undefined,
 
@@ -306,5 +429,5 @@ Ui.SVGElement.extend('Ui.PopupBackground', {
 		}
 	}
 });
-
+*/
 

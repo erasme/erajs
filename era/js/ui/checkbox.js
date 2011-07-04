@@ -143,7 +143,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
 			{ offset: 0.05, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
 			{ offset: 0.9, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -153,7 +153,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
 			{ offset: 0.1, color: new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v }) },
 			{ offset: 0.9, color: new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 

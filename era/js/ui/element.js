@@ -383,17 +383,17 @@ Core.Object.extend('Ui.Element',
 
 			this.layoutX = x;
 			this.layoutY = y;
-			this.layoutWidth = width;
-			this.layoutHeight = height;
+			this.layoutWidth = Math.max(width, 0);
+			this.layoutHeight = Math.max(height, 0);
 
-//			console.log(this+'.arrange '+x+','+y+' ('+width+'x'+height+')');
+//			console.log(this+'.arrange '+x+','+y+' ('+this.layoutWidth+'x'+this.layoutHeight+')');
 
 			this.drawing.style.left = this.layoutX+'px';
 			this.drawing.style.top = this.layoutY+'px';
 			if(this.transform != undefined)
 				this.updateTransform();
-			this.drawing.style.width = width+'px';
-			this.drawing.style.height = height+'px';
+			this.drawing.style.width = this.layoutWidth+'px';
+			this.drawing.style.height = this.layoutHeight+'px';
 
 			if(this.clipToBounds) {
 				this.clipX = 0;
@@ -403,7 +403,7 @@ Core.Object.extend('Ui.Element',
 				this.updateClipRectangle();
 			}
 
-			this.arrangeCore(width, height);
+			this.arrangeCore(this.layoutWidth, this.layoutHeight);
 		}
 		this.arrangeValid = true;
 	},
@@ -1140,7 +1140,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	updateTransform: function() {
-		if(this.transform != undefined) {
+		if((this.transform != undefined) && this.getIsLoaded()) {
 //			console.log('updateTransform');
 
 			var matrix = new Ui.Matrix();
@@ -1161,8 +1161,8 @@ Core.Object.extend('Ui.Element',
 			matrix.translate(-x, -y);
 
 			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
-				this.drawing.style.left = Math.round(this.layoutX + matrix.getE())+'px';
-				this.drawing.style.top = Math.round(this.layoutY + matrix.getF())+'px';
+				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
+				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
 			}
 			else if(navigator.isIE) {
 				this.drawing.style.msTransform = matrix.toString();

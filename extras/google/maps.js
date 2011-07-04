@@ -1,4 +1,3 @@
-document.write("<script type='text/javascript' src='http://maps.google.com/maps/api/js?v=3.5&sensor=false'></script>"); // v=3 ?
 
 Ui.Fixed.extend('Extras.Ui.Google.Map', {
 	map: undefined,
@@ -100,6 +99,10 @@ Ui.Fixed.extend('Extras.Ui.Google.Map', {
         var center = this.getMap().getCenter();
 		google.maps.event.trigger(this.getMap(), 'resize');
         this.getMap().setCenter(center);
+	}
+}, {}, {
+	constructor: function() {
+		document.write("<script type='text/javascript' src='http://maps.google.com/maps/api/js?v=3.5&sensor=false'></script>"); // v=3 ?
 	}
 });
 
