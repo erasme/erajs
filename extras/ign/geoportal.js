@@ -9,9 +9,10 @@
 Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
                 /** @lends Extras.Ui.IGN.Geoportal# */	
 {
-    latitude: undefined,
-    longitude: undefined,
-	map: undefined,
+undefined
+    latitude: 45.750404,
+    longitude: 4.426678,
+	map: 'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC',
 	zoom: 10,
 	waitGeoportal: undefined,
 	viewer: undefined,
@@ -34,12 +35,13 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
      * application. You need to define {@link Extras.Ui.IGN.Geoportal.Key} before
      * creating an instance of this class.
      * @extends Ui.Fixed
+     * @param {Object} config Configuration object, see fields breakout below
      * @param {Number} config.latitude Latitude of initial map center
      * @param {Number} config.longitude Longitude of initial map center
      * @param {Number} config.zoom Initial zoom level for map (0 to 20)
-     * @param {Array} config.maptype Array of strings containing inituial layers
+     * @param {Array} config.maptype Array of strings containing initial layers
      * (see IGN <a href="http://api.ign.fr/geoportail/api/doc/fr/webmaster/layers.html">documentation</a> 
-     * for available layers (also depends on your IGN contract)
+     * for available layers, also depends on your IGN contract).
      */
 	constructor: function(config) {
 		if ('latitude' in config)
@@ -47,7 +49,7 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
 		if ('longitude' in config)
             this.longitude = config.longitude;
 		if ('zoom' in config)
-            this.zoom = config.zoom;
+            this.zoom = Math.max(20,Math.min(0,config.zoom));
         if ('maptype' in config) 
             this.maptype = config.maptype;
 
@@ -76,7 +78,6 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
 		this.viewer.getMap().setCenterAtLonLat(longitude, latitude);
 	},
 
-    
 	/**
 	 * @description Get the current zoom level.
      * @returns {Number} Current map zoom level.
@@ -87,6 +88,7 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
 
 	setZoom: function(zoom) {
         var ll = this.getLatLng();
+        zoom = Math.max(20,Math.min(0,zoom));
 		this.viewer.getMap().setCenterAtLonLat(ll[1], ll[0], zoom);
 	},
 
@@ -120,11 +122,6 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
                                    gGEOPORTALRIGHTSMANAGEMENT          // API configuration with regard to the API key
 			)
 		);
-
-        /*
-			[ 'ORTHOIMAGERY.ORTHOPHOTOS:WMSC',
-			'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC'],
-        */
 
         if (this.maptype instanceof Array)
             this.viewer.addGeoportalLayers(this.maptype, {});
