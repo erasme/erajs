@@ -29,8 +29,6 @@ Ui.LBox.extend('Ui.App', {
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
 
-//		this.setFocusable(true);
-
 		this.contentBox = new Ui.LBox();
 		this.append(this.contentBox);
 
@@ -39,15 +37,15 @@ Ui.LBox.extend('Ui.App', {
 
 //		this.getDrawing().style.position = 'fixed';
 
-		document.documentElement.style.padding = '0px';
-		document.documentElement.style.margin = '0px';
-		document.documentElement.style.border = '0px solid black';
-		document.documentElement.style.overflow = 'hidden';
-		document.documentElement.style.width = '100%';
-		document.documentElement.style.height = '100%';
+//		document.documentElement.style.padding = '0px';
+//		document.documentElement.style.margin = '0px';
+//		document.documentElement.style.border = '0px solid black';
+//		document.documentElement.style.overflow = 'hidden';
+//		document.documentElement.style.width = '100%';
+//		document.documentElement.style.height = '100%';
 
-		if(navigator.supportSVG)
-			this.svgRoot = document.createElementNS(svgNS, 'svg');
+//		if(navigator.supportSVG)
+//			this.svgRoot = document.createElementNS(svgNS, 'svg');
 
 		this.setTransformOrigin(0, 0);
 
@@ -380,13 +378,13 @@ Ui.LBox.extend('Ui.App', {
 		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
 
 		// update arrange
-		while(this.layoutList != undefined) {
-			var next = this.layoutList.layoutNext;
-			this.layoutList.layoutValid = true;
-			this.layoutList.layoutNext = undefined;
-			this.layoutList.updateLayout();
-			this.layoutList = next;
-		}
+//		while(this.layoutList != undefined) {
+//			var next = this.layoutList.layoutNext;
+//			this.layoutList.layoutValid = true;
+//			this.layoutList.layoutNext = undefined;
+//			this.layoutList.updateLayout();
+//			this.layoutList = next;
+//		}
 
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
@@ -399,11 +397,28 @@ Ui.LBox.extend('Ui.App', {
 
 	setContent: function(content) {
 		if(this.content != content) {
+			document.documentElement.style.padding = '0px';
+			document.documentElement.style.margin = '0px';
+			document.documentElement.style.border = '0px solid black';
+			document.documentElement.style.overflow = 'hidden';
+			document.documentElement.style.width = '100%';
+			document.documentElement.style.height = '100%';
+
 			if(this.content != undefined)
 				this.contentBox.remove(this.content);
 			if(content != undefined)
 				this.contentBox.append(content);
 			this.content = content;
+
+			if((this.content != undefined) && this.ready) {
+				document.body.style.padding = '0px';
+				document.body.style.margin = '0px';
+				document.body.style.border = '0px solid black';
+				document.body.style.overflow = 'hidden';
+				document.body.style.width = '100%';
+				document.body.style.height = '100%';
+				document.body.appendChild(this.getDrawing());
+			}
 		}
 	},
 
@@ -457,12 +472,16 @@ Ui.LBox.extend('Ui.App', {
 				this.htmlRoot = document.createElement('body');
 				document.body = this.htmlRoot;
 			}
-			document.body.style.padding = '0px';
-			document.body.style.margin = '0px';
-			document.body.style.border = '0px solid black';
-			document.body.style.overflow = 'hidden';
-			document.body.style.width = '100%';
-			document.body.style.height = '100%';
+
+			if(this.content != undefined) {
+				document.body.style.padding = '0px';
+				document.body.style.margin = '0px';
+				document.body.style.border = '0px solid black';
+				document.body.style.overflow = 'hidden';
+				document.body.style.width = '100%';
+				document.body.style.height = '100%';
+				document.body.appendChild(this.getDrawing());
+			}
 /*
 			this.forceKeyboard = document.createElement('input');
 			this.forceKeyboard.setAttribute('type', 'text');
@@ -490,7 +509,6 @@ Ui.LBox.extend('Ui.App', {
 			this.connect(this.forceKeyboard, 'keydown', this.onWindowKeyDown, true);
 			this.connect(this.forceKeyboard, 'keyup', this.onWindowKeyUp, true);
 */
-			document.body.appendChild(this.getDrawing());
 
 //			document.body.appendChild(this.forceKeyboard);
 
@@ -612,12 +630,12 @@ Ui.LBox.extend('Ui.App', {
 //		}
 //	},
 
-	enqueueLayout: function(element) {
-		element.layoutNext = this.layoutList;
-		this.layoutList = element;
-		if((this.updateTask == undefined) && this.ready)
-			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-	}
+//	enqueueLayout: function(element) {
+//		element.layoutNext = this.layoutList;
+//		this.layoutList = element;
+//		if((this.updateTask == undefined) && this.ready)
+//			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+//	}
 }, {
 	invalidateMeasure: function() {
 //		if(this.measureValid) {

@@ -321,21 +321,21 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	invalidateLayout: function() {
-		if(this.layoutValid) {
+//	invalidateLayout: function() {
+//		if(this.layoutValid) {
 //			console.log('invalidateLayout enqueue ('+(new Date()).getTime()+')');
 
-			this.layoutValid = false;
-			Ui.App.current.enqueueLayout(this);
-		}
-	},
+//			this.layoutValid = false;
+//			Ui.App.current.enqueueLayout(this);
+//		}
+//	},
 
 	onChildInvalidateMeasure: function(child) {
 		this.invalidateMeasure();
 	},
 
-	updateLayout: function() {
-	},
+//	updateLayout: function() {
+//	},
 
 	//
 	// Update the current element arrangement
