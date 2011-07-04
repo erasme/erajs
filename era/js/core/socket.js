@@ -1,6 +1,6 @@
-
-
-Core.Object.extend('Core.Socket', {
+Core.Object.extend('Core.Socket', 
+/**@lends Core.Socket#*/
+{
 	host: undefined,
 	service: '/',
 	port: 80,
@@ -16,6 +16,11 @@ Core.Object.extend('Core.Socket', {
 	size: 0,
 	data: '',
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		if(config.host != undefined)
 			this.host = config.host;
@@ -109,9 +114,9 @@ Core.Object.extend('Core.Socket', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	* @private
+	*/
 	onWebSocketOpen: function() {
 		this.fireEvent('open', this);
 	},
@@ -270,6 +275,7 @@ Core.Object.extend('Core.Socket', {
 		this.fireEvent('error', this);
 		this.close();
 	}
+	/**#@-*/
 });
 
 

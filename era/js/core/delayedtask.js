@@ -1,11 +1,21 @@
-
-Core.Object.extend('Core.DelayedTask', {
+Core.Object.extend('Core.DelayedTask', 
+/**@lends Core.DelayedTask#*/
+{
 	delay: 1,
 	scope: undefined,
 	callback: undefined,
 	arguments: undefined,
 	isDone: false,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*	@param config.delay
+	*	@param config.scope
+	*	@param config.arguments
+	*	@param config.callback
+	*/
 	constructor: function(config) {
 		if(config.delay != undefined)
 			this.delay = config.delay;

@@ -170,8 +170,9 @@ Ui.Pressable.extend('Ui.Button',
 	},
 
 	/**#@+
-	 * @private
-	 */
+	* @private
+	*/
+
 	updateSizes: function() {
 		var spacing = this.getStyleProperty('spacing');
 		// vertical

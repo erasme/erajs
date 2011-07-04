@@ -1,4 +1,6 @@
-Core.Object.extend('Core.Event', {
+Core.Object.extend('Core.Event', 
+/** @lends Core.Event#*/
+{
 	defaultPrevented: false,
 	type: undefined,
 	bubbles: true,
@@ -7,6 +9,11 @@ Core.Object.extend('Core.Event', {
 	target: undefined,
 	cancelBubble: false,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*/
 	constructor: function(config) {
 		if(config.type != undefined)
 			this.type = config.type;
@@ -72,7 +79,10 @@ Core.Object.extend('Core.Event', {
 		}
 		return this.defaultPrevented;
 	}
-}, {}, {
+}, 
+{},
+/** @lends Core.Event*/
+{
 	events: {},
 
 	types: {},
@@ -264,4 +274,3 @@ else {
 	document.__createElement = document.createElement;
 	document.createElement = Core.Event.createElement;
 }
-

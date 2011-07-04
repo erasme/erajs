@@ -1,20 +1,24 @@
-
+/**
+*	@class Object class from which every Era classes derives.
+*	It handles inheritance, serialization, dump function, manages events connections.
+*/
 Core.Object = function Core() {
 };
 
 Core.Object.prototype.classType = 'Core.Object';
 
-//
-// Change default object toString
-//
+/**
+*	Change default object toString
+*/
 Core.Object.prototype.toString = function() {
 	return "[object "+this.classType+"]";
 };
 
-//
-// Add dump method to objects to allow object
-// content to be displayed in the console
-//
+/**
+*	Add dump method to objects to allow object
+*	content to be displayed in the console
+*	@param {String} filter Regex filter of the dump
+*/
 Core.Object.prototype.dump = function(filter) {
 	if(filter != undefined)
 		filter = new RegExp(filter,'i');
@@ -30,9 +34,11 @@ Core.Object.prototype.dump = function(filter) {
 	}
 };
 
-//
-// Static method of any object
-//
+/**
+*	Display all objects properties
+*	@param {mixed} obj Object to dump
+*	@param {String} filter Regex filter of the dump
+*/
 Core.Object.dump = function(obj, filter) {
 	if(filter != undefined)
 		filter = new RegExp(filter,'i');
@@ -48,17 +54,18 @@ Core.Object.dump = function(obj, filter) {
 	}
 };
 
-//
-// Serialize a javascript object into a string
-// to deserialize, just use JSON.parse
-//
+/**
+*	Serialize a javascript object into a string
+*	to deserialize, just use JSON.parse
+*/
 Core.Object.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
-//
-// INTERNAL: dont use. Usefull function for the object constructor.
-//
+/** 
+*	@private
+* 	INTERNAL: dont use. Usefull function for the object constructor.
+*/
 Core.Object.prototype.constructorHelper = function(config, proto) {
 	if(proto == undefined)
 		proto = this.__proto__;
@@ -75,12 +82,13 @@ Core.Object.prototype.constructorHelper = function(config, proto) {
 		proto.__constructor.call(this, config);
 }; 
 
-//
-// Extend a Class to create a new class.
-// classType: the full class name with the namespace
-// classDefine: the object with the class define (method, properties and constructor)
-// classOverride: an object with the method that need to be overrided in parents classes
-//
+/**
+*	Extend a Class to create a new class.
+*	@param {String} classType The full class name with the namespace
+*	@param {String} classDefine The object with the class members (methods, properties and constructor)
+*	@param {String} classOverride An object with the members (fields and methods) that need to be overrided in parents classes. It will trow an error if overrided members are not declare here.
+*	@param {String} classStatic An object with all the static members.
+*/
 Function.prototype.extend = function(classType, classDefine, classOverride, classStatic) {
 	var tab = classType.split('.');
 	var namespace = "";
@@ -142,6 +150,9 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	return func;
 };
 
+/**
+*	@return {Boolean} Whether or not an object is or derives from the class Type of the calling instance.
+*/ 
 Function.prototype.hasInstance = function(obj) {
 	if((typeof(obj) != 'object') || (obj == null))
 		return false;
@@ -155,9 +166,11 @@ Function.prototype.hasInstance = function(obj) {
 	return false;
 };
 
-//
-// Declare supported events on this class
-//
+/**
+*	Declare supported events on this class
+*	@param {String} events List of all class events
+*	@example this.addEvents('press', 'down', 'up');
+*/
 Core.Object.prototype.addEvents = function() {
 	if(this.events == undefined)
 		this.events = [];
@@ -165,10 +178,11 @@ Core.Object.prototype.addEvents = function() {
 		this.events[arguments[i]] = [];
 };
 
-//
-// Fire the eventName event. All given arguments are passed to the
-// registered methods.
-//
+/**
+*	Fire the eventName event. All given arguments are passed to the
+*	registered methods.
+*	@param {String} eventName Name of the event to fire. Must have been registred with {@link Core.Object#addEvents} before.
+*/
 Core.Object.prototype.fireEvent = function(eventName) {
 	var args = [];
 	for(var i = 1; i < arguments.length; i++)
@@ -182,11 +196,16 @@ Core.Object.prototype.fireEvent = function(eventName) {
 	return handled;
 };
 
-//
-// Connect a method to the eventName event of the obj object. The method will
-// be called in the current element scope.
-//
+/** 
+* Connect a method to the eventName event of the obj object. The method will
+* be called in the current element scope.
+*	@param {mixed} obj
+*	@param {String} eventName
+*	@param {function} method
+*	@param capture
+*/
 Core.Object.prototype.connect = function(obj, eventName, method, capture) {
+	/**#nocode+ Avoid Jsdoc warnings...*/
 	if(capture == undefined)
 		capture = false;
 	if(obj.addEventListener != undefined) {
@@ -206,11 +225,16 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 		var signal = { scope: this, method: method, capture: capture };
 		obj.events[eventName].push(signal);
 	}
+	/**#nocode-*/ 
 };
 
-//
-// Disconnect the current object from the eventName event on obj.
-//
+
+/**
+* Disconnect the current object from the eventName event on obj.
+*	@param {mixed} obj
+*	@param {String} eventName
+*	@param {function} method
+*/
 Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	if(obj.removeEventListener != undefined) {
 		for(var i = 0; (obj.events != undefined) && (i < obj.events.length); i++) {

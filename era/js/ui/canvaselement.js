@@ -1,8 +1,7 @@
-
-//
-// Define the base class for all Canvas drawing
-//
-Ui.Element.extend('Ui.CanvasElement', {
+//The base class for all Canvas drawing
+Ui.Element.extend('Ui.CanvasElement', 
+/**@lends Ui.CanvasElement#*/
+{
 	context: undefined,
 
 	//
@@ -10,7 +9,9 @@ Ui.Element.extend('Ui.CanvasElement', {
 	//
 	updateCanvas: function(context) {
 	}
-}, {
+}, 
+/**@lends Ui.CanvasElement#*/
+{
 	renderDrawing: function() {
 		var canvas = document.createElement('canvas');
 		this.context = canvas.getContext('2d');

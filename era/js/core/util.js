@@ -47,7 +47,14 @@ try {
 	navigator.supportRgb = false;
 }
 
+/**
+*	@namespace Regroup all the non Ui related classes : event, object, httprequest etc. 
+*/
 Core = {};
+
+/**
+*	@namespace	A set of utilities.
+*/
 Core.Util = {};
 Core.Util.idGenerator = 0;
 Core.Util.generateId = function() {

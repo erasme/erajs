@@ -1,5 +1,6 @@
-
-Core.Object.extend('Core.FilePostUploader', {
+Core.Object.extend('Core.FilePostUploader', 
+/**@lends Core.FilePostUploader#*/
+{
 	file: undefined,
 	destination: undefined,
 	service: undefined,
@@ -8,6 +9,11 @@ Core.Object.extend('Core.FilePostUploader', {
 	binaryString: false,
 	responseText: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		this.addEvents('progress', 'complete', 'error');
 
@@ -73,10 +79,9 @@ Core.Object.extend('Core.FilePostUploader', {
 		return this.responseText;
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+
+	* @private
+	*/
 	onStateChange: function(event) {
 		if(this.request.readyState == 4) {
 			if(this.request.status == 200) {
@@ -97,5 +102,6 @@ Core.Object.extend('Core.FilePostUploader', {
 		document.body.removeChild(this.file.iframe);
 		this.fireEvent('complete', this);
 	}
+	/**#@-*/
 });
 

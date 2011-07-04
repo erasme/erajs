@@ -1,10 +1,15 @@
-
 Core.Object.extend('Core.Timer', {
+/**@lends Core.Timer#*/
 	interval: 1,
 	scope: undefined,
 	callback: undefined,
 	arguments: undefined,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Core.Object
+	*/
 	constructor: function(config) {
 		if(config.interval != undefined)
 			this.interval = config.interval;

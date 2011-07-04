@@ -1,12 +1,15 @@
-//
-// Define the TimeManager class.
-// The TimeManager handle animations clocks
-//
-Core.Object.extend('Anim.TimeManager', {
+Core.Object.extend('Anim.TimeManager', 
+/**@lends Anim.TimeManager#*/
+{
 	clocks: undefined,
 	timer: undefined,
 	start: 0,
 
+	/**
+    *   @constructs
+	*	@class The TimeManager handle animations clocks
+    *   @extends Core.Object
+	*/
 	constructor: function(config) {
 		this.clocks = [];
 		this.start = new Date().getTime();
@@ -30,9 +33,8 @@ Core.Object.extend('Anim.TimeManager', {
 		}
 	},
 
-	//
-	// Private
-	//
+	
+	/**	@Private*/
 	onTick: function() {
 		var current = (new Date().getTime()) - this.start;
 		current /= 1000;

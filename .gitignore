@@ -1,6 +1,33 @@
+# Project
 version/
 tests/
 *copie*
 doc/jsdoc/*.html
 doc/jsdoc/symbols/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+.elc
+auto-save-list
+tramp
+
+# Vim
+.*.sw[a-z]
+*.un~
+Session.vim
+
+# MacOS
+.DS_Store
+Icon?
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
 

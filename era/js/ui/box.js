@@ -1,6 +1,6 @@
-
-
-Ui.Container.extend('Ui.Box', {
+Ui.Container.extend('Ui.Box', 
+/**@lends Ui.Box#*/
+{
 	paddingTop: 0,
 	paddingBottom: 0,
 	paddingLeft: 0,
@@ -10,6 +10,11 @@ Ui.Container.extend('Ui.Box', {
 	star: 0,
 	vertical: true,
 
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Ui.Container
+	*/
 	constructor: function(config) {
 		if(config.padding != undefined)
 			this.setPadding(config.padding);
@@ -213,9 +218,9 @@ Ui.Container.extend('Ui.Box', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	* @private
+	*/
 	measureUniform: function(width, height) {
 		var constraintSize = this.vertical?height:width;
 		var constraintOpSize = this.vertical?width:height;
@@ -402,7 +407,10 @@ Ui.Container.extend('Ui.Box', {
 		}
 		return { width: minWidth, height: minHeight };
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.Box#*/
+{
 	measureCore: function(width, height) {
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
@@ -470,13 +478,27 @@ Ui.Container.extend('Ui.Box', {
 });
 
 
-Ui.Box.extend('Ui.VBox', {
+Ui.Box.extend('Ui.VBox', 
+/**@lends Ui.VBox#*/
+{
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Ui.Box
+	*/
 	constructor: function(config) {
 		this.setOrientation('vertical');
 	}
 });
 
-Ui.Box.extend('Ui.HBox', {
+Ui.Box.extend('Ui.HBox', 
+/**@lends Ui.HBox#*/
+{
+	/**
+	*	@constructs
+	*	@class
+	*	@extends Ui.Box
+	*/
 	constructor: function(config) {
 		this.setOrientation('horizontal');
 	}

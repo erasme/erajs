@@ -1,9 +1,13 @@
-//
-// Define the ClockGroup class.
-//
-Anim.Clock.extend('Anim.ClockGroup', {
+Anim.Clock.extend('Anim.ClockGroup', 
+/**@lends Anim.ClockGroup#*/
+{
 	children: undefined,
 
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Anim.Clock
+	*/
 	constructor: function(config) {
 		this.children = [];
 	},
@@ -12,7 +16,9 @@ Anim.Clock.extend('Anim.ClockGroup', {
 		child.setParent(this);
 		this.children.push(child);
 	}
-}, {
+}, 
+/**@lends Anim.ClockGroup#*/
+{
 	begin: function() {
 		Anim.ClockGroup.base.begin.call(this);
 		for(var i = 0; i < this.children.length; i++)
