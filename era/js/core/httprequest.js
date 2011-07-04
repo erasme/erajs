@@ -12,13 +12,11 @@ Core.Object.extend('Core.HttpRequest',
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
-		if(config.url != undefined)
-			this.url = config.url;
-		else
-			throw('url MUST be given for an HttpRequest');
-		if(config && (config.method != undefined))
-			this.method = config.method;
-		if(config.binary != undefined)
+		if('url' in config)
+			this.setUrl(config.url);
+		if('method' in config)
+			this.setMethod(config.method);
+		if('binary' in config)
 			this.binary = config.binary;
 
 //		if(Core.HttpRequest.supportXDomainRequest) {
@@ -44,7 +42,6 @@ Core.Object.extend('Core.HttpRequest',
 			this.request = new XMLHttpRequest();
 			if(this.binary)
 				this.request.overrideMimeType('text/plain; charset=x-user-defined');
-			this.request.open(this.method, this.url, true);
 
 			var wrapper = function() {
 				var httprequest = arguments.callee.httprequest;
@@ -61,6 +58,14 @@ Core.Object.extend('Core.HttpRequest',
 		this.addEvents('error', 'done');
 	},
 
+	setUrl: function(url) {
+		this.url = url;
+	},
+
+	setMethod: function(method) {
+		this.method = method;
+	},
+
 	setRequestHeader: function(header, value) {
 		this.request.setRequestHeader(header, value);
 	},
@@ -70,6 +75,10 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	send: function() {
+		if(this.url == undefined)
+			throw('url MUST be given for an HttpRequest');
+
+		this.request.open(this.method, this.url, true);
 		this.request.send();
 //		if((arguments == undefined) || (arguments == null))
 //			this.request.send.apply(this.request, []);
