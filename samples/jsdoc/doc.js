@@ -9,34 +9,24 @@
  */
 
 /**
- * @namespace This is a classical namespace declaration
- */
-Sample = {};
-
-/**
- * If you don't explicitly declare your namespace you can use the name tag
- * @name MyNewNameSpace
- * @namespace A namespace implicitly declared by the name tag
- */
-
-/**
  * @constant This is a constant declaration which will be displayed in the _global_ section of the jsdoc
  */
 const acceleration = 9.80665;
 
 Core.Object.extend('Sample.MyObject',
 /**
- * The lens tag is used to tell jsdoc that we define an object from a JSON like structure. 
- * The # at the end of the name specify that we are working on the prototype section of the object.
- * Note that we can't add anything except the class name in the lends tag line.
+ * The lends tag is used to tell jsdoc that we define an object from a
+ * JSON like structure.  The # at the end of the name specify that we
+ * are working on the prototype section of the object.  Note that we
+ * can't add anything except the class name in the lends tag line.
  * @lends Sample.MyObject#
  */
 {
 	/**
-	 * Event declaration, we must specify the event name cause there is no function related to them.
-	 * Fires on disconnection
-	 * @name Sample.MyObject#disconnect
-	 * @event
+	 * Event declaration, we must specify the event name cause there
+	 * is no function related to them.  Fires on disconnection 
+     * @name Sample.MyObject#disconnect 
+     * @event
  	 */
 	/**
 	 * Fires on a connection to something.
@@ -46,13 +36,16 @@ Core.Object.extend('Sample.MyObject',
 	 */
 
 	/**
-	 * By default, class fields are not include in the documentation. If you want to expose a field, you need to surround your comment with jsdoc doclet.
-	 * We can define the default field value with the tag default
-	 * @default 12
+	 * By default, class fields are not included in the
+	 * documentation. If you want to expose a field, you need to
+	 * surround your comment with jsdoc doclet.  We can define the
+	 * default field value with the tag default 
+     * @default 12
 	 */
 	myvar: 12,
 	
-	//This field won't be include in the documentation cause we do not document it with jsdoc doclet.
+	//This field won't be included in the documentation cause we do
+	//not document it with jsdoc doclet.
 	myvar2: undefined,
 
 	/**
@@ -67,7 +60,7 @@ Core.Object.extend('Sample.MyObject',
 	 */
 	myvar3: Sample.MyObject.myStaticMethod();
 
-	//This on will be documented with the property tag
+	//This one will be documented with the property tag
 	documentedInConsctructor: 24,
 
 

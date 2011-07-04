@@ -1,5 +1,7 @@
 
-Ui.Fixed.extend('Extras.Ui.Google.Map', {
+Ui.Fixed.extend('Extras.Ui.Google.Map',  
+/** @lends Extras.Ui.Google.Map# */
+{
 	map: undefined,
 
 	constructor: function(config) {
