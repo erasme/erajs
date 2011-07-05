@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test CanvasElement</title>
+	<script src='../../era/js/era-debug.js'></script>
+<script>
+
+Ui.CanvasElement.extend('Sample.MyCanvas', {
+	svgDrawing: undefined,
+	fill: 'black',
+
+	constructor: function(config) {
+		if('fill' in config)
+			this.setFill(config.fill);
+		else
+			this.setFill(this.fill);
+	},
+
+	setFill: function(fill) {
+		this.fill = Ui.Color.create(fill);
+		this.invalidateArrange();
+	}
+}, {
+	updateCanvas: function(ctx) {
+		ctx.translate(50, 50);
+		ctx.fillStyle = this.fill.getCssRgba();
+
+		for(i = 0; i < 10; i++) {
+			ctx.rotate(0.2 * Math.PI);
+			ctx.beginPath();
+			ctx.moveTo(10, 0);
+			ctx.bezierCurveTo(60, 0, 60, 0, 90, 30);
+			ctx.fill();
+		}
+	},
+
+	measureCore: function(width, height) {
+		return { width: 100, height: 100 };
+	}
+});
+
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var button = new Ui.Button({ text: 'color1' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	mycanvas.setFill('orange');
+});
+
+button = new Ui.Button({ text: 'color2' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	mycanvas.setFill('pink');
+});
+
+var mycanvas = new Sample.MyCanvas({ verticalAlign: 'center', horizontalAlign: 'center' });
+vbox.append(mycanvas, true);
+
+
+</script>
+	</head>
+</html>
