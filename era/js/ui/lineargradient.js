@@ -15,6 +15,9 @@ Core.Object.extend('Ui.LinearGradient', {
 		if(config.orientation != undefined)
 			this.orientation = config.orientation;
 
+		for(var i = 0; i < this.stops.length; i++)
+			this.stops[i].color = Ui.Color.create(this.stops[i].color);
+
 		if(navigator.isWebkit) {
 			this.image = '-webkit-gradient(linear, 0% 0%, ';
 			if(this.orientation == 'vertical')
