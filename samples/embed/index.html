@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src='../../era/js/era-debug.js'></script>
+<style>
+#mycontainer {
+	padding: 20px;
+	background: lightgreen;
+}
+
+#mydiv {
+	background: orange;
+}
+
+#mydiv2 {
+	background: purple;
+}
+
+#mydiv3 {
+	width: 500px;
+	height: 600px;
+	background: lightblue;
+}
+</style>
+<script>
+
+var embed = new Ui.Embed({ divId: 'mydiv' });
+var button = new Ui.Button({ text: 'click me' });
+embed.append(button);
+embed.connect(button, 'press', function() {
+	console.log('button press');
+});
+
+var embed2 = new Ui.Embed({ divId: 'mydiv2', width: 200, height: 200 });
+var button2 = new Ui.Button({ text: 'click me too' });
+embed2.append(button2);
+
+</script>
+  </head>
+  <body>
+    <div id="mycontainer">
+	    <div id="mydiv"></div>
+
+	    <div id="mydiv2"></div>
+
+	    <div id="mydiv3"></div>
+	</div>
+  </body>
+</html>
