@@ -18,7 +18,14 @@ Ui.Container.extend('Ui.Fixed', {
 		child.fixedX = x;
 		child.fixedY = y;
 		this.appendChild(child);
+	},
+
+	remove: function(child) {
+		delete(child['fixedX']);
+		delete(child['fixedY']);
+		this.removeChild(child);
 	}
+
 }, {
 	//
 	// Return the required size for the current element
