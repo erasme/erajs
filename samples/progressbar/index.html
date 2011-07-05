@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test ProgressBar</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var beginButton = new Ui.Button({ text: 'begin' });
+toolbar.append(beginButton);
+app.connect(beginButton, 'press', function() {
+	clock.begin();
+});
+
+var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', horizontalAlign: 'center', width: 200, height: 10 });
+
+vbox.append(progressbar, true);
+
+var clock = new Anim.Clock({ duration: 4.0, target: progressbar,
+	callback: function(clock, progress) {
+		this.setValue(progress);
+	}
+});
+
+</script>
+  </head>
+</html>
