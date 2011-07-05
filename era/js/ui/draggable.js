@@ -17,6 +17,7 @@ Ui.LBox.extend('Ui.Draggable', {
 	touchStartY: undefined,
 	menuPosX: undefined,
 	menuPosY: undefined,
+	dragDelta: undefined,
 
 	constructor: function(config) {
 		if(config.data != undefined) 
@@ -94,12 +95,16 @@ Ui.LBox.extend('Ui.Draggable', {
 		this.downloadFilename = filename;
 	},
 
+	getDragDelta: function() {
+		return this.dragDelta;
+	},
+
 	//
 	// Private
 	//
 
 	onDragStart: function(event) {
-		console.log('onDragStart');
+		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
@@ -119,6 +124,8 @@ Ui.LBox.extend('Ui.Draggable', {
 		// that works cross browser. Only Firefox support different mimetypes
 		event.dataTransfer.setData('Text', this.mimetype+':'+this.data);
 
+		this.fireEvent('dragstart', this);
+
 		if(this.icon != undefined) {
 			// TODO: improve this
 //			console.log(this.icon.drawing.childNodes[0]);
@@ -126,13 +133,10 @@ Ui.LBox.extend('Ui.Draggable', {
 			if(event.dataTransfer.setDragImage != undefined)
 				event.dataTransfer.setDragImage(this.icon.drawing.childNodes[0], 0, 0);
 		}
-		this.fireEvent('dragstart', this);
 		return false;
 	},
 
 	onDragEnd: function(event) {
-		console.log('onDragEnd');
-
 		event.stopPropagation();
 		// dropEffect give the operation done: [none|copy|link|move]
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
@@ -173,7 +177,7 @@ Ui.LBox.extend('Ui.Draggable', {
 		if(this.getIsDisabled() || this.isDown)
 			return;
 
-		console.log('onFingerDown');
+//		console.log('onFingerDown');
 
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
 		this.connect(event.finger, 'fingerup', this.onFingerUp);
@@ -200,7 +204,7 @@ Ui.LBox.extend('Ui.Draggable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		console.log('onFingerMove');
+//		console.log('onFingerMove');
 
 		var deltaX = event.finger.getX() - this.touchStartX;
 		var deltaY = event.finger.getY() - this.touchStartY;
@@ -229,7 +233,7 @@ Ui.LBox.extend('Ui.Draggable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		console.log('onFingerUp');
+//		console.log('onFingerUp');
 
 //		this.onUp();
 
