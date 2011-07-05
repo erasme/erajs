@@ -33,6 +33,7 @@ Ui.Container.extend('Ui.Scrollable', {
 	scrollbarVertical: undefined,
 
 	lock: false,
+	overScroll: true,
 
 	constructor: function(config) {
 		if(config.scrollHorizontal != undefined)
@@ -65,7 +66,20 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'fingerdown', this.onHorizontalFingerDown);
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'fingerdown', this.onVerticalFingerDown);
 
+		if('overScroll' in config)
+			this.setOverScroll(config.overScroll);
+
 //		this.connect(this, 'keydown', this.onKeyDown);
+	},
+
+	setOverScroll: function(overScroll) {
+		if(overScroll != this.overScroll) {
+			this.overScroll = overScroll;
+			if(!this.overScroll)
+				this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+			else
+				this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+		}
 	},
 
 	setLock: function(lock) {
