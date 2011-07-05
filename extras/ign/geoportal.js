@@ -9,13 +9,12 @@
 Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
                 /** @lends Extras.Ui.IGN.Geoportal# */	
 {
-undefined
     latitude: 45.750404,
     longitude: 4.426678,
-	map: 'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC',
-	zoom: 10,
-	waitGeoportal: undefined,
-	viewer: undefined,
+    map: 'GEOGRAPHICALGRIDSYSTEMS.MAPS:WMSC',
+    zoom: 10,
+    waitGeoportal: undefined,
+    viewer: undefined,
     
     /**
      * @description Kx factor for longitude conversion
@@ -86,18 +85,30 @@ undefined
 		return this.viewer.getMap().getZoom();
 	},
 
+	/**
+	 * @description Sets the current zoom level.
+     * @returns {Number} zoom Required map zoom level.
+     */    
 	setZoom: function(zoom) {
         var ll = this.getLatLng();
         zoom = Math.max(20,Math.min(0,zoom));
 		this.viewer.getMap().setCenterAtLonLat(ll[1], ll[0], zoom);
 	},
 
+    /**
+     * @description Show/hide all available tools
+     * @param {Boolean} val Set to true to show tool, false to hide.
+     */
     showAllTools: function(val) {
         console.log('showAllTools :' + val);
         this.viewer.setToolsPanelVisibility(val);
         this.viewer.setInformationPanelVisibility(val);
     },
 
+    /**
+     * @description Shows the layer selection tool
+     * @param {Boolean} val Set to true to show tool, false to hide.
+     */
     showMapTypeControl: function(val) {
         console.log('showMapTypeControl :' + val);
 		this.viewer.setLayersPanelVisibility(val);
@@ -171,6 +182,9 @@ undefined
 	 */
 	Key: '1244054277973706333',
 
+    /** 
+	 * @description Static constructor, called after this js file has been loaded
+	 */
 	constructor: function() {
 		document.write("<script type='text/javascript' src='http://api.ign.fr/geoportail/api?v=1.2&key="+Extras.Ui.IGN.Geoportal.Key+"&'></script>");
 	}
