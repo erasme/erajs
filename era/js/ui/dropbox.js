@@ -5,6 +5,7 @@ Ui.LBox.extend('Ui.DropBox', {
 	allowedMimetypes: undefined,
 	allowFiles: false,
 	allowText: false,
+	allowedMode: 'all',
 
 	constructor: function(config) {
 		this.allowedMimetypes = [];
@@ -14,6 +15,14 @@ Ui.LBox.extend('Ui.DropBox', {
 		this.connect(this.drawing, 'drop', this.onDrop);
 
 		this.addEvents('drop', 'dropfile');
+	},
+
+	//
+	// Set the allowed operation. Possible values are:
+	// [copy|copyLink|copyMove|link|linkMove|move|all]
+	//
+	setAllowedMode: function(allowedMode) {
+		this.allowedMode = allowedMode;
 	},
 
 	//
@@ -88,12 +97,17 @@ Ui.LBox.extend('Ui.DropBox', {
 			effectAllowed = event.dataTransfer.effectAllowed;
 
 		var dropEffect = 'copy';
-		if((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all'))
+		if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
+		   ((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
 			dropEffect = 'copy';
-		else if((effectAllowed == 'linkMove') || (effectAllowed == 'move'))
+		else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyMove') ||  (this.allowedMode == 'linkMove') || (this.allowedMode == 'move')) &&
+				((effectAllowed == 'all') || (effectAllowed == 'copyMove') || (effectAllowed == 'linkMove') || (effectAllowed == 'move')))
 			dropEffect = 'move';
-		else if(effectAllowed == 'link')
+		else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyLink') ||  (this.allowedMode == 'link') || (this.allowedMode == 'linkMove')) &&
+				((effectAllowed == 'all') || (effectAllowed == 'copyLink') || (effectAllowed == 'link') || (effectAllowed == 'linkMove')))
 			dropEffect = 'link';
+		else
+			dropEffect = 'none';
 
 		event.dataTransfer.dropEffect = dropEffect;
 
@@ -103,28 +117,42 @@ Ui.LBox.extend('Ui.DropBox', {
 	},
 
 	onDrop: function(event) {
-		// accept the drop
-		event.preventDefault();
-		event.stopPropagation();
-		console.log('onDrop');
+//		console.log('onDrop '+event.clientX+','+event.clientY);
+		
+		var dropPoint = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 //		console.log('drop Files: '+((event.dataTransfer.files == undefined)?0:event.dataTransfer.files.length));
 
 		if((event.dataTransfer.files != undefined) && (event.dataTransfer.files.length > 0)) {
+			// accept the drop
+			event.preventDefault();
+			event.stopPropagation();
+
 //			console.log('drop files');
 			for(var i = 0; i < event.dataTransfer.files.length; i++)
 				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }));
 		}
 		else {
 			var data = event.dataTransfer.getData('Text');
-			console.log('onDrop data Text: '+data);
+//			console.log('onDrop data Text: '+data);
 
 			if(data != undefined) {
 				var pos = data.indexOf(':');
 				if(pos != -1) {
 					var mimetype = data.substring(0, pos);
 					var data = data.substring(pos+1);
-					this.fireEvent('drop', this, mimetype, data);
+
+					for(var i = 0; i < this.allowedMimetypes.length; i++) {
+						if(this.allowedMimetypes[i] == mimetype) {
+//							console.log('found allowed mimetype: '+mimetype);
+							// accept the drop
+							event.preventDefault();
+							event.stopPropagation();
+							this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
+							return;
+						}
+					}
+//					console.log('allowed mimetype NOT FOUND');
 				}
 			}
 		}
