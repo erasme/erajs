@@ -6,6 +6,8 @@ Ui.LBox.extend('Ui.Embed', {
 	updateTask: undefined,
 
 	constructor: function(config) {
+		if(Ui.App.current == undefined)
+			new Ui.App();
 		this.getDrawing().style.cursor = 'default';
 		if('div' in config)
 			this.setDiv(config.div);
