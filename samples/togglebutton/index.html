@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src='../../era/js/era-debug.js'></script>
+<script>
+
+var count = 0;
+
+var app = new Ui.App({ });
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(vbox);
+
+var label = new Ui.Label({ text: 'toggle count: 0' });
+vbox.append(label);
+
+var togglebutton = new Ui.ToggleButton({ text: 'toggle me' });
+vbox.append(togglebutton);
+
+app.connect(togglebutton, 'toggle', function() {
+	label.setText('toggle count: '+(++count));
+});
+app.connect(togglebutton, 'untoggle', function() {
+});
+
+
+</script>
+  </head>
+</html>
