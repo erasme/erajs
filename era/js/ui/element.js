@@ -201,7 +201,7 @@ Core.Object.extend('Ui.Element',
 	// Return the id of the current element
 	//
 	getId: function() {
-		return this.drawing.getAttributeNS(null, 'id');
+		return this.drawing.getAttribute('id');
 	},
 
 	//
@@ -1072,6 +1072,10 @@ Core.Object.extend('Ui.Element',
 			}
 		}
 	},*/
+
+	getParent: function() {
+		return this.parent;
+	},
 
 	setParentStyle: function(parentStyle) {
 		if(this.parentStyle != parentStyle) {
