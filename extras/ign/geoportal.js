@@ -48,7 +48,7 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
 		if ('longitude' in config)
             this.longitude = config.longitude;
 		if ('zoom' in config)
-            this.zoom = Math.max(20,Math.min(0,config.zoom));
+            this.zoom = Math.min(20,Math.max(0,config.zoom));
         if ('maptype' in config) 
             this.maptype = config.maptype;
 
@@ -91,7 +91,7 @@ Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',
      */    
 	setZoom: function(zoom) {
         var ll = this.getLatLng();
-        zoom = Math.max(20,Math.min(0,zoom));
+        zoom = Math.min(20,Math.max(0,config.zoom));
 		this.viewer.getMap().setCenterAtLonLat(ll[1], ll[0], zoom);
 	},
 
