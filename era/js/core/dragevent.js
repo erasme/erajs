@@ -295,9 +295,9 @@ Core.Object.extend('Core.DragManager', {
 
 	onDragDown: function(target, x, y, event, mouse, finger) {
 		var current = target;
-		while((current != undefined) && ('getAttribute' in current) && !current.getAttribute('draggable'))
+		while((current != undefined) && ('getAttribute' in current) && !((current.getAttribute('draggable') === true) || (current.getAttribute('draggable') === 'true')))
 			current = current.parentNode;
-		if((current != undefined) && ('getAttribute' in current))
+		if((current != undefined) && ('getAttribute' in current) && ((current.getAttribute('draggable') === true) || (current.getAttribute('draggable') === 'true')))
 			new Core.DragDataTransfer({ draggable: current, x: x, y: y, event: event, mouse: mouse, finger: finger });
 	},
 
