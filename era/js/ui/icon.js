@@ -50,7 +50,6 @@ Ui.Shape.extend('Ui.Icon', {
 	},
 
 	create: function(iconName, width, height, fill) {
-		console.log('Ui.Icon.create '+iconName);
 		return new Ui.Icon({
 			path: Ui.Icon.icons[iconName],
 			width: (width != undefined)?width:48,

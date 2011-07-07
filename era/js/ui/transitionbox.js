@@ -25,6 +25,10 @@ Ui.LBox.extend('Ui.TransitionBox', {
 		this.setClipToBounds(true);
 	},
 
+	getPosition: function() {
+		return this.position;
+	},
+
 	setDuration: function(duration) {
 		this.duration = duration;
 	},

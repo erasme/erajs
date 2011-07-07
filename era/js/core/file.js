@@ -30,9 +30,10 @@ Core.Object.extend('Core.File', {
 	},
 
 	getMimetype: function() {
-	},
-
-	getFilePostUploader: function() {
+		if((this.fileApi != undefined) && ('type' in this.fileApi))
+			return this.fileApi.type;
+		else
+			return 'application/octet-stream';
 	}
 });
 
