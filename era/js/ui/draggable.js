@@ -18,8 +18,11 @@ Ui.LBox.extend('Ui.Draggable', {
 	menuPosX: undefined,
 	menuPosY: undefined,
 	dragDelta: undefined,
+	isSelected: false,
 
 	constructor: function(config) {
+		this.addEvents('select', 'unselect', 'dragstart', 'dragend', 'activate', 'menu');
+
 		if(config.data != undefined) 
 			this.setData(config.mimetype, config.data);
 		if(config.downloadUrl != undefined)
@@ -33,8 +36,6 @@ Ui.LBox.extend('Ui.Draggable', {
 
 		// handle touches
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-
-		this.addEvents('dragstart', 'dragend', 'activate', 'menu');
 	},
      
 	setLock: function(lock) {
@@ -81,8 +82,8 @@ Ui.LBox.extend('Ui.Draggable', {
 	//
 	setDownloadUrl: function(url, mimetype, filename) {
 		// TODO: if url is relative, make it absolute
-
-		this.downloadUrl = url;
+		var uri = new Core.Uri({ uri: url });
+		this.downloadUrl = uri.toString();
 		// extract the fileName if not given
 		if(filename == undefined) {
 			// TODO
@@ -107,7 +108,6 @@ Ui.LBox.extend('Ui.Draggable', {
 		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 
 		event.stopPropagation();
 		event.dataTransfer.effectAllowed = this.allowedMode;
@@ -143,34 +143,23 @@ Ui.LBox.extend('Ui.Draggable', {
 	},
 
 	onMouseDown: function(event) {
-		if(this.getIsDisabled() || (event.button != 0))
+		if(this.getIsDisabled() || !((event.button == 0) || (event.button == 2)))
 			return;
-
-//		console.log('onMouseDown');
 		this.connect(window, 'mouseup', this.onMouseUp, true);
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-
-//		event.stopPropagation();
-	},
-
-	onMouseMove: function(event) {
-//		console.log('onMouseMove');
-//		event.stopPropagation();
 	},
 
 	onMouseUp: function(event) {
-		if(event.button != 0)
-			return;
-
-//		event.stopPropagation();
-//		console.log('onMouseUp');
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
-		var currentTime = (new Date().getTime())/1000;
-		if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
-			this.fireEvent('activate', this);
-		this.lastTime = currentTime;
+		if(event.button == 0) {
+			var currentTime = (new Date().getTime())/1000;
+			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
+				this.fireEvent('activate', this);
+			this.lastTime = currentTime;
+			this.onSelect();
+		}
+		else if(event.button == 2)
+			this.fireEvent('menu', this, event.clientX, event.clientY);
 	},
 
 	onFingerDown: function(event) {
@@ -250,6 +239,32 @@ Ui.LBox.extend('Ui.Draggable', {
 				this.fireEvent('activate', this);
 			this.lastTime = currentTime;
 //			this.onSelect();
+		}
+	},
+
+	getIsSelected: function() {
+		return this.isSelected;
+	},
+
+	select: function() {
+		this.onSelect();
+	},
+
+	unselect: function() {
+		this.onUnselect();
+	},
+
+	onSelect: function() {
+		if(!this.isSelected) {
+			this.isSelected = true;
+			this.fireEvent('select', this);
+		}
+	},
+
+	onUnselect: function() {
+		if(this.isSelected) {
+			this.isSelected = false;
+			this.fireEvent('unselect', this);
 		}
 	},
 

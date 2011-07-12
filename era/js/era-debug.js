@@ -27,6 +27,7 @@ function include(fileName) {
 //
 include(eraBaseDirectory+'core/util.js');
 include(eraBaseDirectory+'core/object.js');
+include(eraBaseDirectory+'core/uri.js');
 include(eraBaseDirectory+'core/event.js');
 include(eraBaseDirectory+'core/mouseevent.js');
 include(eraBaseDirectory+'core/fingerevent.js');

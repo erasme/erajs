@@ -85,8 +85,10 @@ Ui.Container.extend('Ui.Popup', {
 	},
 
 	show: function(posX, posY) {
-		if(!this.visible) {
-			this.visible = true;
+		var oldVisible = this.getIsVisible();
+		Ui.Popup.base.show.call(this);
+
+		if(!oldVisible) {
 			if((typeof(posX) == 'object') && (Ui.Element.hasInstance(posX))) {
 				var element = posX;
 				var point = element.pointToWindow({ x: element.getLayoutWidth(), y: element.getLayoutHeight()/2 });
@@ -109,11 +111,8 @@ Ui.Container.extend('Ui.Popup', {
 		}
 	},
 
-	hide: function() {
-		if(this.visible) {
-			this.visible = false;
-			Ui.App.current.removeDialog(this);
-		}
+	onHidden: function() {
+		Ui.App.current.removeDialog(this);
 	},
 
 	measureCore: function(width, height) {
