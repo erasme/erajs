@@ -49,6 +49,7 @@ Ui.Element.extend('Ui.Video', {
 			try {
 				this.videoDrawing.pause();
 				this.videoDrawing.currentTime = 0;
+				this.videoDrawing.load();
 			} catch(e) {}
 			this.videoDrawing.play();
 		}
