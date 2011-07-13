@@ -46,6 +46,7 @@ Ui.Element.extend('Ui.Video', {
 	//
 	play: function() {
 		if(Ui.Video.htmlVideo) {
+//			console.log('HTML5 video play '+this.videoDrawing.getAttribute('src'));
 			try {
 				this.videoDrawing.pause();
 				this.videoDrawing.currentTime = 0;
@@ -145,16 +146,19 @@ Ui.Element.extend('Ui.Video', {
 	//
 
 	onReady: function() {
+//		console.log('Video.onReady');
 		this.naturalWidth = this.videoDrawing.videoWidth;
 		this.naturalHeight = this.videoDrawing.videoHeight;
 		this.fireEvent('ready');
 	},
 
 	onTimeupdate: function() {
+//		console.log('Video.onTimeupdate');
 		this.fireEvent('timeupdate', this.videoDrawing.currentTime);
 	},
 
 	onEnded: function() {
+//		console.log('Video.onEnded');
 		this.playing = false;
 		this.fireEvent('ended');
 	}

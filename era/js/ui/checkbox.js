@@ -77,7 +77,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 				}
 				this.text = text;
 				this.contentBox = new Ui.Label({ margin: 8,  text: this.text });
-				this.hbox.append(this.contentBox, true);
+				this.hbox.append(this.contentBox);
 			}
 		}
 	},
@@ -104,7 +104,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 				this.contentBox.remove(this.content);
 			else {
 				this.contentBox = new Ui.LBox({ padding: 8 });
-				this.hbox.append(this.contentBox, true);
+				this.hbox.append(this.contentBox);
 			}
 			this.content = content;
 			this.contentBox.append(this.content);
