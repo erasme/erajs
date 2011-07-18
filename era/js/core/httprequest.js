@@ -40,7 +40,6 @@ Core.Object.extend('Core.HttpRequest',
 //		}
 //		else {
 			this.request = new XMLHttpRequest();
-			this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
 			if(this.binary)
 				this.request.overrideMimeType('text/plain; charset=x-user-defined');
@@ -81,6 +80,7 @@ Core.Object.extend('Core.HttpRequest',
 			throw('url MUST be given for an HttpRequest');
 
 		this.request.open(this.method, this.url, true);
+		this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 		this.request.send();
 //		if((arguments == undefined) || (arguments == null))
 //			this.request.send.apply(this.request, []);
