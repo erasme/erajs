@@ -73,6 +73,13 @@ Ui.LBox.extend('Ui.TransitionBox', {
 		}
 	},
 
+	getCurrent: function() {
+		if(this.position == -1)
+			return undefined;
+		else
+			return this.getChildren()[this.position].getChildren()[0];
+	},
+
 	//
 	// Private
 	//
@@ -137,6 +144,8 @@ Ui.LBox.extend('Ui.TransitionBox', {
 			if(this.getChildren()[i].getChildren()[0] == child) {
 				if(i < this.position)
 					this.position--;
+				if(i == this.position)
+					this.position = -1;
 				this.getChildren()[i].remove(child);
 				Ui.TransitionBox.base.remove.call(this, this.getChildren()[i]);
 				break;
