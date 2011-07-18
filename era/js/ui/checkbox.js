@@ -56,6 +56,10 @@ Ui.Togglable.extend('Ui.CheckBox',
 			this.setContent(config.content);
 	},
 
+	getValue: function() {
+		return this.getIsToggled();
+	},
+
 	setText: function(text) {
 		if(text == undefined) {
 			if(this.contentBox != undefined) {
