@@ -40,6 +40,8 @@ Core.Object.extend('Core.HttpRequest',
 //		}
 //		else {
 			this.request = new XMLHttpRequest();
+			this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
 			if(this.binary)
 				this.request.overrideMimeType('text/plain; charset=x-user-defined');
 
