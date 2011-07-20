@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test jQuery</title>
+	<script src='../../era/js/era-debug.js'></script>
+	<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
+	<script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js'></script>
+	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+<script>
+
+Ui.Fixed.extend('JQuery.ProgressBar', 
+{
+	constructor: function(config) {
+//		this.connect(this, 'load', this.updateSize);
+//		this.connect(this, 'resize', this.updateSize);
+//		this.connect(this, 'visible', this.updateSize);
+
+		$(this.getDrawing()).progressbar();
+	},
+
+	getValue: function() {
+		return $(this.getDrawing()).progressbar("value");
+	},
+
+	setValue: function(value) {
+		return $(this.getDrawing()).progressbar("value", value);
+	},
+
+//	updateSize: function() {
+//		$(this.getDrawing()).progressbar({ value: 37 });
+//	}
+});
+
+Ui.Fixed.extend('JQuery.Accordion', 
+{
+	constructor: function(config) {
+		this.connect(this, 'load', this.updateSize);
+		this.connect(this, 'resize', this.updateSize);
+		this.connect(this, 'visible', this.updateSize);
+	},
+
+	updateSize: function() {
+		$(this.getDrawing()).accordion();
+		console.log('updateSize need size: '+this.getDrawing().clientWidth+'x'+this.getDrawing().clientHeight);
+	}
+});
+
+
+Ui.Fixed.extend('JQuery.Accordion2', {
+	jqueryDrawing: undefined,
+
+	constructor: function(config) {
+		if('content' in config)
+			this.setContent(config.content);
+
+		this.connect(this, 'load', this.updateSize);
+		this.connect(this, 'resize', this.updateSize);
+		this.connect(this, 'visible', this.updateSize);
+	},
+
+	setContent: function(html) {
+		this.jqueryDrawing.innerHTML = html;
+		$(this.jqueryDrawing).accordion();
+		this.invalidateMeasure();
+	},
+
+	updateSize: function() {
+		$(this.jqueryDrawing).accordion("resize");
+		if(($(this.jqueryDrawing).width() > this.getLayoutWidth()) || ($(this.jqueryDrawing).height() > this.getLayoutHeight()))
+			this.invalidateMeasure();
+		console.log('updateSize need size: '+this.jqueryDrawing.clientWidth+'x'+this.jqueryDrawing.clientHeight);
+	}
+}, {
+	render: function() {
+		this.jqueryDrawing = document.createElement('div');
+		this.jqueryDrawing.style.display = 'block';
+		this.jqueryDrawing.style.position = 'absolute';
+		this.jqueryDrawing.style.left = '0px';
+		this.jqueryDrawing.style.top = '0px';
+		return this.jqueryDrawing;
+	},
+
+	measureCore: function(width, height) {
+		this.jqueryDrawing.style.width = width+'px';
+		$(this.jqueryDrawing).accordion("resize");
+
+		console.log(this.jqueryDrawing.clientWidth);
+
+		console.log('Accordion2 measureCore width: '+$(this.jqueryDrawing).width()+', height: '+$(this.jqueryDrawing).height());
+
+		return { width: width, height: Math.max($(this.jqueryDrawing).height(), height) };
+	},
+});
+
+
+Ui.Fixed.extend('JQuery.DatePicker', 
+{
+	jqueryDrawing: undefined,
+
+	constructor: function(config) {
+		$(this.jqueryDrawing).datepicker();
+		this.jqueryDrawing.childNodes[0].style.display = 'block';
+//		$(this.jqueryDrawing).datepicker("widget");
+		this.connect(this, 'load', this.updateSize);
+		this.connect(this, 'resize', this.updateSize);
+		this.connect(this, 'visible', this.updateSize);
+
+//		$(this.jqueryDrawing).datepicker("widget");
+	},
+
+	updateSize: function() {
+		$(this.jqueryDrawing).datepicker("refresh");
+	}
+}, {
+	onLoad: function() {
+//		$(this.jqueryDrawing).datepicker("show");
+//		$(this.jqueryDrawing).datepicker( "dialog" , new Date());	
+	},
+
+	render: function() {
+		this.jqueryDrawing = document.createElement('div');
+//		this.jqueryDrawing = document.createElement('input');
+//		this.jqueryDrawing.type = 'text';
+//		this.jqueryDrawing.style.display = 'block';
+//		this.jqueryDrawing.style.position = 'absolute';
+//		this.jqueryDrawing.style.left = '0px';
+//		this.jqueryDrawing.style.top = '0px';
+		return this.jqueryDrawing;
+	},
+
+	arrangeCore: function(width, height) {
+		this.jqueryDrawing.style.width = width+'px';
+		this.jqueryDrawing.style.height = height+'px';
+	}
+});
+
+Ui.Fixed.extend('JQuery.DatePicker2', {
+	jqueryDrawing: undefined,
+
+	constructor: function(config) {
+//		$(this.jqueryDrawing).datepicker();
+		this.jqueryDrawing.eraElement = this;
+		$(this.jqueryDrawing).datepicker({  onChangeMonthYear: function(year, month, inst) {
+			console.log('month change ');
+			this.eraElement.invalidateMeasure();
+		},
+			onSelect: function(dateText, inst) {
+				console.log('on select');
+			}
+		});
+//		this.jqueryDrawing.childNodes[0].style.display = 'block';
+		this.connect(this, 'load', this.updateSize);
+		this.connect(this, 'resize', this.updateSize);
+		this.connect(this, 'visible', this.updateSize);
+	},
+
+	updateSize: function() {
+		$(this.jqueryDrawing).datepicker("refresh");
+		if(($(this.jqueryDrawing).width() > this.getLayoutWidth()) || ($(this.jqueryDrawing).height() > this.getLayoutHeight()))
+			this.invalidateMeasure();
+		console.log('updateSize need size: '+this.jqueryDrawing.clientWidth+'x'+this.jqueryDrawing.clientHeight);
+	}
+}, {
+	render: function() {
+		this.jqueryDrawing = document.createElement('div');
+		this.jqueryDrawing.style.display = 'block';
+		this.jqueryDrawing.style.position = 'absolute';
+		this.jqueryDrawing.style.left = '0px';
+		this.jqueryDrawing.style.top = '0px';
+		return this.jqueryDrawing;
+	},
+
+	measureCore: function(width, height) {
+		this.jqueryDrawing.style.width = '';//width+'px';
+		$(this.jqueryDrawing).datepicker("refresh");
+
+		console.log(this.jqueryDrawing.clientWidth);
+
+		console.log('DatePicker2 measureCore width: '+$(this.jqueryDrawing).width()+', height: '+$(this.jqueryDrawing).height());
+
+		return { width: Math.max($(this.jqueryDrawing).width(), width), height: Math.max($(this.jqueryDrawing).height(), height) };
+	},
+});
+
+
+var app = new Ui.App();
+
+/*var content = new JQuery.ProgressBar({ width: 200, height: 30, verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(content);
+content.setValue(75);
+console.log(content.getValue());*/
+
+//var content = new JQuery.Accordion2({ width: 300, height: 300, verticalAlign: 'center', horizontalAlign: 'center' });
+/*var content = new JQuery.Accordion2({ width: 300, verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(content);
+
+content.setContent(
+'	<h3><a href="#">Section 1</a></h3>'+
+'	<div>'+
+'		<p>'+
+'		Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer'+
+'		ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit'+
+'		amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut'+
+'		odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.'+
+'		</p>'+
+'	</div>'+
+'	<h3><a href="#">Section 2</a></h3>'+
+'	<div>'+
+'		<p>'+
+'		Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet'+
+'		purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor'+
+'		velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In'+
+'		suscipit faucibus urna.'+
+'		</p>'+
+'	</div>');*/
+
+var content = new JQuery.DatePicker2({ width: 100, height: 100, verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(content);
+
+/*var content = new Ui.Element({ width: 200, height: 200, verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(content);
+$(content.getDrawing()).datepicker();*/
+//console.log($(content.getDrawing()).datepicker("widget"));
+//$(content.getDrawing()).datepicker("show");
+
+/*var content = new JQuery.Accordion({ width: 300, height: 300, verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(content);
+
+content.getDrawing().innerHTML = 
+'	<h3><a href="#">Section 1</a></h3>'+
+'	<div>'+
+'		<p>'+
+'		Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer'+
+'		ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit'+
+'		amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut'+
+'		odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.'+
+'		</p>'+
+'	</div>'+
+'	<h3><a href="#">Section 2</a></h3>'+
+'	<div>'+
+'		<p>'+
+'		Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet'+
+'		purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor'+
+'		velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In'+
+'		suscipit faucibus urna.'+
+'		</p>'+
+'	</div>';
+
+//$(content.getDrawing()).accordion();
+*/
+
+/*var content = new Ui.Element({ width: 350, height: 300, verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(content);
+$(content.getDrawing()).datepicker();*/
+
+</script>
+	</head>	
+</html>
+	
+

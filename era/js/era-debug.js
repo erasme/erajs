@@ -142,6 +142,7 @@ include(eraBaseDirectory+'ui/fade.js');
 include(eraBaseDirectory+'ui/flip.js');
 include(eraBaseDirectory+'ui/slide.js');
 include(eraBaseDirectory+'ui/transitionbox.js');
+include(eraBaseDirectory+'ui/carousel.js');
 include(eraBaseDirectory+'ui/app.js');
 include(eraBaseDirectory+'ui/embed.js');
 
