@@ -52,7 +52,11 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		if(config.buttonIcon != undefined)
 			this.setButtonIcon(config.buttonIcon);
 
-		this.addEvents('change', 'validate');
+		this.addEvents('change', 'validate', 'buttonpress');
+	},
+
+	setWidthText: function(nbchar) {
+		this.entry.setWidth(nbchar * 16 * 2 / 3);
 	},
 
 	getButtonIcon: function() {
@@ -151,6 +155,9 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	// Private
 	//
 	updateSizes: function() {
+		if(!this.getIsLoaded())
+			return;
+
 		var spacing = this.getStyleProperty('spacing');
 		if(this.buttonText != undefined) {
 			// icon + text
@@ -283,6 +290,7 @@ Ui.LBox.extend('Ui.TextButtonField', {
 	},
 
 	onButtonPress: function() {
+		this.fireEvent('buttonpress', this);
 		this.fireEvent('validate', this);
 	},
 

@@ -6,6 +6,7 @@ Ui.Container.extend('Ui.Popup', {
 	contentBox: undefined,
 	posX: undefined,
 	posY: undefined,
+	attachedElement: undefined,
 	lbox: undefined,
 	autoHide: true,
 
@@ -88,10 +89,14 @@ Ui.Container.extend('Ui.Popup', {
 		var oldVisible = this.getIsVisible();
 		Ui.Popup.base.show.call(this);
 
+		this.attachedElement = undefined;
+		this.posX = undefined;
+		this.posY = undefined;
+
 		if(!oldVisible) {
 			if((typeof(posX) == 'object') && (Ui.Element.hasInstance(posX))) {
-				var element = posX;
-				var point = element.pointToWindow({ x: element.getLayoutWidth(), y: element.getLayoutHeight()/2 });
+				this.attachedElement = posX;
+				var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
 				this.posX = point.x;
 				this.posY = point.y;
 				this.background.setArrowBorder('left');
@@ -118,12 +123,23 @@ Ui.Container.extend('Ui.Popup', {
 	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
 
-		this.background.measure(width, height);
-		var size = this.contentBox.measure(Math.max(width - 80, 0), Math.max(height - 80, 0));
+		var constraintWidth = Math.max(width - 80, 0);
+		var constraintHeight = Math.max(height - 80, 0);
+
+		if((this.posX != undefined) || (this.attachedElement != undefined)) {
+			constraintWidth = 0;
+			constraintHeight = 0;
+		}
+
+		this.background.measure(constraintWidth, constraintHeight);
+		var size = this.contentBox.measure(constraintWidth, constraintHeight);
 
 //		console.log('contentBox = '+size.width+' x '+size.height);
 
-		return { width: Math.max(width, size.width + 80), height: Math.max(height, size.height + 80) };
+		if((this.posX != undefined) || (this.attachedElement != undefined))
+			return { width: size.width, height: size.height };
+		else
+			return { width: Math.max(width, size.width + 80), height: Math.max(height, size.height + 80) };
 	},
 
 	arrangeCore: function(width, height) {
@@ -134,39 +150,142 @@ Ui.Container.extend('Ui.Popup', {
 
 		this.shadow.arrange(0, 0, width, height);
 
-		if(this.posX == undefined) {
-			x = (width - this.contentBox.getMeasureWidth())/2;
-			y = (height - this.contentBox.getMeasureHeight())/2;
-			this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-			this.shadow.setOpacity(0.5);
+		// handle open center screen
+		if((this.posX == undefined) && (this.attachedElement == undefined)) {
+			this.setCenter(width, height);
 		}
-		else {
-			x = this.posX;
-			y = this.posY;
-			x += 10;
-			y -= 30;
-
-			if(y + this.contentBox.getMeasureHeight() > height) {
-				y = height - this.contentBox.getMeasureHeight();
-
-				var offset = this.posY - y;
-				if(offset > this.contentBox.getMeasureHeight() - 18)
-					offset = this.contentBox.getMeasureHeight() - 18;
-				this.background.setArrowOffset(offset);
-			}
+		// handle open at an element
+		else if(this.attachedElement != undefined) {
+			var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
+			if(this.contentBox.getMeasureWidth() + point.x + 10 < width)
+				this.setLeft(point.x, point.y, width, height);
 			else {
-				this.background.setArrowOffset(30);
+				point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
+				if(this.contentBox.getMeasureWidth() + 10 < point.x)
+					this.setRight(point.x, point.y, width, height);
+				else {
+					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: 0 });
+					if(this.contentBox.getMeasureHeight() + 10 < point.y)
+						this.setTop(point.x, point.y, width, height);
+					else {
+						point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: this.attachedElement.getLayoutHeight() });
+						if(this.contentBox.getMeasureHeight() + 10 + point.y < height)
+							this.setBottom(point.x, point.y, width, height);
+						else
+							this.setCenter(width, height);
+					}
+				}
 			}
-
-			this.shadow.setOpacity(0);
-//			this.shadow.arrange(0, 0, 0, 0);
-			this.background.arrange(x - 10, y, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		}
+		// handle open at a position
+		else {
+			this.setLeft(this.posX, this.posY, width, height);
+		}
+	},
+
+	setLeft: function(x, y, width, height) {
+		var px = x + 10;
+		var py = y - 30;
+
+		this.background.setArrowBorder('left');
+
+		if(py + this.contentBox.getMeasureHeight() > height) {
+			py = height - this.contentBox.getMeasureHeight();
+
+			var offset = y - py;
+			if(offset > this.contentBox.getMeasureHeight() - 18)
+				offset = this.contentBox.getMeasureHeight() - 18;
+			this.background.setArrowOffset(offset);
+		}
+		else
+			this.background.setArrowOffset(30);
+		this.shadow.setOpacity(0);
+		this.background.arrange(px - 10, py, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
+		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+	},
+
+	setRight: function(x, y, width, height) {
+		var px = x - (10 + this.contentBox.getMeasureWidth());
+		var py = y - 30;
+
+		this.background.setArrowBorder('right');
+
+		if(py + this.contentBox.getMeasureHeight() > height) {
+			py = height - this.contentBox.getMeasureHeight();
+
+			var offset = y - py;
+			if(offset > this.contentBox.getMeasureHeight() - 18)
+				offset = this.contentBox.getMeasureHeight() - 18;
+			this.background.setArrowOffset(offset);
+		}
+		else
+			this.background.setArrowOffset(30);
+		this.shadow.setOpacity(0);
+		this.background.arrange(px, py, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
+		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+	},
+
+	setTop: function(x, y, width, height) {
+		var py = y - (this.contentBox.getMeasureHeight());
+		var px = x - 30;
+
+		this.background.setArrowBorder('bottom');
+
+		if(px + this.contentBox.getMeasureWidth() > width) {
+			px = width - this.contentBox.getMeasureWidth();
+
+			var offset = x - px;
+			if(offset > this.contentBox.getMeasureWidth() - 18)
+				offset = this.contentBox.getMeasureWidth() - 18;
+			this.background.setArrowOffset(offset);
+		}
+		else
+			this.background.setArrowOffset(30);
+		this.shadow.setOpacity(0);
+		this.background.arrange(px, py - 10, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight() + 10);
+		this.contentBox.arrange(px, py - 10, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+	},
+
+	setBottom: function(x, y, width, height) {
+		var py = y + 10;
+		var px = x - 30;
+
+		this.background.setArrowBorder('top');
+
+		if(px + this.contentBox.getMeasureWidth() > width) {
+			px = width - this.contentBox.getMeasureWidth();
+
+			var offset = x - px;
+
+			if(offset > this.contentBox.getMeasureWidth() - 18)
+				offset = this.contentBox.getMeasureWidth() - 18;
+			this.background.setArrowOffset(offset);
+		}
+		else
+			this.background.setArrowOffset(30);
+		this.shadow.setOpacity(0);
+		this.background.arrange(px, py - 10, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight() + 10);
+		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+	},
+
+	setCenter: function(width, height) {
+		this.background.setArrowBorder('none');
+
+		x = (width - this.contentBox.getMeasureWidth())/2;
+		y = (height - this.contentBox.getMeasureHeight())/2;
+		this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+		this.shadow.setOpacity(0.5);
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 })
+		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 }),
+
+		"Ui.MonthCalendar": {
+			color: new Ui.Color({ r: 1, g: 1, b: 1 }),
+			dayColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.3 }),
+			currentDayColor: new Ui.Color({ r: 1, g: 0.31, b: 0.66, a: 0.5 })
+		}
 	}
 });
 
@@ -253,13 +372,26 @@ Ui.Fixed.extend('Ui.PopupBackground', {
 			var v1 = width - radius;
 			var v2 = height - radius;
 			return 'M'+radius+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
-//			return 'M'+radius+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+radius+','+height+' A'+radius+','+radius+' 0 0,1 0,'+v2+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
 		}
 		else if(arrowBorder == 'left') {
 			var v1 = width - this.radius;
 			var v2 = height - this.radius;
 			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+(radius+arrowSize)+','+height+' Q'+arrowSize+','+height+' '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' Q'+arrowSize+',0 '+(radius+arrowSize)+',0 z';
-//			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+(radius+arrowSize)+','+height+' A'+radius+','+radius+' 0 0,1 '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' A'+radius+','+radius+' 0 0,1 '+(radius+arrowSize)+',0 z';
+		}
+		else if(arrowBorder == 'right') {
+			var v1 = width - (this.radius + arrowSize);
+			var v2 = height - this.radius;
+			return 'M'+radius+',0 L'+v1+',0 Q'+(width - arrowSize)+',0 '+(width - arrowSize)+','+radius+' L'+(width - arrowSize)+','+(arrowOffset - arrowSize)+' L'+width+','+arrowOffset+' L'+(width - arrowSize)+','+(arrowOffset + arrowSize)+' L '+(width - arrowSize)+','+v2+' Q'+(width - arrowSize)+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
+		}
+		else if(arrowBorder == 'top') {
+			var v1 = width - this.radius;
+			var v2 = height - this.radius;
+			return 'M'+radius+','+arrowSize+' L'+(arrowOffset - arrowSize)+','+arrowSize+' L'+arrowOffset+',0 L'+(arrowOffset + arrowSize)+','+arrowSize+' L'+v1+','+arrowSize+' Q'+width+','+arrowSize+' '+width+','+(arrowSize + radius)+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+(arrowSize+radius)+' Q0,'+arrowSize+' '+radius+','+arrowSize+' z';
+		}
+		else if(arrowBorder == 'bottom') {
+			var v1 = width - this.radius;
+			var v2 = height - (this.radius + arrowSize);
+			return 'M'+radius+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+(height-arrowSize)+' '+v1+','+(height-arrowSize)+' L '+(arrowOffset+arrowSize)+','+(height-arrowSize)+' L'+arrowOffset+','+height+' L'+(arrowOffset-arrowSize)+','+(height-arrowSize)+' L'+radius+','+(height-arrowSize)+' Q0,'+(height-arrowSize)+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
 		}
 	},
 
@@ -279,16 +411,49 @@ Ui.Fixed.extend('Ui.PopupBackground', {
 			this.setPosition(this.background, 2, 2);
 			this.background.setPath(this.genPath(width-4, height-4, this.radius-1.4, this.arrowBorder));
 		}
-		else {
-			this.lightShadow.setWidth(width - 2);
+		else if(this.arrowBorder == 'left') {
+			this.lightShadow.setWidth(width - 3);
 			this.lightShadow.setHeight(height - 2);
-			this.setPosition(this.lightShadow, 1.6, 1);
+			this.setPosition(this.lightShadow, 2, 1);
 			this.lightShadow.setPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
 			
 			this.background.setWidth(width - 4.7);
 			this.background.setHeight(height - 3.7);
 			this.setPosition(this.background, 3.2, 2);
 			this.background.setPath(this.genPath(width-4.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
+		}
+		else if(this.arrowBorder == 'right') {
+			this.lightShadow.setWidth(width - 3);
+			this.lightShadow.setHeight(height - 2);
+			this.setPosition(this.lightShadow, 1, 1);
+			this.lightShadow.setPath(this.genPath(width-3, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
+			
+			this.background.setWidth(width - 5.7);
+			this.background.setHeight(height - 3.7);
+			this.setPosition(this.background, 2.2, 2);
+			this.background.setPath(this.genPath(width-5.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
+		}
+		else if(this.arrowBorder == 'top') {
+			this.lightShadow.setWidth(width - 2);
+			this.lightShadow.setHeight(height - 3);
+			this.setPosition(this.lightShadow, 1, 2);
+			this.lightShadow.setPath(this.genPath(width-2, height-3, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
+			
+			this.background.setWidth(width - 4);
+			this.background.setHeight(height - 5);
+			this.setPosition(this.background, 2, 3);
+			this.background.setPath(this.genPath(width-4, height-5, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
+		}
+		else if(this.arrowBorder == 'bottom') {
+			this.lightShadow.setWidth(width - 2);
+			this.lightShadow.setHeight(height - 3);
+			this.setPosition(this.lightShadow, 1, 1);
+			this.lightShadow.setPath(this.genPath(width-2, height-3, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
+			
+			this.background.setWidth(width - 4);
+			this.background.setHeight(height - 5);
+			this.setPosition(this.background, 2, 2);
+			this.background.setPath(this.genPath(width-4, height-5, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
 		}
 	}
 });

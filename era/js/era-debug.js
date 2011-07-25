@@ -145,4 +145,6 @@ include(eraBaseDirectory+'ui/transitionbox.js');
 include(eraBaseDirectory+'ui/carousel.js');
 include(eraBaseDirectory+'ui/app.js');
 include(eraBaseDirectory+'ui/embed.js');
+include(eraBaseDirectory+'ui/monthcalendar.js');
+include(eraBaseDirectory+'ui/datepicker.js');
 
