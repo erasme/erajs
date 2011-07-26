@@ -4,28 +4,29 @@ Ui.Element.extend('Ui.Container',
 	children: undefined,
 
     /**
-    *   @constructs
-	*	@class
-    *   @extends Ui.Element
+    * @constructs
+	* @class
+    * @extends Ui.Element
 	*/
 	constructor: function(config) {
 		this.children = [];
 	},
 
-	//
-	// Add a child in the container at the end
-	//
+	/**
+	* Add a child in the container at the end
+	*/
 	appendChild: function(child) {
 		child.parent = this;
 		this.children.push(child);
 		this.getDrawing().appendChild(child.getDrawing());
+		child.getDrawing().style.zIndex = this.children.length;
 		this.invalidateMeasure();
 		child.setIsLoaded(this.isLoaded);
 	},
 
-	//
-	// Add a child in the container at the begining
-	//
+	/**
+	* Add a child in the container at the begining
+	*/
 	prependChild: function(child) {
 		child.parent = this;
 		this.children.unshift(child);
@@ -34,12 +35,14 @@ Ui.Element.extend('Ui.Container',
 			this.getDrawing().insertBefore(child.getDrawing(), this.getDrawing().firstChild);
 		else
 			this.getDrawing().appendChild(child.getDrawing());
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
 	},
 
-	//
-	// Remove a child element from the current container
-	//
+	/**
+	* Remove a child element from the current container
+	*/
 	removeChild: function(child) {
 		child.parent = undefined;
 		this.getDrawing().removeChild(child.getDrawing());
@@ -47,9 +50,32 @@ Ui.Element.extend('Ui.Container',
 		while((i < this.children.length) && (this.children[i] != child)) { i++ };
 		if(i < this.children.length)
 			this.children.splice(i, 1);
-
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].getDrawing().style.zIndex = i + 1;
 		this.invalidateMeasure();
 		child.setIsLoaded(false);
+	},
+
+	/**
+	* Move a child from its current position to
+	* the given position. Negative value allow
+	* to specify position from the end.
+	*/
+	moveChildAt: function(child, position) {
+		if(position < 0)
+			position = this.children.length + position;
+		if(position < 0)
+			position = 0;
+		if(position >= this.children.length)
+			position = this.children.length;
+		var i = 0;
+		while((i < this.children.length) && (this.children[i] != child)) { i++ };
+		if(i < this.children.length) {
+			this.children.splice(i, 1);
+			this.children.splice(position, 0, child);
+			for(var i = 0; i < this.children.length; i++)
+				this.children[i].getDrawing().style.zIndex = i + 1;
+		}
 	},
 
 	/**

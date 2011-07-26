@@ -160,8 +160,7 @@ Ui.Container.extend('Ui.Notebook',
 				page.getBackground().arrange(0, 0, width, height);
 			}
 			else {
-				this.removeChild(page.getBackground());
-				this.prependChild(page.getBackground());
+				this.moveChildAt(page.getBackground(), 0);
 
 				page.getContentBox().hide();
 				if(this.hiddenColor != undefined)
