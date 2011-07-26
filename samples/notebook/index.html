@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Notebook</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var button = new Ui.Button({ text: 'set page 1' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	notebook.setCurrentPosition(0);
+});
+
+button = new Ui.Button({ text: 'add page' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	var page = new Ui.NotebookPage();
+	page.setHeader(new Ui.Label({ text: 'Page X' }));
+	page.setContent(new Ui.Label({ text: 'Page X content', verticalAlign: 'center', horizontalAlign: 'center' }));
+	notebook.appendPage(page);
+});
+
+button = new Ui.Button({ text: 'remove last page' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	var count = notebook.getPages().length;
+	if(count > 0)
+		notebook.removePage(notebook.getPages()[count - 1]);
+});
+
+var notebook = new Ui.Notebook({ margin: 10 });
+vbox.append(notebook, true);
+
+var page = new Ui.NotebookPage();
+page.setHeader(new Ui.Label({ text: 'Page 1' }));
+page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen', verticalAlign: 'center', horizontalAlign: 'center' }));
+notebook.appendPage(page);
+
+page = new Ui.NotebookPage();
+page.setHeader(new Ui.Label({ text: 'Page 2' }));
+page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'orange', margin: 40 }));
+notebook.appendPage(page);
+
+page = new Ui.NotebookPage();
+page.setHeader(new Ui.Label({ text: 'Page 3' }));
+page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'purple' }));
+notebook.appendPage(page);
+
+</script>
+  </head>
+</html>

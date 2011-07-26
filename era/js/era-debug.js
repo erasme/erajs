@@ -147,4 +147,5 @@ include(eraBaseDirectory+'ui/app.js');
 include(eraBaseDirectory+'ui/embed.js');
 include(eraBaseDirectory+'ui/monthcalendar.js');
 include(eraBaseDirectory+'ui/datepicker.js');
+include(eraBaseDirectory+'ui/notebook.js');
 
