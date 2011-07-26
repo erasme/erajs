@@ -154,7 +154,7 @@ Ui.VBox.extend('Ui.MonthCalendar',
 	style: {
 		color: 'black',
 		dayColor: new Ui.Color({ r: 0.81, g: 0.81, b: 0.81, a: 0.5 }),
-		currentDayColor: new Ui.Color({ r: 1, g: 0.31, b: 0.66, a: 0.5 }),
+		currentDayColor: new Ui.Color({ r: 1, g: 0.31, b: 0.66, a: 0.5 })
 	}
 });
 

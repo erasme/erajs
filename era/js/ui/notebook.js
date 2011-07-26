@@ -72,7 +72,7 @@ Ui.Container.extend('Ui.Notebook',
 
 			if((this.current == i) && (this.current == 0))
 				this.setCurrentPosition(0);
-			else if(this.current >= pos)
+			else if(this.current >= i)
 				this.setCurrentPosition(this.current - 1);
 			else
 				this.setCurrentPosition(this.current);
@@ -97,7 +97,7 @@ Ui.Container.extend('Ui.Notebook',
 
 	onPageClose: function(page) {
 		this.removePage(page);
-	},
+	}
 
 	/**#@-*/
 }, 

@@ -530,7 +530,7 @@ Ui.LBox.extend('Ui.App', {
 
 	sendMessageToParent: function(msg) {
 		parent.postMessage(msg.serialize(), "*");
-	},
+	}
 /*
 	findNextFocusable: function() {
 		console.log('findNextFocusable');
