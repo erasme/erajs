@@ -95,6 +95,8 @@ Ui.LBox.extend('Ui.DropBox', {
 		var effectAllowed = 'all';
 		if(event.dataTransfer.effectAllowed != undefined)
 			effectAllowed = event.dataTransfer.effectAllowed;
+		if(effectAllowed == 'uninitialized')
+			effectAllowed = 'all';
 
 		var dropEffect = 'copy';
 		if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
@@ -108,6 +110,8 @@ Ui.LBox.extend('Ui.DropBox', {
 			dropEffect = 'link';
 		else
 			dropEffect = 'none';
+
+		console.log('effectAllowed: '+effectAllowed+', dropEffect: '+dropEffect);
 
 		event.dataTransfer.dropEffect = dropEffect;
 
