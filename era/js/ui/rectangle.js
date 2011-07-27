@@ -2,8 +2,6 @@
 
 Ui.Element.extend('Ui.Rectangle', {
 	fill: undefined,
-	stroke: undefined,
-	strokeWidth: 0,
 	radiusTopLeft: 0,
 	radiusTopRight: 0,
 	radiusBottomLeft: 0,
@@ -15,12 +13,6 @@ Ui.Element.extend('Ui.Rectangle', {
 	vmlOpacity: 1,
 
 	constructor: function(config) {
-		if(this.vml == undefined) {
-			this.getDrawing().style.boxSizing = 'border-box';
-			this.getDrawing().style.borderStyle = 'solid';
-			this.getDrawing().style.borderWidth = '0px';
-		}
-
 		if(config.radius != undefined)
 			this.setRadius(config.radius);
 		if(config.radiusTopLeft != undefined)
@@ -31,10 +23,6 @@ Ui.Element.extend('Ui.Rectangle', {
 			this.setRadiusBottomLeft(config.radiusBottomLeft);
 		if(config.radiusBottomRight != undefined)
 			this.setRadiusBottomRight(config.radiusBottomRight);
-		if(config.stroke != undefined)
-			this.setStroke(config.stroke);
-		if(config.strokeWidth != undefined)
-			this.setStrokeWidth(config.strokeWidth);
 		if(config.fill != undefined)
 			this.setFill(config.fill);
 		if(config.shadow != undefined)
@@ -175,27 +163,6 @@ Ui.Element.extend('Ui.Rectangle', {
 
 	getFill: function() {
 		return this.fill;
-	},
-
-	setStroke: function(stroke) {
-		if(this.stroke != stroke) {
-			this.stroke = stroke;
-			if(typeof(this.stroke) == 'string')
-				this.getDrawing().style.borderColor = this.stroke;
-			else if(Ui.Color.hasInstance(this.stroke))
-				this.getDrawing().style.borderColor = this.stroke.getCssRgba();
-		}
-	},
-
-	getStroke: function() {
-		return this.stroke;
-	},
-
-	setStrokeWidth: function(strokeWidth) {
-		if(this.strokeWidth != strokeWidth) {
-			this.strokeWidth = strokeWidth;
-			this.getDrawing().style.borderWidth = this.strokeWidth+'px';
-		}
 	},
 
 	updateVml: function() {

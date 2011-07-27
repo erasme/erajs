@@ -100,12 +100,8 @@ Ui.VBox.extend('Ui.MonthCalendar',
 				day.append(bg);
 			}
 
-			if((this.selectedDate != undefined) && (current.getFullYear() == this.selectedDate.getFullYear()) && (current.getMonth() == this.selectedDate.getMonth()) && (current.getDate() == this.selectedDate.getDate())) {
-				console.log('selectedDate month: '+this.selectedDate.getMonth()+',  current: '+current.getMonth());
-
-				bg.setStrokeWidth(3);
-				bg.setStroke('red');
-			}
+			if((this.selectedDate != undefined) && (current.getFullYear() == this.selectedDate.getFullYear()) && (current.getMonth() == this.selectedDate.getMonth()) && (current.getDate() == this.selectedDate.getDate()))
+				day.append(new Ui.Frame({ frameWidth: 3, fill: 'red', radius: 2 }));
 
 			day.append(new Ui.Label({ text: current.getDate(), margin: 5 }))
 

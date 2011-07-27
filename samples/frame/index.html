@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/js/era-debug.js'></script>
+<script>
+//
+// Play with Ui.Frame, the basic drawing element
+//
+
+var app = new Ui.App();
+
+var frame = new Ui.Frame({
+//	fill: new Ui.Color({ r: 0.9, g: 0.6, b: 0 }),
+	fill: new Ui.LinearGradient({ orientation: 'vertical', stops: [
+        { offset: 0, color: new Ui.Color({ r: 0.2, g: 0.5, b: 0.2 }) },
+        { offset: 0.5, color: new Ui.Color({ r: 0.9, g: 0.1, b: 0.1 }) },
+        { offset: 1, color: new Ui.Color({ r: 0.1, g: 0.8, b: 0.9 }) }
+	] }),
+	margin: 50,
+//	width: 100, height: 100,
+//	verticalAlign: 'center',
+//	horizontalAlign: 'center',
+	radius: 16,
+	radiusTopLeft: 8,
+	radiusBottomRight: 0,
+	frameWidth: 5
+});
+app.setContent(frame);
+
+</script>
+  </head>
+</html>

@@ -14,7 +14,7 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	*/
 	constructor: function(config) {
 		this.setButtonIcon('calendar');
-		this.setWidthText(8);
+		this.setWidthText(9);
 		this.connect(this, 'buttonpress', this.onDatePickerButtonPress);
 		this.connect(this, 'change', this.onDatePickerChange);
 	},
