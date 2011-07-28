@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src='../../era/js/era-debug.js'></script>
+<script>
+
+var app = new Ui.App({ });
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var previousButton = new Ui.Button({ icon: 'arrowleft' });
+toolbar.append(previousButton);
+app.connect(previousButton, 'press', function() {
+	carousel.previous();
+});
+
+toolbar.append(new Ui.Spacer(), true);
+
+var nextButton = new Ui.Button({ icon: 'arrowright' });
+toolbar.append(nextButton);
+app.connect(nextButton, 'press', function() {
+	carousel.next();
+});
+
+
+var lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', width: 400, height: 400 });
+vbox.append(lbox, true);
+
+lbox.append(new Ui.Frame({ fill: 'orange', frameWidth: 4 }));
+
+var carousel = new Ui.Carousel({ margin: 4 });
+lbox.append(carousel);
+
+carousel.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+carousel.append(new Ui.Rectangle({ fill: 'lightblue' }));
+carousel.append(new Ui.Rectangle({ fill: 'purple' }));
+
+
+
+</script>
+  </head>
+</html>

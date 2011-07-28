@@ -156,4 +156,20 @@ X - Fournir un ToolBarButton
 
 - Faire de la documentation automatique (voir le functionnement de Doxygen)
 
+- Améliorer le support des courbes de bézier en VML (générer des lignes
+  sera toujours mieux que ce que fait VML actuellement)
+
+- Dans Ui.Frame, gérer les cas où la frame et trop petit pour ses arrondis
+  et sa largeur
+
+- Fournir une classe Ui.Shadow pour dessiner des ombres et ne plus être
+  dépendant de 'box-shadow'
+
+- Passer Ui.Rectangle en une classe dérivée de Ui.Shape
+
+- Implémenter une classe Ui.Carousel pour faire défiler du contenu
+
+- Implémenter un 'fill' pour Ui.Shape qui supporte les textures à base
+  d'image (Ui.ImageBrush)
+
 

@@ -10,13 +10,14 @@ Ui.LBox.extend('Ui.Movable', {
 	posX: 0,
 	posY: 0,
 	isMoving: false,
-	hasMoved: false,
 	measureSpeedTimer: undefined,
 	speedX: 0,
 	speedY: 0,
 	speedComputed: false,
 	lastPosX: undefined,
 	lastPosY: undefined,
+	startPosX: undefined,
+	startPosY: undefined,
 	lastTime: undefined,
 	inertiaClock: undefined,
 	inertia: false,
@@ -24,6 +25,7 @@ Ui.LBox.extend('Ui.Movable', {
 	touchStart: undefined,
 	isDown: false,
 	lock: false,
+	isInMoveEvent: false,
 
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
@@ -103,7 +105,12 @@ Ui.LBox.extend('Ui.Movable', {
 		if((y != undefined) && (this.moveVertical))
 			this.posY = y;
 		this.contentBox.setTransform(Ui.Matrix.createTranslate(this.posX, this.posY));
-		this.fireEvent('move', this);
+
+		if(!this.isInMoveEvent) {
+			this.isInMoveEvent = true;
+			this.fireEvent('move', this);
+			this.isInMoveEvent = false;
+		}
 	},
 
 	getPositionX: function() {
@@ -126,7 +133,7 @@ Ui.LBox.extend('Ui.Movable', {
 
 	onUp: function() {
  		this.isDown = false;
-		this.fireEvent('up', this);
+		this.fireEvent('up', this, this.speedX, this.speedY, (this.posX - this.startPosX), (this.posY - this.startPosY));
 	},
 
 	onKeyDown: function(event) {
@@ -171,8 +178,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
-		if(this.inertia)
-			this.startComputeInertia();
+		this.startComputeInertia();
 	},
 
 	onMouseMove: function(event) {
@@ -183,6 +189,7 @@ Ui.LBox.extend('Ui.Movable', {
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 		this.setPosition(this.startPosX + deltaX, this.startPosY + deltaY);
+		this.hasMoved = true;
 	},
 
 	onMouseUp: function(event) {
@@ -195,12 +202,10 @@ Ui.LBox.extend('Ui.Movable', {
 		this.disconnect(window, 'mousemove', this.onMouseMove);
 		this.disconnect(window, 'mouseup', this.onMouseUp);
 
-		this.onUp();
-
-		if(this.measureSpeedTimer != undefined) {
-			this.stopComputeInertia();
+		this.stopComputeInertia();
+		if(this.inertia)
 			this.startInertia();
-		}
+		this.onUp();
 	},
 
 	onFingerDown: function(event) {
@@ -224,8 +229,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.touchStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
-		if(this.inertia)
-			this.startComputeInertia();
+		this.startComputeInertia();
 	},
 
 	onFingerMove: function(event) {
@@ -251,12 +255,10 @@ Ui.LBox.extend('Ui.Movable', {
 
 		this.isMoving = false;
 
-		this.onUp();
-
-		if(this.measureSpeedTimer != undefined) {
-			this.stopComputeInertia();
+		this.stopComputeInertia();
+		if(this.inertia)
 			this.startInertia();
-		}
+		this.onUp();
 	},
 
 	measureSpeed: function() {
