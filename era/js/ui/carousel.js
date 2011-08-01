@@ -24,10 +24,32 @@ Ui.Container.extend('Ui.Carousel',
 			this.setEase(config.ease);
 		else
 			this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
+		if('lock' in config)
+			this.setLock(config.lock);
+	},
+
+	getLock: function() {
+		return this.movable.getLock();
+	},
+
+	setLock: function(lock) {
+		this.movable.setLock(lock);
+	},
+
+	getCurrent: function() {
+		return this.box.getChildren()[this.getCurrentPosition()];
 	},
 
 	getCurrentPosition: function() {
-		return Math.round(-this.movable.getPositionX() / this.movable.getLayoutWidth());
+		return Math.min(this.box.getChildren().length - 1, Math.max(0, Math.round(-this.movable.getPositionX() / this.movable.getLayoutWidth())));
+	},
+
+	setCurrentAt: function(position) {
+		position = Math.min(this.box.getChildren().length - 1, Math.max(0, position));
+		if(position < this.getCurrentPosition())
+			this.startAnimation(0.8, position);
+		else
+			this.startAnimation(-0.8, position);
 	},
 
 	next: function() {
@@ -64,6 +86,7 @@ Ui.Container.extend('Ui.Carousel',
 
 	remove: function(child) {
 		this.box.remove(child);
+		// TODO: provide animation
 	},
 
 	/**#@+
@@ -88,12 +111,12 @@ Ui.Container.extend('Ui.Carousel',
 	},
 
 	onUp: function(movable, speedX, speedY, deltaX, deltaY) {
-		if(Math.abs(speedX) < 200) {
+		if(Math.abs(speedX) < 100) {
 			var mod = (-this.movable.getPositionX() / this.movable.getLayoutWidth()) % 1;
 			if(mod > 0.5)
-				speedX = -200;
+				speedX = -400;
 			else
-				speedX = 200;
+				speedX = 400;
 		}
 		if(speedX != 0)
 			this.startAnimation(speedX / this.movable.getLayoutWidth());

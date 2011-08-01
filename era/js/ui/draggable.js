@@ -146,6 +146,9 @@ Ui.LBox.extend('Ui.Draggable', {
 		if(this.getIsDisabled() || !((event.button == 0) || (event.button == 2)))
 			return;
 		this.connect(window, 'mouseup', this.onMouseUp, true);
+		event.stopPropagation();
+		if(!navigator.supportDrag)
+			new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
 	},
 
 	onMouseUp: function(event) {
@@ -212,9 +215,14 @@ Ui.LBox.extend('Ui.Draggable', {
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 //			this.onUp();
 
-			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-			event.finger.release();
-			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+			if(navigator.supportDrag) {
+				this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+				event.finger.release();
+				this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+			}
+			else
+				new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.finger.getX(), y: event.finger.getY(), event: event, finger: event.finger });
+
 		}
 	},
 	

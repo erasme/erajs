@@ -388,12 +388,12 @@ Core.Object.extend('Ui.Element',
 
 //			console.log(this+'.arrange '+x+','+y+' ('+this.layoutWidth+'x'+this.layoutHeight+')');
 
-			this.drawing.style.left = this.layoutX+'px';
-			this.drawing.style.top = this.layoutY+'px';
+			this.drawing.style.left = Math.round(this.layoutX)+'px';
+			this.drawing.style.top = Math.round(this.layoutY)+'px';
 			if(this.transform != undefined)
 				this.updateTransform();
-			this.drawing.style.width = this.layoutWidth+'px';
-			this.drawing.style.height = this.layoutHeight+'px';
+			this.drawing.style.width = Math.round(this.layoutWidth)+'px';
+			this.drawing.style.height = Math.round(this.layoutHeight)+'px';
 
 			if(this.clipToBounds) {
 				this.clipX = 0;
@@ -1164,33 +1164,61 @@ Core.Object.extend('Ui.Element',
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
-			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
+			if(matrix.isTranslateOnly()) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
+				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
+					this.drawing.style.removeProperty('-ms-transform');
+					this.drawing.style.removeProperty('-ms-transform-origin');
+				}
+				else if(navigator.isGecko) {
+					this.drawing.style.removeProperty('-moz-transform');
+					this.drawing.style.removeProperty('-moz-transform-origin');
+				}
+				else if(navigator.isWebkit) {
+					this.drawing.style.removeProperty('-webkit-transform');
+					this.drawing.style.removeProperty('-webkit-transform-origin');
+				}
+				else if(navigator.isOpera) {
+					this.drawing.style.removeProperty('-o-transform');
+					this.drawing.style.removeProperty('-o-transform-origin');
+				}
 			}
-			else if(navigator.isIE) {
-				this.drawing.style.msTransform = matrix.toString();
-				this.drawing.style.msTransformOrigin = '0% 0%';
-			}
-			else if(navigator.isGecko) {
-				this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(0)+'px, '+matrix.getF().toFixed(0)+'px)';
-				this.drawing.style.MozTransformOrigin = '0% 0%';
-			}
-			else if(navigator.isWebkit) {
-				this.drawing.style.webkitTransform = matrix.toString();
-				this.drawing.style.webkitTransformOrigin = '0% 0%';
-			}
-			else if(navigator.isOpera) {
-				this.drawing.style.OTransform = matrix.toString();
-				this.drawing.style.OTransformOrigin = '0% 0%';
+			else {
+				this.drawing.style.left = Math.round(this.layoutX)+'px';
+				this.drawing.style.top = Math.round(this.layoutY)+'px';
+//				if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
+//					this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
+//					this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
+//				}
+//				else
+				if(navigator.isIE) {
+					this.drawing.style.msTransform = matrix.toString();
+					this.drawing.style.msTransformOrigin = '0% 0%';
+				}
+				else if(navigator.isGecko) {
+					this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(0)+'px, '+matrix.getF().toFixed(0)+'px)';
+					this.drawing.style.MozTransformOrigin = '0% 0%';
+				}
+				else if(navigator.isWebkit) {
+					this.drawing.style.webkitTransform = matrix.toString();
+					this.drawing.style.webkitTransformOrigin = '0% 0%';
+				}
+				else if(navigator.isOpera) {
+					this.drawing.style.OTransform = matrix.toString();
+					this.drawing.style.OTransformOrigin = '0% 0%';
+				}
 			}
 		}
 		else {
-			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
-				this.drawing.style.left = Math.round(this.layoutX)+'px';
-				this.drawing.style.top = Math.round(this.layoutY)+'px';
-			}
-			else if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
+			this.drawing.style.left = Math.round(this.layoutX)+'px';
+			this.drawing.style.top = Math.round(this.layoutY)+'px';
+//			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
+//				this.drawing.style.left = Math.round(this.layoutX)+'px';
+//				this.drawing.style.top = Math.round(this.layoutY)+'px';
+//			}
+//			else
+			if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
 				this.drawing.style.removeProperty('-ms-transform');
 				this.drawing.style.removeProperty('-ms-transform-origin');
 			}

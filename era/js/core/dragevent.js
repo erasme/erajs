@@ -316,5 +316,5 @@ navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
   !navigator.isIE && !navigator.iPad && !navigator.iPhone && !navigator.Android;
 
 if(!navigator.supportDrag)
-	new Core.DragManager();
+	Core.DragManager.current = new Core.DragManager();
 

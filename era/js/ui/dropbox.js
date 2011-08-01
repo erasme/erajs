@@ -111,7 +111,7 @@ Ui.LBox.extend('Ui.DropBox', {
 		else
 			dropEffect = 'none';
 
-		console.log('effectAllowed: '+effectAllowed+', dropEffect: '+dropEffect);
+//		console.log('effectAllowed: '+effectAllowed+', dropEffect: '+dropEffect);
 
 		event.dataTransfer.dropEffect = dropEffect;
 

@@ -11,6 +11,10 @@ Core.Object.extend('Ui.Matrix', {
 	constructor: function(config) {
 	},
 
+	isTranslateOnly: function() {
+		return((this.a == 1) && (this.b == 0) && (this.c == 0) && (this.d == 1));
+	},
+
 	translate: function(x, y) {
 		this.multiply(Ui.Matrix.createTranslate(x, y));
 	},

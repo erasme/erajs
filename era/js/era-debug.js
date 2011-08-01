@@ -43,6 +43,7 @@ include(eraBaseDirectory+'core/filepostuploader.js');
 // Animations
 //
 include(eraBaseDirectory+'anim/timemanager.js');
+include(eraBaseDirectory+'anim/animationmanager.js');
 include(eraBaseDirectory+'anim/easingfunction.js');
 include(eraBaseDirectory+'anim/powerease.js');
 include(eraBaseDirectory+'anim/elasticease.js');

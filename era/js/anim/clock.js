@@ -1,6 +1,7 @@
 Core.Object.extend('Anim.Clock', 
 /**@lends Anim.Clock#*/
 {
+	animation: true,
 	parent: undefined,
 	time: undefined,
 	iteration: undefined,
@@ -64,6 +65,9 @@ Core.Object.extend('Anim.Clock',
 			this.scope = this.target;
 		if(config.ease != undefined)
 			this.ease = Anim.EasingFunction.create(config.ease);
+		if('animation' in config)
+			this.animation = config.animation;
+
 		if(this.duration == 'automatic')
 			this.duration = 'forever';
 
@@ -100,8 +104,12 @@ Core.Object.extend('Anim.Clock',
 
 	begin: function() {
 		// if this clock is the root clock, add to the TimeManager
-		if(this.parent == undefined)
-			Anim.TimeManager.current.add(this);
+		if(this.parent == undefined) {
+			if(this.animation)
+				Anim.AnimationManager.current.add(this);
+			else
+				Anim.TimeManager.current.add(this);
+		}
 		else if(this.scope == undefined)
 			this.scope = this.parent.scope;
 
@@ -125,8 +133,12 @@ Core.Object.extend('Anim.Clock',
 
 	onComplete: function() {
 		// if the current clock is the root clock, remove it from the timemanager
-		if(this.parent == undefined)
-			Anim.TimeManager.current.remove(this);
+		if(this.parent == undefined) {
+			if(this.animation)
+				Anim.AnimationManager.current.remove(this);
+			else
+				Anim.TimeManager.current.remove(this);
+		}
 		this.fireEvent('complete');
 	},
 
