@@ -102,6 +102,7 @@ Ui.Element.extend('Ui.Text', {
 
 	setSelectable: function(selectable) {
 		this.selectable = selectable;
+		this.getDrawing().selectable = selectable;
 
 		if(selectable) {
 			this.textDrawing.style.cursor = 'text';

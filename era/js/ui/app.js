@@ -54,6 +54,7 @@ Ui.LBox.extend('Ui.App', {
 
 		this.connect(window, 'load', this.onWindowLoad);
 		this.connect(window, 'resize', this.onWindowResize);
+		this.connect(window, 'selectstart', this.onWindowSelectStart);
 
 		this.addEvents('resize', 'ready', 'parentmessage');
 
@@ -154,6 +155,20 @@ Ui.LBox.extend('Ui.App', {
 	//
 	// Private
 	//
+
+	onWindowSelectStart: function(event) {
+		var current = event.target;
+		var selectable = false;
+		while((current != undefined) && (current != window)) {
+			if('selectable' in current) {
+				selectable = current.selectable;
+				break;
+			}
+			current = current.parentNode;
+		}
+		if(!selectable)
+			event.preventDefault();
+	},
 
 	onWindowLoad: function() {
 		if(navigator.iPad || navigator.iPhone || navigator.Android) {

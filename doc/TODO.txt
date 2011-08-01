@@ -172,4 +172,9 @@ X - Fournir un ToolBarButton
 - Implémenter un 'fill' pour Ui.Shape qui supporte les textures à base
   d'image (Ui.ImageBrush)
 
+- Utiliser getValue() et setValue() pour tous les éléments qui renvoie
+  une valeur (comme Ui.CheckBox par exemple)
+
+- Régler le problème de la sélection du text dans Opera quand on en veux pas
+  et dans IE < 9
 
