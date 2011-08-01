@@ -7,8 +7,25 @@
 <script>
 var app = new Ui.App();
 
+var mainvbox = new Ui.VBox();
+app.setContent(mainvbox);
+
+var toolbar = new Ui.ToolBar();
+mainvbox.append(toolbar);
+
+var button = new Ui.CheckBox({ text: 'selectable' });
+toolbar.append(button);
+
+app.connect(button, 'toggle', function() {
+	html.setSelectable(true);
+});
+
+app.connect(button, 'untoggle', function() {
+	html.setSelectable(false);
+});
+
 var vbox = new Ui.VBox({ verticalAlign: 'center' });
-app.setContent(vbox);
+mainvbox.append(vbox, true);
 
 vbox.append(new Ui.Rectangle({ fill: 'lightblue', height: 10 }));
 
