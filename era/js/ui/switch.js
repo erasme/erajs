@@ -18,6 +18,8 @@ Ui.LBox.extend('Ui.Switch',
 	ease: undefined,
 
 	constructor: function(config) {
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown, true);
+
 		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), frameWidth: 1, radius: 4, marginTop: 1 }));
 
 		this.fixed = new Ui.Fixed();
@@ -35,6 +37,8 @@ Ui.LBox.extend('Ui.Switch',
 		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, marginBottom: 2 });
 		this.movable.setClipToBounds(true);
 		this.append(this.movable);
+		this.connect(this.movable, 'focus', this.updateColors);
+		this.connect(this.movable, 'blur', this.updateColors);
 
 		this.switchbox = new Ui.SwitchBox();
 		this.movable.setContent(this.switchbox);
@@ -47,8 +51,12 @@ Ui.LBox.extend('Ui.Switch',
 
 		if('trueContent' in config)
 			this.setTrueContent(config.trueContent);
+		else
+			this.setTrueContent(new Ui.Label({ text: 'ON', marginLeft: 5, marginRight: 5 }));
 		if('falseContent' in config)
 			this.setFalseContent(config.falseContent);
+		else
+			this.setFalseContent(new Ui.Label({ text: 'OFF', marginLeft: 5, marginRight: 5 }));
 		if('ease' in config)
 			this.setEase(config.ease);
 		else
@@ -82,15 +90,32 @@ Ui.LBox.extend('Ui.Switch',
 		if(this.value != value) {
 			this.value = value;
 			if(this.value)
-				this.startAnimation(1);
+				this.startAnimation(2);
 			else
-				this.startAnimation(-1);
+				this.startAnimation(-2);
 		}
 	},
 
 	/**#@+
 	* @private
 	*/
+
+	onKeyDown: function(event) {
+		if(this.getIsDisabled())
+			return;
+		var key = event.which;
+
+		if((key == 32) || (key == 13) || (key == 37) || (key == 39)) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+		if((key == 32) || (key == 13))
+			this.setValue(!this.value);
+		else if(key == 37)
+			this.setValue(false);
+		else if(key == 39)
+			this.setValue(true);		
+	},
 
 	onMove: function(button) {
 		var posX = this.movable.getPositionX();
@@ -105,17 +130,23 @@ Ui.LBox.extend('Ui.Switch',
 		this.stopAnimation();
 	},
 
-	onUp: function(movable, speedX, speedY, deltaX, deltaY) {
-		if(Math.abs(speedX) < 100) {
-			if(this.pos > 0.5)
-				speedX = -1;
+	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove) {
+		// if move is very low consider a click and invert the value
+		if(cumulMove < 10)
+			this.setValue(!this.value);
+		// else consider a move
+		else {
+			 if(Math.abs(speedX) < 100) {
+				if(this.pos > 0.5)
+					speedX = -1;
+				else
+					speedX = 1;
+			}
 			else
-				speedX = 1;
+				speedX /= this.switchbox.getContentWidth();
+			if(speedX != 0)
+				this.startAnimation(speedX);
 		}
-		else
-			speedX /= this.switchbox.getContentWidth();
-		if(speedX != 0)
-			this.startAnimation(speedX);
 	},
 
 	updatePos: function() {
@@ -181,7 +212,15 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	updateColors: function() {
-		this.switchbox.getSwitchButton().setFill(this.getStyleProperty('color'));
+		var color = this.getStyleProperty('color');
+
+		if(this.movable.getHasFocus()) {
+//			var yuv = color.getYuv();
+//			color = new Ui.Color({ y: yuv.y + 0.40, u: yuv.u, v: yuv.v });
+			color = this.getStyleProperty('focusColor');
+		}
+
+		this.switchbox.getSwitchButton().setFill(color);
 		this.bg1.setFill(this.getStyleProperty('trueColor'));
 		this.bg2.setFill(this.getStyleProperty('falseColor'));
 	}
@@ -213,8 +252,9 @@ Ui.LBox.extend('Ui.Switch',
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
-		trueColor: new Ui.Color({ r: 0.2, g: 0.96, b: 0.6 }),
-		falseColor: new Ui.Color({ r: 1, g: 0.3, b: 0.3 })
+		focusColor: Ui.Color.create('#f6caa2'),
+		trueColor: Ui.Color.create('#91f5c5'),
+		falseColor: Ui.Color.create('#ff9797')
 	}
 });
 

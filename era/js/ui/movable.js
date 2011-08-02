@@ -5,6 +5,7 @@ Ui.LBox.extend('Ui.Movable', {
 	moveHorizontal: true,
 	moveVertical: true,
 	mouseStart: undefined,
+	mouseLast: undefined,
 	contentBox: undefined,
 	content: undefined,
 	posX: 0,
@@ -23,9 +24,11 @@ Ui.LBox.extend('Ui.Movable', {
 	inertia: false,
 	touchId: undefined,
 	touchStart: undefined,
+	touchLast: undefined,
 	isDown: false,
 	lock: false,
 	isInMoveEvent: false,
+	cumulMove: 0,
 
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
@@ -126,6 +129,7 @@ Ui.LBox.extend('Ui.Movable', {
 	//
 
 	onDown: function() {
+		this.cumulMove = 0;
 		this.isDown = true;
 		this.focus();
 		this.fireEvent('down', this);
@@ -133,7 +137,7 @@ Ui.LBox.extend('Ui.Movable', {
 
 	onUp: function() {
  		this.isDown = false;
-		this.fireEvent('up', this, this.speedX, this.speedY, (this.posX - this.startPosX), (this.posY - this.startPosY));
+		this.fireEvent('up', this, this.speedX, this.speedY, (this.posX - this.startPosX), (this.posY - this.startPosY), this.cumulMove);
 	},
 
 	onKeyDown: function(event) {
@@ -176,6 +180,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		this.mouseLast = this.mouseStart;
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
 		this.startComputeInertia();
@@ -188,6 +193,12 @@ Ui.LBox.extend('Ui.Movable', {
 		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
+
+		var dX = mousePos.x - this.mouseLast.x;
+		var dY = mousePos.y - this.mouseLast.y;
+		this.mouseLast = mousePos;
+		this.cumulMove += Math.sqrt(dX * dX + dY * dY);
+
 		this.setPosition(this.startPosX + deltaX, this.startPosY + deltaY);
 		this.hasMoved = true;
 	},
@@ -227,6 +238,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.onDown();
 
 		this.touchStart = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
+		this.touchLast = this.touchStart;
 		this.startPosX = this.posX;
 		this.startPosY = this.posY;
 		this.startComputeInertia();
@@ -242,6 +254,12 @@ Ui.LBox.extend('Ui.Movable', {
 		var deltaY = touchPos.y - this.touchStart.y;
 		posX = this.startPosX + deltaX;
 		posY = this.startPosY + deltaY;
+
+		var dX = touchPos.x - this.touchLast.x;
+		var dY = touchPos.y - this.touchLast.y;
+		this.touchLast = touchPos;
+		this.cumulMove += Math.sqrt(dX * dX + dY * dY);
+
 		this.setPosition(posX, posY);
 		this.hasMoved = true;
 	},
