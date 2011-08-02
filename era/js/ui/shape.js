@@ -39,8 +39,8 @@ Ui.Element.extend('Ui.Shape', {
 					this.svgGradient = undefined;
 				}
 				if(Ui.Color.hasInstance(fill)) {
-					fill = fill.getCssHtml();
-					this.svgPath.style.fill = fill;
+					this.svgPath.style.fill = fill.getCssHtml();
+					this.svgPath.style.opacity = fill.getRgba().a;
 				}
 				else if(Ui.LinearGradient.hasInstance(fill)) {
 					this.svgGradient = fill.getSVGGradient();
@@ -48,6 +48,7 @@ Ui.Element.extend('Ui.Shape', {
 					this.svgGradient.setAttributeNS(null, 'id', gradId);
 					this.shapeDrawing.insertBefore(this.svgGradient, this.shapeDrawing.firstChild);
 					this.svgPath.style.fill = 'url(#'+gradId+')';
+					this.svgPath.style.opacity = 1;
 				}
 			}
 			else if(navigator.supportVML) {

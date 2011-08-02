@@ -145,6 +145,7 @@ include(eraBaseDirectory+'ui/flip.js');
 include(eraBaseDirectory+'ui/slide.js');
 include(eraBaseDirectory+'ui/transitionbox.js');
 include(eraBaseDirectory+'ui/carousel.js');
+include(eraBaseDirectory+'ui/switch.js');
 include(eraBaseDirectory+'ui/app.js');
 include(eraBaseDirectory+'ui/embed.js');
 include(eraBaseDirectory+'ui/monthcalendar.js');

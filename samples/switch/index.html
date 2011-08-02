@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Switch</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var pos1Button = new Ui.Button({ text: 'set true' });
+toolbar.append(pos1Button);
+app.connect(pos1Button, 'press', function() {
+	switcher.setValue(true);
+});
+
+var pos2Button = new Ui.Button({ text: 'set false' });
+toolbar.append(pos2Button);
+app.connect(pos2Button, 'press', function() {
+	switcher.setValue(false);
+});
+
+var enableButton = new Ui.Button({ text: 'enable' });
+toolbar.append(enableButton);
+app.connect(enableButton, 'press', function() {
+	switcher.enable();
+});
+
+var disableButton = new Ui.Button({ text: 'disable' });
+toolbar.append(disableButton);
+app.connect(disableButton, 'press', function() {
+	switcher.disable();
+});
+
+var vbox2 = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+vbox.append(vbox2, true);
+
+var switcher = new Ui.Switch({ trueContent: new Ui.Label({ text: 'PRESENT' }), falseContent: new Ui.Label({ text: 'ABSENT' }) });
+
+var label = new Ui.Label({ text: 'Value: '+switcher.getValue() });
+vbox2.append(label);
+
+vbox2.append(switcher);
+
+app.connect(switcher, 'change', function() {
+	label.setText('Value: '+switcher.getValue());
+});
+
+
+</script>
+  </head>
+</html>

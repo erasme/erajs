@@ -44,9 +44,6 @@ Ui.LBox.extend('Ui.App', {
 //		document.documentElement.style.width = '100%';
 //		document.documentElement.style.height = '100%';
 
-//		if(navigator.supportSVG)
-//			this.svgRoot = document.createElementNS(svgNS, 'svg');
-
 		this.setTransformOrigin(0, 0);
 
 //		this.connect(window, 'focus', this.onWindowFocus);

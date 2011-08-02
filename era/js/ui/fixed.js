@@ -1,6 +1,8 @@
 
 
 Ui.Container.extend('Ui.Fixed', {
+	lastWidth: 0,
+	lastHeight: 0,
 
 	constructor: function(config) {
 		this.addEvents('resize');
@@ -11,7 +13,7 @@ Ui.Container.extend('Ui.Fixed', {
 			item.fixedX = x;
 		if(y != undefined)
 			item.fixedY = y;
-		this.invalidateArrange();
+		this.onChildInvalidateArrange(item);
 	},
 
 	append: function(child, x, y) {
@@ -40,7 +42,11 @@ Ui.Container.extend('Ui.Fixed', {
 	// Arrange children
 	//
 	arrangeCore: function(width, height) {
-		this.fireEvent('resize', this, width, height);
+		if((this.lastWidth != width) || (this.lastHeight != height)) {
+			this.lastWidth = width;
+			this.lastHeight = height;
+			this.fireEvent('resize', this, width, height);
+		}
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());

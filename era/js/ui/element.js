@@ -311,7 +311,6 @@ Core.Object.extend('Ui.Element',
 	invalidateMeasure: function() {
 //		console.log(this+'.invalidateMeasure start');
 
-		this.invalidateArrange();
 		if(this.measureValid) {
 //			console.log(this+'.invalidateMeasure');
 
@@ -319,6 +318,7 @@ Core.Object.extend('Ui.Element',
 			if((this.parent != undefined) && (this.parent.measureValid))
 				this.parent.onChildInvalidateMeasure(this);
 		}
+		this.invalidateArrange();
 	},
 
 //	invalidateLayout: function() {
@@ -1144,7 +1144,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	updateTransform: function() {
-		if((this.transform != undefined) && this.getIsLoaded()) {
+		if(this.transform != undefined) {
 //			console.log('updateTransform');
 
 			var matrix = new Ui.Matrix();
