@@ -71,6 +71,7 @@ Core.Object.extend('Sample.MyObject',
 	 * @extends Core.Object 
 	 * @property {Number} documentedInConsctructor This is a field documented with the <b>property</b> tag in the constructor, 
 	 * it's not very elegant but may be usefull in some cases.
+	 * @param {Object} config If you want "config" to be display as a function paramter (inside the parenthesis) you must specify the param name config. 
 	 * @param {Number} config.myvar This is the description of myvar which is a number 
 	 */
 	constructor: function(config) {

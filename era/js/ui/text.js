@@ -1,5 +1,6 @@
-
-Ui.Element.extend('Ui.Text', {
+Ui.Element.extend('Ui.Text', 
+/**@lends Ui.Text#*/
+{
 	text: '',
 	measureDrawing: undefined,
 	textDrawing: undefined,
@@ -18,6 +19,18 @@ Ui.Element.extend('Ui.Text', {
 	color: 'black',
 	selectable: false,
 
+    /**
+     * @constructs
+	 * @class      
+     * @extends Ui.Element
+     * @param {String} [config.text]
+     * @param {Number} [config.fontSize]
+     * @param {String} [config.fontFamily]
+     * @param {String} [config.fontWeight]
+     * @param {String} [config.color]
+     * @param {Boolean} [config.selectable] Whether or not the text can be selected
+	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
+     */ 
 	constructor: function(config) {
 		if('text' in config)
 			this.setText(config.text);
@@ -128,9 +141,9 @@ Ui.Element.extend('Ui.Text', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+ 
+	 * @private 
+	 */
 
 	onSelectStart: function(event) {
 		event.preventDefault();
@@ -213,7 +226,11 @@ Ui.Element.extend('Ui.Text', {
 		if(this.line != '')
 			this.newLine();
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.Text#*/
+{
 	render: function() {
 		// create the container for all text rendering
 		this.textDrawing = document.createElement('div');

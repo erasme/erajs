@@ -18,9 +18,9 @@ Ui.Container.extend('Ui.Fold', {
 		this.addEvents('fold', 'unfold', 'orientationchange');
 
 		if(config.over != undefined)
-			this.over = config.over;
-		if(config.extend != undefined)
-			this.extend = config.extend;
+			this.setOver(config.over);
+		if(config.mode != undefined)
+			this.setMode(config.mode);
 		if(config.orientation != undefined)
 			this.setOrientation(config.orientation);
 

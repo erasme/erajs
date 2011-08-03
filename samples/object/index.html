@@ -4,6 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<script src='../../era/js/era-debug.js'></script>
 <script>
+
 //
 // Sample that show how to use the era object language.
 //
@@ -16,37 +17,37 @@
 Core.Object.extend('Sample.MyObject',
 // the definition of the class
 {
-	// define all the fields of the class with
-	// their initial values.
-	myvar: 12,
-	// the initial value can not be an object, in this
-	// case, use undefined and fill the field later in
-	// the constructor
-	myvar2: undefined,
+        // define all the fields of the class with
+        // their initial values.
+        myvar: 12,
+        // the initial value can not be an object, in this
+        // case, use undefined and fill the field later in
+        // the constructor
+        myvar2: undefined,
 
-	//
-	// the constructor is called each time a new instance
-	// of the class is created. Before this class constructor
-	// call, all the parent class are always called before
-	// without anything to do.
-	// config is an object (see it as an hashtable) that
-	// contains the setup values of the object
-	//
-	constructor: function(config) {
-		console.log('init Sample.MyObject');
-		// check if myvar is present in config.
-		// in this case, init with its value
-		if('myvar' in config)
-			// use "this" to access all method and field
-			// of the current instance of the class
-			this.myvar = config.myvar;
-	},
+        //
+        // the constructor is called each time a new instance
+        // of the class is created. Before this class constructor
+        // call, all the parent class are always called before
+        // without anything to do.
+        // config is an object (see it as an hashtable) that
+        // contains the setup values of the object
+        //
+        constructor: function(config) {
+                console.log('init Sample.MyObject');
+                // check if myvar is present in config.
+                // in this case, init with its value
+                if('myvar' in config)
+                        // use "this" to access all method and field
+                        // of the current instance of the class
+                        this.myvar = config.myvar;
+        },
 
-	//
-	// Define a new method for the class
-	//
-	myMethod: function(myarg1, myarg2) {
-	}
+        //
+        // Define a new method for the class
+        //
+        myMethod: function(myarg1, myarg2) {
+        }
 },
 // the override definition of the class. If the parent class already
 // define something (method or field), if you try to use the same
@@ -54,30 +55,30 @@ Core.Object.extend('Sample.MyObject',
 // If you known what you do and what to override that method of field,
 // just declare it here
 {
-	// override the toString method
-	toString: function() {
-		// when you override a method, you can always called
-		// the overrided method with the following syntax:
-		var res = Sample.MyObject.base.toString.call(this);
-		return("Sample.MyObject ("+res+")");
-	}
+        // override the toString method
+        toString: function() {
+                // when you override a method, you can always called
+                // the overrided method with the following syntax:
+                var res = Sample.MyObject.base.toString.call(this);
+                return("Sample.MyObject ("+res+")");
+        }
 },
 // if you need to declare some class static fields of methods, do
 // it here
 {
-	// declare a static field. To access its value
-	// use: Sample.MyObject.myStaticField
-	myStaticField: 32,
+        // declare a static field. To access its value
+        // use: Sample.MyObject.myStaticField
+        myStaticField: 32,
 
-	// the static constructor is called only once when the class is
-	// declared. In this constructor, "this" correspond to Sample.MyObject
-	constructor: function() {
-	},
+        // the static constructor is called only once when the class is
+        // declared. In this constructor, "this" correspond to Sample.MyObject
+        constructor: function() {
+        },
 
-	// declare a static method. To call it
-	// use: Sample.MyObject.myStaticMethod()
-	myStaticMethod: function() {
-	}
+        // declare a static method. To call it
+        // use: Sample.MyObject.myStaticMethod()
+        myStaticMethod: function() {
+        }
 
 });
 
@@ -87,9 +88,9 @@ Core.Object.extend('Sample.MyObject',
 //
 Sample.MyObject.extend('Sample.MyObject2', {
 
-	constructor: function(config) {
-		console.log('init Sample.MyObject2');
-	}
+        constructor: function(config) {
+                console.log('init Sample.MyObject2');
+        }
 });
 
 // create a new instance of the class MyObject2

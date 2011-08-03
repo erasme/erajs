@@ -1,14 +1,14 @@
 Ui.LBox.extend('Ui.Pressable', 
-/** @lends Ui.Pressable#*/
+/** @lends Ui.Pressable# */
 {
 	isDown: false,
 
     /**
-    *   @constructs   
-    *   @class A pressable is a container which can be pressed   
-    *   @extends Ui.LBox
-	*	@param {mixed} [config] see {@link Ui.LBox} constructor for more options.  
-    */
+     * @constructs   
+     * @class A pressable is a container which can be pressed   
+     * @extends Ui.LBox
+	 * @param {mixed} [config] see {@link Ui.LBox} constructor for more options.  
+     */
 	constructor: function(config) {
 		this.getDrawing().style.cursor = 'pointer';
 

@@ -1,5 +1,6 @@
-
-Ui.Element.extend('Ui.Label', {
+Ui.Element.extend('Ui.Label', 
+/**@lends Ui.Label#*/
+{
 	text: '',
 	orientation: 'horizontal',
 	fontSize: 16,
@@ -11,6 +12,18 @@ Ui.Element.extend('Ui.Label', {
 	textWidth: 0,
 	textHeight: 0,
 
+    /**
+     * @constructs
+	 * @class A label is a graphical element that display a Text and which will take all the place it could to display it on one row.        
+     * @extends Ui.Element
+     * @param {String} [config.text] Label's text
+     * @param {Number} [config.fontSize]
+     * @param {String} [config.fontFamily]
+     * @param {String} [config.fontWeight]
+     * @param {String} [config.color]
+     * @param {String} [config.orientation]
+	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
+     */ 
 	constructor: function(config) {
 		if(config.text != undefined)
 			this.setText(config.text);
@@ -107,7 +120,9 @@ Ui.Element.extend('Ui.Label', {
 			this.invalidateMeasure();
 		}
 	}
-}, {
+}, 
+/**@lends Ui.Label#*/
+{
 	verticalAlign: 'center',
 	horizontalAlign: 'center',
 
@@ -180,7 +195,9 @@ Ui.Element.extend('Ui.Label', {
 				this.labelDrawing.style.removeProperty('-o-transform');
 		}
 	}
-}, {
+}, 
+/**@lends Ui.Label*/
+{
 	measureBox: undefined,
 
 	constructor: function() {

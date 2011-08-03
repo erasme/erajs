@@ -1,7 +1,6 @@
-//
-// Define the ListView class.
-//
-Ui.Container.extend('Ui.ListView', {
+Ui.Container.extend('Ui.ListView', 
+ /** @lends Ui.ListView#*/
+{
 	data: undefined,
 	headers: undefined,
 	rowsHeight: 0,
@@ -105,10 +104,9 @@ Ui.Container.extend('Ui.ListView', {
 		return this.data;
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+ 
+	 * @private 
+	 */
 	findDataRow: function(data) {
 		for(var row = 0; row < this.data.length; row++) {
 			if(data == this.data[row])
@@ -182,7 +180,11 @@ Ui.Container.extend('Ui.ListView', {
 		if(row != -1)
 			this.fireEvent('activate', this, row, cell.getKey());
 	}
-}, {
+
+	/**#@-*/
+}, 
+ /** @lends Ui.ListView#*/
+{
 	measureCore: function(width, height) {
 		for(var col = 0; col < this.headers.length; col++)
 			this.headers[col].minWidth = 0;
@@ -294,7 +296,9 @@ Ui.Container.extend('Ui.ListView', {
 	}
 });
 
-Ui.Pressable.extend('Ui.ListViewHeader', {
+Ui.Pressable.extend('Ui.ListViewHeader', 
+/** @lends Ui.ListViewHeader#*/
+{
 	title: undefined,
 	uiTitle: undefined,
 	background: undefined,
@@ -327,9 +331,9 @@ Ui.Pressable.extend('Ui.ListViewHeader', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+ 
+	 * @private 
+	 */
 	getGradient: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
@@ -358,7 +362,10 @@ Ui.Pressable.extend('Ui.ListViewHeader', {
 	onListViewHeaderUp: function() {
 		this.background.setFill(this.getGradient());
 	}
-}, {
+	/**#@-*/
+}, 
+/** @lends Ui.ListViewHeader#*/
+{
 	onStyleChange: function() {
 		var gradient;
 		var darkColor;
@@ -374,14 +381,18 @@ Ui.Pressable.extend('Ui.ListViewHeader', {
 		var spacing = this.getStyleProperty('spacing');
 		this.uiTitle.setMargin(spacing + 2);
 	}
-}, {
+}, 
+/** @lends Ui.ListViewHeader*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
 		spacing: 5
 	}
 });
 
-Ui.Selectable.extend('Ui.ListViewCellString', {
+Ui.Selectable.extend('Ui.ListViewCellString', 
+/** @lends Ui.ListViewCellString#*/
+{
 	string: '',
 	ui: undefined,
 	background: undefined,
@@ -435,9 +446,9 @@ Ui.Selectable.extend('Ui.ListViewCellString', {
 			this.background.setFill(this.getBackgroundColor());
 	},
 
-	//
-	// Private
-	//
+	/**#@+ 
+	 * @private 
+	 */
 	getDarkColor: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
@@ -467,7 +478,10 @@ Ui.Selectable.extend('Ui.ListViewCellString', {
 	onCellUnselect: function() {
 		this.background.setFill(this.getBackgroundColor());
 	}
-}, {
+	/**#@-*/
+}, 
+/** @lends Ui.ListViewCellString#*/
+{
 	onStyleChange: function() {
 		var color = this.getStyleProperty('color');
 		var yuv = color.getYuv();
@@ -478,7 +492,9 @@ Ui.Selectable.extend('Ui.ListViewCellString', {
 		var spacing = this.getStyleProperty('spacing');
 		this.ui.setMargin(spacing + 2);
 	}
-}, {
+}, 
+/** @lends Ui.ListViewCellString*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99 }),
 		selectColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),

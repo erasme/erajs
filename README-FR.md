@@ -29,7 +29,7 @@ Ses principals caractéristiques sont :
 Commande pour générer la doc :
 
 > $ export JSDOCDIR=<path_to_jsdoc-toolkit> 
-> $ cd <path-to-era-repo>/era/js 
+> $ cd <path-to-era-repo>
 > $ java -jar $JSDOCDIR/jsrun.jar $JSDOCDIR/app/run.js -c=doc/jsdoc/conf/era.conf
 
 # Licence
