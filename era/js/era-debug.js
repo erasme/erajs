@@ -115,6 +115,7 @@ include(eraBaseDirectory+'ui/scrollable2.js');
 include(eraBaseDirectory+'ui/draggable.js');
 include(eraBaseDirectory+'ui/dropbox.js');
 include(eraBaseDirectory+'ui/iframe.js');
+include(eraBaseDirectory+'ui/mouseoverable.js');
 
 //
 // Ui high level element (= drawing + logic + style)

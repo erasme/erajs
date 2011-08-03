@@ -400,6 +400,14 @@ Ui.LBox.extend('Ui.App', {
 
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
+		if(navigator.iPad || navigator.iPhone) {
+			var top = document.body.scrollTop;
+			document.body.scrollLeft = 0;
+			document.body.scrollTop = top;
+		}
+
+//		console.log(document.body.scrollLeft);
+
 		this.updateTask = undefined;
 	},
 
