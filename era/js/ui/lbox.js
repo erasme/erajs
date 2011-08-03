@@ -1,5 +1,5 @@
 Ui.Container.extend('Ui.LBox', 
-/** @lends Ui.LBox#*/
+/** @lends Ui.LBox# */
 {
 	paddingTop: 0,
 	paddingBottom: 0,
@@ -7,15 +7,15 @@ Ui.Container.extend('Ui.LBox',
 	paddingRight: 0,
 
     /**
-    *   @constructs
-	*	@class LBox stands for Layer Box, a container that "pile" elements like layers        
-    *   @extends Ui.Container
-    *   @param {String} [config.padding] padding
-    *   @param {String} [config.paddingTop]
-    *   @param {String} [config.paddingBottom]
-    *   @param {String} [config.paddingLeft]
-    *   @param {String} [config.paddingRight]
-    */ 
+     * @constructs
+	 * @class LBox stands for Layer Box, a container that "pile" elements like layers        
+     * @extends Ui.Container
+     * @param {String} [config.padding] padding
+     * @param {String} [config.paddingTop]
+     * @param {String} [config.paddingBottom]
+     * @param {String} [config.paddingLeft]
+     * @param {String} [config.paddingRight]
+     */ 
 	constructor: function(config) {
 		if(config.padding != undefined)
 			this.setPadding(config.padding);
@@ -128,7 +128,7 @@ Ui.Container.extend('Ui.LBox',
 		this.removeChild(child);
 	}
 }, 
-/** @lends Ui.LBox#*/
+/** @lends Ui.LBox# */
 {
 	/**#@+
 	 * @private

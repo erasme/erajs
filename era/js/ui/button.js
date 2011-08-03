@@ -1,5 +1,5 @@
 Ui.Pressable.extend('Ui.Button', 
-/** @lends Ui.Button#*/
+/** @lends Ui.Button# */
 {
 
 	allcontent: undefined,
@@ -21,15 +21,15 @@ Ui.Pressable.extend('Ui.Button',
 	lightShadow: undefined,
 	darkShadow: undefined,
     /**
-    *   @constructs
-	*	@class A Button is a pressable element that looks like a rounded rectangle (by default) with some text and/or icon.        
-    *   @extends Ui.Pressable
-    *   @param {String} [config.text] Button's text
-    *   @param {String} [config.icon] SVG Icon name
-    *   @param {String} [config.orientation] 'vertical' or 'horizontal'
-	*	@param {mixed} [config] see {@link Ui.Pressable} constructor for more options.  
-    *   @see <a href="http://daniel.erasme.lan:8080/era/samples/button/">Button sample</a>.
-    */ 
+     * @constructs
+	 * @class A Button is a pressable element that looks like a rounded rectangle (by default) with some text and/or icon.        
+     * @extends Ui.Pressable
+     * @param {String} [config.text] Button's text
+     * @param {String} [config.icon] SVG Icon name
+     * @param {String} [config.orientation] 'vertical' or 'horizontal'
+	 * @param {mixed} [config] see {@link Ui.Pressable} constructor for more options.  
+     * @see <a href="http://daniel.erasme.lan:8080/era/samples/button/">Button sample</a>.
+     */ 
 	constructor: function(config) {
 		this.setPadding(3);
 
@@ -155,7 +155,7 @@ Ui.Pressable.extend('Ui.Button',
 		this.updateSizes();
 	},
 
-    /**@return {String} Orientation*/
+    /** @return {String} Orientation */
 	getOrientation: function() {
 		return this.orientation;
 	},
@@ -170,8 +170,8 @@ Ui.Pressable.extend('Ui.Button',
 	},
 
 	/**#@+
-	* @private
-	*/
+	 * @private
+	 */
 
 	updateSizes: function() {
 		var spacing = this.getStyleProperty('spacing');
@@ -423,7 +423,6 @@ Ui.Pressable.extend('Ui.Button',
 }, 
 /** @lends Ui.Button */
 {
-    /** @fieldOf*/
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 //		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
