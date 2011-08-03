@@ -16,7 +16,7 @@ vbox.append(toolbar);
 var previousButton = new Ui.Button({ icon: 'arrowleft' });
 toolbar.append(previousButton);
 app.connect(previousButton, 'press', function() {
-	carousel.previous();
+	carouselable.previous();
 });
 
 toolbar.append(new Ui.Spacer(), true);
@@ -24,7 +24,7 @@ toolbar.append(new Ui.Spacer(), true);
 var nextButton = new Ui.Button({ icon: 'arrowright' });
 toolbar.append(nextButton);
 app.connect(nextButton, 'press', function() {
-	carousel.next();
+	carouselable.next();
 });
 
 
@@ -33,14 +33,12 @@ vbox.append(lbox, true);
 
 lbox.append(new Ui.Frame({ fill: 'orange', frameWidth: 4 }));
 
-var carousel = new Ui.Carousel({ margin: 4 });
-lbox.append(carousel);
+var carouselable = new Ui.Carouselable({ margin: 4 });
+lbox.append(carouselable);
 
-carousel.append(new Ui.Rectangle({ fill: 'lightgreen' }));
-carousel.append(new Ui.Rectangle({ fill: 'lightblue' }));
-carousel.append(new Ui.Rectangle({ fill: 'purple' }));
-carousel.append(new Ui.Rectangle({ fill: 'orange' }));
-carousel.append(new Ui.Rectangle({ fill: 'green' }));
+carouselable.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+carouselable.append(new Ui.Rectangle({ fill: 'lightblue' }));
+carouselable.append(new Ui.Rectangle({ fill: 'purple' }));
 
 
 

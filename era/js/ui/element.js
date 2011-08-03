@@ -665,7 +665,8 @@ Core.Object.extend('Ui.Element',
 	// Ask for focus on the current element
 	//
 	focus: function() {
-		this.drawing.focus();
+		if(this.focusable)
+			this.drawing.focus();
 //		var current = this;
 //		while(current.parent != undefined) {
 //			current = current.parent;
