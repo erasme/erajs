@@ -38,8 +38,6 @@ Core.Event.extend('Core.MouseEvents', {
 Core.Object.extend('Core.MouseManager', {
 
 	constructor: function(config) {
-		console.log('new Core.MouseManager');
-
 		Core.Event.registerEvent('MouseEvents', Core.MouseEvents);
 		Core.Event.register('mousedown', Core.MouseEvents);
 		Core.Event.register('mousemove', Core.MouseEvents);
@@ -64,7 +62,6 @@ Core.Object.extend('Core.MouseManager', {
 			event.altKey, event.shiftKey, event.metaKey, button, target);
 		target.dispatchEvent(mouseEvent);
 		event.returnValue = !mouseEvent.defaultPrevented;
-		console.log('onMouseDown return: '+event.returnValue);
 		return event.returnValue;
 	},
 
@@ -99,7 +96,6 @@ Core.Object.extend('Core.MouseManager', {
 			event.altKey, event.shiftKey, event.metaKey, button, target);
 		target.dispatchEvent(mouseEvent);
 		event.returnValue = !mouseEvent.defaultPrevented;
-		console.log('onMouseUp return: '+event.returnValue);
 		return event.returnValue;
 	}
 });

@@ -18,7 +18,11 @@ Ui.LBox.extend('Ui.Switch',
 	ease: undefined,
 
 	constructor: function(config) {
-		this.connect(this.getDrawing(), 'keydown', this.onKeyDown, true);
+		this.setFocusable(true);
+		this.connect(this, 'focus', this.updateColors);
+		this.connect(this, 'blur', this.updateColors);
+
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 
 		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), frameWidth: 1, radius: 4, marginTop: 1 }));
 
@@ -35,10 +39,9 @@ Ui.LBox.extend('Ui.Switch',
 		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.2 }), frameWidth: 1, radius: 5, marginBottom: 1  }));
 
 		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, marginBottom: 2 });
+		this.movable.setFocusable(false);
 		this.movable.setClipToBounds(true);
 		this.append(this.movable);
-		this.connect(this.movable, 'focus', this.updateColors);
-		this.connect(this.movable, 'blur', this.updateColors);
 
 		this.switchbox = new Ui.SwitchBox();
 		this.movable.setContent(this.switchbox);
@@ -214,11 +217,8 @@ Ui.LBox.extend('Ui.Switch',
 	updateColors: function() {
 		var color = this.getStyleProperty('color');
 
-		if(this.movable.getHasFocus()) {
-//			var yuv = color.getYuv();
-//			color = new Ui.Color({ y: yuv.y + 0.40, u: yuv.u, v: yuv.v });
+		if(this.getHasFocus())
 			color = this.getStyleProperty('focusColor');
-		}
 
 		this.switchbox.getSwitchButton().setFill(color);
 		this.bg1.setFill(this.getStyleProperty('trueColor'));

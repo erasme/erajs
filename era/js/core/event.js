@@ -136,9 +136,11 @@ Core.Object.extend('Core.Event',
 					var newEvent = {};
 					for(var key in arguments[0])
 						newEvent[key] = arguments[0][key];
+					if(('keyCode' in arguments[0]) && !('which' in arguments[0]))
+						newEvent.which = arguments[0].keyCode;
 					newEvent.preventDefault = function() {
 						this.defaultPrevented = true;
-						this.returnValue= false;
+						this.returnValue = false;
 					};
 					newEvent.stopPropagation = function() {
 						this.cancelBubble = true;

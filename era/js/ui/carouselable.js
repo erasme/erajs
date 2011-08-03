@@ -11,11 +11,12 @@ Ui.Container.extend('Ui.Carouselable',
 	ease: undefined,
 
 	constructor: function(config) {
+		this.setClipToBounds(true);
 		this.setFocusable(true);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.addEvents('change');
 
-		this.movable = new Ui.Movable({ clipToBounds: true, inertia: false });
+		this.movable = new Ui.Movable({ inertia: false });
 		this.movable.setFocusable(false);
 		this.connect(this.movable, 'move', this.onMove);
 		this.connect(this.movable, 'down', this.onDown);
@@ -46,7 +47,7 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	getCurrentPosition: function() {
-		return Math.min(this.box.getChildren().length - 1, Math.max(0, Math.round(-this.movable.getPositionX() / this.movable.getLayoutWidth())));
+		return Math.min(this.box.getChildren().length - 1, Math.max(0, Math.round(-this.movable.getPositionX() / this.getLayoutWidth())));
 	},
 
 	setCurrentAt: function(position) {
@@ -61,7 +62,7 @@ Ui.Container.extend('Ui.Carouselable',
 		if(this.alignClock == undefined)
 			this.startAnimation(-1, this.getCurrentPosition() + 1);
 		else {
-			var pos = -this.movable.getPositionX() / this.movable.getLayoutWidth();
+			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
 			if(this.animNext > pos)
 				this.startAnimation(-1 * (this.animNext+1-this.getCurrentPosition()), Math.min(this.animNext + 1, this.box.getChildren().length - 1));
 			else
@@ -73,7 +74,7 @@ Ui.Container.extend('Ui.Carouselable',
 		if(this.alignClock == undefined)
 			this.startAnimation(1, this.getCurrentPosition() - 1);
 		else {
-			var pos = -this.movable.getPositionX() / this.movable.getLayoutWidth();
+			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
 			if(this.animNext < pos)
 				this.startAnimation(1 * (this.getCurrentPosition() - (this.animNext-1)), Math.max(this.animNext - 1, 0));
 			else
@@ -130,6 +131,7 @@ Ui.Container.extend('Ui.Carouselable',
 				x = -(this.getLayoutWidth() * (this.box.getChildren().length - 1));
 			movable.setPosition(x, 0);
 		}
+		this.updateShow();
 	},
 
 	onDown: function(movable) {
@@ -139,14 +141,35 @@ Ui.Container.extend('Ui.Carouselable',
 
 	onUp: function(movable, speedX, speedY, deltaX, deltaY) {
 		if(Math.abs(speedX) < 100) {
-			var mod = (-this.movable.getPositionX() / this.movable.getLayoutWidth()) % 1;
+			var mod = (-this.movable.getPositionX() / this.getLayoutWidth()) % 1;
 			if(mod > 0.5)
 				speedX = -400;
 			else
 				speedX = 400;
 		}
 		if(speedX != 0)
-			this.startAnimation(speedX / this.movable.getLayoutWidth());
+			this.startAnimation(speedX / this.getLayoutWidth());
+	},
+
+	onChange: function() {
+		var current = this.getCurrentPosition();
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			if(i == current)
+				this.box.getChildren()[i].show();
+			else
+				this.box.getChildren()[i].hide();
+		}
+		this.fireEvent('change', this, this.getCurrentPosition());
+	},
+
+	updateShow: function() {
+		var pos = Math.floor(-this.movable.getPositionX() / this.getLayoutWidth());
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			if((i == pos - 1) || (i == pos) || (i == pos +1))
+				this.box.getChildren()[i].show();
+			else
+				this.box.getChildren()[i].hide();
+		}
 	},
 
 	onAlignTick: function(clock, progress, delta) {
@@ -158,17 +181,21 @@ Ui.Container.extend('Ui.Carouselable',
 			this.alignClock.stop();
 			this.alignClock = undefined;
 			relprogress = 1;
-			this.fireEvent('change', this, this.getCurrentPosition());
 		}
 		relprogress = this.ease.ease(relprogress);
-		var newX = -(this.animStart + relprogress * (this.animNext - this.animStart))*this.movable.getLayoutWidth();
+		var newX = -(this.animStart + relprogress * (this.animNext - this.animStart))*this.getLayoutWidth();
 		this.movable.setPosition(newX, undefined);
+
+		if(relprogress >= 1)
+			this.onChange();
+		else
+			this.updateShow();
 	},
 
 	startAnimation: function(speed, next) {
 		this.stopAnimation();
 		this.speed = speed;
-		this.animStart = -this.movable.getPositionX() / this.movable.getLayoutWidth();
+		this.animStart = -this.movable.getPositionX() / this.getLayoutWidth();
 		if(next == undefined) {
 			if(this.speed < 0)
 				this.animNext = Math.ceil(this.animStart);
@@ -195,15 +222,19 @@ Ui.Container.extend('Ui.Carouselable',
 /**@lends Ui.Carouselable#*/
 {
 	measureCore: function(width, height) {
-		return this.movable.measure(width, height);
+		this.movable.measure(width, height);
+		return { width: this.box.getElementWidth(), height: this.box.getElementHeight() };
 	},
 
 	arrangeCore: function(width, height) {
-		return this.movable.arrange(0, 0, width, height);
+		return this.movable.arrange(0, 0, width * this.box.getChildren().length, height);
 	}
 });
 
 Ui.Container.extend('Ui.CarouselableBox', {
+	elementWidth: 0,
+	elementHeight: 0,
+
 	constructor: function() {
 	},
 
@@ -213,7 +244,16 @@ Ui.Container.extend('Ui.CarouselableBox', {
 
 	remove: function(child) {
 		this.removeChild(child);
+	},
+
+	getElementWidth: function() {
+		return this.elementWidth;
+	},
+
+	getElementHeight: function() {
+		return this.elementHeight;
 	}
+
 }, {
 	measureCore: function(width, height) {
 		var minWidth = 0;
@@ -224,12 +264,15 @@ Ui.Container.extend('Ui.CarouselableBox', {
 				minWidth = size.width;
 			if(size.height > minHeight)
 				minHeight = size.height;
-		} 
-		return { width: minWidth, height: minHeight };
+		}
+		this.elementWidth = minWidth;
+		this.elementHeight = minHeight;
+		return { width: minWidth * this.getChildren().length, height: minHeight };
 	},
 
 	arrangeCore: function(width, height) {
 		var x = 0;
+		width /= this.getChildren().length;
 		for(var i = 0; i < this.getChildren().length; i++) {
 			this.getChildren()[i].arrange(x, 0, width, height);
 			x += width;

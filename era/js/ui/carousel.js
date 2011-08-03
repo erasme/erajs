@@ -57,7 +57,6 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	*/
 
 	onCarouselableChange: function(carouselable, position) {
-		console.log('pos change current: '+position);
 		this.showArrows();
 	},
 
@@ -118,7 +117,6 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	hideArrows: function() {
-		console.log('hideArrows');
 		if(this.hideTimeout != undefined) {
 			this.hideTimeout.abort();
 			this.hideTimeout = undefined;

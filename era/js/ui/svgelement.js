@@ -4,7 +4,9 @@
 //
 Ui.Element.extend('Ui.SVGElement', {}, {
 	renderDrawing: function() {
-		return document.createElementNS(svgNS, 'svg');
+		var svg = document.createElementNS(svgNS, 'svg');
+		svg.setAttribute('focusable', false);
+		return svg;
 	}
 });
 

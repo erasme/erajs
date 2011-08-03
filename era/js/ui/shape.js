@@ -160,6 +160,7 @@ Ui.Element.extend('Ui.Shape', {
 	render: function() {
 		if(navigator.supportSVG) {
 			this.shapeDrawing = document.createElementNS(svgNS, 'svg');
+			this.shapeDrawing.setAttribute('focusable', false);
 			this.svgPath = document.createElementNS(svgNS, 'path');
 			this.svgPath.style.fillOpacity = '1';
 			this.svgPath.style.stroke = 'none';

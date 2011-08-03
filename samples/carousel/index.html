@@ -31,7 +31,7 @@ app.connect(nextButton, 'press', function() {
 var lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', width: 400, height: 400 });
 vbox.append(lbox, true);
 
-lbox.append(new Ui.Frame({ fill: 'orange', frameWidth: 4 }));
+lbox.append(new Ui.Frame({ fill: 'orange', frameWidth: 4, radius: 8 }));
 
 var carousel = new Ui.Carousel({ margin: 4 });
 lbox.append(carousel);
@@ -39,7 +39,12 @@ lbox.append(carousel);
 carousel.append(new Ui.Rectangle({ fill: 'lightgreen' }));
 carousel.append(new Ui.Rectangle({ fill: 'lightblue' }));
 carousel.append(new Ui.Rectangle({ fill: 'purple' }));
-carousel.append(new Ui.Rectangle({ fill: 'orange' }));
+
+var complexcontent = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+complexcontent.append(new Ui.Button({ text: 'Button 1' }));
+complexcontent.append(new Ui.Button({ text: 'Button 2' }));
+carousel.append(complexcontent);
+
 carousel.append(new Ui.Rectangle({ fill: 'green' }));
 
 
