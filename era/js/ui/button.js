@@ -326,12 +326,15 @@ Ui.Pressable.extend('Ui.Button',
 	},
 
 	getGradient: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv;
+		if(this.getHasFocus())
+			yuv = this.getStyleProperty('focusColor').getYuv();
+		else
+			yuv = this.getStyleProperty('color').getYuv();
+
 		var deltaY = 0;
 		if(this.getIsDown())
 			deltaY = -0.20;
-		else if(this.getHasFocus())
-			deltaY = 0.10;
 
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v }) },
@@ -340,12 +343,14 @@ Ui.Pressable.extend('Ui.Button',
 	},
 
 	getContentColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv;
+		if(this.getHasFocus())
+			yuv = this.getStyleProperty('focusColor').getYuv();
+		else
+			yuv = this.getStyleProperty('color').getYuv();
 
 		var deltaY = 0;
 		if(this.getIsDown())
-			deltaY = 0.20;
-		else if(this.getHasFocus())
 			deltaY = 0.20;
 
 		if(yuv.y < 0.4)
@@ -355,13 +360,15 @@ Ui.Pressable.extend('Ui.Button',
 	},
 
 	getContentLightColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv;
+		if(this.getHasFocus())
+			yuv = this.getStyleProperty('focusColor').getYuv();
+		else
+			yuv = this.getStyleProperty('color').getYuv();
 
 		var deltaY = 0;
 		if(this.getIsDown())
-			deltaY = 0.20;
-		else if(this.getHasFocus())
-			deltaY = 0.10;
+			deltaY = -0.20;
 
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v });
@@ -370,13 +377,15 @@ Ui.Pressable.extend('Ui.Button',
 	},
 
 	getLightColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv;
+		if(this.getHasFocus())
+			yuv = this.getStyleProperty('focusColor').getYuv();
+		else
+			yuv = this.getStyleProperty('color').getYuv();
 
 		var deltaY = 0;
 		if(this.getIsDown())
 			deltaY = -0.30;
-		else if(this.getHasFocus())
-			deltaY = 0.10;
 
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y - 0.20 + deltaY, u: yuv.u, v: yuv.v });
@@ -425,7 +434,7 @@ Ui.Pressable.extend('Ui.Button',
 {
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-//		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+		focusColor: Ui.Color.create('#f6caa2'),
 		radius: 4,
 		spacing: 3
 	}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test mouse over</title>
+    <script src='../../era/js/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App();
+
+var overable = new Ui.MouseOverable({ verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(overable);
+app.connect(overable, 'enter', function() {
+	label.show();
+});
+app.connect(overable, 'leave', function() {
+	label.hide();
+});
+
+var lbox = new Ui.LBox({ width: 400, height: 400 });
+overable.append(lbox);
+
+lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+lbox.append(new Ui.Rectangle({ fill: 'purple', margin: 50 }));
+lbox.append(new Ui.Rectangle({ fill: 'orange', margin: 100 }));
+
+var label = new Ui.Label({ text: 'mouse is over', fontWeight: 'bold', fontSize: 20 })
+label.hide();
+lbox.append(label);
+
+
+</script>
+  </head>
+</html>

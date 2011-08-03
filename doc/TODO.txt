@@ -20,7 +20,7 @@ Liste de choses à faire:
     couche de Ui.Container
 * - Créer Ui.DropBox pour les destinations de Drag & Drop
 
-- Créer Ui.DragElement pour les sources de Drag & Drop
+* - Créer Ui.Draggable pour les sources de Drag & Drop
 
 * - Créer Ui.IconList et Ui.IconListItem pour le rendu des
     listes en icone
@@ -42,8 +42,8 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
   texte comme Label et Text doivent utiliser ce dépôt pour charger la police
   et recalculer la taille du texte lorsqu'elle est disponible
 
-- Dans Ui.Container, fournir des fonctions pour réordonner les fils
-  et une fonction pour remplacer un element par un autre
+* - Dans Ui.Container, fournir des fonctions pour réordonner les fils
+    et une fonction pour remplacer un element par un autre
 
 * - Dans le système d'animation, voir si on peut pas finalement se débarrasser
     des timelines pour n'utiliser que les clock
@@ -89,8 +89,8 @@ X - Fournir un ToolBarButton
 * - dans Accordeon, utiliser offset entre 0-1 (en relatif) pour
     pouvoir gérer correctement le redimentionnement
 
-- lorsqu'un Ui.Element Focusable est disabled, il ne doit plus
-  être accessible au focus et doit même le perdre s'il l'avait
+* - lorsqu'un Ui.Element Focusable est disabled, il ne doit plus
+    être accessible au focus et doit même le perdre s'il l'avait
 
 - dans Ui.Button, fournir une propriété "variant" ou "ui"
   pour proposer différents "style" de bouton comme:
@@ -121,7 +121,7 @@ X - Fournir un ToolBarButton
   mettre à jour le positionnement absolue dans arrange.
 
 - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'il
-  faut (en hauteur)
+  faut (en hauteur) (à discuter)
 
 - Problème avec l'iPad. Si le clavier virtuel est ouvert et que l'on recalcul
   la taille de la fenêtre. On perd la taille du clavier virtuel. Lorsqu'il ferme
@@ -171,5 +171,21 @@ X - Fournir un ToolBarButton
 
 - Implémenter un 'fill' pour Ui.Shape qui supporte les textures à base
   d'image (Ui.ImageBrush)
+
+- Utiliser getValue() et setValue() pour tous les éléments qui renvoie
+  une valeur (comme Ui.CheckBox par exemple)
+
+- Régler le problème de la sélection du text dans Opera quand on en veux pas
+  et dans IE < 9
+
+- Pour le Ui.Carousel, faire un Ui.Carouselable sans ui et Ui.Carousel qui
+  rajoute une gestion des flèches de défilement. Rajouter la gestion du clavier
+  et gérer le focus uniquement pour l'élement affiché.
+
+- Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
+  pour l'élément en cours.
+
+- Sur un iPad, améliorer la gestion du clavier virtuel (commencer par détecter
+  qu'il est ouvert et permettre ) 
 
 

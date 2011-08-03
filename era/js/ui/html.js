@@ -26,6 +26,7 @@ Ui.Element.extend('Ui.Html', {
 	},
 
 	setSelectable: function(selectable) {
+		this.getDrawing().selectable = selectable;
 		this.selectable = selectable;
 
 		if(selectable) {

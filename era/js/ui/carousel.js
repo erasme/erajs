@@ -1,164 +1,175 @@
 
-Ui.Container.extend('Ui.Carousel', 
+Ui.MouseOverable.extend('Ui.Carousel', 
 /**@lends Ui.Carousel#*/
 {
-	movable: undefined,
-	box: undefined,
-	alignClock: undefined,
-	speed: 0,
-	animNext: 0,
-	animStart: 0,
-	ease: undefined,
+	carouselable: undefined,
+	buttonNext: undefined,
+	buttonNextIcon: undefined,
+	buttonPrevious: undefined,
+	buttonPreviousIcon: undefined,
+	showClock: undefined,
+//	hideClock: undefined,
+	hideTimeout: undefined,
+
+	showNext: false,
+	showPrevious: false,
 
 	constructor: function(config) {
-		this.movable = new Ui.Movable({ clipToBounds: true, inertia: false });
-		this.connect(this.movable, 'move', this.onMove);
-		this.connect(this.movable, 'down', this.onDown);
-		this.connect(this.movable, 'up', this.onUp);
-		this.appendChild(this.movable);
+		this.addEvents('change');
 
-		this.box = new Ui.CarouselBox();
-		this.movable.setContent(this.box);
+		this.connect(this, 'enter', this.onMouseEnter);
+		this.connect(this, 'leave', this.onMouseLeave);
+		this.connect(this, 'move', this.onMouseOverMove);
 
-		if('ease' in config)
-			this.setEase(config.ease);
-		else
-			this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
-		if('lock' in config)
-			this.setLock(config.lock);
-	},
+		this.carouselable = new Ui.Carouselable();
+		Ui.Carousel.base.append.call(this, this.carouselable);
+		this.connect(this.carouselable, 'focus', this.onCarouselableFocus);
+		this.connect(this.carouselable, 'blur', this.onCarouselableBlur);
+		this.connect(this.carouselable, 'change', this.onCarouselableChange);
+		
+		this.buttonPrevious = new Ui.Pressable({ horizontalAlign: 'left', verticalAlign: 'center', opacity: 0 });
+		this.buttonPrevious.setFocusable(false);
+		this.buttonPreviousIcon = Ui.Icon.create('arrowleft', 48, 48);
+		this.buttonPrevious.append(this.buttonPreviousIcon);
+		Ui.Carousel.base.append.call(this, this.buttonPrevious);
+//		this.buttonPrevious.hide();
+		this.connect(this.buttonPrevious, 'press', this.onPreviousPress);
 
-	getLock: function() {
-		return this.movable.getLock();
-	},
-
-	setLock: function(lock) {
-		this.movable.setLock(lock);
-	},
-
-	getCurrent: function() {
-		return this.box.getChildren()[this.getCurrentPosition()];
-	},
-
-	getCurrentPosition: function() {
-		return Math.min(this.box.getChildren().length - 1, Math.max(0, Math.round(-this.movable.getPositionX() / this.movable.getLayoutWidth())));
-	},
-
-	setCurrentAt: function(position) {
-		position = Math.min(this.box.getChildren().length - 1, Math.max(0, position));
-		if(position < this.getCurrentPosition())
-			this.startAnimation(0.8, position);
-		else
-			this.startAnimation(-0.8, position);
+		this.buttonNext = new Ui.Pressable({ horizontalAlign: 'right', verticalAlign: 'center', opacity: 0 });
+		this.buttonNext.setFocusable(false);
+		this.buttonNextIcon = Ui.Icon.create('arrowright', 48, 48);
+		this.buttonNext.append(this.buttonNextIcon);
+		Ui.Carousel.base.append.call(this, this.buttonNext);
+//		this.buttonNext.hide();
+		this.connect(this.buttonNext, 'press', this.onNextPress);
 	},
 
 	next: function() {
-		if(this.alignClock == undefined)
-			this.startAnimation(-0.8, this.getCurrentPosition() + 1);
-		else {
-			var pos = -this.movable.getPositionX() / this.movable.getLayoutWidth();
-			if(this.animNext > pos)
-				this.startAnimation(-0.8, Math.min(this.animNext + 1, this.box.getChildren().length - 1));
-			else
-				this.startAnimation(-0.8, Math.min(Math.ceil(pos), this.box.getChildren().length - 1));
-		}
+		this.carouselable.next();
 	},
 
 	previous: function() {
-		if(this.alignClock == undefined)
-			this.startAnimation(0.8, this.getCurrentPosition() - 1);
-		else {
-			var pos = -this.movable.getPositionX() / this.movable.getLayoutWidth();
-			if(this.animNext < pos)
-				this.startAnimation(0.8, Math.max(this.animNext - 1, 0));
-			else
-				this.startAnimation(0.8, Math.floor(pos));
-		}
-	},
-
-	setEase: function(ease) {
-		this.ease = Anim.EasingFunction.create(ease);
-	},
-
-	append: function(child) {
-		this.box.append(child);
-	},
-
-	remove: function(child) {
-		this.box.remove(child);
-		// TODO: provide animation
+		this.carouselable.previous();
 	},
 
 	/**#@+
 	* @private
 	*/
 
-	onMove: function(movable) {
-		if(this.box.getChildren().length < 2)
-			movable.setPosition(0, 0);
+	onCarouselableChange: function(carouselable, position) {
+		console.log('pos change current: '+position);
+		this.showArrows();
+	},
+
+	onCarouselableFocus: function() {
+		this.showArrows();
+	},
+
+	onCarouselableBlur: function() {
+		this.hideArrows();
+	},
+
+	onPreviousPress: function() {
+		this.carouselable.focus();
+		this.previous();
+	},
+
+	onNextPress: function() {
+		this.carouselable.focus();
+		this.next();
+	},
+
+	onMouseEnter: function() {
+		this.showArrows();
+	},
+
+	onMouseOverMove: function() {
+		this.showArrows();
+	},
+
+	onMouseLeave: function() {
+		this.hideArrows();
+	},
+
+	showArrows: function() {
+		if(this.hideTimeout != undefined) {
+			this.hideTimeout.abort();
+			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
+		}
+		else
+			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
+
+		var pos = this.carouselable.getCurrentPosition();
+		var children = this.carouselable.getLogicalChildren();
+
+		if(children.length > 0) {
+			this.showPrevious = (pos > 0);
+			this.showNext = (pos < children.length - 1);
+		}
 		else {
-			var x = undefined;
-			if(movable.getPositionX() > 0)
-				x = 0;
-			if(movable.getPositionX() < -(this.getLayoutWidth() * (this.box.getChildren().length - 1)))
-				x = -(this.getLayoutWidth() * (this.box.getChildren().length - 1));
-			movable.setPosition(x, 0);
+			this.showPrevious = false;
+			this.showNext = false;
+		}
+
+		if(this.showClock == undefined) {
+			this.showClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onShowTick });
+			this.showClock.begin();
 		}
 	},
 
-	onDown: function(movable) {
-		this.stopAnimation();
-	},
-
-	onUp: function(movable, speedX, speedY, deltaX, deltaY) {
-		if(Math.abs(speedX) < 100) {
-			var mod = (-this.movable.getPositionX() / this.movable.getLayoutWidth()) % 1;
-			if(mod > 0.5)
-				speedX = -400;
-			else
-				speedX = 400;
+	hideArrows: function() {
+		console.log('hideArrows');
+		if(this.hideTimeout != undefined) {
+			this.hideTimeout.abort();
+			this.hideTimeout = undefined;
 		}
-		if(speedX != 0)
-			this.startAnimation(speedX / this.movable.getLayoutWidth());
+		this.showPrevious = false;
+		this.showNext = false;
+		if(this.showClock == undefined) {
+			this.showClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onShowTick });
+			this.showClock.begin();
+		}
 	},
 
-	onAlignTick: function(clock, progress, delta) {
+	onShowTick: function(clock, progress, delta) {
 		if(delta == 0)
 			return;
 
-		var relprogress = -(clock.getTime() * this.speed) / (this.animNext - this.animStart);
-		if(relprogress > 1) {
-			this.alignClock.stop();
-			this.alignClock = undefined;
-			relprogress = 1;
+		var previousDone = false;
+		if(this.showPrevious) {
+			var opacity = this.buttonPrevious.getOpacity();
+			opacity = Math.min(opacity + delta, 1);
+			this.buttonPrevious.setOpacity(opacity);
+			if(opacity == 1)
+				previousDone = true;
 		}
-		relprogress = this.ease.ease(relprogress);
-		var newX = -(this.animStart + relprogress * (this.animNext - this.animStart))*this.movable.getLayoutWidth();
-		this.movable.setPosition(newX, undefined);
-	},
+		else {
+			var opacity = this.buttonPrevious.getOpacity();
+			opacity = Math.max(opacity - (delta * 2), 0);
+			this.buttonPrevious.setOpacity(opacity);
+			if(opacity == 0)
+				previousDone = true;
+		}
 
-	startAnimation: function(speed, next) {
-		this.stopAnimation();
-		this.speed = speed;
-		this.animStart = -this.movable.getPositionX() / this.movable.getLayoutWidth();
-		if(next == undefined) {
-			if(this.speed < 0)
-				this.animNext = Math.ceil(this.animStart);
-			else
-				this.animNext = Math.floor(this.animStart);
+		var nextDone = false;
+		if(this.showNext) {
+			var opacity = this.buttonNext.getOpacity();
+			opacity = Math.min(opacity + delta, 1);
+			this.buttonNext.setOpacity(opacity);
+			if(opacity == 1)
+				nextDone = true;
 		}
-		else
-			this.animNext = next;
-		if(this.animStart != this.animNext) {
-			this.alignClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onAlignTick });
-			this.alignClock.begin();
+		else {
+			var opacity = this.buttonNext.getOpacity();
+			opacity = Math.max(opacity - (delta * 2), 0);
+			this.buttonNext.setOpacity(opacity);
+			if(opacity == 0)
+				nextDone = true;
 		}
-	},
 
-	stopAnimation: function() {
-		if(this.alignClock != undefined) {
-			this.alignClock.stop();
-			this.alignClock = undefined;
+		if(previousDone && nextDone) {
+			this.showClock.stop();
+			this.showClock = undefined;
 		}
 	}
 
@@ -166,46 +177,22 @@ Ui.Container.extend('Ui.Carousel',
 }, 
 /**@lends Ui.Carousel#*/
 {
-	measureCore: function(width, height) {
-		return this.movable.measure(width, height);
-	},
-
-	arrangeCore: function(width, height) {
-		return this.movable.arrange(0, 0, width, height);
-	}
-});
-
-Ui.Container.extend('Ui.CarouselBox', {
-	constructor: function() {
-	},
-
 	append: function(child) {
-		this.appendChild(child);
+		this.carouselable.append(child);
 	},
 
 	remove: function(child) {
-		this.removeChild(child);
-	}
-}, {
-	measureCore: function(width, height) {
-		var minWidth = 0;
-		var minHeight = 0;
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var size = this.getChildren()[i].measure(width, height);
-			if(size.width > minWidth)
-				minWidth = size.width;
-			if(size.height > minHeight)
-				minHeight = size.height;
-		} 
-		return { width: minWidth, height: minHeight };
+		this.carouselable.remove(child);
 	},
 
-	arrangeCore: function(width, height) {
-		var x = 0;
-		for(var i = 0; i < this.getChildren().length; i++) {
-			this.getChildren()[i].arrange(x, 0, width, height);
-			x += width;
-		}
+	onStyleChange: function() {
+		var color = this.getStyleProperty('focusColor');
+		this.buttonPreviousIcon.setFill(color);
+		this.buttonNextIcon.setFill(color);
+	}
+}, {
+	style: {
+		focusColor: Ui.Color.create('#5d3109')
 	}
 });
 
