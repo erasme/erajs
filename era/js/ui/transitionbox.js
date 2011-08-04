@@ -1,6 +1,6 @@
-
-
-Ui.LBox.extend('Ui.TransitionBox', {
+Ui.LBox.extend('Ui.TransitionBox', 
+/**@lends Ui.TransitionBox#*/
+{
 	transition: undefined,
 	duration: 0.5,
 	ease: undefined,
@@ -8,7 +8,15 @@ Ui.LBox.extend('Ui.TransitionBox', {
 	transitionClock: undefined,
 	current: undefined,
 	next: undefined,
-
+	
+	/**
+     * @constructs
+	 * @class Container that displays only one element at a time and allows differents kind of transition between elements
+     * @extends Ui.LBox
+     * @param {Number} [config.duration] Transition duration in second (can be float)
+	 * @param {String} [config.ease] Transition ease behaviour [linear|bounce|elastic]
+	 * @param {String} [config.transition] Transition type [slide|fade|flip]
+	 */
 	constructor: function(config) {
 		if(config.duration != undefined)
 			this.setDuration(config.duration);
