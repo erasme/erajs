@@ -280,6 +280,7 @@ Ui.Container.extend('Ui.Fold', {
 			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight());
 			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
 		}
+		this.setOffset(this.offset);
 	}
 });
 

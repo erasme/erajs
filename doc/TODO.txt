@@ -178,9 +178,9 @@ X - Fournir un ToolBarButton
 - Régler le problème de la sélection du text dans Opera quand on en veux pas
   et dans IE < 9
 
-- Pour le Ui.Carousel, faire un Ui.Carouselable sans ui et Ui.Carousel qui
-  rajoute une gestion des flèches de défilement. Rajouter la gestion du clavier
-  et gérer le focus uniquement pour l'élement affiché.
+* - Pour le Ui.Carousel, faire un Ui.Carouselable sans ui et Ui.Carousel qui
+    rajoute une gestion des flèches de défilement. Rajouter la gestion du clavier
+    et gérer le focus uniquement pour l'élement affiché.
 
 - Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
   pour l'élément en cours.
