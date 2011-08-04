@@ -2,14 +2,6 @@
 Liste de choses à faire:
 ------------------------
 
-* - renommer Era.* par Core.* pour le coeur du système
-* - renommer Era.* par Ui.* pour les éléments d'interface
-    graphique
-* - Créer une classe ButtonBase dont hérite les bouttons
-    cette classe doit gérer l'évènement "pressed" et la gestion
-    du curseur souris
-* - Créer Button qui hérite de ButtonBase et fait un rendu
-    "classic" d'un bouton (Pressable)
 * - Dans scrollingarea permettre de desactiver la fonction
     de scrolling en vertical ou en horizontal. Dans ce cas,
     la scrolling area réclame l'espace nécessaire pour les
@@ -18,16 +10,9 @@ Liste de choses à faire:
     que la gestion du padding (à déplacer dans VBox, HBox, LBox)
 * - Créer LBox pour remplacer la logique de positionnement par
     couche de Ui.Container
-* - Créer Ui.DropBox pour les destinations de Drag & Drop
-
-* - Créer Ui.Draggable pour les sources de Drag & Drop
 
 * - Créer Ui.IconList et Ui.IconListItem pour le rendu des
     listes en icone
-
-* - Revoir "disconnect". Si on connect plusieurs callback
-    le disconnect ne permet pas de préciser celui que l'on enlève.
-    A tester.
 
 x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 
@@ -45,9 +30,6 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 * - Dans Ui.Container, fournir des fonctions pour réordonner les fils
     et une fonction pour remplacer un element par un autre
 
-* - Dans le système d'animation, voir si on peut pas finalement se débarrasser
-    des timelines pour n'utiliser que les clock
-
 * - Changer la gestion de updateRender. invalidateRender doit créer une liste chainée
     rattaché à Ui.App.current qui l'on parcours dans update
 
@@ -55,29 +37,13 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
   pouvoir ou pas faire suivre a son parent. Passer donc par une methode
   que l'on peut surcharger pour gérer cela
 
-* - implementer un Togglable
-
 * - Fournir l'accès aux box-shadow dans Ui.Rectangle
-
-* - Fournir un système de gestion des styles (sous forme
-    de JSON)
-
-X - Fournir un ToolBarButton
 
 - Fournir un ButtonBox + HButtonBox + VButtonBox (et inserer
   des éléments dedans)
 
-* - Virer le parametre "force" de arrange de measure
-
-* - Gérer un état "disable" que l'on hérite. Cela doit nous
-    permettre de rendre inactive n'importe qu'elle arborescence
-
 - voir pour intégrer les animations dans le "update" de Ui.App
   (ordre logique: event, anim, render, measure, arrange)
-
-* - dans Ui.Fold, utiliser display: none lorsque la partie cachée est
-    cachée (pas display: none mais visibility: hidden sinon on ne peut
-    plus mesuré le texte)
 
 - dans Ui.Scrollable envoyer systématiquement comme taille minimum
   la taille de barre de scroll
@@ -85,12 +51,6 @@ X - Fournir un ToolBarButton
 - dans Ui.App update, gérer la mise à jour de l'arbre de rendu
   d'abords et le rendu graphique à la fin (en gros, séparer
   l'updateRender en 2)
-
-* - dans Accordeon, utiliser offset entre 0-1 (en relatif) pour
-    pouvoir gérer correctement le redimentionnement
-
-* - lorsqu'un Ui.Element Focusable est disabled, il ne doit plus
-    être accessible au focus et doit même le perdre s'il l'avait
 
 - dans Ui.Button, fournir une propriété "variant" ou "ui"
   pour proposer différents "style" de bouton comme:
@@ -113,9 +73,6 @@ X - Fournir un ToolBarButton
 - pour Ui.Color faire un parser pour #rgb #rrggbb rgb(r,g,b) rgba(r,g,b,a)
   dans Ui.Color.create
 
-* - a verifier le comportement de measure dans Box pour les Uniform
-    (la contrainte doit faire au plus petit possible)
-
 - dans Scrollable, ne laisser la possiblité à l'utilisateur de fixer
   l'offset uniquement relatif (entre 0 et 1). Si l'offset est en relatif
   mettre à jour le positionnement absolue dans arrange.
@@ -134,14 +91,8 @@ X - Fournir un ToolBarButton
 * - virer la gestion des resources sur les styles dans Ui.Button et Ui.Element
     ça ne vaut pas le coup.
 
-* - ecrire un élement Ui.Loading pour les animations de chargement
-
-* - faire une progressbar
-
 - virer "target" dans Anim.Clock. Laisser chacun gérer comme il faut comme
   dans Ui.TransitionBox.
-
-* - réécrire Ui.Text en utilisant du HTML à la place du SVG
 
 - Ui.ListView rame, optimiser tout cela
 
@@ -154,10 +105,10 @@ X - Fournir un ToolBarButton
 - Faire un composant pour intégrer le framework non pas dans une page
   mais dans un DIV
 
-- Faire de la documentation automatique (voir le functionnement de Doxygen)
+- Faire de la documentation automatique (voir le fonctionnement de Doxygen)
 
-- Améliorer le support des courbes de bézier en VML (générer des lignes
-  sera toujours mieux que ce que fait VML actuellement)
+* - Améliorer le support des courbes de bézier en VML (générer des lignes
+    sera toujours mieux que ce que fait VML actuellement)
 
 - Dans Ui.Frame, gérer les cas où la frame et trop petit pour ses arrondis
   et sa largeur
@@ -166,8 +117,6 @@ X - Fournir un ToolBarButton
   dépendant de 'box-shadow'
 
 - Passer Ui.Rectangle en une classe dérivée de Ui.Shape
-
-- Implémenter une classe Ui.Carousel pour faire défiler du contenu
 
 - Implémenter un 'fill' pour Ui.Shape qui supporte les textures à base
   d'image (Ui.ImageBrush)
@@ -178,14 +127,16 @@ X - Fournir un ToolBarButton
 - Régler le problème de la sélection du text dans Opera quand on en veux pas
   et dans IE < 9
 
-* - Pour le Ui.Carousel, faire un Ui.Carouselable sans ui et Ui.Carousel qui
-    rajoute une gestion des flèches de défilement. Rajouter la gestion du clavier
-    et gérer le focus uniquement pour l'élement affiché.
-
 - Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
   pour l'élément en cours.
 
 - Sur un iPad, améliorer la gestion du clavier virtuel (commencer par détecter
   qu'il est ouvert et permettre ) 
 
+* - Les Ui.Frame avec radius ne fonctionne pas sur IE < 9. A corriger.
+
+- Implémenter la nouvelle version des WebSocket disponible dans Chrome 14
+  http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10
+
+- Dans Ui.Accordeon, gérer le clavier
 
