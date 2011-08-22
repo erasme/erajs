@@ -81,6 +81,7 @@ Core.Object.extend('Ui.Element',
 	animClock: undefined,
 
 	opacity: 1,
+	parentOpacity: 1,
 
 	// handle disable
 	disabled: undefined,
@@ -654,11 +655,28 @@ Core.Object.extend('Ui.Element',
 	setOpacity: function(opacity) {
 		if(this.opacity != opacity) {
 			this.opacity = opacity;
-			if((navigator.userAgent.match(/MSIE 7/i) != null) ||	(navigator.userAgent.match(/MSIE 8/i) != null))
-				this.drawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity='+(Math.round(opacity * 100))+')';
-			else
+//			if((navigator.userAgent.match(/MSIE 7/i) != null) || (navigator.userAgent.match(/MSIE 8/i) != null))
+//				this.drawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity='+(Math.round(opacity * 100))+')';
+//			else
+
+			if(navigator.supportOpacity)
 				this.drawing.style.opacity = this.opacity;
+			else
+				this.onInternalSetOpacity(this.parentOpacity * this.opacity);
 		}
+	},
+
+	onInternalSetOpacity: function(cumulOpacity) {
+		this.onCumulOpacityChange(cumulOpacity);
+	},
+
+	onCumulOpacityChange: function(cumulOpacity) {
+//		console.log(this+'.onCumulOpacityChange '+cumulOpacity);
+	},
+
+	setParentCumulOpacity: function(parentOpacity) {
+		this.parentOpacity = parentOpacity;
+		this.onInternalSetOpacity(this.parentOpacity * this.opacity);
 	},
 
 	//
@@ -1252,6 +1270,8 @@ Core.Object.extend('Ui.Element',
 			this.setParentStyle(this.parent.mergeStyle);
 			this.setParentDisabled(this.getIsDisabled());
 			this.setParentVisible(this.getIsVisible());
+			if(!navigator.supportOpacity)
+				this.setParentCumulOpacity(this.parentOpacity * this.opacity);
 		}
 		this.fireEvent('load');
 	},
@@ -1421,4 +1441,6 @@ Core.Object.extend('Ui.Element',
 		}
 	}
 });
+
+navigator.supportOpacity = !((navigator.userAgent.match(/MSIE 7/i) != null) || (navigator.userAgent.match(/MSIE 8/i) != null));
 

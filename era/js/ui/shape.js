@@ -2,6 +2,7 @@
 Ui.Element.extend('Ui.Shape', {
 	shapeDrawing: undefined,
 	vmlFill: undefined,
+	vmlOpacity: 1,
 	svgPath: undefined,
 	svgGradient: undefined,
 
@@ -57,10 +58,11 @@ Ui.Element.extend('Ui.Shape', {
 					this.vmlFill = undefined;
 				}
 				if(Ui.Color.hasInstance(fill)) {
-					fill = fill.getCssHtml();
 					this.vmlFill = document.createElement('vml:fill');
 					this.vmlFill.type = 'solid';
-					this.vmlFill.color = fill;
+					this.vmlFill.color = fill.getCssHtml();
+//					this.vmlFill.opacity = fill.getRgba().a;
+					this.vmlFill.opacity = fill.getRgba().a * this.vmlOpacity;
 					this.shapeDrawing.appendChild(this.vmlFill);
 				}
 				else if(Ui.LinearGradient.hasInstance(fill)) {
@@ -235,7 +237,44 @@ Ui.Element.extend('Ui.Shape', {
 			this.shapeDrawing.coordorigin = '0 0';
 			this.shapeDrawing.coordsize = (width * 100 / this.scale)+' '+(height * 100 / this.scale);
 		}
+	},
+
+	onCumulOpacityChange: function(cumulOpacity) {
+//		console.log('Shape.onCumulOpacityChange: '+cumulOpacity);
+		this.vmlOpacity = cumulOpacity;
+		if(Ui.Color.hasInstance(this.fill)) {
+			this.shapeDrawing.removeChild(this.vmlFill);
+			this.vmlFill = document.createElement('vml:fill');
+			this.vmlFill.type = 'solid';
+			this.vmlFill.color = this.fill.getCssHtml();
+			this.vmlFill.opacity = this.fill.getRgba().a * this.vmlOpacity;
+			this.shapeDrawing.appendChild(this.vmlFill);
+		}
 	}
+
+/*	setOpacity: function(opacity) {
+		if(!navigator.supportSVG && navigator.supportVML) {
+			console.log('handle VML opacity hack '+opacity);
+			this.vmlOpacity = opacity;
+			if(Ui.Color.hasInstance(this.fill)) {
+				this.shapeDrawing.removeChild(this.vmlFill);
+				this.vmlFill = document.createElement('vml:fill');
+				this.vmlFill.type = 'solid';
+				this.vmlFill.color = this.fill.getCssHtml();
+				this.vmlFill.opacity = this.fill.getRgba().a * this.vmlOpacity;
+				this.shapeDrawing.appendChild(this.vmlFill);
+			}
+		}
+		else
+			Ui.Shape.base.setOpacity.call(this, opacity);
+	},
+
+	getOpacity: function() {
+		if(!navigator.supportSVG && navigator.supportVML)
+			return this.vmlOpacity;
+		else
+			return Ui.Shape.base.getOpacity.call(this);
+	}*/
 });
 
 Core.Object.extend('Ui.SvgParser', {

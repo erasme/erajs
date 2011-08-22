@@ -70,8 +70,8 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 * - pour Ui.Rectangle, supprimer un niveau de div. Modifier le drawing
     pour l'affichage.
 
-- pour Ui.Color faire un parser pour #rgb #rrggbb rgb(r,g,b) rgba(r,g,b,a)
-  dans Ui.Color.create
+* - pour Ui.Color faire un parser pour #rgb #rrggbb rgb(r,g,b) rgba(r,g,b,a)
+    dans Ui.Color.create
 
 - dans Scrollable, ne laisser la possiblité à l'utilisateur de fixer
   l'offset uniquement relatif (entre 0 et 1). Si l'offset est en relatif
@@ -100,7 +100,7 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
   des éléments afin d'éviter les measures multiples lorsqu'elles ne servent
   à rien.
 
-- faire Ui.Shape pour du dessin vectoriel simple cross plateform
+* - faire Ui.Shape pour du dessin vectoriel simple cross plateform
 
 - Faire un composant pour intégrer le framework non pas dans une page
   mais dans un DIV
@@ -138,5 +138,25 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - Implémenter la nouvelle version des WebSocket disponible dans Chrome 14
   http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10
 
-- Dans Ui.Accordeon, gérer le clavier
+- Dans Ui.Accordeon, gérer le clavier (peut être créer Ui.Accordeonable
+  et fournir un des graphismes pour Ui.Accordeon)
 
+- Permettre le clic droit pour copier/coller sur le texte selectionnable
+  (voir si on peut faire cela avec un menu popup maison)
+
+- Améliorer le clipping du contenu dans Ui.Switch
+
+- Gérer le problème de la capture des évènements de la souris par les IFrames
+
+- Améliorer la gestion de la vidéo pour le gestion du buffering
+
+- Voir si on fournit un Ui.VideoPlayer
+
+- Fournir un Ui.DragOverable comme Ui.MouseOverable mais pour le survol
+  des Drag & Drop
+
+- Améliorer le "feedback" pour la négociation du drag & drop
+
+- Voir pour rendre transparent aux évènements souris/doigts toutes les balises
+  de positionnement (DIV). Peut être n'utiliser que les Ui.Shape pour cette
+  détection de collision.

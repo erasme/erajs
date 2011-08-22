@@ -38,9 +38,10 @@ Ui.LBox.extend('Ui.Switch',
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0 }), radius: 4, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.50)', margin: 1, marginBottom: 2 }));
 		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.2 }), frameWidth: 1, radius: 5, marginBottom: 1  }));
 
+		this.setClipToBounds(true);
+
 		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, marginBottom: 2 });
 		this.movable.setFocusable(false);
-		this.movable.setClipToBounds(true);
 		this.append(this.movable);
 
 		this.switchbox = new Ui.SwitchBox();

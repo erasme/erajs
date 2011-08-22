@@ -194,6 +194,15 @@ Ui.Element.extend('Ui.Label',
 			else if(navigator.isOpera)
 				this.labelDrawing.style.removeProperty('-o-transform');
 		}
+	},
+
+	onCumulOpacityChange: function(cumulOpacity) {
+		if(navigator.isIE) {
+			if(cumulOpacity < 1)
+				this.labelDrawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity='+(Math.round(cumulOpacity * 100))+')';
+			else
+				this.labelDrawing.style.filter = '';
+		}
 	}
 }, 
 /**@lends Ui.Label*/

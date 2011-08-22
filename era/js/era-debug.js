@@ -82,6 +82,7 @@ include(eraBaseDirectory+'ui/accordeon.js');
 include(eraBaseDirectory+'ui/spacer.js');
 include(eraBaseDirectory+'ui/rectangle.js');
 include(eraBaseDirectory+'ui/frame.js');
+include(eraBaseDirectory+'ui/shadow.js');
 include(eraBaseDirectory+'ui/icon.js');
 
 //

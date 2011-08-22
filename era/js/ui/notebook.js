@@ -306,7 +306,7 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 
 	constructor: function(config) {
 
-		this.darkShadow = new Ui.Shape({ fill: '#010002', opacity: 0.8 });
+		this.darkShadow = new Ui.Shape({ fill: '#010002' });
 		this.append(this.darkShadow);
 
 		this.lightShadow = new Ui.Shape({ fill: '#5f625b' });
