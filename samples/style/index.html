@@ -28,8 +28,8 @@ content.append(vbox, true);
 // the default style
 app.setStyle({
 	"Ui.Button": {
-		color: new Ui.Color({ r: 0.8, g: 0, b: 0.8 }),
-	},
+		color: new Ui.Color({ r: 0.8, g: 0, b: 0.8 })
+	}
 });
 
 var button = new Ui.Button({ text: 'default', width: 200 });
@@ -47,7 +47,7 @@ app.connect(button, 'press', function() {
 		"Ui.ToolBar": {
 			color: blueColor,
 			"Ui.Button": {
-				color: new Ui.Color({ r: 0.94, g: 0.94, b: 0.94 }),
+				color: new Ui.Color({ r: 0.94, g: 0.94, b: 0.94 })
 			}
 		},
 		"Ui.Button": {
@@ -61,11 +61,11 @@ vbox.append(button2);
 app.connect(button2, 'press', function() {
 	app.setStyle({
 		"Ui.ToolBar": {
-			color: new Ui.Color({ r: 0.68, g: 0.68, b: 0.18 }),
+			color: new Ui.Color({ r: 0.68, g: 0.68, b: 0.18 })
 		},
 		"Ui.Button": {
 			color: new Ui.Color({ r: 1, g: 0.75, b: 0.80 }),
-			radius: 18,
+			radius: 18
 		}
 	});
 });
@@ -78,12 +78,12 @@ app.connect(button3, 'press', function() {
 			color: new Ui.Color({ r: 0.18, g: 0.68, b: 0.18 }),
 			"Ui.Button": {
 				color: new Ui.Color({ r: 0.18, g: 0.68, b: 1 }),
-				radius: 0,
+				radius: 0
 			}
 		},
 
 		"Ui.Button": {
-			color: new Ui.Color({ r: 1, g: 0.68, b: 0.18 }),
+			color: new Ui.Color({ r: 1, g: 0.68, b: 0.18 })
 		}
 	});
 });
