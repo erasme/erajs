@@ -15,6 +15,8 @@ Core.Object.extend('Core.Socket',
 	readSize: true,
 	size: 0,
 	data: '',
+	isClosed: false,
+	closeSent: false,
 
 	/**
 	*	@constructs
@@ -39,8 +41,6 @@ Core.Object.extend('Core.Socket',
 		else {
 			if(Core.Socket.supportWebSocket)
 				this.mode = 'websocket';
-			else if(Core.Socket.supportStreamSocket)
-				this.mode = 'stream';
 			else
 				this.mode = 'poll';
 		}
@@ -51,18 +51,6 @@ Core.Object.extend('Core.Socket',
 			this.connect(this.websocket, 'error', this.onWebSocketError);
 			this.connect(this.websocket, 'message', this.onWebSocketMessage);
 			this.connect(this.websocket, 'close', this.onWebSocketClose);
-		}
-		else if(this.mode == 'stream') {
-			this.emumessages = [];
-			this.emuopenrequest = new XMLHttpRequest();
-			this.emuopenrequest.open('GET', 'http://'+this.host+':'+this.port+this.service+'?socket=stream&command=open', true);
-			var wrapper = function() {
-				var socket = arguments.callee.socket;
-				socket.onEmuSocketChange.call(socket);
-			}
-			wrapper.socket = this;
-			this.emuopenrequest.onreadystatechange = wrapper;
-			this.emuopenrequest.send();
 		}
 		else {
 			this.emumessages = [];
@@ -92,24 +80,25 @@ Core.Object.extend('Core.Socket',
 
 	close: function() {
 		if(this.websocket != undefined) {
+			this.isClosed = true;
 			this.websocket.close();
 		}
 		else {
-			if(this.emutimer != undefined) {
-				this.emutimer.abort();
-				this.emutimer = undefined;
-			}
-			if(this.emusendrequest != undefined) {
-				this.emusendrequest.abort();
-				this.emusendrequest = undefined;
-			}
-			if(this.emuopenrequest != undefined) {
-				this.emuopenrequest.abort();
-				this.emuopenrequest = undefined;
-			}
-			if(this.emupollrequest != undefined) {
-				this.emupollrequest.abort();
-				this.emupollrequest = undefined;
+			if(!this.isClosed) {
+				this.isClosed = true;
+				if(this.emuopenrequest != undefined) {
+					this.emuopenrequest.abort();
+					this.emuopenrequest = undefined;
+				}
+				else if(this.emuid != undefined) {
+					if(this.emusendrequest == undefined) {
+						this.closeSent = true;
+						this.emusendrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=close&id='+this.emuid });
+						this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
+						this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
+						this.emusendrequest.send();
+					}
+				}
 			}
 		}
 	},
@@ -167,44 +156,8 @@ Core.Object.extend('Core.Socket',
 		}
 	},
 
-	onEmuSocketChange: function() {
-		if(this.emuopenrequest.readyState == 2) {
-			if(this.emuopenrequest.status != 200) {
-				this.emuopenrequest.onreadystatechange = undefined;
-				this.emuopenrequest.abort();
-				this.emuopenrequest = undefined;
-				this.fireEvent('error', this);
-			}
-		}
-		else if(this.emuopenrequest.readyState == 3) {
-			var	responseText = this.emuopenrequest.responseText;
-			if(responseText.length != this.lastPosition) {
-				var delta = responseText.substring(this.lastPosition);
-				this.emuSocketUpdate(delta);
-				this.lastPosition = responseText.length;
-			}
-		}
-		else if(this.emuopenrequest.readyState == 4) {
-			// check for the last message
-			if(this.emuopenrequest.responseText.length != this.lastPosition) {
-				var delta = this.emuopenrequest.responseText.substring(this.lastPosition);
-				this.emuSocketUpdate(delta);
-				this.lastPosition = this.emuopenrequest.responseText.length;
-			}
-			this.emuopenrequest.onreadystatechange = undefined;
-			this.emuopenrequest = undefined;
-			this.fireEvent('close', this);
-		}
-	},
-
 	onEmuSocketSendDone: function() {
 		var response = this.emusendrequest.getResponseJSON();
-		if(response.messages != undefined) {
-			for(var i = 0; i < response.messages.length; i++) {
-				var msg = JSON.parse(response.messages[i].fromBase64());
-				this.fireEvent('message', this, msg);
-			}
-		}
 		if(this.emumessages.length > 0) {
 			var messages = '';
 			for(var i = 0; i < this.emumessages.length; i++) {
@@ -218,9 +171,14 @@ Core.Object.extend('Core.Socket',
 			this.emusendrequest.send();
 			this.emumessages = [];
 		}
-		else {
-			this.emusendrequest = undefined;
+		else if(this.isClosed && !this.closeSent) {
+			this.emusendrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=close&id='+this.emuid });
+			this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
+			this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
+			this.emusendrequest.send();
 		}
+		else
+			this.emusendrequest = undefined;
 	},
 
 	onEmuSocketSendError: function() {
@@ -228,24 +186,17 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketOpenDone: function() {
+		console.log('onEmuSocketOpenDone');
 		var response = this.emuopenrequest.getResponseJSON();
 		this.emuid = response.id;
 		this.emuopenrequest = undefined;
 		if(response.status != 'open')
 			this.fireEvent('error', this);
 		else {
-			this.emutimer = new Core.Timer({ interval: 5, scope: this, callback: this.onEmuSocketTimer });
 			this.fireEvent('open', this);
-		}
-	},
 
-	onEmuSocketOpenError: function() {
-		this.emuopenrequest = undefined;
-		this.fireEvent('error', this);
-	},
+			console.log('send poll request');
 
-	onEmuSocketTimer: function() {
-		if(this.emupollrequest == undefined) {
 			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
 			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
 			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
@@ -253,21 +204,44 @@ Core.Object.extend('Core.Socket',
 		}
 	},
 
+	onEmuSocketOpenError: function(request, status) {
+		console.log('onEmuSocketOpenError status: '+status);
+//		Core.Object.dump(request.request);
+
+		this.emuopenrequest = undefined;
+		this.fireEvent('error', this);
+	},
+
+//	onEmuSocketTimer: function() {
+//		if(this.emupollrequest == undefined) {
+//			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
+//			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
+//			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
+//			this.emupollrequest.send();
+//		}
+//	},
+
 	onEmuSocketPollDone: function() {
 		var response = this.emupollrequest.getResponseJSON();
+		if(response.messages != undefined) {
+			for(var i = 0; i < response.messages.length; i++) {
+				var msg = JSON.parse(response.messages[i].fromBase64());
+				this.fireEvent('message', this, msg);
+			}
+		}
 		if(response.status != 'open') {
 			this.close();
 			this.fireEvent('close', this);
 		}
 		else {
-			if(response.messages != undefined) {
-				for(var i = 0; i < response.messages.length; i++) {
-					var msg = JSON.parse(response.messages[i].fromBase64());
-					this.fireEvent('message', this, msg);
-				}
-			}
+			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
+			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
+			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
+			this.emupollrequest.send();
 		}
-		this.emupollrequest = undefined;
+//		this.emupollrequest = undefined;
+
+
 	},
 
 	onEmuSocketPollError: function() {
