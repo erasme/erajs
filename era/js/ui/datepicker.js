@@ -8,15 +8,21 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	isValid: false,
 
 	/**
-	* @constructs
-	* @class
-	* @extends Ui.HBox
-	*/
+	 * @constructs
+	 * @class TextButtonField that open a calendar to choose a day and then display it in a DD/MM/YYYY format 
+	 * @extends Ui.TextButtonField
+	 * @param {Date} config.selectedDate Selected date (default nothing)
+ 	 */
 	constructor: function(config) {
 		this.setButtonIcon('calendar');
 		this.setWidthText(9);
+
 		this.connect(this, 'buttonpress', this.onDatePickerButtonPress);
 		this.connect(this, 'change', this.onDatePickerChange);
+
+		if('selectedDate' in config){
+			this.setSelectedDate(config.selectedDate);
+		}
 	},
 
 	getIsValid: function() {
@@ -25,6 +31,12 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 
 	getSelectedDate: function() {
 		return this.selectedDate;
+	},
+
+	setSelectedDate: function(date) {
+		this.lastValid = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();
+		this.selectedDate = date;
+		this.setValue(this.lastValid);
 	},
 
 	onDatePickerButtonPress: function() {
@@ -71,9 +83,7 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	},
 
 	onDaySelect: function(monthcalendar, date) {
-		this.lastValid = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();
-		this.selectedDate = date;
-		this.setValue(this.lastValid);
+		this.setSelectedDate(date);
 		this.popup.hide();
 		this.popup = undefined;
 	}

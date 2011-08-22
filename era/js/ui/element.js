@@ -1,7 +1,7 @@
 /**
-*	@name Ui
-*	@namespace Regroup all the Ui related classes : element, button, container etc. 
-*/
+ * @name Ui
+ * @namespace Regroup all the Ui related classes : element, button, container etc. 
+ */
 
 Core.Object.extend('Ui.Element', 
 /**@lends Ui.Element#*/
@@ -93,28 +93,28 @@ Core.Object.extend('Ui.Element',
 	mergeStyle: undefined,
 
 	/**
-    *   @constructs
-	*	@class Define the base class for all GUI elements
-    *   @extends Core.Object
-    *   @param {String} [config.width]
-    *   @param {String} [config.height]
-    *   @param {String} [config.verticalAlign]
-    *   @param {String} [config.horizontalAlign]
-    *   @param {String} [config.margin]
-    *   @param {String} [config.width]
-    *   @param {String} [config.height]
-    *   @param {String} [config.verticalAlign]
-    *   @param {String} [config.horizontalAlign]
-    *   @param {String} [config.marginTop]
-    *   @param {String} [config.marginBottom]
-    *   @param {String} [config.marginLeft]
-    *   @param {String} [config.marginRight]
-    *   @param {String} [config.opacity]
-    *   @param {String} [config.focusable]
-    *   @param {String} [config.keyboardRequired]
-    *   @param {String} [config.clipToBounds]
-    *   @param {String} [config.id]
-	*/
+     * @constructs
+	 * @class Define the base class for all GUI elements
+     * @extends Core.Object
+     * @param {String} [config.width]
+     * @param {String} [config.height]
+     * @param {String} [config.verticalAlign]
+     * @param {String} [config.horizontalAlign]
+     * @param {String} [config.margin]
+     * @param {String} [config.width]
+     * @param {String} [config.height]
+     * @param {String} [config.verticalAlign]
+     * @param {String} [config.horizontalAlign]
+     * @param {String} [config.marginTop]
+     * @param {String} [config.marginBottom]
+     * @param {String} [config.marginLeft]
+     * @param {String} [config.marginRight]
+     * @param {String} [config.opacity]
+     * @param {String} [config.focusable]
+     * @param {String} [config.keyboardRequired]
+     * @param {String} [config.clipToBounds]
+     * @param {String} [config.id]
+	 */
 	constructor: function(config) {
 		// create the drawing container
 		this.drawing = this.renderDrawing();
