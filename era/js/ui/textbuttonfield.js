@@ -22,7 +22,8 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		var lbox = new Ui.LBox({ marginBottom: 1 });
 		hbox.append(lbox, true);
 
-		lbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radiusTopLeft: 4, radiusBottomLeft: 4, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)'  }));
+		lbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radiusTopLeft: 4, radiusBottomLeft: 4 }));
+		lbox.append(new Ui.Shadow({ radiusTopLeft: 4, radiusBottomLeft: 4, opacity: 0.2, shadowWidth: 2, inner: true }));
 
 		this.entry = new Ui.Entry({ margin: 4, fontSize: 16 });
 		lbox.append(this.entry);

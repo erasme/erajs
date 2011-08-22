@@ -16,16 +16,19 @@ Ui.Container.extend('Ui.Slider', {
 		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4 });
 		this.appendChild(this.darkShadow);
 
-		this.background = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.85, g: 0.85, b: 0.85 }), radius: 4, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)' });
+		this.background = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.85, g: 0.85, b: 0.85 }), radius: 4 });
 		this.appendChild(this.background);
+
+		this.backgroundShadow = new Ui.Shadow({ shadowWidth: 2, inner: true, radius: 4, opacity: 0.2 });
+		this.appendChild(this.backgroundShadow);
 
 		this.barBox = new Ui.LBox();
 		this.appendChild(this.barBox);
 
-		this.barBackground = new Ui.Rectangle({ radius: 6 });
+		this.barBackground = new Ui.Rectangle({ radius: 3 });
 		this.barBox.append(this.barBackground);
 
-		this.bar = new Ui.Rectangle({ margin: 1, radius: 6 });
+		this.bar = new Ui.Rectangle({ margin: 1, radius: 3 });
 		this.barBox.append(this.bar);
 
 		this.button = new Ui.Movable({ moveVertical: false });
@@ -125,6 +128,7 @@ Ui.Container.extend('Ui.Slider', {
 		this.lightShadow.measure(width - 34, 10);
 		this.darkShadow.measure(width - 34, 10);
 		this.background.measure(width - 36, 10);
+		this.backgroundShadow.measure(width - 36, 10);
 		this.barBox.measure(width - 38, 9);
 		this.button.measure(40, 40);
 		return { width: 88, height: 44 };
@@ -135,6 +139,7 @@ Ui.Container.extend('Ui.Slider', {
 		this.lightShadow.arrange(17, y + 18, width - 34, 10);
 		this.darkShadow.arrange(17, y + 17, width - 34, 10);
 		this.background.arrange(18, y + 18, width - 36, 10);
+		this.backgroundShadow.arrange(18, y + 18, width - 36, 10);
 		this.button.arrange(2, y + 2, 40, 40);
 		this.updateValue();
 	},

@@ -35,7 +35,8 @@ Ui.LBox.extend('Ui.Switch',
 		this.bg2 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.9, g: 0.2, b: 0.2 }), radius: 4, margin: 1, marginBottom: 2 });
 		this.fixed.append(this.bg2);
 
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0 }), radius: 4, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.50)', margin: 1, marginBottom: 2 }));
+		this.append(new Ui.Shadow({ radius: 4, inner: true, margin: 1, marginBottom: 2, shadowWidth: 2, opacity: 0.5 }));
+
 		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.2 }), frameWidth: 1, radius: 5, marginBottom: 1  }));
 
 		this.setClipToBounds(true);

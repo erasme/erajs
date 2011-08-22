@@ -10,9 +10,8 @@ Ui.LBox.extend('Ui.TextField', {
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  }));
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  }));
 
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radius: 4, margin: 1, marginBottom: 2, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)'  }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radius: 4, margin: 1, marginBottom: 2  }));
 		this.append(new Ui.Shadow({ shadowWidth: 2, inner: true, radius: 4, opacity: 0.2, margin: 1, marginBottom: 2 }));
-//		shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)'
 
 		this.entry = new Ui.Entry({ margin: 4, fontSize: 16 });
 		this.append(this.entry);

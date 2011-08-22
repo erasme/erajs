@@ -22,7 +22,7 @@ Ui.Container.extend('Ui.ProgressBar', {
 		this.lightBorder = new Ui.Rectangle({ fill: 'lightgray', radius: 4, marginTop: 1, marginBottom: 2, marginLeft: 1, marginRight: 1  });
 		this.appendChild(this.lightBorder);
 
-		this.background = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.85, g: 0.85, b: 0.85 }), radius: 3, marginTop: 1, marginBottom: 2, marginLeft: 1, marginRight: 1, shadow: 'inset 0px 0px 1px 1px rgba(0, 0, 0, 0.20)'  });
+		this.background = new Ui.Shadow({ shadowWidth: 2, inner: true, radius: 3, opacity: 0.2, margin: 1, marginBottom: 2 });
 		this.appendChild(this.background);
 
 		this.barBox = new Ui.LBox();
