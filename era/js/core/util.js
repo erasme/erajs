@@ -105,26 +105,26 @@ String.prototype.toBase64 = function() {
 		var val1 = value.charCodeAt(i++) & 0xff;
 		var val2 = value.charCodeAt(i++) & 0xff;
 		var val3 = value.charCodeAt(i++) & 0xff;
-		var enc1 = code[val1 >> 2];
-		var enc2 = code[((val1 & 3) << 4) | (val2 >> 4)];
-		var enc3 = code[((val2 & 15) << 2) | (val3 >> 6)];
-		var enc4 = code[val3 & 63];
+		var enc1 = code.charAt(val1 >> 2);
+		var enc2 = code.charAt(((val1 & 3) << 4) | (val2 >> 4));
+		var enc3 = code.charAt(((val2 & 15) << 2) | (val3 >> 6));
+		var enc4 = code.charAt(val3 & 63);
 		res += enc1+enc2+enc3+enc4;
 	}
 	// 2 bytes
 	if(i + 1 < value.length) {
 		var val1 = value.charCodeAt(i++) & 0xff;
 		var val2 = value.charCodeAt(i++) & 0xff;
-		var enc1 = code[val1 >> 2];
-		var enc2 = code[((val1 & 3) << 4) | (val2 >> 4)];
-		var enc3 = code[(val2 & 15) << 2];
+		var enc1 = code.charAt(val1 >> 2);
+		var enc2 = code.charAt(((val1 & 3) << 4) | (val2 >> 4));
+		var enc3 = code.charAt((val2 & 15) << 2);
 		res += enc1+enc2+enc3+'=';
 	}
 	// 1 byte
 	else if(i < value.length) {
 		var val1 = value.charCodeAt(i++) & 0xff;
-		var enc1 = code[val1 >> 2];
-		var enc2 = code[(val1 & 3) << 4];
+		var enc1 = code.charAt(val1 >> 2);
+		var enc2 = code.charAt((val1 & 3) << 4);
 		res += enc1+enc2+'==';
 	}
 	return res;
@@ -136,10 +136,10 @@ String.prototype.fromBase64 = function() {
 	var res = '';
 	var i = 0;
 	while(i < value.length) {
-		enc1 = code.indexOf(value[i++]);
-		enc2 = code.indexOf(value[i++]);
-		enc3 = code.indexOf(value[i++]);
-		enc4 = code.indexOf(value[i++]);
+		enc1 = code.indexOf(value.charAt(i++));
+		enc2 = code.indexOf(value.charAt(i++));
+		enc3 = code.indexOf(value.charAt(i++));
+		enc4 = code.indexOf(value.charAt(i++));
 
 		char1 = (enc1 << 2) | (enc2 >> 4);
 		char2 = ((enc2 & 15) << 4) | (enc3 >> 2);
@@ -149,7 +149,7 @@ String.prototype.fromBase64 = function() {
 		if(enc3 != 64) {
 			res += String.fromCharCode(char2);
 			if(enc4 != 64)
-			res += String.fromCharCode(char3);
+				res += String.fromCharCode(char3);
 		}
 	}
 	return res.utf8Decode();
