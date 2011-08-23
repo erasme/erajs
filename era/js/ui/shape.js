@@ -256,19 +256,8 @@ Ui.Element.extend('Ui.Shape', {
 				var y2 = y + parser.getCurrent(); parser.next();
 				var x3 = x + parser.getCurrent(); parser.next();
 				var y3 = y + parser.getCurrent(); parser.next();
-//				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
-				for(var i = 0; i < 1; i += 0.1) {
-					var c1 = (1 - i);
-					var c12 = c1*c1;
-					var c13 = c12*c1;
-					var t2 = i*i;
-					var t3 = t2*i;
-					var cx = c13*x + 3*c12*i*x1 + 3*c1*t2*x2 + t3*x3;
-					var cy = c13*y + 3*c12*i*y1 + 3*c1*t2*y2 + t3*y3;
-					ctx.lineTo(cx, cy);
-				}
+				ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
-				ctx.lineTo(x, y);
 			}
 			else if(cmd == 'C') {
 				var x1 = parser.getCurrent(); parser.next();
@@ -277,53 +266,24 @@ Ui.Element.extend('Ui.Shape', {
 				var y2 = parser.getCurrent(); parser.next();
 				var x3 = parser.getCurrent(); parser.next();
 				var y3 = parser.getCurrent(); parser.next();
-//				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
-				for(var i = 0; i < 1; i += 0.1) {
-					var c1 = (1 - i);
-					var c12 = c1*c1;
-					var c13 = c12*c1;
-					var t2 = i*i;
-					var t3 = t2*i;
-					var cx = c13*x + 3*c12*i*x1 + 3*c1*t2*x2 + t3*x3;
-					var cy = c13*y + 3*c12*i*y1 + 3*c1*t2*y2 + t3*y3;
-					ctx.lineTo(cx, cy);
-				}
+				ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
-				ctx.lineTo(x, y);
 			}
 			else if(cmd == 'q') {
 				var x1 = x + parser.getCurrent(); parser.next();
 				var y1 = y + parser.getCurrent(); parser.next();
 				var x2 = x + parser.getCurrent(); parser.next();
 				var y2 = y + parser.getCurrent(); parser.next();
-//				vml += 'qb '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
-				for(var i = 0; i < 1; i += 0.1) {
-					var c1 = (1 - i);
-					var c12 = c1*c1;
-					var t2 = i*i;
-					var cx = c12*x + 2*c1*i*x1 + t2*x2;
-					var cy = c12*y + 2*c1*i*y1 + t2*y2;
-					ctx.lineTo(cx, cy);
-				}
+				ctx.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
-				ctx.lineTo(x, y);
 			}
 			else if(cmd == 'Q') {
 				var x1 = parser.getCurrent(); parser.next();
 				var y1 = parser.getCurrent(); parser.next();
 				var x2 = parser.getCurrent(); parser.next();
 				var y2 = parser.getCurrent(); parser.next();
-//				vml += 'qb '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
-				for(var i = 0; i < 1; i += 0.1) {
-					var c1 = (1 - i);
-					var c12 = c1*c1;
-					var t2 = i*i;
-					var cx = c12*x + 2*c1*i*x1 + t2*x2;
-					var cy = c12*y + 2*c1*i*y1 + t2*y2;
-					ctx.lineTo(cx, cy);
-				}
+				ctx.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
-				ctx.lineTo(x, y);
 			}
 			else if(cmd == 'z') {
 			}
