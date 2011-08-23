@@ -102,6 +102,19 @@ Core.Object.extend('Ui.LinearGradient', {
 		return gradient;
 	},
 
+	getCanvasGradient: function(context, width, height) {
+		var gradient;
+		if(this.orientation == 'vertical')
+			gradient = context.createLinearGradient(0, 0, 0, height);
+		else
+			gradient = context.createLinearGradient(0, 0, width, 0);
+		for(var i = 0; i < this.stops.length; i++) {
+			var stop = this.stops[i];
+			gradient.addColorStop(stop.offset, stop.color.getCssRgba());
+		}
+		return gradient;
+	},
+
 	getVMLFill: function() {
 		var fill = document.createElement('vml:fill');
 		fill.type = 'gradient';
