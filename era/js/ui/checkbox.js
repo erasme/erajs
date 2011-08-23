@@ -20,6 +20,8 @@ Ui.Togglable.extend('Ui.CheckBox',
 	*	@extends Ui.Togglable
 	*/
 	constructor: function(config) {
+		this.addEvents('change');
+
 		this.setPadding(3);
 
 		this.hbox = new Ui.HBox();
@@ -50,14 +52,23 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.connect(this, 'toggle', this.onCheckBoxToggle);
 		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
 
-		if(config.text != undefined)
+		if('text' in config)
 			this.setText(config.text);
-		if(config.content != undefined)
+		if('content' in config)
 			this.setContent(config.content);
+		if('value' in config)
+			this.setValue(config.value);
 	},
 
 	getValue: function() {
 		return this.getIsToggled();
+	},
+
+	setValue: function(value) {
+		if(value)
+			this.toggle();
+		else
+			this.untoggle();
 	},
 
 	setText: function(text) {
@@ -201,6 +212,16 @@ Ui.Togglable.extend('Ui.CheckBox',
 	onEnable: function() {
 		Ui.CheckBox.base.onEnable.call(this);
 		this.check.setOpacity(1);
+	},
+
+	onToggle: function() {
+		Ui.CheckBox.base.onToggle.call(this);
+		this.fireEvent('change', this, true);
+	},
+
+	onUntoggle: function() {
+		Ui.CheckBox.base.onUntoggle.call(this);
+		this.fireEvent('change', this, false);
 	}
 }, 
 /**Ui.CheckBox*/
