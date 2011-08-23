@@ -37,10 +37,20 @@ Ui.Element.extend('Ui.Entry', {
 	setPasswordMode: function(passwordMode) {
 		if(this.passwordMode != passwordMode) {
 			this.passwordMode = passwordMode;
-			if(this.passwordMode)
-				this.entryDrawing.setAttributeNS(null, 'type', 'password');
-			else
-				this.entryDrawing.setAttributeNS(null, 'type', 'text');
+			try {
+				if(this.passwordMode)
+					this.entryDrawing.setAttribute('type', 'password');
+				else
+					this.entryDrawing.setAttribute('type', 'text');
+			} catch(exception) {
+				var clone = this.entryDrawing.cloneNode(false);
+				if(this.passwordMode)
+					clone.setAttribute('type', 'password');
+				else
+					clone.setAttribute('type', 'text');
+				this.entryDrawing.parentNode.replaceChild(clone, this.entryDrawing);
+				this.entryDrawing = clone;
+			}
 		}
 	},
 
