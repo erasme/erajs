@@ -62,6 +62,8 @@ Ui.Container.extend('Ui.Slider', {
 	//
 
 	onButtonMove: function(button) {
+		console.log('onButtonMove');
+
 		var posX = this.button.getPositionX();
 		var width = this.getLayoutWidth();
 		var maxX = width - 44;
@@ -162,81 +164,6 @@ Ui.Container.extend('Ui.Slider', {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 })
 	}
 });
-
-/*
-Ui.SVGElement.extend('Ui.SliderContentDrawing', {
-	contentDrawing: undefined,
-
-	svgGradient: undefined,
-	shadow: undefined,
-	background: undefined,
-
-	radius: 8,
-	fill: 'black',
-
-	constructor: function(config) {
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
-		if(config.fill != undefined)
-			this.setFill(config.fill);
-	},
-
-	setRadius: function(radius) {
-		if(this.radius != radius) {
-			this.radius = radius;
-			this.invalidateArrange();
-		}
-	},
-
-	setFill: function(fill) {
-		if(this.fill != fill) {
-			this.fill = Ui.Color.create(fill);
-			if(this.svgGradient != undefined)
-				this.contentDrawing.removeChild(this.svgGradient);
-
-			var yuv = this.fill.getYuv();
-			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) },
-			] });
-			this.svgGradient = gradient.getSVGGradient();
-			var gradId = 'grad'+Core.Util.generateId();
-			this.svgGradient.setAttributeNS(null, 'id', gradId);
-			this.contentDrawing.insertBefore(this.svgGradient, this.contentDrawing.firstChild);
-			this.background.style.fill = 'url(#'+gradId+')';
-			this.shadow.style.fill = (new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v })).getCssHtml();
-		}
-	},
-
-	//
-	// Private
-	//
-
-	genPath: function(width, height, radius) {
-		return 'M'+radius+',0 L'+(width-radius)+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+'  L'+width+','+(height*0.66)+' L'+(width/2)+','+height+' L0,'+(height*0.66)+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
-	}
-}, {
-	render: function() {
-		this.contentDrawing = document.createElementNS(svgNS, 'g');
-
-		this.shadow = document.createElementNS(svgNS, 'path');
-		this.contentDrawing.appendChild(this.shadow);
-		this.shadow.style.stroke = 'none';
-
-		this.background = document.createElementNS(svgNS, 'path');
-		this.contentDrawing.appendChild(this.background);
-		this.background.style.stroke = 'none';
-
-		return this.contentDrawing;
-	},
-
-	arrangeCore: function(width, height) {
-		this.shadow.setAttributeNS(null, 'd', this.genPath(width, height, this.radius));
-		this.background.setAttributeNS(null, 'transform', 'translate(1,1)');
-		this.background.setAttributeNS(null, 'd', this.genPath(width-2, height-2, this.radius-1.4));
-	}
-});
-*/
 
 Ui.LBox.extend('Ui.SliderContentDrawing', {
 	contentDrawing: undefined,
