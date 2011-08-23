@@ -174,6 +174,7 @@ Ui.LBox.extend('Ui.Switch',
 		this.stopAnimation();
 		this.speed = speed;
 		this.animStart = this.pos;
+
 		if(this.speed < 0)
 			this.animNext = 1;
 		else
@@ -181,6 +182,12 @@ Ui.LBox.extend('Ui.Switch',
 		if(this.animStart != this.animNext) {
 			this.alignClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onAlignTick });
 			this.alignClock.begin();
+		}
+		else {
+			if(this.value != (this.animNext == 0)) {
+				this.value = (this.animNext == 0);
+				this.fireEvent('change', this, this.value);
+			}
 		}
 	},
 
