@@ -5,16 +5,17 @@ Ui.Element.extend('Ui.Shape', {
 	vmlOpacity: 1,
 	svgPath: undefined,
 	svgGradient: undefined,
+	svgDefs: undefined,
 
 	fill: 'black',
 	path: undefined,
 	scale: 1,
 
 	constructor: function(config) {
-		if(config.fill != undefined)
-			this.setFill(config.fill);
 		if(config.path != undefined)
 			this.setPath(config.path);
+		if(config.fill != undefined)
+			this.setFill(config.fill);
 		if(config.scale != undefined)
 			this.setScale(config.scale);
 	},
@@ -22,7 +23,9 @@ Ui.Element.extend('Ui.Shape', {
 	setScale: function(scale) {
 		if(this.scale != scale) {
 			this.scale = scale;
-			if(navigator.supportSVG)
+			if(Ui.Shape.forceCanvas)
+				this.updateCanvas();
+			else if(navigator.supportSVG)
 				this.svgPath.setAttribute('transform', 'scale( '+scale.toFixed(4)+', '+scale.toFixed(4)+' )');
 			else if(navigator.supportVML)
 				this.shapeDrawing.coordsize = (this.getLayoutWidth() * 100 / scale)+' '+(this.getLayoutHeight() * 100 / scale);
@@ -34,9 +37,12 @@ Ui.Element.extend('Ui.Shape', {
 			this.fill = fill;
 			if(typeof(fill) == 'string')
 				fill = Ui.Color.create(fill);
-			if(navigator.supportSVG) {
+			if(Ui.Shape.forceCanvas) {
+				this.updateCanvas();
+			}
+			else if(navigator.supportSVG) {
 				if(this.svgGradient != undefined) {
-					this.shapeDrawing.removeChild(this.svgGradient);
+					this.svgDefs.removeChild(this.svgGradient);
 					this.svgGradient = undefined;
 				}
 				if(Ui.Color.hasInstance(fill)) {
@@ -47,7 +53,8 @@ Ui.Element.extend('Ui.Shape', {
 					this.svgGradient = fill.getSVGGradient();
 					var gradId = 'grad'+Core.Util.generateId();
 					this.svgGradient.setAttributeNS(null, 'id', gradId);
-					this.shapeDrawing.insertBefore(this.svgGradient, this.shapeDrawing.firstChild);
+
+					this.svgDefs.appendChild(this.svgGradient);
 					this.svgPath.style.fill = 'url(#'+gradId+')';
 					this.svgPath.style.opacity = 1;
 				}
@@ -76,7 +83,9 @@ Ui.Element.extend('Ui.Shape', {
 	setPath: function(path) {
 		if(this.path != path) {
 			this.path = path;
-			if(navigator.supportSVG)
+			if(Ui.Shape.forceCanvas)
+				this.updateCanvas();
+			else if(navigator.supportSVG)
 				this.svgPath.setAttributeNS(null, 'd', this.path, null);
 			else if(navigator.supportVML)
 				this.shapeDrawing.path = this.pathToVML(path);
@@ -202,12 +211,169 @@ Ui.Element.extend('Ui.Shape', {
 		}
 		vml += 'e';
 		return vml;
+	},
+
+	pathToCanvas: function(path, ctx) {
+		var x = 0;
+		var y = 0;
+
+		ctx.beginPath();
+
+		var parser = new Ui.SvgParser({ path: path });
+		parser.next();
+
+		while(!parser.isEnd()) {
+			var cmd = parser.getCmd();
+			if(parser.isCmd())
+				parser.next();
+
+			if(cmd == 'm') {
+				parser.setCmd('l');
+				x += parser.getCurrent(); parser.next(); 
+				y += parser.getCurrent(); parser.next();
+				ctx.moveTo(x, y);
+			}
+			else if(cmd == 'M') {
+				parser.setCmd('L');
+				x = parser.getCurrent(); parser.next();
+				y = parser.getCurrent(); parser.next();
+				ctx.moveTo(x, y);
+			}
+			else if(cmd == 'l') {
+				x += parser.getCurrent(); parser.next();
+				y += parser.getCurrent(); parser.next();
+				ctx.lineTo(x, y);
+			}
+			else if(cmd == 'L') {
+				x = parser.getCurrent(); parser.next();
+				y = parser.getCurrent(); parser.next();
+				ctx.lineTo(x, y);
+			}
+			else if(cmd == 'c') {
+				var x1 = x + parser.getCurrent(); parser.next();
+				var y1 = y + parser.getCurrent(); parser.next();
+				var x2 = x + parser.getCurrent(); parser.next();
+				var y2 = y + parser.getCurrent(); parser.next();
+				var x3 = x + parser.getCurrent(); parser.next();
+				var y3 = y + parser.getCurrent(); parser.next();
+//				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+				for(var i = 0; i < 1; i += 0.1) {
+					var c1 = (1 - i);
+					var c12 = c1*c1;
+					var c13 = c12*c1;
+					var t2 = i*i;
+					var t3 = t2*i;
+					var cx = c13*x + 3*c12*i*x1 + 3*c1*t2*x2 + t3*x3;
+					var cy = c13*y + 3*c12*i*y1 + 3*c1*t2*y2 + t3*y3;
+					ctx.lineTo(cx, cy);
+				}
+				x = x3; y = y3;
+				ctx.lineTo(x, y);
+			}
+			else if(cmd == 'C') {
+				var x1 = parser.getCurrent(); parser.next();
+				var y1 = parser.getCurrent(); parser.next();
+				var x2 = parser.getCurrent(); parser.next();
+				var y2 = parser.getCurrent(); parser.next();
+				var x3 = parser.getCurrent(); parser.next();
+				var y3 = parser.getCurrent(); parser.next();
+//				vml += 'c '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x2 * 100)+','+Math.round(y2 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+				for(var i = 0; i < 1; i += 0.1) {
+					var c1 = (1 - i);
+					var c12 = c1*c1;
+					var c13 = c12*c1;
+					var t2 = i*i;
+					var t3 = t2*i;
+					var cx = c13*x + 3*c12*i*x1 + 3*c1*t2*x2 + t3*x3;
+					var cy = c13*y + 3*c12*i*y1 + 3*c1*t2*y2 + t3*y3;
+					ctx.lineTo(cx, cy);
+				}
+				x = x3; y = y3;
+				ctx.lineTo(x, y);
+			}
+			else if(cmd == 'q') {
+				var x1 = x + parser.getCurrent(); parser.next();
+				var y1 = y + parser.getCurrent(); parser.next();
+				var x2 = x + parser.getCurrent(); parser.next();
+				var y2 = y + parser.getCurrent(); parser.next();
+//				vml += 'qb '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+				for(var i = 0; i < 1; i += 0.1) {
+					var c1 = (1 - i);
+					var c12 = c1*c1;
+					var t2 = i*i;
+					var cx = c12*x + 2*c1*i*x1 + t2*x2;
+					var cy = c12*y + 2*c1*i*y1 + t2*y2;
+					ctx.lineTo(cx, cy);
+				}
+				x = x2; y = y2;
+				ctx.lineTo(x, y);
+			}
+			else if(cmd == 'Q') {
+				var x1 = parser.getCurrent(); parser.next();
+				var y1 = parser.getCurrent(); parser.next();
+				var x2 = parser.getCurrent(); parser.next();
+				var y2 = parser.getCurrent(); parser.next();
+//				vml += 'qb '+Math.round(x1 * 100)+','+Math.round(y1 * 100)+' '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+				for(var i = 0; i < 1; i += 0.1) {
+					var c1 = (1 - i);
+					var c12 = c1*c1;
+					var t2 = i*i;
+					var cx = c12*x + 2*c1*i*x1 + t2*x2;
+					var cy = c12*y + 2*c1*i*y1 + t2*y2;
+					ctx.lineTo(cx, cy);
+				}
+				x = x2; y = y2;
+				ctx.lineTo(x, y);
+			}
+			else if(cmd == 'z') {
+			}
+			else {
+				console.log('Invalid SVG path cmd: '+cmd);
+				throw('Invalid SVG path');
+			}
+		}
+		ctx.closePath();
+	},
+
+	updateCanvas: function() {
+		var ctx = this.shapeDrawing.getContext("2d");
+
+		ctx.save();
+
+		ctx.clearRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight());
+
+		if(this.path == undefined)
+			return;
+
+		if(this.scale != 1)
+			ctx.scale(this.scale, this.scale);
+
+		this.pathToCanvas(this.path, ctx);
+
+		var fill = this.fill;
+		if(typeof(fill) == 'string')
+			fill = Ui.Color.create(fill);
+
+		if(Ui.Color.hasInstance(fill))
+			ctx.fillStyle = fill.getCssRgba();
+		else if(Ui.LinearGradient.hasInstance(fill))
+			ctx.fillStyle = fill.getCanvasGradient(ctx, this.getLayoutWidth(), this.getLayoutHeight());
+
+		ctx.fill();
+
+		ctx.restore();
 	}
 }, {
 	render: function() {
-		if(navigator.supportSVG) {
+		if(Ui.Shape.forceCanvas)
+			this.shapeDrawing = document.createElement('canvas');
+		else if(navigator.supportSVG) {
 			this.shapeDrawing = document.createElementNS(svgNS, 'svg');
 			this.shapeDrawing.setAttribute('focusable', false);
+			
+			this.svgDefs = document.createElementNS(svgNS, 'defs');
+			this.shapeDrawing.appendChild(this.svgDefs);
+
 			this.svgPath = document.createElementNS(svgNS, 'path');
 			this.svgPath.style.fillOpacity = '1';
 			this.svgPath.style.stroke = 'none';
@@ -233,9 +399,14 @@ Ui.Element.extend('Ui.Shape', {
 		height = Math.round(height);
 		this.shapeDrawing.style.width = width+'px';
 		this.shapeDrawing.style.height = height+'px';
-		if((!navigator.supportSVG) && (navigator.supportVML)) {
+		if(!Ui.Shape.forceCanvas && !navigator.supportSVG && navigator.supportVML) {
 			this.shapeDrawing.coordorigin = '0 0';
 			this.shapeDrawing.coordsize = (width * 100 / this.scale)+' '+(height * 100 / this.scale);
+		}
+		if(Ui.Shape.forceCanvas) {
+			this.shapeDrawing.setAttribute('width', width, null);
+			this.shapeDrawing.setAttribute('height', height, null);
+			this.updateCanvas();
 		}
 	},
 
@@ -275,6 +446,8 @@ Ui.Element.extend('Ui.Shape', {
 		else
 			return Ui.Shape.base.getOpacity.call(this);
 	}*/
+}, {
+	forceCanvas: (navigator.userAgent.match(/ Firefox\/3\.5\./) != null) || (navigator.userAgent.match(/ Firefox\/3\.6\./) != null)
 });
 
 Core.Object.extend('Ui.SvgParser', {
