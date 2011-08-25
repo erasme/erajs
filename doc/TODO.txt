@@ -52,16 +52,16 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
   d'abords et le rendu graphique à la fin (en gros, séparer
   l'updateRender en 2)
 
-- dans Ui.Button, fournir une propriété "variant" ou "ui"
-  pour proposer différents "style" de bouton comme:
-  - normal
-  - normal-left
-  - normal-right
-  - normal-middle
-  - toolbar
-  - toolbar-left
-  - toolbar-right
-  - toolbar-middle
+X - dans Ui.Button, fournir une propriété "variant" ou "ui"
+    pour proposer différents "style" de bouton comme:
+	  - normal
+	  - normal-left
+	  - normal-right
+	  - normal-middle
+	  - toolbar
+	  - toolbar-left
+	  - toolbar-right
+	  - toolbar-middle
 
 - Proposer un style différent pour les menus, les dialogs
   style que les menus et les dialogs appliqueront aux éléments
@@ -113,10 +113,10 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - Dans Ui.Frame, gérer les cas où la frame et trop petit pour ses arrondis
   et sa largeur
 
-- Fournir une classe Ui.Shadow pour dessiner des ombres et ne plus être
-  dépendant de 'box-shadow'
+* - Fournir une classe Ui.Shadow pour dessiner des ombres et ne plus être
+    dépendant de 'box-shadow'
 
-- Passer Ui.Rectangle en une classe dérivée de Ui.Shape
+* - Passer Ui.Rectangle en une classe dérivée de Ui.Shape
 
 - Implémenter un 'fill' pour Ui.Shape qui supporte les textures à base
   d'image (Ui.ImageBrush)
@@ -160,3 +160,18 @@ x - Remplacer VBox, HBox et LBox par StackPanel avec le choix du mode
 - Voir pour rendre transparent aux évènements souris/doigts toutes les balises
   de positionnement (DIV). Peut être n'utiliser que les Ui.Shape pour cette
   détection de collision.
+
+- Voir si on peu supprimer les "rémanences" de rendu VML dans IE < 9
+
+* - Le notebook ne fonctionne pas dans Firefox 3.6 à corriger (gestion
+    non fonctionnel des dégradés linéaires en SVG)
+
+* - le Ui.Switch ne change pas d'état si on le tire jusqu'au bout
+
+* - le Ui.Entry en mode "password" ne fonctionne pas sous IE < 9
+
+- Dans Ui.Accordeon mettre un event "unselect" sur les pages et un
+  event "change" sur l'accordeon au changement de page active
+
+- Dans Ui.ListView permettre de sélectionner une ligne à partir du
+  code Javascript (ex: selectRow(..))
