@@ -1183,7 +1183,7 @@ Core.Object.extend('Ui.Element',
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
-			if(matrix.isTranslateOnly()) {
+			if(matrix.isTranslateOnly() && (navigator.isIE7 || navigator.isIE8 || navigator.isChrome)) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
 				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
