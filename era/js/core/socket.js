@@ -255,8 +255,3 @@ Core.Object.extend('Core.Socket',
 
 Core.Socket.supportWebSocket = "WebSocket" in window;
 
-Core.Socket.supportStreamSocket = true;
-if(navigator.isIE)
-	Core.Socket.supportStreamSocket = false;
-
-
