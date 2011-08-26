@@ -135,8 +135,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 * - Les Ui.Frame avec radius ne fonctionne pas sur IE < 9. A corriger.
 
-- Implémenter la nouvelle version des WebSocket disponible dans Chrome 14
-  http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10
+* - Implémenter la nouvelle version des WebSocket disponible dans Chrome 14
+    http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10
 
 - Dans Ui.Accordeon, gérer le clavier (peut être créer Ui.Accordeonable
   et fournir un des graphismes pour Ui.Accordeon)
@@ -175,3 +175,6 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 - Dans Ui.ListView permettre de sélectionner une ligne à partir du
   code Javascript (ex: selectRow(..))
+
+* - Dans les styles permettre l'héritage des styles pour le style static
+    par défaut
