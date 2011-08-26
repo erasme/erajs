@@ -136,6 +136,8 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			func.prototype[prop] = classDefine[prop];
 		}
 	}
+	if(classDefine['constructor'] === Object.prototype.constructor)
+		 func.prototype['__constructor'] = undefined;
 	if((navigator.isIE) && (classDefine.constructor !== Object.prototype.constructor))
 			func.prototype['__constructor'] = classDefine.constructor;
 	if(classOverride != undefined) {
