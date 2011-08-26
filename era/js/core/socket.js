@@ -114,8 +114,11 @@ Core.Object.extend('Core.Socket',
 		this.fireEvent('error', this);
 	},
 
-	onWebSocketMessage: function(msg) {		
-		this.fireEvent('message', this, JSON.parse(msg.data));
+	onWebSocketMessage: function(msg) {
+		if(msg.data == 'PING')
+			this.websocket.send('PONG');
+		else
+			this.fireEvent('message', this, JSON.parse(msg.data));
 	},
 
 	onWebSocketClose: function(msg) {
@@ -186,7 +189,6 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketOpenDone: function() {
-		console.log('onEmuSocketOpenDone');
 		var response = this.emuopenrequest.getResponseJSON();
 		this.emuid = response.id;
 		this.emuopenrequest = undefined;
@@ -194,9 +196,6 @@ Core.Object.extend('Core.Socket',
 			this.fireEvent('error', this);
 		else {
 			this.fireEvent('open', this);
-
-			console.log('send poll request');
-
 			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
 			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
 			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
@@ -205,21 +204,9 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketOpenError: function(request, status) {
-		console.log('onEmuSocketOpenError status: '+status);
-//		Core.Object.dump(request.request);
-
 		this.emuopenrequest = undefined;
 		this.fireEvent('error', this);
 	},
-
-//	onEmuSocketTimer: function() {
-//		if(this.emupollrequest == undefined) {
-//			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
-//			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
-//			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
-//			this.emupollrequest.send();
-//		}
-//	},
 
 	onEmuSocketPollDone: function() {
 		var response = this.emupollrequest.getResponseJSON();
@@ -239,9 +226,6 @@ Core.Object.extend('Core.Socket',
 			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
 			this.emupollrequest.send();
 		}
-//		this.emupollrequest = undefined;
-
-
 	},
 
 	onEmuSocketPollError: function() {
