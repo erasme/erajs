@@ -210,7 +210,7 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	/**#nocode+ Avoid Jsdoc warnings...*/
 	if(capture == undefined)
 		capture = false;
-	if(obj.addEventListener != undefined) {
+	if('addEventListener' in obj) {
 		var wrapper = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
 		}
