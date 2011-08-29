@@ -342,6 +342,14 @@ Core.Object.extend('Ui.Element',
 	// Update the current element arrangement
 	//
 	arrange: function(x, y, width, height) {
+		if(isNaN(x))
+			x = 0;
+		if(isNaN(y))
+			y = 0;
+		if(isNaN(width))
+			width = 0;
+		if(isNaN(height))
+			height = 0;
 		if((!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) || (this.arrangeHeight != height)) {
 			this.arrangeX = x;
 			this.arrangeY = y;
@@ -386,8 +394,6 @@ Core.Object.extend('Ui.Element',
 			this.layoutY = y;
 			this.layoutWidth = Math.max(width, 0);
 			this.layoutHeight = Math.max(height, 0);
-
-//			console.log(this+'.arrange '+x+','+y+' ('+this.layoutWidth+'x'+this.layoutHeight+')');
 
 			this.drawing.style.left = Math.round(this.layoutX)+'px';
 			this.drawing.style.top = Math.round(this.layoutY)+'px';
