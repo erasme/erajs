@@ -1,12 +1,19 @@
-//
-// Define the TextButtonField class.
-//
-Ui.LBox.extend('Ui.TextButtonField', {
+Ui.LBox.extend('Ui.TextButtonField', 
+/**@lends Ui.TextButtonField#*/
+{
 	entry: undefined,
 	button: undefined,
 	buttonIcon: undefined,
 	buttonText: undefined,
 
+	/**
+     * @constructs
+	 * @class 
+     * @extends Ui.LBox
+     * @param {String} [config.buttonText] Text display in the button
+	 * @param {String} [config.buttonIcon] Name of the button icon
+	 * @param {String} [config.value] Default TextField value
+	 */
 	constructor: function(config) {
 		this.setPadding(3);
 
@@ -48,10 +55,12 @@ Ui.LBox.extend('Ui.TextButtonField', {
 		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.buttonContentBox.append(this.iconBox);
 
-		if(config.buttonText != undefined)
+		if('buttonText' in config)
 			this.setButtonText(config.buttonText);
-		if(config.buttonIcon != undefined)
+		if('buttonIcon' in config)
 			this.setButtonIcon(config.buttonIcon);
+		if('value' in config)
+			this.setValue(config.value);
 
 		this.addEvents('change', 'validate', 'buttonpress');
 	},
