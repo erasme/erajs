@@ -1,9 +1,15 @@
-//
-// Define the TextField class.
-//
-Ui.LBox.extend('Ui.TextField', {
+Ui.LBox.extend('Ui.TextField', 
+/**@lends Ui.TextField#*/
+{
 	entry: undefined,
 
+    /**
+     * @constructs
+	 * @class    
+     * @extends Ui.TextField
+     * @param {Boolean} [config.passwordMode] Whether or not the TextField is in password mode (hide the typed text)
+     * @param {String} [config.value] TextField intial value
+     */ 
 	constructor: function(config) {
 		this.setPadding(3);
 
@@ -21,8 +27,11 @@ Ui.LBox.extend('Ui.TextField', {
 
 		this.addEvents('change', 'validate');
 
-		if(config.passwordMode != undefined)
+		if("passwordMode" in config)
 			this.setPasswordMode(config.passwordMode);
+
+		if("value" in config)
+			this.setValue(config.value);
 	},
 
 	setPasswordMode: function(passwordMode) {
@@ -48,7 +57,9 @@ Ui.LBox.extend('Ui.TextField', {
 	onEntryValidate: function(entry) {
 		this.fireEvent('validate', this);
 	}
-}, {
+}, 
+/**@lends Ui.TextField#*/
+{
 	onStyleChange: function() {
 	},
 

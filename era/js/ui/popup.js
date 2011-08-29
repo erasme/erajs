@@ -1,7 +1,6 @@
-//
-// Define the PopupMenu class.
-//
-Ui.Container.extend('Ui.Popup', {
+Ui.Container.extend('Ui.Popup', 
+/**@lends Ui.Popup#*/
+{
 	background: undefined,
 	contentBox: undefined,
 	posX: undefined,
@@ -10,6 +9,12 @@ Ui.Container.extend('Ui.Popup', {
 	lbox: undefined,
 	autoHide: true,
 
+	/*
+     * @constructs
+	 * @class
+     * @extends Ui.Container
+     * @param {Boolean} [config.autoHide]
+	 */
 	constructor: function(config) {
 		if(config.autoHide != undefined)
 			this.setAutoHide(config.autoHide);
