@@ -225,10 +225,10 @@ if(window.JSON == undefined) {
 	json.stringify = function(object) {
 		var res = '';
 		var first = true;
-		var isArray = (this.constructor.toString().indexOf('function Array()') != -1);
-		for(var prop in this) {
+		var isArray = (object.constructor.toString().indexOf('function Array()') != -1);
+		for(var prop in object) {
 			try {
-				var propValue = this[prop];
+				var propValue = object[prop];
 				if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object'))
 					continue;
 				if(first)
