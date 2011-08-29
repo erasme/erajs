@@ -190,41 +190,56 @@ Core.Object.extend('Core.Socket',
 
 	onEmuSocketOpenDone: function() {
 		var response = this.emuopenrequest.getResponseJSON();
-		this.emuid = response.id;
 		this.emuopenrequest = undefined;
-		if(response.status != 'open')
+		if(response == undefined) {
 			this.fireEvent('error', this);
+			this.fireEvent('close', this);
+		}
 		else {
-			this.fireEvent('open', this);
-			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
-			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
-			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
-			this.emupollrequest.send();
+			this.emuid = response.id;
+			if(response.status != 'open') {
+				this.fireEvent('error', this);
+				this.fireEvent('close', this);
+			}
+			else {
+				this.fireEvent('open', this);
+				this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
+				this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
+				this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
+				this.emupollrequest.send();
+			}
 		}
 	},
 
 	onEmuSocketOpenError: function(request, status) {
 		this.emuopenrequest = undefined;
 		this.fireEvent('error', this);
+		this.fireEvent('close', this);
 	},
 
 	onEmuSocketPollDone: function() {
 		var response = this.emupollrequest.getResponseJSON();
-		if(response.messages != undefined) {
-			for(var i = 0; i < response.messages.length; i++) {
-				var msg = JSON.parse(response.messages[i].fromBase64());
-				this.fireEvent('message', this, msg);
-			}
-		}
-		if(response.status != 'open') {
+		if(response == undefined) {
 			this.close();
 			this.fireEvent('close', this);
 		}
 		else {
-			this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
-			this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
-			this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
-			this.emupollrequest.send();
+			if(response.messages != undefined) {
+				for(var i = 0; i < response.messages.length; i++) {
+					var msg = JSON.parse(response.messages[i].fromBase64());
+					this.fireEvent('message', this, msg);
+				}
+			}
+			if(response.status != 'open') {
+				this.close();
+				this.fireEvent('close', this);
+			}
+			else {
+				this.emupollrequest = new Core.HttpRequest({ url: 'http://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
+				this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
+				this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
+				this.emupollrequest.send();
+			}
 		}
 	},
 
