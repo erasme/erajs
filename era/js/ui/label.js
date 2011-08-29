@@ -19,7 +19,7 @@ Ui.Element.extend('Ui.Label',
      * @param {String} [config.text] Label's text
      * @param {Number} [config.fontSize]
      * @param {String} [config.fontFamily]
-     * @param {String} [config.fontWeight]
+     * @param {String} [config.fontWeight] CSS fontWeight property ['normal', 'bold', Number]
      * @param {String} [config.color]
      * @param {String} [config.orientation]
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
