@@ -12,17 +12,17 @@ Ui.Element.extend('Ui.Image', {
 		this.addEvents('ready');
 	},
 
-	//
-	// Get the URL of the image
-	//
+	/**
+	* Get the URL of the image
+	*/
 	getSrc: function() {
 		return this.src;
 	},
 
-	//
-	// Set the URL of the image. When the image is loaded,
-	// ready event is fired and getIsReady return true.
-	//
+	/**
+	* Set the URL of the image. When the image is loaded,
+	* ready event is fired and getIsReady return true.
+	*/
 	setSrc: function(src) {
 		this.loaddone = false;
 		this.naturalWidth = undefined;
@@ -31,34 +31,34 @@ Ui.Element.extend('Ui.Image', {
 		this.imageDrawing.setAttribute('src', src);
 	},
 
-	//
-	// Return the natural width of the image as defined
-	// in the image file. Return undefined if the image is
-	// not ready
-	//
+	/**
+	* Return the natural width of the image as defined
+	* in the image file. Return undefined if the image is
+	* not ready
+	*/
 	getNaturalWidth: function() {
 		return this.naturalWidth;
 	},
 
-	//
-	// Return the natural height of the image as defined
-	// in the image file. Return undefined if the image is
-	// not ready
-	//
+	/**
+	* Return the natural height of the image as defined
+	* in the image file. Return undefined if the image is
+	* not ready
+	*/
 	getNaturalHeight: function() {
 		return this.naturalHeight;
 	},
 
-	//
-	// Return true if the image is loaded
-	//
+	/**
+	* Return true if the image is loaded
+	*/
 	getIsReady: function() {
 		return this.loaddone;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	* @private
+	*/
 
 	onImageLoad: function(event) {
 		this.loaddone = true;
@@ -81,12 +81,22 @@ Ui.Element.extend('Ui.Image', {
 		this.fireEvent('ready', this);
 		this.invalidateMeasure();
 	}
+
+	/**#@-*/
 }, {
 	render: function() {
 		this.imageDrawing = document.createElement('img');
 		this.imageDrawing.style.width = '0px';
 		this.imageDrawing.style.height = '0px';
 		this.imageDrawing.setAttribute('draggable', false);
+		if(navigator.isWebkit)
+			this.imageDrawing.style.webkitUserSelect = 'none';
+		else if(navigator.isGecko)
+			this.imageDrawing.style.MozUserSelect = 'none';
+		else if(navigator.isIE)
+			this.connect(this.imageDrawing, 'selectstart', function(event) { event.preventDefault(); });
+		else if(navigator.isOpera)
+			this.imageDrawing.onmousedown = function(event) { event.preventDefault(); };
 		return this.imageDrawing;
 	},
 

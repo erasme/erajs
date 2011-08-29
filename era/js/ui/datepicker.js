@@ -87,7 +87,5 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		this.popup.hide();
 		this.popup = undefined;
 	}
-}, {}, {
-	style: Ui.TextButtonField.style
 });
 
