@@ -6,6 +6,7 @@ Ui.Container.extend('Ui.ListView',
 	rowsHeight: 0,
 	headersHeight: 0,
 	selectedRow: undefined,
+	headersVisible: true,
 
 	constructor: function(config) {
 		this.rowContainer = new Ui.Container();
@@ -30,6 +31,28 @@ Ui.Container.extend('Ui.ListView',
 				this.appendData(config.data[i]);
 		}
 		this.addEvents('select', 'unselect', 'activate');
+	},
+
+	showHeaders: function() {
+		if(!this.headersVisible) {
+			this.headersVisible = true;
+			for(var i = 0; i < this.headers.length; i++) {
+				var header = this.headers[i];
+				header.ui.show();
+			}
+			this.invalidateMeasure();
+		}
+	},
+
+	hideHeaders: function() {
+		if(this.headersVisible) {
+			this.headersVisible = false;
+			for(var i = 0; i < this.headers.length; i++) {
+				var header = this.headers[i];
+				header.ui.hide();
+			}
+			this.invalidateMeasure();
+		}
 	},
 
 	getSelectedRow: function() {
@@ -203,7 +226,11 @@ Ui.Container.extend('Ui.ListView',
 					var colWidth = header.minWidth;
 					if(col == this.headers.length - 1)
 						colWidth = Math.max(availableWidth, colWidth);
-					var size = header.ui.measure(colWidth, this.headersHeight);
+					var size;
+					if(this.headersVisible)
+						size = header.ui.measure(colWidth, this.headersHeight);
+					else
+						size = { width: 0, height: 0 };
 					if(size.height > minHeight)
 						minHeight = size.height;
 					if(size.width > header.minWidth) {
@@ -404,7 +431,7 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 	constructor: function(config) {
 		this.key = config.key;
 
-		this.border = new Ui.Rectangle({ fill: 'pink' });
+		this.border = new Ui.Rectangle({ height: 1, verticalAlign: 'bottom' });
 		this.append(this.border);
 
 		this.background = new Ui.Rectangle({ fill: 'white', marginBottom: 1, marginRight: 1 });
@@ -496,7 +523,7 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 /** @lends Ui.ListViewCellString*/
 {
 	style: {
-		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99 }),
+		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99, a: 0.1 }),
 		selectColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		spacing: 5
 	}

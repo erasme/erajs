@@ -217,7 +217,6 @@ Ui.Element.extend('Ui.Label',
 	measureText: function(text, fontSize, fontFamily, fontWeight) {
 		if(Ui.Label.measureBox == undefined)
 			this.createMeasure();
-
 		Ui.Label.measureBox.style.fontSize = fontSize+'px';
 		Ui.Label.measureBox.style.fontFamily = fontFamily;
 		Ui.Label.measureBox.style.fontWeight = fontWeight;

@@ -62,8 +62,6 @@ Ui.Container.extend('Ui.Slider', {
 	//
 
 	onButtonMove: function(button) {
-		console.log('onButtonMove');
-
 		var posX = this.button.getPositionX();
 		var width = this.getLayoutWidth();
 		var maxX = width - 44;

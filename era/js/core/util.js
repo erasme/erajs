@@ -3,6 +3,9 @@ navigator.isGecko = (navigator.userAgent.match(/Gecko\//i) != null);
 navigator.isWebkit = (navigator.userAgent.match(/WebKit\//i) != null);
 
 navigator.isIE = (navigator.userAgent.match(/MSIE/i) != null);
+navigator.isIE7 = (navigator.userAgent.match(/MSIE 7\./i) != null);
+navigator.isIE8 = (navigator.userAgent.match(/MSIE 8\./i) != null);
+
 navigator.isOpera =  ((navigator.userAgent == undefined) || (navigator.userAgent.match(/Opera\//i) != null));
 navigator.isChrome = (navigator.userAgent.match(/ Chrome\//) != null);
 navigator.isSafari = (navigator.userAgent.match(/ Safari\//) != null);

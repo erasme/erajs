@@ -1113,8 +1113,16 @@ Core.Object.extend('Ui.Element',
 	getStyleProperty: function(property) {
 		if((this.mergeStyle != undefined) && (this.mergeStyle[this.classType] != undefined) && (this.mergeStyle[this.classType][property] != undefined))
 			return this.mergeStyle[this.classType][property];
-		else
-			return this.constructor.style[property];
+		// look for static default
+		else {
+			var current = this;
+			while(current != undefined) {
+				if((current.constructor.style != undefined) && (property in current.constructor.style))
+					return current.constructor.style[property];
+				current = current.__baseclass__;
+			}
+			return undefined;
+		}
 	},
 
 	onInternalStyleChange: function() {
@@ -1183,7 +1191,7 @@ Core.Object.extend('Ui.Element',
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
-			if(matrix.isTranslateOnly()) {
+			if(matrix.isTranslateOnly() && (navigator.isIE7 || navigator.isIE8 || navigator.isChrome)) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
 				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
