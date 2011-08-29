@@ -185,6 +185,6 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 - permettre de mettre du code de débuggage (des tests supplémentaires)
   dans un preprocesseur et l'enlever dans la version compiler.
 
-- faire une icone de téléphone
+* - faire une icone de téléphone
 
 
