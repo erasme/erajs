@@ -4,12 +4,13 @@ Ui.Element.extend('Ui.Image', {
 	loaddone: false,
 	naturalWidth: undefined,
 	naturalHeight: undefined,
+	imageDrawing: undefined,
 
 	constructor: function(config) {
-		if(config.src != undefined)
-			this.setSrc(config.src);
-		this.connect(this.imageDrawing, 'load', this.onImageLoad);
 		this.addEvents('ready');
+		this.connect(this.imageDrawing, 'load', this.onImageLoad);
+		if('src' in config)
+			this.setSrc(config.src);
 	},
 
 	/**
@@ -67,16 +68,17 @@ Ui.Element.extend('Ui.Image', {
 			this.naturalHeight = event.target.naturalHeight;
 		}
 		else {
-			if('removeProperty' in this.imageDrawing.style) {
-				this.imageDrawing.style.removeProperty('width');
-				this.imageDrawing.style.removeProperty('height');
+			if(document.body == undefined) {
+				var body = document.createElement('body');
+				document.body = body;
 			}
-			else if('removeAttribute' in this.imageDrawing.style) {
-				this.imageDrawing.style.removeAttribute('width');
-				this.imageDrawing.style.removeAttribute('height');
-			}
-			this.naturalWidth = this.imageDrawing.width;
-			this.naturalHeight = this.imageDrawing.height;
+			var imgClone = document.createElement('img');
+			imgClone.style.visibility = 'hidden';
+			imgClone.setAttribute('src', this.src);
+			document.body.appendChild(imgClone);
+			this.naturalWidth = imgClone.width;
+			this.naturalHeight = imgClone.height;
+			document.body.removeChild(imgClone);
 		}
 		this.fireEvent('ready', this);
 		this.invalidateMeasure();
@@ -86,6 +88,9 @@ Ui.Element.extend('Ui.Image', {
 }, {
 	render: function() {
 		this.imageDrawing = document.createElement('img');
+		this.imageDrawing.style.position = 'absolute';
+		this.imageDrawing.style.top = '0px';
+		this.imageDrawing.style.left = '0px';
 		this.imageDrawing.style.width = '0px';
 		this.imageDrawing.style.height = '0px';
 		this.imageDrawing.setAttribute('draggable', false);
@@ -124,7 +129,9 @@ Ui.Element.extend('Ui.Image', {
 	},
 
 	arrangeCore: function(width, height) {
-		this.imageDrawing.style.width = width+'px';
-		this.imageDrawing.style.height = height+'px';
+		if(this.imageDrawing != undefined) {
+			this.imageDrawing.style.width = width+'px';
+			this.imageDrawing.style.height = height+'px';
+		}
 	}
 });
