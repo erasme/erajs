@@ -1,7 +1,6 @@
-//
-// Define the Scrollable class.
-//
-Ui.Container.extend('Ui.Scrollable', {
+Ui.Container.extend('Ui.Scrollable', 
+/**@lends Ui.Scrollable#*/
+{
 	viewWidth: 0,
 	viewHeight: 0,
 	horizontalBarWidth: 0,
@@ -35,10 +34,18 @@ Ui.Container.extend('Ui.Scrollable', {
 	lock: false,
 	overScroll: true,
 
+	/*
+     * @constructs
+	 * @class
+     * @extends Ui.Container
+     * @param {Boolean} [config.scrollHorizontal] Whether or not the scrollable allow horizontal scrolling
+     * @param {Boolean} [config.scrollVertical] Whether or not the scrollable allow vertical scrolling
+	 * @param {Boolean} [config.overScroll] If true, let user scroll over the container content on touch devices. If false, oblige him to use the scrollbar.
+	 */
 	constructor: function(config) {
-		if(config.scrollHorizontal != undefined)
+		if('scrollHorizontal' in config)
 			this.setScrollHorizontal(config.scrollHorizontal);
-		if(config.scrollVertical != undefined)
+		if('scrollVertical' in config)
 			this.setScrollVertical(config.scrollVertical);
 
 		this.scrollbarHorizontalBox = new Ui.LBox();
