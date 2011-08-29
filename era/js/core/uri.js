@@ -16,15 +16,20 @@ Core.Object.extend('Core.Uri', {
 	*/
 	constructor: function(config) {
 		var fullpath = true;
+		var baseURI;
+		if('baseURI' in document)
+			baseURI = document.baseURI;
+		else
+			baseURI = document.location.href;
 		var uri;
 		if('uri' in config)
 			uri = config.uri;
 		else
-			uri = document.baseURI;
+			uri = baseURI;
 		var res = uri.match(/^([^:\/]+):\/\/([^\/]+)(\/.*)$/);
 		if(res === null) {
 			fullpath = false;
-			res = document.baseURI.match(/^([^:\/]+):\/\/([^\/]+)(\/.*)$/);
+			res = baseURI.match(/^([^:\/]+):\/\/([^\/]+)(\/.*)$/);
 		}
 		this.scheme = res[1];
 		var authority = res[2];
