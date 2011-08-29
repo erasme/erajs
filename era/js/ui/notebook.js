@@ -175,7 +175,7 @@ Ui.Container.extend('Ui.Notebook',
 	onStyleChange: function() {
 		this.currentColor = Ui.Color.create(this.getStyleProperty('color'));
 		var yuv = this.currentColor.getYuva();
-		this.hiddenColor = new Ui.Color({ y: yuv.y - 0.3, u: yuv.u, v: yuv.v, a: Math.max(0, yuv.a - 0.3) });
+		this.hiddenColor = new Ui.Color({ y: yuv.y - 0.18, u: yuv.u, v: yuv.v });
 		for(var i = 0; i < this.pages.length; i++) {
 			if(i == this.current)
 				this.pages[i].getBackground().setFill(this.currentColor);
@@ -346,14 +346,14 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = Ui.Color.create(fill);
-			var yuv = this.fill.getYuv();
+			var yuv = this.fill.getYuva();
 			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
+				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) },
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
 			] });
 			this.background.setFill(gradient);
-			this.darkShadow.setFill(new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v }));
-			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.3, u: yuv.u, v: yuv.v }));
+			this.darkShadow.setFill(new Ui.Color({ y: yuv.y - 0.4, u: yuv.u, v: yuv.v }));
+			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }));
 		}
 	},
 
