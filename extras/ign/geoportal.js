@@ -4,6 +4,11 @@
  * @version 0.9
  */
 
+/**
+ * @name Extras.Ui.IGN
+ * @namespace Namespace for all the IGN elements that are bind with Era
+ */
+
 
 
 Ui.Fixed.extend('Extras.Ui.IGN.Geoportal',

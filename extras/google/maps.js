@@ -4,6 +4,21 @@
  * @version 0.9
  */
 
+/**
+ * @name Extras
+ * @namespace Namespace for all things that are outside the scope of the Era framework core but use it
+ */
+
+/**
+ * @name Extras.Ui
+ * @namespace Namespace for all Ui elements that are outside the scope of the Era framework core but use it
+ */
+
+/**
+ * @name Extras.Ui.Google
+ * @namespace Namespace for all the Google element that are bind with Era
+ */
+
 Ui.Fixed.extend('Extras.Ui.Google.Map',  
                 /** @lends Extras.Ui.Google.Map# */
 {
@@ -176,7 +191,7 @@ Ui.Fixed.extend('Extras.Ui.Google.Map',
 	}
 }, 
 {},
-/** @lends Extras.Ui.Google.Maps */
+/** @lends Extras.Ui.Google.Map*/
 {
     /** 
 	 * @description Static constructor, called after this js file has been loaded

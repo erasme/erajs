@@ -1,7 +1,18 @@
+/**
+ * @name JQueryUI
+ * @namespace Regroup all the objects that encapsulate JQuery Ui widgets
+ */
 
-Ui.Fixed.extend('JQueryUI.DatePicker', {
+Ui.Fixed.extend('JQueryUI.DatePicker', 
+/**@lends JQueryUI.DatePicker#*/
+{
 	jqueryDrawing: undefined,
 
+	/**
+    *   @constructs
+	*	@class 
+    *   @extends Ui.Fixed
+	*/
 	constructor: function(config) {
 		this.addEvents('select');
 
@@ -24,7 +35,9 @@ Ui.Fixed.extend('JQueryUI.DatePicker', {
 		if(($(this.jqueryDrawing).width() > this.getLayoutWidth()) || ($(this.jqueryDrawing).height() > this.getLayoutHeight()))
 			this.invalidateMeasure();
 	}
-}, {
+}, 
+/**@lends JQueryUI.DatePicker#*/
+{
 	render: function() {
 		this.jqueryDrawing = document.createElement('div');
 		this.jqueryDrawing.style.display = 'block';
@@ -39,7 +52,9 @@ Ui.Fixed.extend('JQueryUI.DatePicker', {
 		$(this.jqueryDrawing).datepicker("refresh");
 		return { width: Math.max($(this.jqueryDrawing).width(), width), height: Math.max($(this.jqueryDrawing).height(), height) };
 	}
-}, {
+}, 
+/**@lends JQueryUI.DatePicker*/
+{
 	constructor: function() {
 		document.write("<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>");
 		document.write("<script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js'></script>");
