@@ -52,6 +52,8 @@ Ui.LBox.extend('Ui.App', {
 		this.connect(window, 'load', this.onWindowLoad);
 		this.connect(window, 'resize', this.onWindowResize);
 		this.connect(window, 'selectstart', this.onWindowSelectStart);
+		if(('onselectstart' in document) && ('attachEvent' in document))
+			document.attachEvent('onselectstart', this.onWindowSelectStart);
 
 		this.addEvents('resize', 'ready', 'parentmessage');
 
@@ -154,7 +156,11 @@ Ui.LBox.extend('Ui.App', {
 	//
 
 	onWindowSelectStart: function(event) {
-		var current = event.target;
+		var current;
+		if('target' in event)
+			current = event.target;
+		else
+			current = event.srcElement;
 		var selectable = false;
 		while((current != undefined) && (current != window)) {
 			if('selectable' in current) {
@@ -163,8 +169,12 @@ Ui.LBox.extend('Ui.App', {
 			}
 			current = current.parentNode;
 		}
-		if(!selectable)
-			event.preventDefault();
+		if(!selectable) {
+			if('preventDefault' in event)
+				event.preventDefault();
+			return false;
+		}
+		return true;
 	},
 
 	onWindowLoad: function() {
