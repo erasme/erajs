@@ -238,7 +238,7 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 *	@param {function} method
 */
 Core.Object.prototype.disconnect = function(obj, eventName, method) {
-	if(obj.removeEventListener != undefined) {
+	if('removeEventListener' in obj) {
 		for(var i = 0; (obj.events != undefined) && (i < obj.events.length); i++) {
 			var wrapper = obj.events[i];
 			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
