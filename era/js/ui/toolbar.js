@@ -91,6 +91,10 @@ Ui.VBox.extend('Ui.ToolBar', {
 
 		"Ui.TextButtonField": {
 			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
+		},
+
+		"Ui.ScrollingArea": {
+			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
 		}
 	}
 });

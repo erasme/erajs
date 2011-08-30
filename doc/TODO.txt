@@ -107,9 +107,6 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 - Faire de la documentation automatique (voir le fonctionnement de Doxygen)
 
-* - Améliorer le support des courbes de bézier en VML (générer des lignes
-    sera toujours mieux que ce que fait VML actuellement)
-
 - Dans Ui.Frame, gérer les cas où la frame et trop petit pour ses arrondis
   et sa largeur
 
@@ -127,13 +124,14 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 - Régler le problème de la sélection du text dans Opera quand on en veux pas
   et dans IE < 9
 
-- Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
-  pour l'élément en cours.
+* - Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
+    pour l'élément en cours.
+
+* - Dans Ui.Notebook faire comme dans Ui.Accordeonable = un event "change" et 
+    "select", "unselect"
 
 - Sur un iPad, améliorer la gestion du clavier virtuel (commencer par détecter
   qu'il est ouvert et permettre ) 
-
-* - Les Ui.Frame avec radius ne fonctionne pas sur IE < 9. A corriger.
 
 * - Implémenter la nouvelle version des WebSocket disponible dans Chrome 14
     http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10
@@ -166,12 +164,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 * - Le notebook ne fonctionne pas dans Firefox 3.6 à corriger (gestion
     non fonctionnel des dégradés linéaires en SVG)
 
-* - le Ui.Switch ne change pas d'état si on le tire jusqu'au bout
-
-* - le Ui.Entry en mode "password" ne fonctionne pas sous IE < 9
-
-- Dans Ui.Accordeon mettre un event "unselect" sur les pages et un
-  event "change" sur l'accordeon au changement de page active
+* - Dans Ui.Accordeon mettre un event "unselect" sur les pages et un
+    event "change" sur l'accordeon au changement de page active
 
 - Dans Ui.ListView permettre de sélectionner une ligne à partir du
   code Javascript (ex: selectRow(..))
@@ -185,6 +179,17 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 - permettre de mettre du code de débuggage (des tests supplémentaires)
   dans un preprocesseur et l'enlever dans la version compiler.
 
-* - faire une icone de téléphone
+- corriger l'icone "edit"
 
+- faire fonctionner le "doubleclick" dans IE < 9
+
+* - BUG dans le drag & drop émulé, les parties VML n'apparaissent pas
+
+- BUG dans le drag & drop émulé, les parties VML apparaissent en blanc
+
+- gérer la sélection et la non sélection dans IE < 9
+
+- gérer le clic droit dans IE < 9
+
+- créer un Ui.Combo comme bouton avec une liste de choix
 

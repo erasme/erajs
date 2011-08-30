@@ -74,7 +74,7 @@ include(eraBaseDirectory+'ui/flow.js');
 include(eraBaseDirectory+'ui/grid.js');
 include(eraBaseDirectory+'ui/fixed.js');
 include(eraBaseDirectory+'ui/fold.js');
-include(eraBaseDirectory+'ui/accordeon.js');
+include(eraBaseDirectory+'ui/accordeonable.js');
 
 //
 // Ui drawing
@@ -147,6 +147,7 @@ include(eraBaseDirectory+'ui/fade.js');
 include(eraBaseDirectory+'ui/flip.js');
 include(eraBaseDirectory+'ui/slide.js');
 include(eraBaseDirectory+'ui/transitionbox.js');
+include(eraBaseDirectory+'ui/accordeon.js');
 include(eraBaseDirectory+'ui/carousel.js');
 include(eraBaseDirectory+'ui/switch.js');
 include(eraBaseDirectory+'ui/app.js');
