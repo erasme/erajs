@@ -5,6 +5,7 @@ Ui.Element.extend('Ui.Image', {
 	naturalWidth: undefined,
 	naturalHeight: undefined,
 	imageDrawing: undefined,
+	setSrcLock: false,
 
 	constructor: function(config) {
 		this.addEvents('ready');
@@ -25,11 +26,13 @@ Ui.Element.extend('Ui.Image', {
 	* ready event is fired and getIsReady return true.
 	*/
 	setSrc: function(src) {
+		this.setSrcLock = true;
 		this.loaddone = false;
 		this.naturalWidth = undefined;
 		this.naturalHeight = undefined;
 		this.src = src;
 		this.imageDrawing.setAttribute('src', src);
+		this.setSrcLock = false;
 	},
 
 	/**
@@ -62,24 +65,34 @@ Ui.Element.extend('Ui.Image', {
 	*/
 
 	onImageLoad: function(event) {
-		this.loaddone = true;
 		if((event.target != undefined) && (event.target.naturalWidth != undefined) && (event.target.naturalHeight != undefined)) {
+			this.loaddone = true;
 			this.naturalWidth = event.target.naturalWidth;
 			this.naturalHeight = event.target.naturalHeight;
+			this.fireEvent('ready', this);
+			this.invalidateMeasure();
 		}
 		else {
-			if(document.body == undefined) {
-				var body = document.createElement('body');
-				document.body = body;
-			}
-			var imgClone = document.createElement('img');
-			imgClone.style.visibility = 'hidden';
-			imgClone.setAttribute('src', this.src);
-			document.body.appendChild(imgClone);
-			this.naturalWidth = imgClone.width;
-			this.naturalHeight = imgClone.height;
-			document.body.removeChild(imgClone);
+			if(this.setSrcLock)
+				new Core.DelayedTask({ delay: 0, scope: this, callback: this.onImageDelayReady });
+			else
+				this.onImageDelayReady();
 		}
+	},
+
+	onImageDelayReady: function() {
+		this.loaddone = true;
+		if(document.body == undefined) {
+			var body = document.createElement('body');
+			document.body = body;
+		}
+		var imgClone = document.createElement('img');
+		imgClone.style.visibility = 'hidden';
+		imgClone.setAttribute('src', this.src);
+		document.body.appendChild(imgClone);
+		this.naturalWidth = imgClone.width;
+		this.naturalHeight = imgClone.height;
+		document.body.removeChild(imgClone);
 		this.fireEvent('ready', this);
 		this.invalidateMeasure();
 	}
