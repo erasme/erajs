@@ -129,6 +129,7 @@ Core.Object.extend('Core.Event',
 		}
 		else if(this.__addEventListener != undefined)
 			return this.__addEventListener(eventName, callback, capture);
+		/**#nocode+ Avoid Jsdoc warnings...*/
 		else if(this.attachEvent != undefined) {
 			var wrapper = function() {
 				// correct IE < 9 event diff
@@ -163,6 +164,7 @@ Core.Object.extend('Core.Event',
 				this.__ieevents = [];
 			this.__ieevents.push(wrapper);
 		}
+		/**#nocode-*/
 	},
 
 	removeEventListener: function(eventName, callback, capture) {

@@ -1,6 +1,6 @@
-
-
-Core.Event.extend('Core.MouseEvents', {
+Core.Event.extend('Core.MouseEvents', 
+/**@lends Core.MouseEvents#*/
+{
 	detail: 0,
 	screenX: 0,
 	screenY: 0,
@@ -11,7 +11,11 @@ Core.Event.extend('Core.MouseEvents', {
 	shiftKey: false,
 	metaKey: false,
 	button: 0,
-
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Core.Event 
+	 */
 	constructor: function(config) {
 	},
 
@@ -35,8 +39,15 @@ Core.Event.extend('Core.MouseEvents', {
 	}
 });
 
-Core.Object.extend('Core.MouseManager', {
+Core.Object.extend('Core.MouseManager',
+/**@lends Core.MouseManager#*/
+{
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Core.Object
+	 */
 	constructor: function(config) {
 		Core.Event.registerEvent('MouseEvents', Core.MouseEvents);
 		Core.Event.register('mousedown', Core.MouseEvents);

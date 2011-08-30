@@ -1,5 +1,5 @@
 Core.Object.extend('Anim.AnimationManager', 
-/**@lends Anim.TimeManager#*/
+/**@lends Anim.AnimationManager#*/
 {
 	clocks: undefined,
 	start: 0,

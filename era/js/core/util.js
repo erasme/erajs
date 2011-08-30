@@ -160,6 +160,7 @@ String.prototype.fromBase64 = function() {
 
 navigator.supportVML = false;
 
+/**#nocode+ Avoid Jsdoc warnings...*/
 // correct IE specific bugs
 if(navigator.isIE) {
 	if(navigator.supportSVG) {
@@ -264,4 +265,4 @@ if(window.console == undefined) {
 
 if(window.debug == undefined)
 	window.debug = false;
-
+/**#nocode-*/
