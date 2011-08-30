@@ -1327,6 +1327,7 @@ Core.Object.extend('Ui.Element',
 					matrix.translate(originX, originY);
 				}
 				matrix.translate(current.offsetLeft, current.offsetTop);
+				matrix.translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 			return matrix;
@@ -1358,6 +1359,7 @@ Core.Object.extend('Ui.Element',
 					matrix.translate(originX, originY);
 				}
 				matrix.translate(current.offsetLeft, current.offsetTop);
+				matrix.translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 			return matrix;
@@ -1389,6 +1391,7 @@ Core.Object.extend('Ui.Element',
 					matrix.translate(originX, originY);
 				}
 				matrix.translate(current.offsetLeft, current.offsetTop);
+				matrix.translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 			return matrix;
@@ -1425,6 +1428,7 @@ Core.Object.extend('Ui.Element',
 					matrix.translate(originX, originY);
 				}
 				matrix.translate(current.offsetLeft, current.offsetTop);
+				matrix.translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 			return matrix;
