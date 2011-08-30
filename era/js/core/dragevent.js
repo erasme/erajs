@@ -130,6 +130,7 @@ Core.Object.extend('Core.DragDataTransfer',
 //				console.log(iframe.ownerDocument.defaultView);
 
 				var matrix = Ui.Element.transformToWindow(this.draggable);
+
 //				var iframe;
 //				while((iframe = Ui.App.getWindowIFrame(this.rootWindow)) != undefined) {
 //					this.rootWindow = iframe.ownerDocument.defaultView;
@@ -137,6 +138,9 @@ Core.Object.extend('Core.DragDataTransfer',
 //				}
 
 				this.image = this.draggable.cloneNode(true);
+				if(navigator.isIE7 || navigator.isIE8)
+					this.image.innerHTML = this.draggable.innerHTML;
+
 //				document.body.appendChild(this.image);
 				this.rootWindow.document.body.appendChild(this.image);
 
