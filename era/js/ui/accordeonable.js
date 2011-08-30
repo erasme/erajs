@@ -46,6 +46,14 @@ Ui.Container.extend('Ui.Accordeonable',
 	},
 
 	/**
+	* Return the array of page in the accordeonable.
+	* WARNING: use it only in readonly
+	*/
+	getPages: function() {
+		return this.getChildren();
+	},
+
+	/**
 	* @return the current opened page
 	*/
 	getCurrentPage: function() {

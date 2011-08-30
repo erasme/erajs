@@ -124,11 +124,11 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 - Régler le problème de la sélection du text dans Opera quand on en veux pas
   et dans IE < 9
 
-- Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
-  pour l'élément en cours.
+* - Dans Ui.Notebook, gérer le clavier et le focus qui doit être uniquement disponible
+    pour l'élément en cours.
 
-- Dans Ui.Notebook faire comme dans Ui.Accordeonable = un event "change" et 
-  "select", "unselect"
+* - Dans Ui.Notebook faire comme dans Ui.Accordeonable = un event "change" et 
+    "select", "unselect"
 
 - Sur un iPad, améliorer la gestion du clavier virtuel (commencer par détecter
   qu'il est ouvert et permettre ) 
@@ -192,3 +192,4 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 - gérer le clic droit dans IE < 9
 
 - créer un Ui.Combo comme bouton avec une liste de choix
+

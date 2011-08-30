@@ -1,7 +1,8 @@
 Ui.Container.extend('Ui.Notebook', 
 /**@lends Ui.Notebook#*/
 {
-	current: 0,
+	current: -1,
+	currentPage: undefined,
 	pages: undefined,
 	headerHeight: 0,
 	hiddenColor: undefined,
@@ -15,6 +16,7 @@ Ui.Container.extend('Ui.Notebook',
 	*	@extends Ui.Container
 	*/
 	constructor: function(config) {
+		this.addEvents('change');
 		this.pages = [];
 	},
 
@@ -31,11 +33,36 @@ Ui.Container.extend('Ui.Notebook',
 	},
 
 	/**
+	* @return the current page position (start at 0 or -1 if empty)
+	*/
+	getCurrentPosition: function() {
+		return this.current;
+	},
+
+	/**
 	* Set the page at the given position as the
 	* current opened page 
 	*/
 	setCurrentPosition: function(pos) {
-		this.current = pos;
+		if(this.pages.length == 0) {
+			if(this.currentPage != undefined)
+				this.currentPage.unselect();
+			this.currentPage = undefined;
+			this.current = -1;
+		}
+		else {
+			this.current = pos;
+			var newPage = this.pages[this.current];
+			if(newPage != this.currentPage) {
+				if(this.currentPage != undefined)
+					this.currentPage.unselect();
+				this.currentPage = newPage;
+				this.fireEvent('change', this, this.currentPage, this.current);
+				this.disconnect(this.currentPage, 'select', this.onPageSelect);
+				this.currentPage.select();
+				this.connect(this.currentPage, 'select', this.onPageSelect);
+			}
+		}
 		this.invalidateArrange();
 	},
 
@@ -51,6 +78,9 @@ Ui.Container.extend('Ui.Notebook',
 
 		this.connect(page, 'select', this.onPageSelect);
 		this.connect(page, 'close', this.onPageClose);
+
+		if(this.pages.length == 1)
+			page.select();
 	},
 
 	/**
@@ -85,6 +115,13 @@ Ui.Container.extend('Ui.Notebook',
 	*/
 	getPages: function() {
 		return this.pages;
+	},
+
+	/**
+	* @return the current opened page
+	*/
+	getCurrentPage: function() {
+		return this.currentPage;
 	},
 
 	/**#@+
@@ -197,6 +234,7 @@ Core.Object.extend('Ui.NotebookPage',
 	contentBox: undefined,
 	content: undefined,
 	background: undefined,
+	isSelected: false,
 
 	/**
 	*	@constructs
@@ -204,7 +242,7 @@ Core.Object.extend('Ui.NotebookPage',
 	*	@extends Ui.Container
 	*/
 	constructor: function(config) {
-		this.addEvents('select', 'close');
+		this.addEvents('select', 'unselect', 'close');
 
 		if('header' in config)
 			this.setHeader(config.header);
@@ -215,6 +253,7 @@ Core.Object.extend('Ui.NotebookPage',
 		this.connect(this.headerBox, 'press', this.onHeaderPress);
 
 		this.contentBox = new Ui.LBox();
+		this.contentBox.hide();
 
 		this.background = new Ui.NotebookBackground();
 	},
@@ -224,6 +263,25 @@ Core.Object.extend('Ui.NotebookPage',
 	*/
 	close: function() {
 		this.fireEvent('close', this);
+	},
+
+	/**
+	* Select the current page
+	*/
+	select: function() {
+		if(!this.isSelected) {
+			this.isSelected = true;
+			this.contentBox.show();
+			this.fireEvent('select', this);
+		}
+	},
+
+	/**
+	* @return true if the current page is the current active
+	* page in the Ui.Notebook
+	*/
+	getIsSelected: function() {
+		return this.isSelected;
 	},
 
 	/**
@@ -273,6 +331,14 @@ Core.Object.extend('Ui.NotebookPage',
 	* @private
 	*/
 
+	unselect: function() {
+		if(this.isSelected) {
+			this.isSelected = false;
+			this.fireEvent('unselect', this);
+			this.contentBox.hide();
+		}
+	},
+
 	getHeaderBox: function() {
 		return this.headerBox;
 	},
@@ -286,7 +352,7 @@ Core.Object.extend('Ui.NotebookPage',
 	},
 
 	onHeaderPress: function() {
-		this.fireEvent('select', this);
+		this.select();
 	}
 
 	/**#@-*/

@@ -37,17 +37,30 @@ app.connect(button, 'press', function() {
 		notebook.removePage(notebook.getPages()[count - 1]);
 });
 
+var label = new Ui.Label({ text: 'current page: ', margin: 5 });
+vbox.append(label);
+
 var notebook = new Ui.Notebook({ margin: 10 });
 vbox.append(notebook, true);
 
+app.connect(notebook, 'change', function(notebook, page, pos) {
+	label.setText('current page: '+(pos+1));
+});
+
 var page = new Ui.NotebookPage();
 page.setHeader(new Ui.Label({ text: 'Page 1' }));
-page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen', verticalAlign: 'center', horizontalAlign: 'center' }));
+var content1 = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+content1.append(new Ui.Button({ text: 'button1 p1' }));
+content1.append(new Ui.Button({ text: 'button2 p1' }));
+page.setContent(content1);
 notebook.appendPage(page);
 
 page = new Ui.NotebookPage();
 page.setHeader(new Ui.Label({ text: 'Page 2' }));
-page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'orange', margin: 40 }));
+var content2 = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+content2.append(new Ui.Button({ text: 'button1 p2' }));
+content2.append(new Ui.Button({ text: 'button2 p2' }));
+page.setContent(content2);
 notebook.appendPage(page);
 
 page = new Ui.NotebookPage();
