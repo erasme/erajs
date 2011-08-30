@@ -1,7 +1,14 @@
 
-Ui.Transition.extend('Ui.Flip', {
+Ui.Transition.extend('Ui.Flip', 
+/**@lends Ui.Flip#*/
+{
 	orientation: 'horizontal',
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Transition
+	 */
 	constructor: function(config) {
 		if(config.orientation != undefined)
 			this.setOrientation(config.orientation);
@@ -10,7 +17,9 @@ Ui.Transition.extend('Ui.Flip', {
 	setOrientation: function(orientation) {
 		this.orientation = orientation;
 	}
-}, {
+}, 
+/**@lends Ui.Flip#*/
+{
 	run: function(current, next, progress) {
 		if(progress < 0.5) {
 			if(current != undefined) {
@@ -46,7 +55,9 @@ Ui.Transition.extend('Ui.Flip', {
 			}
 		}
 	}
-}, {
+}, 
+/**@lends Ui.Flip*/
+{
 	constructor: function() {
 		Ui.Transition.register('flip', this);
 	}

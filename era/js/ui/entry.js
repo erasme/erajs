@@ -1,5 +1,7 @@
 
-Ui.Element.extend('Ui.Entry', {
+Ui.Element.extend('Ui.Entry', 
+/**@lends Ui.Entry#*/
+{
 	entryDrawing: undefined,
 	fontSize: 14,
 	fontFamily: 'Sans-serif',
@@ -8,6 +10,11 @@ Ui.Element.extend('Ui.Entry', {
 	value: '',
 	passwordMode: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		if(config.fontSize != undefined)
 			this.setFontSize(config.fontSize);
@@ -110,9 +117,9 @@ Ui.Element.extend('Ui.Entry', {
 		this.entryDrawing.value = this.value;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onMouseDown: function(event) {
 		if(!this.getIsDisabled()) {
@@ -154,6 +161,7 @@ Ui.Element.extend('Ui.Entry', {
 			this.fireEvent('validate', this);
 		}
 	}
+	/**#@-*/
 }, {
 	render: function() {
 		this.entryDrawing = document.createElement('input');

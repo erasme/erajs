@@ -1,9 +1,14 @@
-
-
-Ui.Container.extend('Ui.Fixed', {
+Ui.Container.extend('Ui.Fixed', 
+/**@lends Ui.Fixed#*/
+{
 	lastWidth: 0,
 	lastHeight: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.addEvents('resize');
 	},
@@ -28,19 +33,21 @@ Ui.Container.extend('Ui.Fixed', {
 		this.removeChild(child);
 	}
 
-}, {
-	//
-	// Return the required size for the current element
-	//
+}, 
+/**@lends Ui.Fixed#*/
+{
+	/**
+	 * Return the required size for the current element
+	 */
 	measureCore: function(width, height) {
 		for(var i = 0; i < this.getChildren().length; i++)
 			this.getChildren()[i].measure(width, height);
 		return { width: 0, height: 0 };
 	},
 
-	//
-	// Arrange children
-	//
+	/**
+	 * Arrange children
+	 */
 	arrangeCore: function(width, height) {
 		if((this.lastWidth != width) || (this.lastHeight != height)) {
 			this.lastWidth = width;

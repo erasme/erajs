@@ -1,8 +1,6 @@
-//
-// Define the App class. A web application always start
-// with a App class as the main container
-//
-Ui.LBox.extend('Ui.App', {
+Ui.LBox.extend('Ui.App', 
+/**@lends Ui.App#*/
+{
 	defs: undefined,
 	styles: undefined,
 	updateTask: undefined,
@@ -25,6 +23,12 @@ Ui.LBox.extend('Ui.App', {
 
 	dialogs: undefined,
 
+	/**
+	 * @constructs
+	 * @ class Define the App class. A web application always start
+	 * with a App class as the main container
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.addEvents('resize', 'ready', 'parentmessage');
 
@@ -153,10 +157,9 @@ Ui.LBox.extend('Ui.App', {
 			this.arguments = {};
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+
+	 * @private
+	 */
 	onWindowSelectStart: function(event) {
 		var current;
 		if('target' in event)
@@ -241,6 +244,8 @@ Ui.LBox.extend('Ui.App', {
 		this.fireEvent('resize', this);
 		this.invalidateMeasure();
 	},
+
+	/**#@-*/
 
 /*	onWindowKeyPress: function(event) {
 		console.log('onWindowKeyPress '+event.which+', focus: '+this.focusElement);
@@ -471,9 +476,9 @@ Ui.LBox.extend('Ui.App', {
 		}
 	},
 
-	//
-	// Return the arguments given if any
-	//
+	/**
+	 * Return the arguments given if any
+	 */
 	getArguments: function() {
 		return this.arguments;
 	},
@@ -482,11 +487,11 @@ Ui.LBox.extend('Ui.App', {
 		return this.autoscale;
 	},
 
-	//
-	// Activate or not the autoscale. When
-	// autoscale is activated, if the content of the window
-	// is too big, downscale it to fill the window.
-	//
+	/**
+	 * Activate or not the autoscale. When
+	 * autoscale is activated, if the content of the window
+	 * is too big, downscale it to fill the window.
+	 */
 	setAutoScale: function(autoscale) {
 		if(this.autoscale != autoscale) {
 			this.autoscale = autoscale;

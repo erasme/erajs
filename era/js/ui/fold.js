@@ -1,7 +1,6 @@
-//
-// Define a Fold element.
-//
-Ui.Container.extend('Ui.Fold', {
+Ui.Container.extend('Ui.Fold', 
+/**@lends Ui.Fold#*/
+{
 	headerBox: undefined,
 	header: undefined,
 	contentBox: undefined,
@@ -14,6 +13,11 @@ Ui.Container.extend('Ui.Fold', {
 	clock: undefined,
 	contentSize: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */	
 	constructor: function(config) {
 		this.addEvents('fold', 'unfold', 'orientationchange');
 
@@ -42,9 +46,9 @@ Ui.Container.extend('Ui.Fold', {
 		return this.isFolded;
 	},
 
-	//
-	// Fold the content part
-	//
+	/**
+	 * Fold the content part
+	 */
 	fold: function() {
 		if(!this.isFolded) {
 			this.isFolded = true;
@@ -53,9 +57,9 @@ Ui.Container.extend('Ui.Fold', {
 		}
 	},
 
-	//
-	// Unfold the content part
-	//
+	/**
+	 * Unfold the content part
+	 */
 	unfold: function() {
 		if(this.isFolded) {
 			this.isFolded = false;
@@ -68,11 +72,11 @@ Ui.Container.extend('Ui.Fold', {
 		return this.over;
 	},
 
-	//
-	// Set true to unfold the content part
-	// without reserving space in the layout (default)
-	// if false, unfolding will "push" existing element
-	//
+	/**
+	 * Set true to unfold the content part
+	 * without reserving space in the layout (default)
+	 * if false, unfolding will "push" existing element
+	 */
 	setOver: function(over) {
 		if(this.over != over) {
 			this.over = over;
@@ -85,13 +89,13 @@ Ui.Container.extend('Ui.Fold', {
 		return this.mode;
 	},
 
-	//
-	// If the current fold is in over mode.
-	// Setup what happends when unfolding.
-	// Possibles values: [extend|slide]
-	// extend: the header dont move and the content appear below or right
-	// slide: the header move over or left to let the content appear
-	//
+	/**
+	 * If the current fold is in over mode.
+	 * Setup what happends when unfolding.
+	 * Possibles values: [extend|slide]
+	 * extend: the header dont move and the content appear below or right
+	 * slide: the header move over or left to let the content appear
+	 */
 	setMode: function(mode) {
 		if(this.mode != mode) {
 			this.mode = mode;
@@ -100,18 +104,18 @@ Ui.Container.extend('Ui.Fold', {
 		}
 	},
 
-	//
-	// Return the header element
-	//
+	/**
+	 * Return the header element
+	 */
 	getHeader: function() {
 		return this.header;
 	},
 
-	//
-	// Set the header element. The header element
-	// correspond to the bar that can be pressed to
-	// set the content visible
-	//
+	/**
+	 * Set the header element. The header element
+	 * correspond to the bar that can be pressed to
+	 * set the content visible
+	 */
 	setHeader: function(header) {
 		if(header != this.header) {
 			if(this.header != undefined)
@@ -122,16 +126,16 @@ Ui.Container.extend('Ui.Fold', {
 		}
 	},
 
-	//
-	// Return the content element of the page
-	//
+	/**
+	 * Return the content element of the page
+	 */
 	getContent: function() {
 		return this.content;
 	},
 
-	//
-	// Set the content element of the page
-	//
+	/**
+	 * Set the content element of the page
+	 */
 	setContent: function(content) {
 		if(this.content != content) {
 			if(this.content != undefined)
@@ -142,20 +146,20 @@ Ui.Container.extend('Ui.Fold', {
 		}
 	},
 
-	//
-	// Return the orientation of the accordeon
-	// possibles values: [horizontal|vertical]
-	// default value: horizontal
-	//
+	/**
+	 * Return the orientation of the accordeon
+	 * possibles values: [horizontal|vertical]
+	 * default value: horizontal
+	 */
 	getOrientation: function() {
 		return this.orientation;
 	},
 
-	//
-	// Set the orientation of the accordeon
-	// possibles values: [horizontal|vertical]
-	// default value: horizontal
-	//
+	/**
+	 * Set the orientation of the accordeon
+	 * possibles values: [horizontal|vertical]
+	 * default value: horizontal
+	 */
 	setOrientation: function(orientation) {
 		if(this.orientation != orientation) {
 			this.orientation = orientation;
@@ -164,9 +168,9 @@ Ui.Container.extend('Ui.Fold', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	getOffset: function() {
 		return this.offset;
@@ -240,10 +244,13 @@ Ui.Container.extend('Ui.Fold', {
 			this.contentBox.hide();
 		}
 	}
-}, {
-	//
-	// Return the required size for the current element
-	//
+	/**#@-*/
+}, 
+
+{
+	/**
+	 * Return the required size for the current element
+	 */
 	measureCore: function(width, height) {
 		var size = this.headerBox.measure(width, height);
 		var contentSize = { width: 0, height: 0 };
@@ -266,9 +273,9 @@ Ui.Container.extend('Ui.Fold', {
 		return size;
 	},
 
-	//
-	// Arrange children
-	//
+	/**
+	 * Arrange children
+	 */
 	arrangeCore: function(width, height) {
 		if(this.orientation == 'horizontal') {
 			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);

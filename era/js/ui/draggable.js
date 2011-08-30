@@ -1,7 +1,6 @@
-//
-// Define the Draggable class.
-//
-Ui.LBox.extend('Ui.Draggable', {
+Ui.LBox.extend('Ui.Draggable', 
+/**@lends Ui.Draggable#*/
+{
 	icon: undefined,
 	downloadUrl: undefined,
 	downloadMimetype: undefined,
@@ -20,6 +19,11 @@ Ui.LBox.extend('Ui.Draggable', {
 	dragDelta: undefined,
 	isSelected: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.addEvents('select', 'unselect', 'dragstart', 'dragend', 'activate', 'menu');
 
@@ -47,9 +51,9 @@ Ui.LBox.extend('Ui.Draggable', {
 		return this.lock;
 	},
 
-	//
-	// Set the data that we drag & drop
-	//
+	/**
+	 * Set the data that we drag & drop
+	 */
 	setData: function(mimetype, data) {
 		if(mimetype == undefined)
 			this.mimetype = 'application/era-framework';
@@ -58,28 +62,28 @@ Ui.LBox.extend('Ui.Draggable', {
 		this.data = data;
 	},
 
-	//
-	// Set the allowed operation. Possible values are:
-	// [copy|copyLink|copyMove|link|linkMove|move|all]
-	//
+	/**
+	 * Set the allowed operation. Possible values are:
+	 * [copy|copyLink|copyMove|link|linkMove|move|all]
+	 */
 	setAllowedMode: function(allowedMode) {
 		this.allowedMode = allowedMode;
 	},
 
-	//
-	// Provide an Ui.Image that will be used when
-	// dragging the element
-	// Supported by: Firefox, Chrome and Safari on Windows
-	//
+	/**
+	 * Provide an Ui.Image that will be used when
+	 * dragging the element
+	 * Supported by: Firefox, Chrome and Safari on Windows
+	 */
 	setIcon: function(icon) {
 		this.icon = icon;
 	},
 
-	//
-	// Provide an URL to download the associated file (if any)
-	// if the element is dropped on the desktop
-	// Supported by: Chrome only
-	//
+	/**
+	 * Provide an URL to download the associated file (if any)
+	 * if the element is dropped on the desktop
+	 * Supported by: Chrome only
+	 */
 	setDownloadUrl: function(url, mimetype, filename) {
 		// TODO: if url is relative, make it absolute
 		var uri = new Core.Uri({ uri: url });
@@ -100,9 +104,9 @@ Ui.LBox.extend('Ui.Draggable', {
 		return this.dragDelta;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onDragStart: function(event) {
 		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
@@ -250,6 +254,8 @@ Ui.LBox.extend('Ui.Draggable', {
 		}
 	},
 
+	/**#@-*/
+
 	getIsSelected: function() {
 		return this.isSelected;
 	},
@@ -281,7 +287,9 @@ Ui.LBox.extend('Ui.Draggable', {
 		this.menuTimer = undefined;
 	}
 
-}, {
+}, 
+/**@lends Ui.Draggable#*/
+{
 	onDisable: function() {
 		this.drawing.setAttribute('draggable', !this.lock && !this.getIsDisabled());
 	},

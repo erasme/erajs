@@ -1,10 +1,14 @@
-//
-// Define the Downloadable class.
-//
-Ui.LBox.extend('Ui.Downloadable', {
+Ui.LBox.extend('Ui.Downloadable', 
+/**@lends Ui.Downloadable#*/
+{
 	content: undefined,
 	link: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		if(config.src != undefined)
 			this.setSrc(config.src);
@@ -35,7 +39,9 @@ Ui.LBox.extend('Ui.Downloadable', {
 	onClick: function(event) {
 		this.fireEvent('download', this);
 	}
-}, {
+}, 
+/**@lends Ui.Downloadable#*/
+{
 	renderDrawing: function() {
 		var linkDrawing = document.createElement('a');
 		linkDrawing.style.display = 'block';

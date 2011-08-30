@@ -1,12 +1,16 @@
-//
-// Define the DropBox class.
-//
-Ui.LBox.extend('Ui.DropBox', {
+Ui.LBox.extend('Ui.DropBox', 
+/**@lends Ui.DropBox#*/
+{
 	allowedMimetypes: undefined,
 	allowFiles: false,
 	allowText: false,
 	allowedMode: 'all',
 
+	/**
+	* @constructs
+	* @class
+	* @extends Ui.LBox
+	*/
 	constructor: function(config) {
 		this.allowedMimetypes = [];
 
@@ -17,20 +21,20 @@ Ui.LBox.extend('Ui.DropBox', {
 		this.addEvents('drop', 'dropfile');
 	},
 
-	//
-	// Set the allowed operation. Possible values are:
-	// [copy|copyLink|copyMove|link|linkMove|move|all]
-	//
+	/**
+	 * Set the allowed operation. Possible values are:
+	 * [copy|copyLink|copyMove|link|linkMove|move|all]
+	 */
 	setAllowedMode: function(allowedMode) {
 		this.allowedMode = allowedMode;
 	},
 
-	//
-	// Add a mimetype allowed to be dropped on the current
-	// dropbox.
-	// If the special type 'Files' is provided, the dropbox
-	// will accept files dragged from the desktop.
-	//
+	/**
+	 * Add a mimetype allowed to be dropped on the current
+	 * dropbox.
+	 * If the special type 'Files' is provided, the dropbox
+	 * will accept files dragged from the desktop.
+	 */
 	addMimetype: function(mimetype) {
 		this.allowedMimetypes.push(mimetype);
 		if(mimetype.toLowerCase() == 'files')
@@ -39,9 +43,9 @@ Ui.LBox.extend('Ui.DropBox', {
 			this.allowText = true;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onDragEnter: function(event) {
 //		console.log('onDragEnter allowText: '+this.allowText+', allowFiles: '+this.allowFiles);
@@ -208,5 +212,8 @@ Ui.LBox.extend('Ui.DropBox', {
 //			console.log('drop url: '+data);
 		return false;
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.DropBox#*/
+{
 });

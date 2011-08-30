@@ -1,5 +1,6 @@
-
-Ui.Element.extend('Ui.CompactLabel', {
+Ui.Element.extend('Ui.CompactLabel', 
+/**@lends Ui.CompactLabel#*/
+{
 	text: '',
 	fontSize: 16,
 	fontFamily: 'Sans-serif',
@@ -13,6 +14,11 @@ Ui.Element.extend('Ui.CompactLabel', {
 	lastMeasureWidth: 0,
 	lastMeasureHeight: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		if('text' in config)
 			this.setText(config.text);
@@ -169,7 +175,9 @@ Ui.Element.extend('Ui.CompactLabel', {
 			y += this.flushLine(y, line, width, render);
 		return y;
 	}
-}, {
+}, 
+/**@lends Ui.CompactLabel#*/
+{
 	render: function() {
 		// create the container for all text rendering
 		this.textDrawing = document.createElement('div');

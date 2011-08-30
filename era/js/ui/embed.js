@@ -1,10 +1,16 @@
-
-Ui.LBox.extend('Ui.Embed', {
+Ui.LBox.extend('Ui.Embed', 
+/**@lends Ui.Embed#*/
+{
 	content: undefined,
 	div: undefined,
 	divId: undefined,
 	updateTask: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		if(Ui.App.current == undefined)
 			new Ui.App();
@@ -75,7 +81,9 @@ Ui.LBox.extend('Ui.Embed', {
 			this.setDiv(document.getElementById(this.divId));
 		}
 	}
-}, {
+}, 
+/**@lends Ui.Embed#*/
+{
 	invalidateMeasure: function() {
 		this.invalidateArrange();
 		this.measureValid = false;

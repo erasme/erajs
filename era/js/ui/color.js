@@ -1,11 +1,17 @@
-
-
-Core.Object.extend('Ui.Color', {
+Core.Object.extend('Ui.Color', 
+/**@lends Ui.Color#*/
+{
 	r: 0,
 	g: 0,
 	b: 0,
 	a: 1,
 
+
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Core.Object
+ 	 */
 	constructor: function(config) {
 		// define from RGB model
 		if((config.r != undefined) || (config.g != undefined) || (config.b != undefined)) {

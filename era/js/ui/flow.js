@@ -1,27 +1,34 @@
 
 
-Ui.Container.extend('Ui.Flow', {
+Ui.Container.extend('Ui.Flow', 
+/**@lends Ui.Flow#*/
+{
 	uniform: false,
 	uniformWidth: undefined,
 	uniformHeight: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */	
 	constructor: function(config) {
 		if(config.uniform != undefined)
 			this.setUniform(config.uniform);
 	},
 
-	//
-	// True if all children will be arrange to have the
-	// same width and height
-	//
+	/**
+	 * True if all children will be arrange to have the
+	 * same width and height
+	 */
 	getUniform: function() {
 		return this.uniform;
 	},
 
-	//
-	// Set true to force children arrangement to have the
-	// same width and height
-	//
+	/**
+	 * Set true to force children arrangement to have the
+	 * same width and height
+	 */
 	setUniform: function(uniform) {
 		if(this.uniform != uniform) {
 			this.uniform = uniform;
@@ -29,23 +36,23 @@ Ui.Container.extend('Ui.Flow', {
 		}
 	},
 
-	//
-	// Append a child at the end of the flow
-	//
+	/**
+	 * Append a child at the end of the flow
+	 */
 	append: function(child) {
 		this.appendChild(child);
 	},
 
-	//
-	// Remove a child from the flow
-	//
+	/**
+	 * Remove a child from the flow
+	 */
 	remove: function(child) {
 		this.removeChild(child);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	measureChildrenNonUniform: function(width, height) {
 		var line = { pos: 0, y: 0, width: 0, height: 0 };
@@ -99,7 +106,10 @@ Ui.Container.extend('Ui.Flow', {
 		this.uniformHeight = maxHeight;
 		return { width: maxWidth * countPerLine, height: nbLine * maxHeight };
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.Flow#*/
+{
 	measureCore: function(width, height) {
 		if(this.getChildren().length == 0)
 			return { width: 0, height: 0 };

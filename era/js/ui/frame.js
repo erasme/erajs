@@ -1,11 +1,18 @@
 
-Ui.Shape.extend('Ui.Frame', {
+Ui.Shape.extend('Ui.Frame', 
+/**@lends Ui.Frame#*/
+{
 	radiusTopLeft: 0,
 	radiusTopRight: 0,
 	radiusBottomLeft: 0,
 	radiusBottomRight: 0,
 	frameWidth: 10,
 
+	/**
+	 * @constructs 
+	 * @class
+	 * @extends Ui.Shape
+	 */
 	constructor: function(config) {
 		if('radius' in config)
 			this.setRadius(config.radius);
@@ -136,7 +143,9 @@ Ui.Shape.extend('Ui.Frame', {
 		return path;
 	}
 
-}, /* overrided */ {
+}, 
+/**@lends Ui.Frame#*/ 
+{
 	arrangeCore: function(width, height) {
 		Ui.Frame.base.arrangeCore.call(this, width, height);
 		this.setPath(this.genPath(width, height));

@@ -10,6 +10,11 @@ Ui.Container.extend('Ui.Carouselable',
 	animStart: 0,
 	ease: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.setClipToBounds(true);
 		this.setFocusable(true);

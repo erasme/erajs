@@ -1,12 +1,19 @@
-//The base class for all Canvas drawing
 Ui.Element.extend('Ui.CanvasElement', 
 /**@lends Ui.CanvasElement#*/
 {
 	context: undefined,
 
-	//
-	// Override this method to provide the Canvas rendering
-	//
+	/**
+	 * @constructs
+	 * @class The base class for all Canvas drawing
+	 * @extends Ui.Element
+	 */
+	constructor: function(config){
+	},
+
+	/**
+	 * Override this method to provide the Canvas rendering
+	 */
 	updateCanvas: function(context) {
 	}
 }, 

@@ -14,6 +14,11 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	showNext: false,
 	showPrevious: false,
 
+	/**
+	 * @constructs
+     * @class
+	 * @extends Ui.MouseOverable
+     */
 	constructor: function(config) {
 		this.addEvents('change');
 
