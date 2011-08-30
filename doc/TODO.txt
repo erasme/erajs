@@ -193,3 +193,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 - créer un Ui.Combo comme bouton avec une liste de choix
 
+- mettre en place un système de type de donnée avec interface de
+  rendu par type et par type d'interface (formulaire, tableau...).
+  Un peu comme dans ListView qui manipule des "data" et pas de l'ui
+  mais étendre tout cela et créer les formulaires.
+

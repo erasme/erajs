@@ -17,6 +17,10 @@ Ui.Container.extend('Ui.Notebook',
 	*/
 	constructor: function(config) {
 		this.addEvents('change');
+		this.setFocusable(true);
+		this.connect(this, 'focus', this.updateColors);
+		this.connect(this, 'blur', this.updateColors);
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.pages = [];
 	},
 
@@ -124,16 +128,59 @@ Ui.Container.extend('Ui.Notebook',
 		return this.currentPage;
 	},
 
+	/**
+	* Move the current page to the next page
+	*/
+	next: function() {
+		if((this.current >= 0) && (this.current + 1 < this.pages.length))
+			this.setCurrentPosition(this.current + 1);
+	},
+
+	/**
+	* Move the current page to the previous page
+	*/
+	previous: function() {
+		if(this.current >= 1)
+			this.setCurrentPosition(this.current - 1);
+	},
+
 	/**#@+
 	* @private
 	*/
 
+	onKeyDown: function(event) {
+		if(this.getIsDisabled())
+			return;
+		var key = event.which;
+		if((key == 37) || (key == 39)) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+		if(key == 37)
+			this.previous();
+		else if(key == 39)
+			this.next();
+	},
+
 	onPageSelect: function(page) {
 		this.setCurrentPage(page);
+		this.focus();
 	},
 
 	onPageClose: function(page) {
 		this.removePage(page);
+	},
+
+	getCurrentColor: function() {
+		var color = this.getStyleProperty('color');
+		if(this.getHasFocus())
+			color = this.getStyleProperty('focusColor');
+		return color;
+	},
+
+	updateColors: function() {
+		if(this.currentPage != undefined)
+			this.currentPage.getBackground().setFill(this.getCurrentColor());
 	}
 
 	/**#@-*/
@@ -192,7 +239,7 @@ Ui.Container.extend('Ui.Notebook',
 				page.getContentBox().show();
 				page.getContentBox().arrange(spacing, this.headerHeight + spacing, width - (spacing * 2), height - (this.headerHeight + spacing * 2));
 				if(this.currentColor != undefined)
-					page.getBackground().setFill(this.currentColor);
+					page.getBackground().setFill(this.getCurrentColor());
 				page.getBackground().setTab(x, headerWidth + spacing * 2, this.headerHeight);
 				page.getBackground().arrange(0, 0, width, height);
 			}
@@ -222,7 +269,8 @@ Ui.Container.extend('Ui.Notebook',
 	}
 }, {
 	style: {
-		color: 'white'
+		color: 'white',
+		focusColor: Ui.Color.create('#f6caa2')
 	}
 });
 
@@ -250,6 +298,7 @@ Core.Object.extend('Ui.NotebookPage',
 			this.setContent(config.content);
 
 		this.headerBox = new Ui.Pressable();
+		this.headerBox.setFocusable(false);
 		this.connect(this.headerBox, 'press', this.onHeaderPress);
 
 		this.contentBox = new Ui.LBox();
