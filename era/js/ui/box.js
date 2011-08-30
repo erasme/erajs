@@ -11,10 +11,17 @@ Ui.Container.extend('Ui.Box',
 	vertical: true,
 
 	/**
-	*	@constructs
-	*	@class
-	*	@extends Ui.Container
-	*/
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 * @param {Number} [config.padding] Set the same padding for all borders
+	 * @param {Number} [config.paddingTop]
+	 * @param {Number} [config.paddingBottom]
+	 * @param {Number} [config.paddingLeft]
+	 * @param {Number} [config.paddingRight]
+	 * @param {Boolean} [config.uniform] Whether or not the size of the container's children is uniform (will fit to the biggest element)
+	 * @param {String}  [config.orientation] A Box can be either "vertical" (VBox) or "horizontal" (HBox). Very usefull for mobil device. 
+	 */
 	constructor: function(config) {
 		if(config.padding != undefined)
 			this.setPadding(config.padding);
@@ -34,10 +41,10 @@ Ui.Container.extend('Ui.Box',
 			this.setOrientation(config.orientation);
 	},
 
-	//
-	// Get the layout orientation.
-	// Possible values: [vertical|horizontal|
-	//
+	/**
+	 * Get the layout orientation.
+	 * Possible values: [vertical|horizontal|
+	 */
 	getOrientation: function() {
 		if(this.vertical)
 			return 'vertical';
@@ -45,10 +52,10 @@ Ui.Container.extend('Ui.Box',
 			return 'horizontal';
 	},
 
-	//
-	// Set the layout orientation.
-	// Possible values: [vertical|horizontal|
-	//
+	/**
+	 * Set the layout orientation.
+	 * Possible values: [vertical|horizontal|
+	 */
 	setOrientation: function(orientation) {
 		var vertical = true;
 		if(orientation != 'vertical')
@@ -59,9 +66,9 @@ Ui.Container.extend('Ui.Box',
 		}
 	},
 
-	//
-	// Set the padding for all borders
-	//
+	/**
+	 * Set the padding for all borders
+	 */
 	setPadding: function(padding) {
 		this.setPaddingTop(padding);
 		this.setPaddingBottom(padding);
@@ -69,16 +76,16 @@ Ui.Container.extend('Ui.Box',
 		this.setPaddingRight(padding);
 	},
 
-	//
-	// Return the current element top padding
-	//
+	/**
+	 * Return the current element top padding
+	 */
 	getPaddingTop: function() {
 		return this.paddingTop;
 	},
 
-	//
-	// Set the current element top padding
-	//
+	/*
+	 * Set the current element top padding
+	 */
 	setPaddingTop: function(paddingTop) {
 		if(this.paddingTop != paddingTop) {
 			this.paddingTop = paddingTop;
@@ -86,16 +93,16 @@ Ui.Container.extend('Ui.Box',
 		}
 	},
 
-	//
-	// Return the current element bottom padding
-	//
+	/**
+	 * Return the current element bottom padding
+	 */
 	getPaddingBottom: function() {
 		return this.paddingBottom;
 	},
 
-	//
-	// Set the current element bottom padding
-	//
+	/**
+	 * Set the current element bottom padding
+	 */
 	setPaddingBottom: function(paddingBottom) {
 		if(this.paddingBottom != paddingBottom) {
 			this.paddingBottom = paddingBottom;
@@ -110,9 +117,9 @@ Ui.Container.extend('Ui.Box',
 		return this.paddingLeft;
 	},
 
-	//
-	// Set the current element left padding
-	//
+	/**
+	 * Set the current element left padding
+	 */
 	setPaddingLeft: function(paddingLeft) {
 		if(this.paddingLeft != paddingLeft) {
 			this.paddingLeft = paddingLeft;
@@ -120,16 +127,16 @@ Ui.Container.extend('Ui.Box',
 		}
 	},
 
-	//
-	// Return the current element right padding
-	//
+	/**
+	 * Return the current element right padding
+	 */
 	getPaddingRight: function() {
 		return this.paddingRight;
 	},
 
-	//
-	// Set the current element right padding
-	//
+	/**
+	 * Set the current element right padding
+	 */
 	setPaddingRight: function(paddingRight) {
 		if(this.paddingRight != paddingRight) {
 			this.paddingRight = paddingRight;
@@ -137,18 +144,18 @@ Ui.Container.extend('Ui.Box',
 		}
 	},
 
-	//
-	// True if all children will be arrange to have the
-	// same width
-	//
+	/**
+	 * True if all children will be arrange to have the
+	 * same width
+	 */
 	getUniform: function() {
 		return this.uniform;
 	},
 
-	//
-	// Set true to force children arrangement to have the
-	// same width
-	//
+	/**
+	 * Set true to force children arrangement to have the
+	 * same width
+	 */
 	setUniform: function(uniform) {
 		if(this.uniform != uniform) {
 			this.uniform = uniform;
@@ -156,17 +163,17 @@ Ui.Container.extend('Ui.Box',
 		}
 	},
 
-	//
-	// Return the space inserted between each
-	// child
-	//
+	/**
+	 * Return the space inserted between each
+	 * child
+	 */
 	getSpacing: function() {
 		return this.spacing;
 	},
 
-	//
-	// Set the space value inserted between each child
-	//
+	/**
+	 * Set the space value inserted between each child
+	 */
 	setSpacing: function(spacing) {
 		if(this.spacing != spacing) {
 			this.spacing = spacing;
@@ -174,9 +181,9 @@ Ui.Container.extend('Ui.Box',
 		}
 	},
 
-	//
-	// Append a child at the end of the box
-	//
+	/**
+	 * Append a child at the end of the box
+	 */
 	append: function(child, resizable) {
 		if(resizable == undefined)
 			resizable = false;
@@ -184,9 +191,9 @@ Ui.Container.extend('Ui.Box',
 		this.appendChild(child);
 	},
 
-	//
-	// Append a child at the begining of the box
-	//
+	/**
+	 * Append a child at the begining of the box
+	 */
 	prepend: function(child, resizable) {
 		if(resizable == undefined)
 			resizable = false;
@@ -194,23 +201,23 @@ Ui.Container.extend('Ui.Box',
 		this.prependChild(child);
 	},
 
-	//
-	// Remove a child from the box
-	//
+	/**
+	 * Remove a child from the box
+	 */
 	remove: function(child) {
 		this.removeChild(child);
 	},
 
-	//
-	// Return if the given child is resizable or not 
-	//
+	/**
+	 * Return if the given child is resizable or not 
+	 */
 	getResizable: function(child) {
 		return child.boxResizable;
 	},
 
-	//
-	// Setup if the given child is resizable or not
-	//
+	/**
+	 * Setup if the given child is resizable or not
+	 */
 	setResizable: function(child, resizable) {
 		if(child.boxResizable != resizable) {
 			child.boxResizable = resizable;

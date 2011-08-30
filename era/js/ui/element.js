@@ -11,24 +11,24 @@ Core.Object.extend('Ui.Element',
 	marginLeft: 0,
 	marginRight: 0,
 
-	// parent
+	/** parent */
 	parent: undefined,
 
-	// preferred element size
+	/** preferred element size*/
 	width: undefined,
 	height: undefined,
 
-	// rendering
+	/** rendering */
 	drawing: undefined,
 
-	// measurement
+	/** measurement */
 	measureValid: false,
 	measureConstraintWidth: 0,
 	measureConstraintHeight: 0,
 	measureWidth: 0,
 	measureHeight: 0,
 
-	// arrangement
+	/** arrangement */
 	arrangeValid: false,
 	arrangeX: 0,
 	arrangeY: 0,
@@ -42,17 +42,19 @@ Core.Object.extend('Ui.Element',
 	layoutWidth: 0,
 	layoutHeight: 0,
 
-	// is loaded in the displayed tree
+	/** is loaded in the displayed tree*/
 	isLoaded: false,
 
-	// alignment when arrange is bigger than measure
-	// vertical: [top|center|bottom|stretch]
-	// horizontal: [left|center|right|stretch]
+	/** alignment when arrange is bigger than measure
+	 * vertical: [top|center|bottom|stretch]
+	 * horizontal: [left|center|right|stretch]
+	 */
 	verticalAlign: 'stretch',
 	horizontalAlign: 'stretch',
 
-	// whether or not the current element graphic
-	// is clipped to the layout size
+	/** whether or not the current element graphic
+	 *  is clipped to the layout size
+	 */
 	clipToBounds: false,
 
 	clipX: undefined,
@@ -60,15 +62,16 @@ Core.Object.extend('Ui.Element',
 	clipWidth: undefined,
 	clipHeight: undefined,
 
-	// handle visible
+	/** handle visible*/
 	visible: undefined,
 	parentVisible: undefined,
 
-	// whether or not the current element can get focus
+	/** whether or not the current element can get focus*/
 	focusable: false,
 	hasFocus: false,
-	// if true, a keyboard is needed when the element get the focus
-	// open a virtual keyboard on pad systems
+	/** if true, a keyboard is needed when the element get the focus
+	 * open a virtual keyboard on pad systems
+	 */
 	keyboardRequired: false,
 
 	transform: undefined,
@@ -76,18 +79,19 @@ Core.Object.extend('Ui.Element',
 	transformOriginY: 0.5,
 	transformOriginAbsolute: false,
 
-	// if the current element is the target of
-	// an active clock
+	/** if the current element is the target of
+	 * an active clock
+	 */
 	animClock: undefined,
 
 	opacity: 1,
 	parentOpacity: 1,
 
-	// handle disable
+	/** handle disable */
 	disabled: undefined,
 	parentDisabled: undefined,
 
-	// handle styles
+	/** handle styles */
 	style: undefined,
 	parentStyle: undefined,
 	mergeStyle: undefined,
@@ -167,10 +171,10 @@ Core.Object.extend('Ui.Element',
 			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
 	},
 
-	//
-	// Return the HTML element that correspond to
-	// the current element rendering
-	//
+	/*
+	 * Return the HTML element that correspond to
+	 * the current element rendering
+	 */
 	getDrawing: function() {
 		return this.drawing;
 	},
@@ -191,23 +195,23 @@ Core.Object.extend('Ui.Element',
 		return this.layoutHeight;
 	},
 
-	//
-	// Set a unique id for the current element
-	//
+	/*
+	 * Set a unique id for the current element
+	 */
 	setId: function(id) {
 		this.drawing.setAttribute('id', id);
 	},
 
-	//
-	// Return the id of the current element
-	//
+	/**
+	 * Return the id of the current element
+	 */
 	getId: function() {
 		return this.drawing.getAttribute('id');
 	},
 
-	//
-	// Defined if the current element can have the focus
-	//
+	/**
+	 * Defined if the current element can have the focus
+	 */
 	setFocusable: function(focusable) {
 		this.focusable = focusable;
 		if(focusable && !this.getIsDisabled())
@@ -216,9 +220,9 @@ Core.Object.extend('Ui.Element',
 			this.drawing.setAttribute('tabindex', -1);
 	},
 
-	//
-	// Return whether or not the current element can get the focus
-	//
+	/**
+	 * Return whether or not the current element can get the focus
+	 */
 	getFocusable: function() {
 		return this.focusable;
 	},
@@ -231,10 +235,10 @@ Core.Object.extend('Ui.Element',
 		return this.keyboardRequired;
 	},
 
-	//
-	// Set the current element role as defined by
-	// the WAI-ARIA. To remove a role, use undefined
-	//
+	/**
+	 * Set the current element role as defined by
+	 * the WAI-ARIA. To remove a role, use undefined
+	 */
 	setRole: function(role) {
 		if('setAttributeNS' in this.drawing) {
 			if(role == undefined) {
@@ -246,10 +250,10 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Provide the available size and return
-	// the minimum required size
-	//
+	/**
+	 * Provide the available size and return
+	 * the minimum required size
+	 */
 	measure: function(width, height) {
 
 //		console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
@@ -297,18 +301,18 @@ Core.Object.extend('Ui.Element',
 		return { width: this.measureWidth, height: this.measureHeight };
 	},
 
-	//
-	// Override this method to provide your own
-	// measure policy
-	//
+	/**
+	 * Override this method to provide your own
+	 * measure policy
+	 */
 	measureCore: function(width, height) {
 		return { width: 0, height: 0 };
 	},
 
-	//
-	// Signal that the current element measure need to be
-	// updated
-	//
+	/**
+	 * Signal that the current element measure need to be
+	 * updated
+	 */
 	invalidateMeasure: function() {
 //		console.log(this+'.invalidateMeasure start');
 
@@ -338,9 +342,9 @@ Core.Object.extend('Ui.Element',
 //	updateLayout: function() {
 //	},
 
-	//
-	// Update the current element arrangement
-	//
+	/**
+	 * Update the current element arrangement
+	 */
 	arrange: function(x, y, width, height) {
 		if((!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) || (this.arrangeHeight != height)) {
 			this.arrangeX = x;
@@ -409,17 +413,17 @@ Core.Object.extend('Ui.Element',
 		this.arrangeValid = true;
 	},
 
-	//
-	// Override this to provide your own
-	// arrangement policy
-	//
+	/**
+	 * Override this to provide your own
+	 * arrangement policy
+	 */
 	arrangeCore: function(width, height) {
 	},
 
-	//
-	// Signal that the current element arrangement need
-	// to be updated
-	//
+	/**
+	 * Signal that the current element arrangement need
+	 * to be updated
+	 */
 	invalidateArrange: function() {
 		if(this.arrangeValid) {
 			this.arrangeValid = false;
@@ -432,35 +436,35 @@ Core.Object.extend('Ui.Element',
 		this.invalidateArrange();
 	},
 
-	//
-	// Override this method to provide a custom
-	// rendering of the current element.
-	// Return the HTML element of the rendering
-	//
+	/**
+	 * Override this method to provide a custom
+	 * rendering of the current element.
+	 * Return the HTML element of the rendering
+	 */
 	renderDrawing: function() {
 		return document.createElement('div');
 	},
 
-	//
-	// Override this method to provide a custom
-	// rendering of the current element.
-	// Return the HTML element of the rendering
-	//
+	/**
+	 * Override this method to provide a custom
+	 * rendering of the current element.
+	 * Return the HTML element of the rendering
+	 */
 	render: function() {
 		return undefined;
 	},
 
-	//
-	// Return the prefered width of the element
-	// or undefined
-	//
+	/**
+	 * Return the prefered width of the element
+	 * or undefined
+	 */
 	getWidth: function() {
 		return this.width;
 	},
 
-	//
-	// Set the prefered width of the element
-	//
+	/**
+	 * Set the prefered width of the element
+	 */
 	setWidth: function(width) {
 		if(this.width != width) {
 			this.width = width;
@@ -468,17 +472,17 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the prefered height of the element
-	// or undefined
-	//
+	/**
+	 *Return the prefered height of the element
+	 * or undefined
+	 */
 	getHeight: function() {
 		return this.height;
 	},
 
-	//
-	// Set the prefered height of the element
-	//
+	/**
+	 * Set the prefered height of the element
+	 */
 	setHeight: function(height) {
 		if(this.height != height) {
 			this.height = height;
@@ -486,33 +490,33 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the vertical alignment from the parent.
-	//
+	/**
+	 * Return the vertical alignment from the parent.
+	 */
 	getVerticalAlign: function() {
 		return this.verticalAlign;
 	},
 
-	//
-	// Set the vertical alignment from the parent.
-	// Possible values: [top|center|bottom|stretch]
-	//
+	/**
+	 * Set the vertical alignment from the parent.
+	 * Possible values: [top|center|bottom|stretch]
+	 */
 	setVerticalAlign: function(align) {
 		this.verticalAlign = align;
 		this.invalidateArrange();
 	},
 
-	//
-	// Return the horizontal alignment from the parent.
-	//
+	/**
+	 * Return the horizontal alignment from the parent.
+	 */
 	getHorizontalAlign: function() {
 		return this.horizontalAlign;
 	},
 
-	//
-	// Set the horizontal alignment from the parent.
-	// Possible values: [left|center|right|stretch]
-	//
+	/**
+	 * Set the horizontal alignment from the parent.
+	 * Possible values: [left|center|right|stretch]
+	 */
 	setHorizontalAlign: function(align) {
 		this.horizontalAlign = align;
 		this.invalidateArrange();
@@ -574,16 +578,16 @@ Core.Object.extend('Ui.Element',
 		this.setMarginRight(margin);
 	},
 
-	//
-	// Return the current element top margin
-	//
+	/**
+	 * Return the current element top margin
+	 */
 	getMarginTop: function() {
 		return this.marginTop;
 	},
 
-	//
-	// Set the current element top margin
-	//
+	/**
+	 * Set the current element top margin
+	 */
 	setMarginTop: function(marginTop) {
 		if(marginTop != this.marginTop) {
 			this.marginTop = marginTop;
@@ -591,16 +595,16 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the current element bottom margin
-	//
+	/**
+	 * Return the current element bottom margin
+	 */
 	getMarginBottom: function() {
 		return this.marginBottom;
 	},
 
-	//
-	// Set the current element bottom margin
-	//
+	/**
+	 * Set the current element bottom margin
+	 */
 	setMarginBottom: function(marginBottom) {
 		if(marginBottom != this.marginBottom) {
 			this.marginBottom = marginBottom;
@@ -608,16 +612,16 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the current element left margin
-	//
+	/**
+	 * Return the current element left margin
+	 */
 	getMarginLeft: function() {
 		return this.marginLeft;
 	},
 
-	//
-	// Set the current element left margin
-	//
+	/**
+	 * Set the current element left margin
+	 */
 	setMarginLeft: function(marginLeft) {
 		if(marginLeft != this.marginLeft) {
 			this.marginLeft = marginLeft;
@@ -625,16 +629,16 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the current element right margin
-	//
+	/**
+	 * Return the current element right margin
+	 */
 	getMarginRight: function() {
 		return this.marginRight;
 	},
 
-	//
-	// Set the current element right margin
-	//
+	/**
+	 * Set the current element right margin
+	 */
 	setMarginRight: function(marginRight) {
 		if(marginRight != this.marginRight) {
 			this.marginRight = marginRight;
@@ -642,16 +646,16 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the current element opacity
-	//
+	/**
+	 * Return the current element opacity
+	 */
 	getOpacity: function() {
 		return this.opacity;
 	},
 
-	//
-	// Set the current element opacity
-	//
+	/**
+	 * Set the current element opacity
+	 */
 	setOpacity: function(opacity) {
 		if(this.opacity != opacity) {
 			this.opacity = opacity;
@@ -679,9 +683,9 @@ Core.Object.extend('Ui.Element',
 		this.onInternalSetOpacity(this.parentOpacity * this.opacity);
 	},
 
-	//
-	// Ask for focus on the current element
-	//
+	/**
+	 * Ask for focus on the current element
+	 */
 	focus: function() {
 		if(this.focusable)
 			this.drawing.focus();
@@ -693,9 +697,9 @@ Core.Object.extend('Ui.Element',
 //			current.askFocus(this);
 	},
 
-	//
-	// Remove the focus current element
-	//
+	/**
+	 * Remove the focus current element
+	 */
 	blur: function() {
 		this.drawing.blur();
 //		var current = this;
@@ -706,10 +710,10 @@ Core.Object.extend('Ui.Element',
 //			current.removeFocus(this);
 	},
 
-	//
-	// Provide an Matrix to transform the element rendering.
-	// This transformation is not taken in account for the arrangement
-	//
+	/**
+	 * Provide an Matrix to transform the element rendering.
+	 * This transformation is not taken in account for the arrangement
+	 */
 	setTransform: function(transform) {
 		if(this.transform != transform) {
 			this.transform = transform;
@@ -717,12 +721,12 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// If setTransform is used, define the origin of the transform.
-	// x and y give the position of the center.
-	// If absolute is not set, the position is relative to the
-	// width and height of the current element.
-	//
+	/**
+	 * If setTransform is used, define the origin of the transform.
+	 * x and y give the position of the center.
+	 * If absolute is not set, the position is relative to the
+	 * width and height of the current element.
+	 */
 	setTransformOrigin: function(x, y, absolute) {
 		if((this.transformOriginX != x) || (this.transformOriginY != y) || (this.transformOriginAbsolute != absolute)) {
 			this.transformOriginX = x;
@@ -735,49 +739,49 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the transform matrix to convert coordinates
-	// from the current element coordinate system to the page
-	// coordinate system
-	//
+	/**
+	 * Return the transform matrix to convert coordinates
+	 * from the current element coordinate system to the page
+	 * coordinate system
+	 */
 	transformToWindow: function() {
 		return Ui.Element.transformToWindow(this.drawing);
 	},
 
-	//
-	// Return the transform matrix to convert coordinates
-	// from the page coordinate system to the current element
-	// coordinate system
-	//
+	/**
+	 * Return the transform matrix to convert coordinates
+	 * from the page coordinate system to the current element
+	 * coordinate system
+	 */
 	transformFromWindow: function() {
 		var matrix = this.transformToWindow();
 		matrix.inverse();
 		return matrix;
 	},
 
-	//
-	// Return the transform matrix to convert coordinates
-	// from the current element coordinate system to a given
-	// element coordinate system
-	//
+	/**
+	 * Return the transform matrix to convert coordinates
+	 * from the current element coordinate system to a given
+	 * element coordinate system
+	 */
 	transformToElement: function(element) {
 		var matrix = this.transformToWindow();
 		matrix.multiply(element.transformFromWindow());
 		return matrix;
 	},
 
-	//
-	// Return the given point converted from the current element
-	// coordinate system to the page coordinate system
-	//
+	/**
+	 * Return the given point converted from the current element
+	 * coordinate system to the page coordinate system
+	 */
 	pointToWindow: function(point) {
 		return Ui.Element.pointToWindow(this.drawing, point);
 	},
 
-	//
-	// Return the given point converted from the page coordinate
-	// system to the current element coordinate system
-	//
+	/**
+	 * Return the given point converted from the page coordinate
+	 * system to the current element coordinate system
+	 */
 	pointFromWindow: function(point) {
 		if(navigator.isWebkit)
 			return window.webkitConvertPointFromPageToNode(this.drawing, new WebKitPoint(point.x, point.y));
@@ -788,32 +792,32 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	//
-	// Return the given point converted from the given element coordinate
-	// system to the current element coordinate system
-	//
+	/**
+	 * Return the given point converted from the given element coordinate
+	 * system to the current element coordinate system
+	 */
 	pointFromElement: function(element, point) {
 		return this.pointFromWindow(element.pointToWindow(point));
 	},
 
-	//
-	// Return true if the current element is inserted in a displayed
-	// rendering tree
-	//
+	/**
+	 * Return true if the current element is inserted in a displayed
+	 * rendering tree
+	 */
 	getIsLoaded: function() {
 		return this.isLoaded;
 	},
 
-	//
-	// Return the width taken by the current element
-	//
+	/**
+	 * Return the width taken by the current element
+	 */
 	getMeasureWidth: function() {
 		return this.measureWidth;
 	},
 
-	//
-	// Return the height taken by the current element
-	//
+	/**
+	 * Return the height taken by the current element
+	 */
 	getMeasureHeight: function() {
 		return this.measureHeight;
 	},
