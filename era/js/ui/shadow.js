@@ -57,9 +57,6 @@ Ui.LBox.extend('Ui.Shadow', {
 
 	setShadowWidth: function(shadowWidth) {
 		if(this.shadowWidth != shadowWidth) {
-
-			console.log('setShadowWidth: '+shadowWidth+', inner ? '+this.inner);
-
 			this.shadowWidth = shadowWidth;
 			this.updateWidth();
 /*
@@ -135,7 +132,6 @@ Ui.LBox.extend('Ui.Shadow', {
 	},
 
 	updateWidth: function() {
-		console.log('updateWidth inner: '+this.inner);
 		while(this.getFirstChild() != undefined)
 			this.remove(this.getFirstChild());
 		for(var i = 0; i < this.shadowWidth; i++) {

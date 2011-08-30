@@ -67,10 +67,6 @@ Ui.LBox.extend('Ui.TransitionBox',
 			this.next = this.getChildren()[position];
 			this.next.show();
 
-			if(this.current != undefined)
-				this.current.setClipToBounds(true);
-			this.next.setClipToBounds(true);
-
 			this.transition.run(this.current, this.next, 0);
 
 			this.transitionClock = new Anim.Clock({ duration: this.duration, scope: this, callback: this.onTransitionTick, ease: this.ease });
