@@ -26,6 +26,8 @@ Ui.LBox.extend('Ui.App', {
 	dialogs: undefined,
 
 	constructor: function(config) {
+		this.addEvents('resize', 'ready', 'parentmessage');
+
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
 
@@ -54,8 +56,6 @@ Ui.LBox.extend('Ui.App', {
 		this.connect(window, 'selectstart', this.onWindowSelectStart);
 		if(('onselectstart' in document) && ('attachEvent' in document))
 			document.attachEvent('onselectstart', this.onWindowSelectStart);
-
-		this.addEvents('resize', 'ready', 'parentmessage');
 
 //		if(config.style != undefined)
 //			this.setStyle(config.style);
@@ -113,8 +113,10 @@ Ui.LBox.extend('Ui.App', {
 		this.connect(window, 'drop', function(event) { event.preventDefault(); return false; });
 
 		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
-//		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
+		if(('oncontextmenu' in document) && ('attachEvent' in document))
+			document.attachEvent('oncontextmenu', function(event) { return false; });
 
+//		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 //		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); });
 
 		if('onorientationchange' in window)
