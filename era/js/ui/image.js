@@ -111,8 +111,17 @@ Ui.Element.extend('Ui.Image', {
 			this.imageDrawing.style.webkitUserSelect = 'none';
 		else if(navigator.isGecko)
 			this.imageDrawing.style.MozUserSelect = 'none';
-		else if(navigator.isIE)
+		else if(navigator.isIE) {
 			this.connect(this.imageDrawing, 'selectstart', function(event) { event.preventDefault(); });
+			// disable drag & drop for IE < 9
+			if('attachEvent' in this.imageDrawing) {
+				this.imageDrawing.attachEvent('ondragstart', function(event) {
+					event.defaultPrevented = true;
+					event.returnValue = false;
+				 	return false;
+				});
+			}
+		}
 		else if(navigator.isOpera)
 			this.imageDrawing.onmousedown = function(event) { event.preventDefault(); };
 		return this.imageDrawing;
