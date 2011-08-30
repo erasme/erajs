@@ -167,8 +167,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 * - Dans Ui.Accordeon mettre un event "unselect" sur les pages et un
     event "change" sur l'accordeon au changement de page active
 
-- Dans Ui.ListView permettre de sélectionner une ligne à partir du
-  code Javascript (ex: selectRow(..))
+* - Dans Ui.ListView permettre de sélectionner une ligne à partir du
+    code Javascript (ex: selectRow(..))
 
 * - Dans les styles permettre l'héritage des styles pour le style static
     par défaut
