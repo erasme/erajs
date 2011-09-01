@@ -413,7 +413,6 @@ Ui.Uploadable.extend('Ui.UploadButton', {
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-//		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
 		radius: 4,
 		spacing: 3
 	}
