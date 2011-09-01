@@ -9,6 +9,8 @@ Ui.Container.extend('Ui.ListView',
 	headersVisible: true,
 
 	constructor: function(config) {
+		this.addEvents('select', 'unselect', 'activate');
+
 		this.rowContainer = new Ui.Container();
 		this.appendChild(this.rowContainer);
 
@@ -30,9 +32,11 @@ Ui.Container.extend('Ui.ListView',
 			for(var i = 0; i < config.data.length; i++)
 				this.appendData(config.data[i]);
 		}
-		this.addEvents('select', 'unselect', 'activate');
 	},
 
+	/**
+	* Show the headers
+	*/
 	showHeaders: function() {
 		if(!this.headersVisible) {
 			this.headersVisible = true;
@@ -44,6 +48,9 @@ Ui.Container.extend('Ui.ListView',
 		}
 	},
 
+	/**
+	* Hide the headers
+	*/
 	hideHeaders: function() {
 		if(this.headersVisible) {
 			this.headersVisible = false;
@@ -115,16 +122,42 @@ Ui.Container.extend('Ui.ListView',
 		}
 	},
 
-	//
-	// Remove all data
-	//
+	/**
+	* Remove all data
+	*/
 	clearData: function() {
 		while(this.data.length > 0)
 			this.removeDataAt(0);
 	},
 
+	/**
+	* @return the array of data
+	*/
 	getData: function() {
 		return this.data;
+	},
+
+	/**
+	* Select the given row
+	*/
+	selectRow: function(row) {
+		if((row > 0) && (row < this.data.length)) {
+			if(this.selectedRow != undefined) {
+				if(this.selectedRow == row)
+					return;
+				for(var col = 0; col < this.headers.length; col++)
+					this.headers[col].rows[this.selectedRow].unselect();
+				this.fireEvent('unselect', this, this.selectedRow);
+			}
+			this.selectedRow = row;
+			for(var col = 0; col < this.headers.length; col++) {
+				var tmpCell = this.headers[col].rows[row];
+				this.disconnect(tmpCell, 'select', this.onCellSelect);
+				tmpCell.select();
+				this.connect(tmpCell, 'select', this.onCellSelect);
+			}
+			this.fireEvent('select', this, this.selectedRow);
+		}
 	},
 
 	/**#@+ 
@@ -179,23 +212,8 @@ Ui.Container.extend('Ui.ListView',
 
 	onCellSelect: function(cell) {
 		var row = this.findCellRow(cell);
-		if(row != -1) {
-			if(this.selectedRow != undefined) {
-				if(this.selectedRow == row)
-					return;
-				for(var col = 0; col < this.headers.length; col++)
-					this.headers[col].rows[this.selectedRow].unselect();
-				this.fireEvent('unselect', this, this.selectedRow);
-			}
-			this.selectedRow = row;
-			for(var col = 0; col < this.headers.length; col++) {
-				var tmpCell = this.headers[col].rows[row];
-				this.disconnect(tmpCell, 'select', this.onCellSelect);
-				tmpCell.select();
-				this.connect(tmpCell, 'select', this.onCellSelect);
-			}
-			this.fireEvent('select', this, this.selectedRow);
-		}
+		if(row != -1)
+			this.selectRow(row);
 	},
 
 	onCellActivate: function(cell) {
@@ -365,7 +383,7 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -373,7 +391,7 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -485,7 +503,7 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 		var yuv = this.getStyleProperty('selectColor').getYuv();
 		return new Ui.LinearGradient({ stops: [
 			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 

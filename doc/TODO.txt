@@ -167,8 +167,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 * - Dans Ui.Accordeon mettre un event "unselect" sur les pages et un
     event "change" sur l'accordeon au changement de page active
 
-- Dans Ui.ListView permettre de sélectionner une ligne à partir du
-  code Javascript (ex: selectRow(..))
+* - Dans Ui.ListView permettre de sélectionner une ligne à partir du
+    code Javascript (ex: selectRow(..))
 
 * - Dans les styles permettre l'héritage des styles pour le style static
     par défaut
@@ -192,4 +192,9 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 - gérer le clic droit dans IE < 9
 
 - créer un Ui.Combo comme bouton avec une liste de choix
+
+- mettre en place un système de type de donnée avec interface de
+  rendu par type et par type d'interface (formulaire, tableau...).
+  Un peu comme dans ListView qui manipule des "data" et pas de l'ui
+  mais étendre tout cela et créer les formulaires.
 
