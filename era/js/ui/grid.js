@@ -1,8 +1,15 @@
 
-Ui.Container.extend('Ui.Grid', {
+Ui.Container.extend('Ui.Grid', 
+/**@lends Ui.Grid#*/
+{
 	cols: undefined,
 	rows: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		if(config.cols != undefined) {
 			this.cols = [];
@@ -41,9 +48,9 @@ Ui.Container.extend('Ui.Grid', {
 			this.rows = [ { auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 } ];
 	},
 
-	//
-	// Attach a given child on the grid
-	//
+	/**
+	 * Attach a given child on the grid
+	 */
 	attach: function(child, col, row, colSpan, rowSpan) {
 		if(colSpan == undefined)
 			colSpan = 1;
@@ -56,9 +63,9 @@ Ui.Container.extend('Ui.Grid', {
 		this.appendChild(child);
 	},
 
-	//
-	// Remove a given child from the grid
-	//
+	/**
+	 * Remove a given child from the grid
+	 */
 	detach: function(child) {
 		child.gridCol = undefined;
 		child.gridRow = undefined;
@@ -67,9 +74,9 @@ Ui.Container.extend('Ui.Grid', {
 		this.removeChild(child);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	getColMin: function(colPos) {
 		var col = this.cols[colPos];
@@ -168,7 +175,11 @@ Ui.Container.extend('Ui.Grid', {
 		}
 		return min;
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.Grid#*/
+{
 	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
 
