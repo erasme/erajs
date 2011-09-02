@@ -321,19 +321,26 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	}
 });
 
-Ui.Element.extend('Ui.UploadableWrapper', {
+Ui.Element.extend('Ui.UploadableWrapper', 
+/**@lends Ui.UploadableWrapper#*/
+{
 	formDrawing: undefined,
 	inputDrawing: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.setClipToBounds(true);
 		this.setOpacity(0);
 		this.addEvents('file');
 	},
 
-	//
-	// Private
-	//
+	/*#@+
+	 * @private
+	 */
 	createInput: function() {
 
 		this.formDrawing = document.createElement('form');
@@ -393,7 +400,10 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 			this.getDrawing().appendChild(this.createInput());
 		}
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.UploadableWrapper#*/
+{
 	render: function() {
 		return this.createInput();
 	},
@@ -406,7 +416,7 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 	}
 });
 
-navigator.supportFormData = false;
+navigator.supportFormData = true;
 try {
 	new FormData();
 }
