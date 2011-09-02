@@ -26,6 +26,7 @@ Ui.Element.extend('Ui.Html', {
 	},
 
 	setSelectable: function(selectable) {
+		/**#nocode+ Avoid JSDOC warnings...*/
 		this.getDrawing().selectable = selectable;
 		this.selectable = selectable;
 
@@ -51,6 +52,7 @@ Ui.Element.extend('Ui.Html', {
 			else if(navigator.isOpera)
 				this.htmlDrawing.onmousedown = function(event) { event.preventDefault(); };
 		}
+		/**#nocode-*/
 	},
 
 	onSelectStart: function(event) {

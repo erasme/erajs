@@ -1,5 +1,6 @@
-Core.Object.extend('Core.Timer', {
+Core.Object.extend('Core.Timer', 
 /**@lends Core.Timer#*/
+{
 	interval: 1,
 	scope: undefined,
 	callback: undefined,

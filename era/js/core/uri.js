@@ -1,5 +1,6 @@
-Core.Object.extend('Core.Uri', {
+Core.Object.extend('Core.Uri', 
 /**@lends Core.Uri#*/
+{
 	scheme: undefined,
 	user: undefined,
 	password: undefined,
@@ -84,7 +85,9 @@ Core.Object.extend('Core.Uri', {
 	getFragment: function() {
 		return this.fragment;
 	}
-}, {
+}, 
+/**@lends Core.Uri#*/
+{
 	toString: function() {
 		var str = this.scheme+'://';
 		if((this.user != undefined) && (this.password != undefined))
@@ -95,7 +98,9 @@ Core.Object.extend('Core.Uri', {
 		str += this.path;
 		return str;
 	}
-}, {
+}, 
+/**@lends Core.Uri*/
+{
 	cleanPath: function(path) {
 		while(path.match(/\/([^\/]*)\/\.\.\//))
 			path = path.replace(/\/([^\/]*)\/\.\.\//, '/');

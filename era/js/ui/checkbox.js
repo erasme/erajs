@@ -15,10 +15,10 @@ Ui.Togglable.extend('Ui.CheckBox',
 	text: undefined,
 
 	/**
-	*	@constructs
-	*	@class
-	*	@extends Ui.Togglable
-	*/
+	 * @constructs
+	 * @class
+	 * @extends Ui.Togglable
+	 */
 	constructor: function(config) {
 		this.addEvents('change');
 
@@ -130,9 +130,9 @@ Ui.Togglable.extend('Ui.CheckBox',
 		return this.content;
 	},
 
-	//
-	// Private
-	//
+	/**
+	 *#@+ @private
+	 */
 
 	onCheckBoxDown: function() {
 		this.background.setFill(this.getGradientDown());
@@ -184,6 +184,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 		else
 			return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
 	}
+	/**#@-*/
 }, 
 /**Ui.CheckBox#*/
 {

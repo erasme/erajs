@@ -9,7 +9,7 @@ Ui.Container.extend('Ui.Popup',
 	lbox: undefined,
 	autoHide: true,
 
-	/*
+	/**
      * @constructs
 	 * @class
      * @extends Ui.Container
@@ -83,7 +83,9 @@ Ui.Container.extend('Ui.Popup',
 		event.preventDefault();
 		event.stopPropagation();
 	}
-}, {
+}, 
+/**@lends Ui.Popup#*/
+{
 	visible: false,
 
 	onStyleChange: function() {
@@ -282,7 +284,9 @@ Ui.Container.extend('Ui.Popup',
 		this.shadow.setOpacity(0.5);
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	}
-}, {
+}, 
+/**@lends Ui.Popup*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 }),
 
@@ -294,7 +298,9 @@ Ui.Container.extend('Ui.Popup',
 	}
 });
 
-Ui.Fixed.extend('Ui.PopupBackground', {
+Ui.Fixed.extend('Ui.PopupBackground', 
+/**@lends Ui.PopupBackground#*/
+{
 	darkShadow: undefined,
 	lightShadow: undefined,
 	background: undefined,
@@ -306,6 +312,11 @@ Ui.Fixed.extend('Ui.PopupBackground', {
 	arrowOffset: 30,
 	arrowSize: 10,
 
+	/**
+     * @constructs
+	 * @class
+     * @extends Ui.Fixed
+	 */
 	constructor: function(config) {
 
 		this.darkShadow = new Ui.Shape({ fill: '#010002', opacity: 0.8 });
@@ -368,9 +379,9 @@ Ui.Fixed.extend('Ui.PopupBackground', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**
+	 * @private
+	 */
 
 	genPath: function(width, height, radius, arrowBorder, arrowSize, arrowOffset) {
 		if(arrowBorder == 'none') {
@@ -461,6 +472,7 @@ Ui.Fixed.extend('Ui.PopupBackground', {
 			this.background.setPath(this.genPath(width-4, height-5, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
 		}
 	}
+	/**#@-*/
 });
 
 /*

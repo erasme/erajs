@@ -277,8 +277,9 @@ Core.Object.extend('Core.DragDataTransfer',
 });
 
 
-Core.Object.extend('Core.DragManager', {
+Core.Object.extend('Core.DragManager', 
 /**@lends Core.DragManager#*/
+{
 
 	/**
     *   @constructs

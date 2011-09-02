@@ -8,6 +8,11 @@ Ui.Container.extend('Ui.ListView',
 	selectedRow: undefined,
 	headersVisible: true,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.addEvents('select', 'unselect', 'activate');
 
@@ -349,6 +354,11 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	background: undefined,
 	border: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Pressable
+	 */
 	constructor: function(config) {
 		this.border = new Ui.Rectangle();
 		this.append(this.border);
@@ -446,6 +456,11 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 	cellSelected: false,
 	key: undefined,
 	
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Selectable
+	 */
 	constructor: function(config) {
 		this.key = config.key;
 
