@@ -1,11 +1,16 @@
-//
-// Define the Uploadable class.
-//
-Ui.LBox.extend('Ui.Uploadable', {
+
+Ui.LBox.extend('Ui.Uploadable', 
+/**@lends Ui.Uploadable#*/
+{
 	isDown: false,
 	content: undefined,
 	input: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.getDrawing().style.cursor = 'pointer';
 
@@ -48,9 +53,9 @@ Ui.LBox.extend('Ui.Uploadable', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onMouseDown: function(event) {
 		if((event.button != 0) || this.getIsDisabled())
@@ -221,13 +226,21 @@ Ui.LBox.extend('Ui.Uploadable', {
 	onFile: function(fileWrapper, file) {
 		this.fireEvent('file', this, file);
 	}
+	/**#@-*/
 });
 
-Ui.Element.extend('Ui.UploadableFileWrapper', {
+Ui.Element.extend('Ui.UploadableFileWrapper', 
+/**@lends Ui.UploadableFileWrapper#*/
+{
 	formDrawing: undefined,
 	inputDrawing: undefined,
 	iframeDrawing: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.setVerticalAlign('top');
 		this.setHorizontalAlign('left');
@@ -239,9 +252,9 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 		this.inputDrawing.click();
 	},
 
-	//
-	// Private
-	//
+	/*#@+
+	 * @private
+	 */
 	createInput: function() {
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
@@ -305,7 +318,11 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 //		Core.Object.dump(this.getDrawing().files);
 //		this.fireEvent('file', this, this.inputDrawing.files);
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.Uploadable#*/
+{
 	onLoad: function() {
 		Ui.UploadableFileWrapper.base.onLoad.call(this);
 		this.createInput();

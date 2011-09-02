@@ -1,5 +1,7 @@
 
-Ui.LBox.extend('Ui.Shadow', {
+Ui.LBox.extend('Ui.Shadow', 
+/**@lends Ui.Shadow#*/
+{
 	radiusTopLeft: 0,
 	radiusTopRight: 0,
 	radiusBottomLeft: 0,
@@ -8,6 +10,11 @@ Ui.LBox.extend('Ui.Shadow', {
 	inner: false,
 	color: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+ 	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.color = Ui.Color.create('black');
 
@@ -77,6 +84,10 @@ Ui.LBox.extend('Ui.Shadow', {
 			this.updateOpacityColor();
 			this.updateRadius();
 		}
+	},
+
+	getShadowWidth: function(){
+		return this.shadowWidth;
 	},
 
 	setRadius: function(radius) {

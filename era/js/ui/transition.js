@@ -1,10 +1,14 @@
 
-Core.Object.extend('Ui.Transition', {
+Core.Object.extend('Ui.Transition', 
+/**@lends Ui.Transition#*/
+{
 	run: function(current, next, progress) {
 		throw('transition classes MUST override run method');
 	}
-}, /* override */ {
-}, /* static */ {
+}, /**@lends Ui.Transition#*/ {
+}, 
+/**@lends Ui.Transition*/
+{
 	transitions: {},
 
 	register: function(transitionName, classType) {

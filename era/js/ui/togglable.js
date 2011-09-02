@@ -1,10 +1,15 @@
-//
-// Define the Togglable class.
-//
-Ui.LBox.extend('Ui.Togglable', {
+
+Ui.LBox.extend('Ui.Togglable', 
+/**@lends Ui.Togglable#*/
+{
 	isDown: false,
 	isToggled: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.getDrawing().style.cursor = 'pointer';
 
@@ -24,9 +29,9 @@ Ui.LBox.extend('Ui.Togglable', {
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onMouseDown: function(event) {
 		if((event.button != 0) || this.getIsDisabled())
@@ -67,6 +72,7 @@ Ui.LBox.extend('Ui.Togglable', {
 			this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		}
 	},
+	/**#@-*/
 
 	getIsDown: function() {
 		return this.isDown;

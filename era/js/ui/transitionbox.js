@@ -84,9 +84,9 @@ Ui.LBox.extend('Ui.TransitionBox',
 			return this.getChildren()[this.position].getChildren()[0];
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 	getChildPosition: function(child) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			if(this.getChildren()[i].getChildren()[0] == child)
@@ -118,6 +118,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 		this.next.setClipToBounds(false);
 		this.fireEvent('change', this, this.position);
 	}
+	/**#@-*/
 }, {
 	arrangeCore: function(width, height) {
 		Ui.TransitionBox.base.arrangeCore.call(this, width, height);

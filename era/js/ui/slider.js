@@ -1,11 +1,18 @@
 //
 // Define the Slider class.
 //
-Ui.Container.extend('Ui.Slider', {
+Ui.Container.extend('Ui.Slider', 
+/**@lends Ui.Slider#*/
+{
 	value: 0,
 	background: undefined,
 	button: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		if(config.value != undefined)
 			this.value = config.value;
@@ -57,9 +64,9 @@ Ui.Container.extend('Ui.Slider', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onButtonMove: function(button) {
 		var posX = this.button.getPositionX();
@@ -123,7 +130,11 @@ Ui.Container.extend('Ui.Slider', {
 		this.barBackground.setFill(this.getBarBorderColor());
 		this.buttonContent.setFill(this.getButtonColor());
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.Slider#*/
+{
 	measureCore: function(width, height) {
 		this.lightShadow.measure(width - 34, 10);
 		this.darkShadow.measure(width - 34, 10);
@@ -157,13 +168,17 @@ Ui.Container.extend('Ui.Slider', {
 		Ui.Slider.base.onEnable.call(this);
 		this.button.setOpacity(1);
 	}
-}, {
+}, 
+/**@lends Ui.Slider*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 })
 	}
 });
 
-Ui.LBox.extend('Ui.SliderContentDrawing', {
+Ui.LBox.extend('Ui.SliderContentDrawing', 
+/**@lends Ui.SliderContentDrawing#*/
+{
 	contentDrawing: undefined,
 
 	svgGradient: undefined,
@@ -173,6 +188,11 @@ Ui.LBox.extend('Ui.SliderContentDrawing', {
 	radius: 8,
 	fill: 'black',
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.shadow = new Ui.Shape();
 		this.append(this.shadow);
@@ -214,15 +234,14 @@ Ui.LBox.extend('Ui.SliderContentDrawing', {
 		}
 	},
 
-	//
-	// Private
-	//
-
+	/**@private*/
 	genPath: function(width, height, radius) {
 		return 'M'+radius+',0 L'+(width-radius)+',0 Q'+width+',0 '+width+','+radius+'  L'+width+','+(height*0.66)+' L'+(width/2)+','+height+' L0,'+(height*0.66)+' L0,'+radius+' Q0,0 '+radius+',0 z';
 //		return 'M'+radius+',0 L'+(width-radius)+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+'  L'+width+','+(height*0.66)+' L'+(width/2)+','+height+' L0,'+(height*0.66)+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
 	}
-}, {
+}, 
+/**@lends Ui.SliderContentDrawing#*/
+{
 	arrangeCore: function(width, height) {
 		Ui.SliderContentDrawing.base.arrangeCore.call(this, width, height);
 

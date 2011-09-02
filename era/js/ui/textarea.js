@@ -1,5 +1,7 @@
 
-Ui.Element.extend('Ui.TextArea', {
+Ui.Element.extend('Ui.TextArea', 
+/**@lends Ui.TextArea#*/
+{
 	textareaDrawing: undefined,
 	fontSize: 14,
 	fontFamily: 'sans-serif',
@@ -7,6 +9,11 @@ Ui.Element.extend('Ui.TextArea', {
 	color: 'black',
 	value: '',
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		if(config.fontSize != undefined)
 			this.setFontSize(config.fontSize);
@@ -138,7 +145,9 @@ Ui.Element.extend('Ui.TextArea', {
 //		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
 			this.invalidateMeasure();
 	}
-}, {
+}, 
+/**@lends Ui.TextArea#*/
+{
 	render: function() {
 		this.textareaDrawing = document.createElement('textarea');
 		this.textareaDrawing.setAttribute('rows', 1);
@@ -176,7 +185,9 @@ Ui.Element.extend('Ui.TextArea', {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = height+'px';
 	}
-}, {
+}, 
+/**@lends Ui.TextArea*/
+{
 /*	measureBox: undefined,
 
 	constructor: function() {

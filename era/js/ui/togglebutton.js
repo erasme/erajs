@@ -1,7 +1,6 @@
-//
-// Define the ToggleButton class.
-//
-Ui.Togglable.extend('Ui.ToggleButton', {
+Ui.Togglable.extend('Ui.ToggleButton', 
+/**@lends Ui.ToggleButton#*/
+{
 	allcontent: undefined,
 	contentBox: undefined,
 	content: undefined,
@@ -21,6 +20,11 @@ Ui.Togglable.extend('Ui.ToggleButton', {
 	lightShadow: undefined,
 	darkShadow: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Togglable
+	 */
 	constructor: function(config) {
 		this.setPadding(3);
 
@@ -160,9 +164,9 @@ Ui.Togglable.extend('Ui.ToggleButton', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 **/
 
 	updateSizes: function() {
 		var spacing = this.getStyleProperty('spacing');
@@ -387,7 +391,11 @@ Ui.Togglable.extend('Ui.ToggleButton', {
 			this.text2.setColor(this.getContentColor());
 		this.rect2.setFill(this.getLightColor());
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.ToggleButton#*/
+{
 	onStyleChange: function() {
 		var radius = this.getStyleProperty('radius');
 		this.lightShadow.setRadius(radius);
@@ -408,7 +416,9 @@ Ui.Togglable.extend('Ui.ToggleButton', {
 		Ui.Button.base.onEnable.call(this);
 		this.contentBox.setOpacity(1);
 	}
-}, {
+}, 
+/**@lends Ui.ToggleButton*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		radius: 4,

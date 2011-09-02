@@ -1,5 +1,7 @@
 
-Ui.Element.extend('Ui.Shape', {
+Ui.Element.extend('Ui.Shape', 
+/**@lends Ui.Shape*/
+{
 	shapeDrawing: undefined,
 	vmlFill: undefined,
 	vmlOpacity: 1,
@@ -11,6 +13,11 @@ Ui.Element.extend('Ui.Shape', {
 	path: undefined,
 	scale: 1,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	*/
 	constructor: function(config) {
 		if(config.path != undefined)
 			this.setPath(config.path);

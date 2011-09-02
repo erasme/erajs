@@ -1,9 +1,16 @@
 
-Ui.VBox.extend('Ui.ToolBar', {
+Ui.VBox.extend('Ui.ToolBar', 
+/**@lends Ui.ToolBar*/
+{
 	hbox: undefined,
 	scroll: undefined,
 	background: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.VBox
+	 */
 	constructor: function(config) {
 		this.topShadow = new Ui.Rectangle({ height: 1 });
 		Ui.ToolBar.base.append.call(this, this.topShadow);
@@ -26,9 +33,9 @@ Ui.VBox.extend('Ui.ToolBar', {
 		Ui.ToolBar.base.append.call(this, this.bottomShadow);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	getGradient: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
@@ -47,7 +54,11 @@ Ui.VBox.extend('Ui.ToolBar', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.ToolBar#*/
+{
 	append: function(child, resizable) {
 		this.hbox.append(child, resizable);
 	},
@@ -76,7 +87,9 @@ Ui.VBox.extend('Ui.ToolBar', {
 		this.hbox.setSpacing(spacing);
 
 	}
-}, {
+}, 
+/**@lends Ui.ToolBar*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
 		spacing: 3,
