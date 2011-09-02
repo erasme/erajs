@@ -1,5 +1,7 @@
 
-Ui.Element.extend('Ui.Video', {
+Ui.Element.extend('Ui.Video', 
+/**@lends Ui.Video#*/
+{
 	src: undefined,
 	oggSrc: undefined,
 	mp3Src: undefined,
@@ -11,6 +13,11 @@ Ui.Element.extend('Ui.Video', {
 	naturalWidth: undefined,
 	naturalHeight: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Video.supportOgg))
@@ -29,9 +36,9 @@ Ui.Element.extend('Ui.Video', {
 		this.addEvents('ready', 'ended', 'timeupdate');
 	},
 
-	//
-	// Set the file URL for the current video element
-	//
+	/**
+	 * Set the file URL for the current video element
+	 */
 	setSrc: function(src) {
 		this.loaddone = false;
 		this.src = src;
@@ -40,10 +47,10 @@ Ui.Element.extend('Ui.Video', {
 			this.videoDrawing.setAttribute('src', src);
 	},
 
-	//
-	// Play the video element. If the element is already playing
-	// stop it and restart from the begining.
-	//
+	/**
+	 * Play the video element. If the element is already playing
+	 * stop it and restart from the begining.
+	 */
 	play: function() {
 		if(Ui.Video.htmlVideo) {
 //			console.log('HTML5 video play '+this.videoDrawing.getAttribute('src'));
@@ -58,10 +65,10 @@ Ui.Element.extend('Ui.Video', {
 		this.paused = false;
 	},
 
-	//
-	// Pause the video element. If the element is not
-	// currently playing, do nothing.
-	//
+	/**
+	 * Pause the video element. If the element is not
+	 * currently playing, do nothing.
+	 */
 	pause: function() {
 		if(!this.playing || this.paused)
 			return;
@@ -70,9 +77,9 @@ Ui.Element.extend('Ui.Video', {
 			this.videoDrawing.pause();
 	},
 
-	//
-	// Stop the video if playing.
-	//
+	/**
+	 * Stop the video if playing.
+	 */
 	stop: function() {
 		if(!this.playing)
 			return;
@@ -85,10 +92,10 @@ Ui.Element.extend('Ui.Video', {
 		this.onEnded();
 	},
 
-	//
-	// Resume the videl element if in paused else
-	// do nothing.
-	//
+	/**
+	 * Resume the videl element if in paused else
+	 * do nothing.
+	 */
 	resume: function() {
 		if(!this.playing || !this.paused)
 			return;
@@ -97,46 +104,46 @@ Ui.Element.extend('Ui.Video', {
 			this.videoDrawing.play();
 	},
 
-	//
-	// Set the audio volume between 0 and 1
-	//
+	/**
+	 * Set the audio volume between 0 and 1
+	 */
 	setVolume: function(volume) {
 		if(Ui.Video.htmlVideo)
 			this.videoDrawing.volume = volume;
 	},
 
-	//
-	// Get the audio volume between 0 and 1
-	//
+	/**
+	 * Get the audio volume between 0 and 1
+	 */
 	getVolume: function() {
 		if(Ui.Video.htmlVideo)
 			return this.videoDrawing.volume;
 		return 1;
 	},
 
-	//
-	// Return the duration in seconds of the video file
-	// or undefined if unknown. This value is only known
-	// after the ready event.
-	//
+	/**
+	 * Return the duration in seconds of the video file
+	 * or undefined if unknown. This value is only known
+	 * after the ready event.
+	 */
 	getDuration: function() {
 		return this.videoDrawing.duration;
 	},
 
-	//
-	// Return the natural width of the image as defined
-	// in the image file. Return undefined if the image is
-	// not ready
-	//
+	/**
+	 * Return the natural width of the image as defined
+	 * in the image file. Return undefined if the image is
+	 * not ready
+	 */
 	getNaturalWidth: function() {
 		return this.naturalWidth;
 	},
 
-	//
-	// Return the natural height of the image as defined
-	// in the image file. Return undefined if the image is
-	// not ready
-	//
+	/**
+	 * Return the natural height of the image as defined
+	 * in the image file. Return undefined if the image is
+	 * not ready
+	 */
 	getNaturalHeight: function() {
 		return this.naturalHeight;
 	},
@@ -162,7 +169,9 @@ Ui.Element.extend('Ui.Video', {
 		this.playing = false;
 		this.fireEvent('ended');
 	}
-}, {
+}, 
+/**@lends Ui.Video#*/
+{
 	render: function() {
 		var drawing;
 		if(Ui.Video.htmlVideo) {
