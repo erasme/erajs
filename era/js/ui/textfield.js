@@ -6,7 +6,7 @@ Ui.LBox.extend('Ui.TextField',
     /**
      * @constructs
 	 * @class    
-     * @extends Ui.TextField
+     * @extends Ui.LBox
      * @param {Boolean} [config.passwordMode] Whether or not the TextField is in password mode (hide the typed text)
      * @param {String} [config.value] TextField intial value
      */ 

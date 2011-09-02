@@ -166,7 +166,7 @@ Ui.Togglable.extend('Ui.ToggleButton',
 
 	/**#@+
 	 * @private
-	 **/
+	 */
 
 	updateSizes: function() {
 		var spacing = this.getStyleProperty('spacing');
