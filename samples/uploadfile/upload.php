@@ -10,6 +10,7 @@ if(isset($_FILES["file"])) {
 	header("Access-Control-Allow-Origin: *");
 	header("Cache-Control: no-cache, must-revalidate");
 	header("Content-Type: text/plain; charset=utf-8");
+	header("Connection: Close");
 
 	echo "{ \"status\": \"done\" }";
 }

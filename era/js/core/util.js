@@ -7,8 +7,14 @@ navigator.isIE7 = (navigator.userAgent.match(/MSIE 7\./i) != null);
 navigator.isIE8 = (navigator.userAgent.match(/MSIE 8\./i) != null);
 
 navigator.isOpera =  ((navigator.userAgent == undefined) || (navigator.userAgent.match(/Opera\//i) != null));
+
 navigator.isChrome = (navigator.userAgent.match(/ Chrome\//) != null);
+
 navigator.isSafari = (navigator.userAgent.match(/ Safari\//) != null);
+
+navigator.isFirefox = (navigator.userAgent.match(/ Firefox\//) != null);
+navigator.isFirefox35 = (navigator.userAgent.match(/ Firefox\/3\.5\./) != null);
+navigator.isFirefox36 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null);
 
 navigator.iPad = (navigator.userAgent.match(/iPad/i) != null);
 navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);

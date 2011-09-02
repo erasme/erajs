@@ -19,7 +19,7 @@ Ui.LBox.extend('Ui.Uploadable',
 
 		this.addEvents('file', 'down', 'up');
 
-		if(navigator.isOpera)
+		if(navigator.isOpera || navigator.isFirefox35 || navigator.isFirefox36 || navigator.isIE7 || navigator.isIE8)
 			this.input = new Ui.UploadableWrapper();
 		else
 			this.input = new Ui.UploadableFileWrapper();
@@ -44,7 +44,7 @@ Ui.LBox.extend('Ui.Uploadable',
 			if(this.content != undefined)
 				this.remove(this.content);
 			if(content != undefined) {
-				if(navigator.isOpera)
+				if(Ui.UploadableWrapper.hasInstance(this.input))
 					this.prepend(content);
 				else
 					this.append(content);
@@ -119,7 +119,6 @@ Ui.LBox.extend('Ui.Uploadable',
 		if(event.button == 0) {
 			this.onUp();
 			this.onPress();
-			this.focus();
 		}
 	},
 
@@ -219,7 +218,7 @@ Ui.LBox.extend('Ui.Uploadable',
 	},
 
 	onPress: function() {
-		if(!navigator.isOpera)
+		if(Ui.UploadableFileWrapper.hasInstance(this.input))
 			this.input.select();
 	},
 
@@ -256,20 +255,26 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	 * @private
 	 */
 	createInput: function() {
+		this.formDrawing = document.createElement('form');
+		this.formDrawing.method = 'POST';
+		this.formDrawing.enctype = 'multipart/form-data';
+		// needed for IE < 9
+		this.formDrawing.encoding = 'multipart/form-data';
+
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
-		this.inputDrawing.name = 'file';
-		this.inputDrawing.style.display = 'block';
-		this.inputDrawing.style.position = 'absolute';
-		this.inputDrawing.style.left = '0px';
-		this.inputDrawing.style.top = '0px';
-		this.inputDrawing.style.width = '0px';
-		this.inputDrawing.style.height = '0px';
+		this.inputDrawing.setAttribute('name', 'file');
 
-		if('files' in this.inputDrawing) {
-			this.getDrawing().appendChild(this.inputDrawing);
+		this.connect(this.inputDrawing, 'change', this.onChange);
+		this.formDrawing.appendChild(this.inputDrawing);
+
+		if(navigator.supportFileAPI) {
+			this.getDrawing().appendChild(this.formDrawing);
 		}
 		else {
+			// create an iframe now for the async POST
+			// needed because browser like IE9 don't support
+			// unloading the input file from the DOM (else it is cleared)
 			this.iframeDrawing = document.createElement('iframe');
 			this.iframeDrawing.style.position = 'absolute';
 			this.iframeDrawing.style.top = '0px';
@@ -279,32 +284,16 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 			this.iframeDrawing.style.clip = 'rect(0px 0px 0px 0px)';
 
 			document.body.appendChild(this.iframeDrawing);
-
 			this.iframeDrawing.contentWindow.document.write("<!DOCTYPE html><html><body></body></html>");
-
-			this.formDrawing = document.createElement('form');
-			this.formDrawing.method = 'POST';
-			this.formDrawing.enctype = 'multipart/form-data';
-			this.formDrawing.style.display = 'block';
-			this.formDrawing.style.position = 'absolute';
-			this.formDrawing.style.left = '0px';
-			this.formDrawing.style.top = '0px';
-			this.formDrawing.style.width = '0px';
-			this.formDrawing.style.height = '0px';
-
 			this.iframeDrawing.contentWindow.document.body.appendChild(this.formDrawing);
-
-			this.formDrawing.appendChild(this.inputDrawing);
 		}
-
-		this.connect(this.inputDrawing, 'change', this.onChange);
 	},
 
 	onChange: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if('files' in this.inputDrawing) {
+		if(navigator.supportFileAPI) {
 			for(var i = 0; i < this.inputDrawing.files.length; i++)
 				this.fireEvent('file', this, new Core.File({ fileApi: this.inputDrawing.files[i] }));
 		}
@@ -313,10 +302,6 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 			this.fireEvent('file', this, new Core.File({ iframe: this.iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing }));
 			this.createInput();
 		}
-
-//		Core.Object.dump(this.inputDrawing);
-//		Core.Object.dump(this.getDrawing().files);
-//		this.fireEvent('file', this, this.inputDrawing.files);
 	}
 
 	/**#@-*/
@@ -330,9 +315,8 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 
 	onUnload: function() {
 		this.disconnect(this.inputDrawing, 'change', this.onChange);
-        if(this.iframeDrawing != undefined) {
+        if(this.iframeDrawing != undefined)
             document.body.removeChild(this.iframeDrawing);
-        }
 		Ui.UploadableFileWrapper.base.onUnload.call(this);
 	}
 });
@@ -342,6 +326,7 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 	inputDrawing: undefined,
 
 	constructor: function(config) {
+		this.setClipToBounds(true);
 		this.setOpacity(0);
 		this.addEvents('file');
 	},
@@ -354,6 +339,7 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 		this.formDrawing = document.createElement('form');
 		this.formDrawing.method = 'POST';
 		this.formDrawing.enctype = 'multipart/form-data';
+		this.formDrawing.encoding = 'multipart/form-data';
 		this.formDrawing.style.display = 'block';
 		this.formDrawing.style.position = 'absolute';
 		this.formDrawing.style.left = '0px';
@@ -364,6 +350,7 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
 		this.inputDrawing.name = 'file';
+		this.inputDrawing.style.fontSize = '200px';
 		this.inputDrawing.style.display = 'block';
 		this.inputDrawing.style.cursor = 'pointer';
 		this.inputDrawing.style.position = 'absolute';
@@ -371,25 +358,40 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 		this.inputDrawing.style.top = '0px';
 		this.inputDrawing.style.width = this.getLayoutWidth()+'px';
 		this.inputDrawing.style.height = this.getLayoutHeight()+'px';
+		if(navigator.isIE7 || navigator.isIE8)
+			this.inputDrawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity=0)';
 		this.formDrawing.appendChild(this.inputDrawing);
 
 		this.connect(this.inputDrawing, 'change', this.onChange);
-
+		
 		return this.formDrawing;
 	},
 
 	onChange: function(event) {
-		if('files' in this.inputDrawing) {
+		if(navigator.supportFileAPI) {
 			for(var i = 0; i < this.inputDrawing.files.length; i++)
 				this.fireEvent('file', this, new Core.File({ fileApi: this.inputDrawing.files[i] }));
 		}
 		else {
-			this.disconnect(this.inputDrawing, 'change', this.onChange);
-			this.fireEvent('file', this, new Core.File({ iframe: this.iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing }));
-			this.createInput();
-		}
+			this.getDrawing().removeChild(this.formDrawing);
 
-//		this.fireEvent('file', this, this.inputDrawing.files);
+			var iframeDrawing = document.createElement('iframe');
+			iframeDrawing.style.position = 'absolute';
+			iframeDrawing.style.top = '0px';
+			iframeDrawing.style.left = '0px';
+			iframeDrawing.style.width = '0px';
+			iframeDrawing.style.height = '0px';
+			iframeDrawing.style.clip = 'rect(0px 0px 0px 0px)';
+
+			document.body.appendChild(iframeDrawing);
+			iframeDrawing.contentWindow.document.write("<!DOCTYPE html><html><body></body></html>");
+			iframeDrawing.contentWindow.document.body.appendChild(this.formDrawing);
+
+			this.disconnect(this.inputDrawing, 'change', this.onChange);
+			this.fireEvent('file', this, new Core.File({ iframe: iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing }));
+
+			this.getDrawing().appendChild(this.createInput());
+		}
 	}
 }, {
 	render: function() {
@@ -404,63 +406,15 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 	}
 });
 
-Core.Object.extend('Ui.FilePostUploader', {
-	iframe: undefined,
-	destination: undefined,
-	service: undefined,
-	form: undefined,
-	inputDestination: undefined,
+navigator.supportFormData = false;
+try {
+	new FormData();
+}
+catch(err) {
+	navigator.supportFormData = false;
+}
 
-	constructor: function(config) {
-		this.form = config.form;
-		this.iframe = config.iframe;
-
-		this.addEvents('complete');
-
-		if(config.service != undefined)
-			this.setService(config.service);
-//		if(config.destination != undefined)
-//			this.setDestination(config.destination);
-	},
-
-	getFileName: function() {
-//		Core.Object.dump(this.inputFile);
-	},
-
-	getMimetype: function() {
-	},
-
-	setService: function(service) {
-		this.service = service;
-		this.form.action = this.service;
-	},
-
-	setDestination: function(destination) {
-		this.destination = destination;
-//		this.inputDestination.value = this.destination;
-	},
-
-	send: function() {
-		this.connect(this.iframe, 'load', this.onIFrameLoad);
-
-		var errorCount = 0;
-		var done = false;
-		while(!done && (errorCount < 5)) {
-			try {
-				this.form.submit();
-				done = true;
-			}
-			catch(e) {
-				errorCount++;
-			}
-		}
-	},
-
-	onIFrameLoad: function(event) {
-		console.log('iframe loaded');
-		document.body.removeChild(this.iframe);
-		this.fireEvent('complete');
-	}
-});
-
+Ui.Uploadable.testInput = document.createElement('input');
+navigator.supportFileAPI = 'files' in Ui.Uploadable.testInput;
+delete(Ui.Uploadable.testInput);
 

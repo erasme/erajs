@@ -223,6 +223,19 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 			obj.events = [];
 		obj.events.push(wrapper);
 	}
+	else if('attachEvent' in obj) {
+		var wrapper = function() {
+			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+		}
+		wrapper.scope = this;
+		wrapper.callback = method;
+		wrapper.eventName = eventName;
+		wrapper.capture = capture;
+		obj.attachEvent(eventName, wrapper);
+		if(obj.events == undefined)
+			obj.events = [];
+		obj.events.push(wrapper);
+	}
 	else {
 		var signal = { scope: this, method: method, capture: capture };
 		obj.events[eventName].push(signal);
@@ -245,6 +258,18 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 				if((method != undefined) && (wrapper.callback != method))
 					continue;
 				obj.removeEventListener(wrapper.eventName, wrapper, wrapper.capture);
+				obj.events.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	else if('detachEvent' in obj) {
+		for(var i = 0; (obj.events != undefined) && (i < obj.events.length); i++) {
+			var wrapper = obj.events[i];
+			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
+				if((method != undefined) && (wrapper.callback != method))
+					continue;
+				obj.detachEvent(wrapper.eventName, wrapper);
 				obj.events.splice(i, 1);
 				i--;
 			}
