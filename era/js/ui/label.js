@@ -3,10 +3,10 @@ Ui.Element.extend('Ui.Label',
 {
 	text: '',
 	orientation: 'horizontal',
-	fontSize: 16,
-	fontFamily: 'Sans-serif',
-	fontWeight: 'normal',
-	color: 'black',
+	fontSize: undefined,
+	fontFamily: undefined,
+	fontWeight: undefined,
+	color: undefined,
 	labelDrawing: undefined,
 	textMeasureValid: false,
 	textWidth: 0,
@@ -67,7 +67,10 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getFontSize: function() {
-		return this.fontSize;
+		if(this.fontSize != undefined)
+			return this.fontSize;
+		else
+			return this.getStyleProperty('fontSize');
 	},
 
 	setFontFamily: function(fontFamily) {
@@ -80,7 +83,10 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getFontFamily: function() {
-		return this.fontFamily;
+		if(this.fontFamily != undefined)
+			return this.fontFamily;
+		else
+			return this.getStyleProperty('fontFamily');
 	},
 
 	setFontWeight: function(fontWeight) {
@@ -93,21 +99,27 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getFontWeight: function() {
-		return this.fontWeight;
+		if(this.fontWeight != undefined)
+			return this.fontWeight;
+		else
+			return this.getStyleProperty('fontWeight');
 	},
 
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = Ui.Color.create(color);
 			if(navigator.supportRgba)
-				this.labelDrawing.style.color = this.color.getCssRgba();
+				this.labelDrawing.style.color = this.getColor().getCssRgba();
 			else
-				this.labelDrawing.style.color = this.color.getCssHtml();
+				this.labelDrawing.style.color = this.getColor().getCssHtml();
 		}
 	},
 
 	getColor: function() {
-		return this.color;
+		if(this.color != undefined)
+			return this.color;
+		else
+			return this.getStyleProperty('color');
 	},
 
 	getOrientation: function() {
@@ -126,6 +138,20 @@ Ui.Element.extend('Ui.Label',
 	verticalAlign: 'center',
 	horizontalAlign: 'center',
 
+	onStyleChange: function() {
+//		console.log(this+'.onStyleChange color: '+this.getColor()+' ('+this.getStyleProperty('color')+')');
+
+		this.labelDrawing.style.fontSize = this.getFontSize()+'px';
+		this.labelDrawing.style.fontFamily = this.getFontFamily();
+		this.labelDrawing.style.fontWeight = this.getFontWeight();
+		if(navigator.supportRgba)
+			this.labelDrawing.style.color = this.getColor().getCssRgba();
+		else
+			this.labelDrawing.style.color = this.getColor().getCssHtml();
+		this.textMeasureValid = false;
+		this.invalidateMeasure();
+	},
+
 	render: function() {
 		this.labelDrawing = document.createElement('div');
 		this.labelDrawing.style.whiteSpace = 'nowrap';
@@ -133,10 +159,6 @@ Ui.Element.extend('Ui.Label',
 		this.labelDrawing.style.position = 'absolute';
 		this.labelDrawing.style.left = '0px';
 		this.labelDrawing.style.top = '0px';
-		this.labelDrawing.style.fontSize = this.fontSize+'px';
-		this.labelDrawing.style.fontFamily = this.fontFamily;
-		this.labelDrawing.style.fontWeight = this.fontWeight;
-		this.labelDrawing.style.color = this.color;
 		if(navigator.isWebkit)
 			this.labelDrawing.style.webkitUserSelect = 'none';
 		else if(navigator.isGecko)
@@ -151,10 +173,9 @@ Ui.Element.extend('Ui.Label',
 	measureCore: function(width, height) {
 		if(!this.textMeasureValid) {
 			this.textMeasureValid = true;
-			var size = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight);
+			var size = Ui.Label.measureText(this.text, this.getFontSize(), this.getFontFamily(), this.getFontWeight());
 			this.textWidth = size.width;
 			this.textHeight = size.height;
-//			console.log('label.measureCore('+width+','+height+') for \''+this.text+'\' = ('+size.width+' x '+size.height+')');
 		}
 		if(this.orientation == 'vertical')
 			return { width: this.textHeight, height: this.textWidth };
@@ -209,11 +230,6 @@ Ui.Element.extend('Ui.Label',
 {
 	measureBox: undefined,
 
-	constructor: function() {
-//		var dummy = new Core.Object();
-//		dummy.connect(window, 'load', Ui.Label.onWindowLoad);
-	},
-
 	measureText: function(text, fontSize, fontFamily, fontWeight) {
 		if(Ui.Label.measureBox == undefined)
 			this.createMeasure();
@@ -229,7 +245,6 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	createMeasure: function() {
-//		console.log(document.body);
 		if(document.body == undefined) {
 			var body = document.createElement('body');
 			document.body = body;
@@ -239,8 +254,13 @@ Ui.Element.extend('Ui.Label',
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
 		document.body.appendChild(Ui.Label.measureBox);
+	},
+
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		fontSize: 16,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
 	}
 });
-
-
 
