@@ -1,5 +1,6 @@
-Core.Object.extend('Core.File', {
+Core.Object.extend('Core.File', 
 /**@lends Core.File#*/
+{
 	iframe: undefined,
 	form: undefined,
 	fileInput: undefined,

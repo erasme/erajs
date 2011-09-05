@@ -1,10 +1,15 @@
-//
-// Define the TextAreaField class.
-//
-Ui.LBox.extend('Ui.TextAreaField', {
+
+Ui.LBox.extend('Ui.TextAreaField', 
+/**@lends Ui.TextAreaField#*/
+{
 	textarea: undefined,
 	scroll: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.setPadding(3);
 
@@ -30,10 +35,12 @@ Ui.LBox.extend('Ui.TextAreaField', {
 		this.textarea.setValue(value);
 	}
 
-	//
-	// Private
-	//
-}, {
+}, 
+/**@lends Ui.TextAreaField#*/
+{
+	/**#@+
+     * @private
+     */
 	onStyleChange: function() {
 	},
 
@@ -44,5 +51,7 @@ Ui.LBox.extend('Ui.TextAreaField', {
 	onEnable: function() {
 		Ui.TextAreaField.base.onEnable.call(this);
 	}
+
+	/**#@-*/
 });
 

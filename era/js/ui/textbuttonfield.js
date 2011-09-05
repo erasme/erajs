@@ -161,9 +161,9 @@ Ui.LBox.extend('Ui.TextButtonField',
 		this.entry.setValue(value);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 	updateSizes: function() {
 		if(!this.getIsLoaded())
 			return;
@@ -330,7 +330,11 @@ Ui.LBox.extend('Ui.TextButtonField',
 	onEntryValidate: function(entry) {
 		this.fireEvent('validate', this);
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.TextButtonField#*/
+{
 	onStyleChange: function() {
 		var gradient;
 		var contentColor;
@@ -396,7 +400,9 @@ Ui.LBox.extend('Ui.TextButtonField',
 	onEnable: function() {
 		Ui.TextField.base.onEnable.call(this);
 	}
-}, {
+}, 
+/**@lends Ui.TextButtonField*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		radius: 4,

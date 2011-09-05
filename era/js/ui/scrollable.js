@@ -35,7 +35,7 @@ Ui.Container.extend('Ui.Scrollable',
 	lock: false,
 	overScroll: true,
 
-	/*
+	/**
      * @constructs
 	 * @class
      * @extends Ui.Container
@@ -214,9 +214,9 @@ Ui.Container.extend('Ui.Scrollable',
 //		this.offsetLock = false;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onContentBoxScroll: function(content, offsetX, offsetY) {
 		this.offsetX = offsetX;
@@ -730,7 +730,11 @@ Ui.Container.extend('Ui.Scrollable',
 //		this.contentBox.setOffset(this.offsetX, this.offsetY);
 //		this.connect(this.contentBox, 'scroll', this.onContentBoxScroll);
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.Scrollable#*/
+{
 	measureCore: function(width, height) {
 		if(this.contentBox == undefined)
 			return { width: 0, height: 0 };
@@ -893,13 +897,20 @@ Ui.Container.extend('Ui.Scrollable',
 	}
 });
 
-Ui.Container.extend('Ui.ScrollableContent', {
+Ui.Container.extend('Ui.ScrollableContent', 
+/**@lends Ui.ScrollableContent#*/
+{
 	viewWidth: 0,
 	viewHeight: 0,
 	content: undefined,
 	contentWidth: 0,
 	contentHeight: 0,
 
+	/**
+	* @constructs
+	* @class
+	* @extends Ui.Container
+	*/
 	constructor: function(config) {
 		this.getDrawing().style.overflow = 'hidden';
 		this.addEvents('scroll');
@@ -933,7 +944,9 @@ Ui.Container.extend('Ui.ScrollableContent', {
 	getOffsetY: function() {
 		return this.getDrawing().scrollLeft;
 	}
-}, {
+}, 
+/**@lends Ui.ScrollableContent#*/
+{
 	measureCore: function(width, height) {
 		var size;
 		if(this.content != undefined)

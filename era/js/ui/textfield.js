@@ -6,7 +6,7 @@ Ui.LBox.extend('Ui.TextField',
     /**
      * @constructs
 	 * @class    
-     * @extends Ui.TextField
+     * @extends Ui.LBox
      * @param {Boolean} [config.passwordMode] Whether or not the TextField is in password mode (hide the typed text)
      * @param {String} [config.value] TextField intial value
      */ 
@@ -46,9 +46,9 @@ Ui.LBox.extend('Ui.TextField',
 		this.entry.setValue(value);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onEntryChange: function(entry, value) {
 		this.fireEvent('change', this, value);
@@ -57,6 +57,7 @@ Ui.LBox.extend('Ui.TextField',
 	onEntryValidate: function(entry) {
 		this.fireEvent('validate', this);
 	}
+	/**#@-*/
 }, 
 /**@lends Ui.TextField#*/
 {

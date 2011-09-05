@@ -1,11 +1,16 @@
-//
-// Define the Uploadable class.
-//
-Ui.LBox.extend('Ui.Uploadable', {
+
+Ui.LBox.extend('Ui.Uploadable', 
+/**@lends Ui.Uploadable#*/
+{
 	isDown: false,
 	content: undefined,
 	input: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.getDrawing().style.cursor = 'pointer';
 
@@ -48,9 +53,9 @@ Ui.LBox.extend('Ui.Uploadable', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onMouseDown: function(event) {
 		if((event.button != 0) || this.getIsDisabled())
@@ -220,13 +225,21 @@ Ui.LBox.extend('Ui.Uploadable', {
 	onFile: function(fileWrapper, file) {
 		this.fireEvent('file', this, file);
 	}
+	/**#@-*/
 });
 
-Ui.Element.extend('Ui.UploadableFileWrapper', {
+Ui.Element.extend('Ui.UploadableFileWrapper', 
+/**@lends Ui.UploadableFileWrapper#*/
+{
 	formDrawing: undefined,
 	inputDrawing: undefined,
 	iframeDrawing: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.setVerticalAlign('top');
 		this.setHorizontalAlign('left');
@@ -238,9 +251,9 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 		this.inputDrawing.click();
 	},
 
-	//
-	// Private
-	//
+	/*#@+
+	 * @private
+	 */
 	createInput: function() {
 		this.formDrawing = document.createElement('form');
 		this.formDrawing.method = 'POST';
@@ -290,7 +303,11 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 			this.createInput();
 		}
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.Uploadable#*/
+{
 	onLoad: function() {
 		Ui.UploadableFileWrapper.base.onLoad.call(this);
 		this.createInput();
@@ -304,19 +321,26 @@ Ui.Element.extend('Ui.UploadableFileWrapper', {
 	}
 });
 
-Ui.Element.extend('Ui.UploadableWrapper', {
+Ui.Element.extend('Ui.UploadableWrapper', 
+/**@lends Ui.UploadableWrapper#*/
+{
 	formDrawing: undefined,
 	inputDrawing: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.setClipToBounds(true);
 		this.setOpacity(0);
 		this.addEvents('file');
 	},
 
-	//
-	// Private
-	//
+	/*#@+
+	 * @private
+	 */
 	createInput: function() {
 
 		this.formDrawing = document.createElement('form');
@@ -376,7 +400,10 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 			this.getDrawing().appendChild(this.createInput());
 		}
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.UploadableWrapper#*/
+{
 	render: function() {
 		return this.createInput();
 	},
@@ -389,7 +416,7 @@ Ui.Element.extend('Ui.UploadableWrapper', {
 	}
 });
 
-navigator.supportFormData = false;
+navigator.supportFormData = true;
 try {
 	new FormData();
 }

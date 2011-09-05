@@ -1,7 +1,7 @@
-//
-// Define the Transformable class.
-//
-Ui.LBox.extend('Ui.Transformable', {
+
+Ui.LBox.extend('Ui.Transformable', 
+/**@lends Ui.Transformable#*/
+{
 	mouseStart: undefined,
 	contentBox: undefined,
 	content: undefined,
@@ -29,6 +29,11 @@ Ui.LBox.extend('Ui.Transformable', {
 	speedY: 0,
 	speedAngle: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'transform');
 		this.setFocusable(true);
@@ -114,9 +119,9 @@ Ui.LBox.extend('Ui.Transformable', {
 		this.fireEvent('transform', this);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onDown: function() {
 		this.isDown = true;
@@ -368,4 +373,5 @@ Ui.LBox.extend('Ui.Transformable', {
 			this.inertiaClock = undefined;
 		}
 	}
+	/**#@-*/
 });

@@ -114,6 +114,7 @@ Ui.Element.extend('Ui.Text',
 	},
 
 	setSelectable: function(selectable) {
+		/**#nocode+ Avoid Jsdoc warnings...*/
 		this.selectable = selectable;
 		this.getDrawing().selectable = selectable;
 
@@ -139,6 +140,7 @@ Ui.Element.extend('Ui.Text',
 			else if(navigator.isOpera)
 				this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
 		}
+		/**#nocode-*/
 	},
 
 	/**#@+ 

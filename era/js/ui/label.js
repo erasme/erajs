@@ -153,6 +153,7 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	render: function() {
+		/**#nocode+ Avoid Jsdoc warnings...*/
 		this.labelDrawing = document.createElement('div');
 		this.labelDrawing.style.whiteSpace = 'nowrap';
 		this.labelDrawing.style.display = 'inline';
@@ -168,6 +169,7 @@ Ui.Element.extend('Ui.Label',
 		else if(navigator.isOpera)
 			this.labelDrawing.onmousedown = function(event) { event.preventDefault(); };
 		return this.labelDrawing;
+		/**#nocode- Avoid Jsdoc warnings...*/
 	},
 
 	measureCore: function(width, height) {

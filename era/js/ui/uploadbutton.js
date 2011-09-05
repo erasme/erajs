@@ -1,7 +1,6 @@
-//
-// Define the Button class.
-//
-Ui.Uploadable.extend('Ui.UploadButton', {
+Ui.Uploadable.extend('Ui.UploadButton', 
+/**@lends Ui.UploadButton#*/
+{
 	allcontent: undefined,
 	lbox: undefined,
 	contentBox: undefined,
@@ -22,6 +21,11 @@ Ui.Uploadable.extend('Ui.UploadButton', {
 	lightShadow: undefined,
 	darkShadow: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Uploadable
+	 */
 	constructor: function(config) {
 		this.lbox = new Ui.LBox();
 		this.setContent(this.lbox);
@@ -162,9 +166,9 @@ Ui.Uploadable.extend('Ui.UploadButton', {
 		}
 	},
 
-	//
-	// Private
-	//
+	/*#@+
+	 * @private
+	 */
 
 	updateSizes: function() {
 		var spacing = this.getStyleProperty('spacing');
@@ -389,7 +393,11 @@ Ui.Uploadable.extend('Ui.UploadButton', {
 			this.text2.setColor(this.getContentColor());
 		this.rect2.setFill(this.getLightColor());
 	}
-}, {
+
+	/**#@-*/
+}, 
+/**@lends Ui.UploadButton#*/
+{
 	onStyleChange: function() {
 		var radius = this.getStyleProperty('radius');
 		this.lightShadow.setRadius(radius);
@@ -410,7 +418,9 @@ Ui.Uploadable.extend('Ui.UploadButton', {
 		Ui.Button.base.onEnable.call(this);
 		this.contentBox.setOpacity(1);
 	}
-}, {
+}, 
+/**@lends Ui.UploadButton*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		radius: 4,

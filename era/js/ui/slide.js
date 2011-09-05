@@ -1,7 +1,15 @@
 
-Ui.Transition.extend('Ui.Slide', {
+Ui.Transition.extend('Ui.Slide', 
+/**@lends Ui.Slide#*/
+{
 	direction: 'right',
 
+	
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Transition
+	 */
 	constructor: function(config) {
 		if(config.direction != undefined)
 			this.setDirection(config.direction);
@@ -10,7 +18,9 @@ Ui.Transition.extend('Ui.Slide', {
 	setDirection: function(direction) {
 		this.direction = direction;
 	}
-}, {
+}, 
+/**@lends Ui.Slide#*/
+{
 	run: function(current, next, progress) {
 		if(current != undefined) {
 			if(progress == 1) {
@@ -48,7 +58,9 @@ Ui.Transition.extend('Ui.Slide', {
 			}
 		}
 	}
-}, {
+}, 
+/**@lends Ui.Slide*/
+{
 	constructor: function() {
 		Ui.Transition.register('slide', this);
 	}

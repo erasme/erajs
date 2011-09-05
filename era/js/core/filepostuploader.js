@@ -39,7 +39,9 @@ Core.Object.extend('Core.FilePostUploader',
 		this.destination = destination;
 	},
 
+	/**Send the file*/
 	send: function() {
+		/**#nocode+ Avoid Jsdoc warnings...*/
 		if(this.file.fileApi != undefined) {
 			if(navigator.supportFormData) {
 				var formData = new FormData();
@@ -116,6 +118,7 @@ Core.Object.extend('Core.FilePostUploader',
 				}
 			}
 		}
+	/**#nocode-*/
 	},
 
 	getResponseText: function() {

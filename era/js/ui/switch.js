@@ -17,6 +17,11 @@ Ui.LBox.extend('Ui.Switch',
 	animStart: 0,
 	ease: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.setFocusable(true);
 		this.connect(this, 'focus', this.updateColors);
@@ -267,12 +272,19 @@ Ui.LBox.extend('Ui.Switch',
 	}
 });
 
-Ui.LBox.extend('Ui.SwitchButton', {
+Ui.LBox.extend('Ui.SwitchButton', 
+/**@lends Ui.SwitchButton#*/
+{
 	shadow: undefined,
 	background: undefined,
 	radius: 8,
 	fill: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.shadow = new Ui.Rectangle({ radius: 4 });
 		this.append(this.shadow);
@@ -308,11 +320,18 @@ Ui.LBox.extend('Ui.SwitchButton', {
 	}
 });
 
-Ui.Container.extend('Ui.SwitchBox', {
+Ui.Container.extend('Ui.SwitchBox', 
+/**@lends Ui.SwitchBox#*/
+{
 	content1Box: undefined,
 	content2Box: undefined,
 	button: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function() {
 		this.content1Box = new Ui.LBox({ margin: 5 });
 		this.appendChild(this.content1Box);
@@ -359,7 +378,9 @@ Ui.Container.extend('Ui.SwitchBox', {
 	getContentWidth: function() {
 		return this.getLayoutWidth() - this.button.getLayoutWidth();
 	}
-}, {
+}, 
+/**@lends Ui.SwitchBox#*/
+{
 	measureCore: function(width, height) {
 		var c1size = this.content1Box.measure(0, 0);
 		var c2size = this.content2Box.measure(0, 0);

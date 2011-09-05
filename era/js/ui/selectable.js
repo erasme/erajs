@@ -1,7 +1,6 @@
-//
-// Define the Selectable class.
-//
-Ui.LBox.extend('Ui.Selectable', {
+Ui.LBox.extend('Ui.Selectable', 
+/**@lends Ui.Selectable#*/
+{
 	isDown: false,
 	isSelected: false,
 	lastTime: undefined,
@@ -10,6 +9,11 @@ Ui.LBox.extend('Ui.Selectable', {
 	menuPosX: undefined,
 	menuPosY: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.setFocusable(true);
 
@@ -26,9 +30,9 @@ Ui.LBox.extend('Ui.Selectable', {
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onKeyDown: function(event) {
 		console.log(this+'.onKeyDown key: '+event.which);
@@ -243,5 +247,6 @@ Ui.LBox.extend('Ui.Selectable', {
 			this.fireEvent('unselect', this);
 		}
 	}
+	/**#@-*/
 }, {
 });
