@@ -57,13 +57,24 @@ Ui.LBox.extend('Ui.TransitionBox',
 
 	setCurrentAt: function(position) {
 		if(this.position != position) {
-			if(this.transitionClock != undefined)
+			if(this.next != undefined) {
+				if(this.current != undefined) {
+					this.current.hide();
+					this.current = this.next;
+					this.current.show();
+					this.next = undefined;
+				}
+			}
+			if(this.transitionClock != undefined) {
+				this.disconnect(this.transitionClock, 'complete', this.onTransitionComplete);
 				this.transitionClock.stop();
+			}
 
 			if(this.position != -1)
 				this.current = this.getChildren()[this.position];
 			else
 				this.current = undefined;
+
 			this.next = this.getChildren()[position];
 			this.next.show();
 
@@ -111,11 +122,11 @@ Ui.LBox.extend('Ui.TransitionBox',
 	},
 
 	onTransitionComplete: function(clock) {
-		if(this.current != undefined) {
-			this.current.setClipToBounds(false);
+		this.transitionClock = undefined;
+
+		if(this.current != undefined)
 			this.current.hide();
-		}
-		this.next.setClipToBounds(false);
+		this.next = undefined;
 		this.fireEvent('change', this, this.position);
 	}
 	/**#@-*/
