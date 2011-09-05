@@ -90,6 +90,9 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseDown: function(event) {
+		if(('tagName' in event.srcElement) && (event.srcElement.tagName == 'INPUT') && (event.srcElement.type == 'file'))
+			return;
+
 		this.captureElement = event.srcElement;
 		this.captureElement.setCapture();
 		var target = Core.Event.cleanTarget(event.srcElement);
@@ -109,6 +112,9 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseMove: function(event) {
+		if(('tagName' in event.srcElement) && (event.srcElement.tagName == 'INPUT') && (event.srcElement.type == 'file'))
+			return;
+
 		var mouseEvent = document.createEvent('MouseEvents');
 		var target = Core.Event.cleanTarget(event.srcElement);
 		// rename button for IE
@@ -126,6 +132,9 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseUp: function(event) {
+		if(('tagName' in event.srcElement) && (event.srcElement.tagName == 'INPUT') && (event.srcElement.type == 'file'))
+			return;
+
 		this.captureElement.releaseCapture();
 		var target = Core.Event.cleanTarget(event.srcElement);
 		var mouseEvent = document.createEvent('MouseEvents');

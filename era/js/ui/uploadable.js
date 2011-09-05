@@ -375,7 +375,7 @@ Ui.Element.extend('Ui.UploadableWrapper',
 	},
 
 	onChange: function(event) {
-		if(navigator.supportFileAPI) {
+		if(!navigator.isOpera && navigator.supportFileAPI) {
 			for(var i = 0; i < this.inputDrawing.files.length; i++)
 				this.fireEvent('file', this, new Core.File({ fileApi: this.inputDrawing.files[i] }));
 		}
