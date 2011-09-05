@@ -198,3 +198,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
   Un peu comme dans ListView qui manipule des "data" et pas de l'ui
   mais étendre tout cela et créer les formulaires.
 
+* - rendre le Ui.Label stylisable pour les valeurs par défaut
+
+* - implémenter l'héritage des class dans les styles hérités dans le DOM
+    (comme pour les styles statiques)
+

@@ -79,23 +79,7 @@ Ui.VBox.extend('Ui.ToolBar', {
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.11, g: 0.56, b: 1 }),
-		spacing: 3,
-
-		"Ui.Button": {
-			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
-		},
-
-		"Ui.ToggleButton": {
-			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
-		},
-
-		"Ui.TextButtonField": {
-			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
-		},
-
-		"Ui.ScrollingArea": {
-			color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
-		}
+		spacing: 3
 	}
 });
 

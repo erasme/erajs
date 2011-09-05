@@ -2,6 +2,7 @@ Ui.Container.extend('Ui.Popup',
 /**@lends Ui.Popup#*/
 {
 	background: undefined,
+	shadow: undefined,
 	contentBox: undefined,
 	posX: undefined,
 	posY: undefined,
@@ -22,7 +23,7 @@ Ui.Container.extend('Ui.Popup',
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
-		this.shadow = new Ui.Rectangle({ fill: 'white', opacity: 0.5 });
+		this.shadow = new Ui.Rectangle();
 		this.appendChild(this.shadow);
 
 		this.background = new Ui.PopupBackground({ radius: 8, fill: 'black' });
@@ -88,6 +89,7 @@ Ui.Container.extend('Ui.Popup',
 
 	onStyleChange: function() {
 		this.background.setFill(this.getStyleProperty('color'));
+		this.shadow.setFill(this.getStyleProperty('shadowColor'));
 	},
 
 	show: function(posX, posY) {
@@ -279,18 +281,13 @@ Ui.Container.extend('Ui.Popup',
 		x = (width - this.contentBox.getMeasureWidth())/2;
 		y = (height - this.contentBox.getMeasureHeight())/2;
 		this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-		this.shadow.setOpacity(0.5);
+		this.shadow.setOpacity(1);
 		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	}
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 }),
-
-		"Ui.MonthCalendar": {
-			color: new Ui.Color({ r: 1, g: 1, b: 1 }),
-			dayColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.3 }),
-			currentDayColor: new Ui.Color({ r: 1, g: 0.31, b: 0.66, a: 0.5 })
-		}
+		shadowColor: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.5 })
 	}
 });
 
@@ -462,141 +459,4 @@ Ui.Fixed.extend('Ui.PopupBackground', {
 		}
 	}
 });
-
-/*
-Ui.SVGElement.extend('Ui.PopupBackground', {
-	popupDrawing: undefined,
-
-	svgGradient: undefined,
-	darkShadow: undefined,
-	lightShadow: undefined,
-	background: undefined,
-
-	radius: 8,
-	fill: 'black',
-	// [left|right|top|bottom]
-	arrowBorder: 'left',
-	arrowOffset: 30,
-	arrowSize: 10,
-
-	constructor: function(config) {
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
-		if(config.fill != undefined)
-			this.setFill(config.fill);
-		if(config.arrowBorder != undefined)
-			this.setArrowBorder(config.arrowBorder);
-	},
-
-	setArrowBorder: function(arrowBorder) {
-		if(this.arrowBorder != arrowBorder) {
-			this.arrowBorder = arrowBorder;
-			this.invalidateArrange();
-		}
-	},
-
-	setArrowOffset: function(offset) {
-		if(this.arrowOffset != offset) {
-			this.arrowOffset = offset;
-			this.invalidateArrange();
-		}
-	},
-
-	setRadius: function(radius) {
-		if(this.radius != radius) {
-			this.radius = radius;
-			this.invalidateArrange();
-		}
-	},
-
-	setFill: function(fill) {
-		if(this.fill != fill) {
-			this.fill = Ui.Color.create(fill);
-			this.popupDrawing.removeChild(this.svgGradient);
-
-			var yuv = this.fill.getYuv();
-			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) },
-			] });
-			this.svgGradient = gradient.getSVGGradient();
-			var gradId = 'grad'+Core.Util.generateId();
-			this.svgGradient.setAttributeNS(null, 'id', gradId);
-			this.popupDrawing.insertBefore(this.svgGradient, this.popupDrawing.firstChild);
-			this.background.style.fill = 'url(#'+gradId+')';
-			this.darkShadow.style.fill = (new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v })).getCssHtml();
-			this.lightShadow.style.fill = (new Ui.Color({ y: yuv.y + 0.3, u: yuv.u, v: yuv.v })).getCssHtml();
-		}
-	},
-
-	//
-	// Private
-	//
-
-	genPath: function(width, height, radius, arrowBorder, arrowSize, arrowOffset) {
-		if(arrowBorder == 'none') {
-			var v1 = width - radius;
-			var v2 = height - radius;
-			return 'M'+radius+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+radius+','+height+' A'+radius+','+radius+' 0 0,1 0,'+v2+' L0,'+radius+' A'+radius+','+radius+' 0 0,1 '+radius+',0 z';
-		}
-		else if(arrowBorder == 'left') {
-			var v1 = width - this.radius;
-			var v2 = height - this.radius;
-			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 A'+radius+','+radius+' 0 0,1 '+width+','+radius+' L'+width+','+v2+' A'+radius+','+radius+' 0 0,1 '+v1+','+height+' L'+(radius+arrowSize)+','+height+' A'+radius+','+radius+' 0 0,1 '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' A'+radius+','+radius+' 0 0,1 '+(radius+arrowSize)+',0 z';
-		}
-	}
-}, {
-	render: function() {
-		this.popupDrawing = document.createElementNS(svgNS, 'g');
-
-		this.darkShadow = document.createElementNS(svgNS, 'path');
-		this.popupDrawing.appendChild(this.darkShadow);
-		this.darkShadow.style.fill = '#010002';
-		this.darkShadow.style.fillOpacity = '0.8';
-		this.darkShadow.style.stroke = 'none';
-
-		this.lightShadow = document.createElementNS(svgNS, 'path');
-		this.popupDrawing.appendChild(this.lightShadow);
-		this.lightShadow.style.fill = '#5f625b';
-		this.lightShadow.style.fillOpacity = '1';
-		this.lightShadow.style.stroke = 'none';
-
-		var yuv = (new Ui.Color({ r: 0.50, g: 0.50, b: 0.50 })).getYuv();
-
-		var gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: 0.25, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: 0.16, u: yuv.u, v: yuv.v }) },
-		] });
-
-		this.svgGradient = gradient.getSVGGradient();
-		this.svgGradient.setAttributeNS(null, 'id', 'bgGrad');
-		this.popupDrawing.appendChild(this.svgGradient);
-
-		this.background = document.createElementNS(svgNS, 'path');
-		this.popupDrawing.appendChild(this.background);
-		this.background.style.fill = 'url(#bgGrad)';
-		this.background.style.fillOpacity = '1';
-		this.background.style.stroke = 'none';
-
-		return this.popupDrawing;
-	},
-
-	arrangeCore: function(width, height) {
-		this.darkShadow.setAttributeNS(null, 'd', this.genPath(width, height, this.radius, this.arrowBorder, this.arrowSize, this.arrowOffset));
-
-		if(this.arrowBorder == 'none') {
-			this.lightShadow.setAttributeNS(null, 'transform', 'translate(1,1)');
-			this.background.setAttributeNS(null, 'transform', 'translate(2,2)');
-			this.lightShadow.setAttributeNS(null, 'd', this.genPath(width-2, height-2, this.radius-1, this.arrowBorder));
-			this.background.setAttributeNS(null, 'd', this.genPath(width-4, height-4, this.radius-1.4, this.arrowBorder));
-		}
-		else {
-			this.lightShadow.setAttributeNS(null, 'transform', 'translate(1.6,1)');
-			this.background.setAttributeNS(null, 'transform', 'translate(3.2,2)');
-			this.lightShadow.setAttributeNS(null, 'd', this.genPath(width-3, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
-			this.background.setAttributeNS(null, 'd', this.genPath(width-5.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
-		}
-	}
-});
-*/
 

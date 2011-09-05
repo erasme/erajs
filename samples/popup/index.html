@@ -31,11 +31,11 @@ var popup;
 popup = new Ui.Popup({ verticalAlign: 'top', horizontalAlign: 'left' });
 var vbox2 = new Ui.VBox({ spacing: 5 });
 popup.setContent(vbox2);
-vbox2.append(new Ui.Label({ text: 'bonjour', color: 'white' }));
-vbox2.append(new Ui.Rectangle({ fill: 'white', height: 1 }));
-vbox2.append(new Ui.Label({ text: 'bonjour2', color: 'white' }));
-vbox2.append(new Ui.Rectangle({ fill: 'white', height: 1 }));
-vbox2.append(new Ui.Label({ text: 'bonjour3', color: 'white' }));
+vbox2.append(new Ui.Label({ text: 'bonjour' }));
+vbox2.append(new Ui.Separator());
+vbox2.append(new Ui.Label({ text: 'bonjour2' }));
+vbox2.append(new Ui.Separator());
+vbox2.append(new Ui.Label({ text: 'bonjour3' }));
 
 app.connect(button, 'press', function() {
 	popup.show();

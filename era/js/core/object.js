@@ -169,6 +169,20 @@ Function.prototype.hasInstance = function(obj) {
 };
 
 /**
+* @return true if the current object if class or subclass of
+* the given class name
+*/
+Core.Object.prototype.isSubclassOf = function(parentClassName) {
+	var current = this;
+	while(current != undefined) {
+		if(current.classType == parentClassName)
+			return true;
+		current = current.__baseclass__;
+	}
+	return false;
+};
+
+/**
 *	Declare supported events on this class
 *	@param {String} events List of all class events
 *	@example this.addEvents('press', 'down', 'up');

@@ -61,10 +61,10 @@ Ui.LBox.extend('Ui.App',
 		if(('onselectstart' in document) && ('attachEvent' in document))
 			document.attachEvent('onselectstart', this.onWindowSelectStart);
 
-//		if(config.style != undefined)
-//			this.setStyle(config.style);
-//		else
-//			this.setStyle(this.style);
+		if('style' in config)
+			this.setStyle(config.style);
+		else
+			this.setStyle(Ui.Styles['default']);
 
 //		this.connect(window, 'keypress', this.onWindowKeyPress, true);
 //		this.connect(window, 'keydown', this.onWindowKeyDown, true);

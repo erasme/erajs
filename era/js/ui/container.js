@@ -130,8 +130,10 @@ Ui.Element.extend('Ui.Container',
 
 	onInternalStyleChange: function() {
 		this.onStyleChange();
-		for(var i = 0; i < this.children.length; i++)
-			this.children[i].setParentStyle(this.mergeStyle);
+		if(this.children != undefined) {
+			for(var i = 0; i < this.children.length; i++)
+				this.children[i].setParentStyle(this.mergeStyle);
+		}
 	},
 
 	onInternalDisable: function() {

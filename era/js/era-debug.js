@@ -122,6 +122,7 @@ include(eraBaseDirectory+'ui/carouselable.js');
 //
 // Ui high level element (= drawing + logic + style)
 //
+include(eraBaseDirectory+'ui/separator.js');
 include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/textarea.js');
@@ -155,4 +156,10 @@ include(eraBaseDirectory+'ui/embed.js');
 include(eraBaseDirectory+'ui/monthcalendar.js');
 include(eraBaseDirectory+'ui/datepicker.js');
 include(eraBaseDirectory+'ui/notebook.js');
+
+//
+// Ui styles
+//
+include(eraBaseDirectory+'ui/styles.js');
+
 
