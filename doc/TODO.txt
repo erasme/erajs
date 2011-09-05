@@ -181,7 +181,7 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 - corriger l'icone "edit"
 
-- faire fonctionner le "doubleclick" dans IE < 9
+* - faire fonctionner le "doubleclick" dans IE < 9
 
 * - BUG dans le drag & drop émulé, les parties VML n'apparaissent pas
 
@@ -202,4 +202,11 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 * - implémenter l'héritage des class dans les styles hérités dans le DOM
     (comme pour les styles statiques)
+
+- probleme dans les transitions box, si on a 3 elements, que l'on passe du 1 au 2
+  et du 2 au trois avant d'avoir fini la transition du 1 au 2, on se retrouve
+  dans un état de transparence intermédiaire
+
+- si on place un uploadable dans une dropbox sous Firefox 3.6, on ne peut
+  pas cliquer (rien ne se passe) sur l'uploadable
 

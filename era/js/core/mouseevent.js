@@ -55,9 +55,38 @@ Core.Object.extend('Core.MouseManager',
 		Core.Event.register('mousemove', Core.MouseEvents);
 		Core.Event.register('mouseup', Core.MouseEvents);
 
-		document.attachEvent('onmousedown', this.onMouseDown);
-		document.attachEvent('onmousemove', this.onMouseMove);
-		document.attachEvent('onmouseup', this.onMouseUp);
+		var wrapperDown = function() {
+			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+		}
+		wrapperDown.scope = this;
+		wrapperDown.callback = this.onMouseDown;
+		document.attachEvent('onmousedown', wrapperDown);
+
+		var wrapperMove = function() {
+			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+		}
+		wrapperMove.scope = this;
+		wrapperMove.callback = this.onMouseMove;
+		document.attachEvent('onmousemove', wrapperMove);
+
+		var wrapperUp = function() {
+			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+		}
+		wrapperUp.scope = this;
+		wrapperUp.callback = this.onMouseUp;
+		document.attachEvent('onmouseup', wrapperUp);
+
+		var wrapperDblClick = function() {
+			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+		}
+		wrapperDblClick.scope = this;
+		wrapperDblClick.callback = this.onMouseDblClick;
+		document.attachEvent('ondblclick', wrapperDblClick);
+	},
+
+	onMouseDblClick: function(event) {
+		this.onMouseDown(event);
+		return this.onMouseUp(event);
 	},
 
 	onMouseDown: function(event) {
