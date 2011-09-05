@@ -240,7 +240,6 @@ Ui.Container.extend('Ui.Fold',
 			this.setOffset(destOffset - ((destOffset - offset) * (1 - progress)));
 		}
 		if((progress == 1) && this.isFolded) {
-			console.log('hide content');
 			this.contentBox.hide();
 		}
 	}

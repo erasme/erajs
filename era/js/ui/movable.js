@@ -29,6 +29,7 @@ Ui.LBox.extend('Ui.Movable', {
 	lock: false,
 	isInMoveEvent: false,
 	cumulMove: 0,
+	catcher: undefined,
 
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
@@ -176,6 +177,15 @@ Ui.LBox.extend('Ui.Movable', {
 
 		this.onDown();
 
+		this.catcher = document.createElement('div');
+		this.catcher.style.position = 'absolute';
+		this.catcher.style.left = '0px';
+		this.catcher.style.right = '0px';
+		this.catcher.style.top = '0px';
+		this.catcher.style.bottom = '0px';
+		this.catcher.zIndex = 1000;
+		document.body.appendChild(this.catcher);
+
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 
@@ -209,6 +219,8 @@ Ui.LBox.extend('Ui.Movable', {
 
 		if(event.button != 0)
 			return;
+
+		document.body.removeChild(this.catcher);
 
 		this.disconnect(window, 'mousemove', this.onMouseMove);
 		this.disconnect(window, 'mouseup', this.onMouseUp);

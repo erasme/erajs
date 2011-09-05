@@ -182,6 +182,12 @@ Core.Object.extend('Core.DragDataTransfer',
 //			document.body.appendChild(this.image);
 			this.rootWindow.document.body.appendChild(this.image);
 
+			// if SVG, find the first HTML element to avoid
+			// SVG browser bugs
+			while((overElement != undefined) && ('parentNode' in overElement) && ('ownerSVGElement' in overElement)) {
+				overElement = overElement.parentNode;
+			}
+
 //			console.log('dragover: '+overElement.className);
 
 			this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
@@ -214,8 +220,7 @@ Core.Object.extend('Core.DragDataTransfer',
 //			document.body.removeChild(this.image);
 
 			if(this.overElement != undefined) {
-				console.log('drag mouseup over: '+this.overElement.className);
-
+//				console.log('drag mouseup over: '+this.overElement.className);
 				var dragEvent = document.createEvent('DragEvent');
 				dragEvent.initDragEvent('drop', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 				this.overElement.dispatchEvent(dragEvent);

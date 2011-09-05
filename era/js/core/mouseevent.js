@@ -42,6 +42,7 @@ Core.Event.extend('Core.MouseEvents',
 Core.Object.extend('Core.MouseManager',
 /**@lends Core.MouseManager#*/
 {
+	captureElement: undefined,
 
 	/**
 	 * @constructs
@@ -60,6 +61,8 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseDown: function(event) {
+		this.captureElement = event.srcElement;
+		this.captureElement.setCapture();
 		var target = Core.Event.cleanTarget(event.srcElement);
 		var mouseEvent = document.createEvent('MouseEvents');
 		// rename button for IE
@@ -94,6 +97,7 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseUp: function(event) {
+		this.captureElement.releaseCapture();
 		var target = Core.Event.cleanTarget(event.srcElement);
 		var mouseEvent = document.createEvent('MouseEvents');
 		// rename button for IE

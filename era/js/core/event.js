@@ -41,7 +41,10 @@ Core.Object.extend('Core.Event',
 			while(current != undefined) {
 				if('dispatchEvent' in current)
 					stack.push(current);
-				current = current.offsetParent;
+//				if('offsetParent' in current)
+//					current = current.offsetParent;
+//				else
+					current = current.parentNode;
 			}
 			stack.push(window);
 
