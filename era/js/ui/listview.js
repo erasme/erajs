@@ -146,7 +146,7 @@ Ui.Container.extend('Ui.ListView',
 	* Select the given row
 	*/
 	selectRow: function(row) {
-		if((row > 0) && (row < this.data.length)) {
+		if((row >= 0) && (row < this.data.length)) {
 			if(this.selectedRow != undefined) {
 				if(this.selectedRow == row)
 					return;
