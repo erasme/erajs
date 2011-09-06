@@ -160,7 +160,8 @@ Ui.Element.extend('Ui.TextArea',
 		this.textareaDrawing.style.margin = '0px';
 		this.textareaDrawing.style.padding = '0px';
 		this.textareaDrawing.style.outline = 'none';
-		this.textareaDrawing.style.background = 'none';
+		if(!navigator.isIE7 && !navigator.isIE8)
+			this.textareaDrawing.style.background = 'none';
 		if(navigator.isWebkit)
 			this.textareaDrawing.style.webkitAppearance = 'none'
 		this.textareaDrawing.style.fontSize = this.fontSize+'px';

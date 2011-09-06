@@ -170,7 +170,8 @@ Ui.Element.extend('Ui.Entry',
 		this.entryDrawing.style.margin = '0px';
 		this.entryDrawing.style.padding = '0px';
 		this.entryDrawing.style.outline = 'none';
-		this.entryDrawing.style.background = 'none';
+		if(!navigator.isIE7 && !navigator.isIE8)
+			this.entryDrawing.style.background = 'none';
 		if(navigator.isWebkit)
 			this.entryDrawing.style.webkitAppearance = 'none';
 		this.entryDrawing.style.fontSize = this.fontSize+'px';

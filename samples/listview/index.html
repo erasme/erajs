@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test ListView</title>
+    <script src='../../era/js/era-debug.js'></script>
+<script>
+
+Ui.VBox.extend('Test.Logs', {
+	logs: undefined,
+	scrolling: undefined,
+
+	constructor: function() {
+		this.append(new Ui.Label({ text: 'Logs:', horizontalAlign: 'left', fontWeight: 'bold' }));
+		this.scrolling = new Ui.ScrollingArea();
+		this.append(this.scrolling, true);
+		this.logs = new Ui.VBox();
+		this.scrolling.setContent(this.logs);
+	},
+
+	log: function(text, color) {
+		if(color == undefined)
+			color = 'black';
+		this.logs.prepend(new Ui.Label({ text: text, color: color, horizontalAlign: 'left' }));
+	}
+});
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var checkbox = new Ui.CheckBox({ text: 'show headers', value: true });
+toolbar.append(checkbox);
+app.connect(checkbox, 'change', function(checkbox, value) {
+	if(value)
+		listview.showHeaders();
+	else
+		listview.hideHeaders();
+});
+
+var button = new Ui.Button({ text: 'select row 5', verticalAlign: 'center' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	listview.selectRow(5);
+});
+
+var hbox = new Ui.HBox();
+vbox.append(hbox, true);
+
+var scroll = new Ui.ScrollingArea();
+hbox.append(scroll, true);
+
+var listview = new Ui.ListView({ headers: [ { type: 'string', title: 'Data 1', key: 'data1' }, { type: 'string', title: 'Data 2', key: 'data2' } ] });
+scroll.setContent(listview);
+
+app.connect(listview, 'select', function(listview, row) {
+	logs.log('select row: '+row);
+});
+app.connect(listview, 'unselect', function(listview, row) {
+	logs.log('unselect row: '+row);
+});
+app.connect(listview, 'unselect', function(listview, row, colKey) {
+	logs.log('activate row: '+row+', colKey: '+colKey);
+});
+
+
+for(var i = 0; i < 50; i++) {
+	listview.appendData({ data1: 'hi number '+i, data2: 'col 2 '+i });
+}
+
+var logs = new Test.Logs({ width: 250 });
+hbox.append(logs);
+
+</script>
+  </head>
+</html>
