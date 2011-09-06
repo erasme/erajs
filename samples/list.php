@@ -1,7 +1,6 @@
 <?php
 
 $res = '';
-
 $dir = './';
 
 $handle = opendir($dir);
