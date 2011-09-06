@@ -63,9 +63,9 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 	  - toolbar-right
 	  - toolbar-middle
 
-- Proposer un style différent pour les menus, les dialogs
-  style que les menus et les dialogs appliqueront aux éléments
-  enfants (avec les propriétés génériques: background, spacing...)
+* - Proposer un style différent pour les menus, les dialogs
+    style que les menus et les dialogs appliqueront aux éléments
+    enfants (avec les propriétés génériques: background, spacing...)
 
 * - pour Ui.Rectangle, supprimer un niveau de div. Modifier le drawing
     pour l'affichage.
@@ -77,8 +77,8 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
   l'offset uniquement relatif (entre 0 et 1). Si l'offset est en relatif
   mettre à jour le positionnement absolue dans arrange.
 
-- pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'il
-  faut (en hauteur) (à discuter)
+X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'il
+    faut (en hauteur) (à discuter)
 
 - Problème avec l'iPad. Si le clavier virtuel est ouvert et que l'on recalcul
   la taille de la fenêtre. On perd la taille du clavier virtuel. Lorsqu'il ferme
@@ -189,7 +189,7 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
 
 - gérer la sélection et la non sélection dans IE < 9
 
-- gérer le clic droit dans IE < 9
+* - gérer le clic droit dans IE < 9
 
 - créer un Ui.Combo comme bouton avec une liste de choix
 
@@ -207,6 +207,9 @@ X - dans Ui.Button, fournir une propriété "variant" ou "ui"
     et du 2 au trois avant d'avoir fini la transition du 1 au 2, on se retrouve
     dans un état de transparence intermédiaire
 
-- si on place un uploadable dans une dropbox sous Firefox 3.6, on ne peut
-  pas cliquer (rien ne se passe) sur l'uploadable
+* - si on place un uploadable dans une dropbox sous Firefox 3.6, on ne peut
+    pas cliquer (rien ne se passe) sur l'uploadable
+
+- améliorer Ui.Text pour que le text utilise mieux l'espace (pb des espaces)
+  et permettre de changer l'alignement du texte: left, right, center
 
