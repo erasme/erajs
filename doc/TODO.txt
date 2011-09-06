@@ -118,8 +118,8 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 - Implémenter un 'fill' pour Ui.Shape qui supporte les textures à base
   d'image (Ui.ImageBrush)
 
-- Utiliser getValue() et setValue() pour tous les éléments qui renvoie
-  une valeur (comme Ui.CheckBox par exemple)
+* - Utiliser getValue() et setValue() pour tous les éléments qui renvoie
+    une valeur (comme Ui.CheckBox par exemple)
 
 - Régler le problème de la sélection du text dans Opera quand on en veux pas
   et dans IE < 9
@@ -212,4 +212,11 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 - améliorer Ui.Text pour que le text utilise mieux l'espace (pb des espaces)
   et permettre de changer l'alignement du texte: left, right, center
+
+- améliorer Ui.ButtonGraphic pour permettre de mutualiser le code aussi avec
+  TextButtonField et des listes de bouttons par exemple
+
+- fournir le CompactLabel dans erajs et l'optimiser
+
+- permettre d'avoir des boutons qui ne s'affichent que au survol
 
