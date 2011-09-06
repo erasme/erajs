@@ -90,7 +90,7 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseDown: function(event) {
-		if(('tagName' in event.srcElement) && (event.srcElement.tagName == 'INPUT') && (event.srcElement.type == 'file'))
+		if(('tagName' in event.srcElement) && ((event.srcElement.tagName == 'INPUT') || (event.srcElement.tagName == 'TEXTAREA')))
 			return;
 
 		this.captureElement = event.srcElement;
@@ -112,7 +112,7 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseMove: function(event) {
-		if(('tagName' in event.srcElement) && (event.srcElement.tagName == 'INPUT') && (event.srcElement.type == 'file'))
+		if(('tagName' in event.srcElement) && ((event.srcElement.tagName == 'INPUT') || (event.srcElement.tagName == 'TEXTAREA')))
 			return;
 
 		var mouseEvent = document.createEvent('MouseEvents');
@@ -132,10 +132,11 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseUp: function(event) {
-		if(('tagName' in event.srcElement) && (event.srcElement.tagName == 'INPUT') && (event.srcElement.type == 'file'))
+		if(('tagName' in event.srcElement) && ((event.srcElement.tagName == 'INPUT') || (event.srcElement.tagName == 'TEXTAREA')))
 			return;
 
-		this.captureElement.releaseCapture();
+		if(this.captureElement != undefined)
+			this.captureElement.releaseCapture();
 		var target = Core.Event.cleanTarget(event.srcElement);
 		var mouseEvent = document.createEvent('MouseEvents');
 		// rename button for IE

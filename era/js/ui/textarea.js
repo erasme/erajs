@@ -24,6 +24,8 @@ Ui.Element.extend('Ui.TextArea',
 		if(config.color != undefined)
 			this.setColor(config.color);
 
+		this.getDrawing().selectable = true;
+
 		this.connect(this.textareaDrawing, 'mousedown', function(event) {
 //			console.log('entry mousedown');
 			this.textareaDrawing.focus();

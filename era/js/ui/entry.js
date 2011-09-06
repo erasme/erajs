@@ -27,6 +27,8 @@ Ui.Element.extend('Ui.Entry',
 		if(config.passwordMode != undefined)
 			this.setPasswordMode(config.passwordMode);
 
+		this.getDrawing().selectable = true;
+
 		this.connect(this.entryDrawing, 'mousedown', this.onMouseDown);
 		this.connect(this.entryDrawing, 'touchstart', this.onTouchStart);
 		this.connect(this.entryDrawing, 'change', this.onChange);
