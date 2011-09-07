@@ -2,6 +2,7 @@
 version/
 tests/
 *copie*
+*.highlight
 doc/jsdoc/*.html
 doc/jsdoc/symbols/
 
