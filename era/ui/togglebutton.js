@@ -36,11 +36,11 @@ Ui.Togglable.extend('Ui.ToggleButton',
 	},
 
 	getIcon: function() {
-		return this.getIcon();
+		return this.graphic.getIcon();
 	},
 
 	setIcon: function(icon) {
-		this.setIcon(icon);
+		this.graphic.setIcon(icon);
 	},
 
 	getOrientation: function() {
