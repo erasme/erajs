@@ -10,6 +10,8 @@ Ui.LBox.extend('Ui.Downloadable',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
+		this.addEvents('download');
+
 		if(config.src != undefined)
 			this.setSrc(config.src);
 
@@ -18,8 +20,6 @@ Ui.LBox.extend('Ui.Downloadable',
 		this.setRole('button');
 
 		this.connect(this.getDrawing(), 'click', this.onClick);
-
-		this.addEvents('download');
 	},
 
 	setSrc: function(src) {
