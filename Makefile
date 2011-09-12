@@ -12,3 +12,7 @@ sampleshighlight:
 
 jsdoc:
 	jsdoc -c=doc/jsdoc/conf/era.conf -d=doc/jsdoc/
+
+clean:
+	find samples -iname \*.html.highlight -type f -exec rm {} \;
+

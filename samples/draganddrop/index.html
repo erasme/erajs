@@ -55,6 +55,7 @@ app.connect(draggable, 'dragend', function(draggable, operation) {
 //
 var dropbox = new Ui.DropBox({ width: 200, height: 200 });
 // add allowed mimetype for this dropbox. Here we allow the mimetype of the drag element
+dropbox.addMimetype('text/uri-list');
 dropbox.addMimetype('application/x-wonder-data');
 // fill with content to see something
 dropbox.append(new Ui.Rectangle({ fill: 'lightgreen', radius: 8 }));
