@@ -100,10 +100,6 @@ Core.Object.extend('Ui.Element',
      * @constructs
 	 * @class Define the base class for all GUI elements
      * @extends Core.Object
-     * @param {String} [config.width]
-     * @param {String} [config.height]
-     * @param {String} [config.verticalAlign]
-     * @param {String} [config.horizontalAlign]
      * @param {String} [config.margin]
      * @param {String} [config.width]
      * @param {String} [config.height]
