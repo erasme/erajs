@@ -52,12 +52,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.connect(this, 'toggle', this.onCheckBoxToggle);
 		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
 
-		if('text' in config)
-			this.setText(config.text);
-		if('content' in config)
-			this.setContent(config.content);
-		if('value' in config)
-			this.setValue(config.value);
+		this.autoConfig(config, 'text', 'content', 'value');
 	},
 
 	getValue: function() {

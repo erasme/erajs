@@ -10,8 +10,7 @@ Anim.EasingFunction.extend('Anim.ElasticEase',
     *   @extends Anim.EasingFunction
 	*/
 	constructor: function(config) {
-		if(config.oscillations != undefined)
-			this.setOscillations(config.oscillations);
+		this.autoConfig(config, 'oscillations', 'springiness');
 	},
 
 	setOscillations: function(oscillations) {

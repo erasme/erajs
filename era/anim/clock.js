@@ -43,6 +43,8 @@ Core.Object.extend('Anim.Clock',
 	*	@param config.duration
 	*/
 	constructor: function(config) {
+		this.addEvents('complete', 'timeupdate');
+
 		if(config.parent != undefined)
 			this.parent = config.parent;
 		if(config.beginTime != undefined)
@@ -70,8 +72,6 @@ Core.Object.extend('Anim.Clock',
 
 		if(this.duration == 'automatic')
 			this.duration = 'forever';
-
-		this.addEvents('complete', 'timeupdate');
 	},
 
 	setParent: function(parent) {

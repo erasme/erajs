@@ -25,20 +25,8 @@ Ui.Element.extend('Ui.Label',
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
-		if(config.text != undefined)
-			this.setText(config.text);
-		if(config.fontSize != undefined)
-			this.setFontSize(config.fontSize);
-		if(config.fontFamily != undefined)
-			this.setFontFamily(config.fontFamily);
-		if(config.fontWeight != undefined)
-			this.setFontWeight(config.fontWeight);
-		if(config.color != undefined)
-			this.setColor(config.color);
-		else
-			this.setColor(this.color);
-		if(config.orientation != undefined)
-			this.setOrientation(config.orientation);
+		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
+			'color', 'orientation');
 	},
 
 	getText: function() {

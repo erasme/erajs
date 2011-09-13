@@ -368,11 +368,10 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 		this.uiTitle = new Ui.Label({ margin: 8 });
 		this.append(this.uiTitle);
 
-		if(config.title != undefined)
-			this.setTitle(config.title);
-
 		this.connect(this, 'down', this.onListViewHeaderDown);
 		this.connect(this, 'up', this.onListViewHeaderUp);
+
+		this.autoConfig(config, 'title');
 	},
 
 	getTitle: function() {
@@ -472,11 +471,10 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 		this.ui = new Ui.Label({ margin: 8, horizontalAlign: 'left' });
 		this.append(this.ui);
 
-		if(config.title != undefined)
-			this.setTitle(config.title);
-
 		this.connect(this, 'select', this.onCellSelect);
 		this.connect(this, 'unselect', this.onCellUnselect);
+
+		this.autoConfig(config, 'title');
 	},
 
 	getKey: function() {

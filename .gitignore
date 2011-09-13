@@ -5,6 +5,7 @@ tests/
 *.highlight
 doc/jsdoc/*.html
 doc/jsdoc/symbols/
+vrac/
 
 # Emacs
 *~

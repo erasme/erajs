@@ -10,6 +10,10 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 			focusColor: Ui.Color.create('#f6caa2')
 		},
+		"Ui.DownloadButton": {
+			color: new Ui.Color({ r: 0.21, g: 0.9, b: 0.56 }),
+			focusColor: Ui.Color.create('#f6caa2')
+		},
 		"Ui.Separator": {
 			color: new Ui.Color({ r: 0, g: 0,  b: 0 })
 		},

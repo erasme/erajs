@@ -17,25 +17,10 @@ Ui.LBox.extend('Ui.Shadow',
 	 */
 	constructor: function(config) {
 		this.color = Ui.Color.create('black');
+		this.setShadowWidth(4);
 
-		if('radius' in config)
-			this.setRadius(config.radius);
-		if('radiusTopLeft' in config)
-			this.setRadiusTopLeft(config.radiusTopLeft);
-		if('radiusTopRight' in config)
-			this.setRadiusTopRight(config.radiusTopRight);
-		if('radiusBottomLeft' in config)
-			this.setRadiusBottomLeft(config.radiusBottomLeft);
-		if('radiusBottomRight' in config)
-			this.setRadiusBottomRight(config.radiusBottomRight);
-		if('shadowWidth' in config)
-			this.setShadowWidth(config.shadowWidth)
-		else
-			this.setShadowWidth(4);
-		if('inner' in config)
-			this.setInner(config.inner);
-		if('color' in config)
-			this.setColor(config.color);
+		this.autoConfig(config, 'radius', 'radiusTopLeft', 'radiusTopRight',
+			'radiusBottomLeft',	'radiusBottomRight', 'shadowWidth', 'inner', 'color');
 	},
 
 	getColor: function() {

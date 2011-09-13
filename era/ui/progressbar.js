@@ -34,8 +34,7 @@ Ui.Container.extend('Ui.ProgressBar', {
 		this.bar = new Ui.Rectangle({ margin: 1 });
 		this.barBox.append(this.bar);
 
-		if(config.value != undefined)
-			this.setValue(config.value);
+		this.autoConfig(config, 'value');
 	},
 
 	setValue: function(value) {

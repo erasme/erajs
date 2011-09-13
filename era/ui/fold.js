@@ -21,13 +21,6 @@ Ui.Container.extend('Ui.Fold',
 	constructor: function(config) {
 		this.addEvents('fold', 'unfold', 'orientationchange');
 
-		if(config.over != undefined)
-			this.setOver(config.over);
-		if(config.mode != undefined)
-			this.setMode(config.mode);
-		if(config.orientation != undefined)
-			this.setOrientation(config.orientation);
-
 		this.headerBox = new Ui.Pressable();
 		this.appendChild(this.headerBox);
 		this.connect(this.headerBox, 'press', this.onHeaderPress);
@@ -36,10 +29,7 @@ Ui.Container.extend('Ui.Fold',
 		this.appendChild(this.contentBox);
 		this.contentBox.hide();
 
-		if(config.header != undefined)
-			this.setHeader(config.header);
-		if(config.content != undefined)
-			this.setContent(config.content);
+		this.autoConfig(config, 'header', 'content', 'over', 'mode', 'orientation');
 	},
 
 	getIsFolded: function() {

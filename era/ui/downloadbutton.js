@@ -1,23 +1,25 @@
-Ui.Togglable.extend('Ui.ToggleButton', 
-/**@lends Ui.ToggleButton#*/
+Ui.Downloadable.extend('Ui.DownloadButton', 
+/** @lends Ui.Button# */
 {
 	graphic: undefined,
 
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.Togglable
-	 */
+    /**
+     * @constructs
+	 * @class A DownloadButton is a button that allow to download a file when clicked.
+     * @extends Ui.Downloadable
+     * @param {String} [config.text] Button's text
+     * @param {String} [config.icon] Icon name
+     * @param {String} [config.orientation] 'vertical' or 'horizontal'
+	 * @param {mixed} [config] see {@link Ui.Downloadable} constructor for more options.
+     */ 
 	constructor: function(config) {
 		this.graphic = new Ui.ButtonGraphic();
-		this.append(this.graphic);
+		this.setContent(this.graphic);
 
 		this.autoConfig(config, 'text', 'icon', 'orientation');
 
-		this.connect(this, 'down', function() {	this.graphic.setIsDown(true); });
-		this.connect(this, 'up', function() { this.graphic.setIsDown(this.getIsDown() || this.getIsToggled()); });
-		this.connect(this, 'toggle', function() { this.graphic.setIsDown(true); });
-		this.connect(this, 'untoggle', function() { this.graphic.setIsDown(this.getIsDown() || this.getIsToggled()); });
+		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
+		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
 		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
 		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
 	},
@@ -38,15 +40,17 @@ Ui.Togglable.extend('Ui.ToggleButton',
 		this.graphic.setIcon(icon);
 	},
 
+    /** @return {String} Orientation */
 	getOrientation: function() {
 		return this.graphic.getOrientation();
 	},
-
+    
+    /** @param {String} orientation can be 'vertical' or 'horizontal' */
 	setOrientation: function(orientation) {
 		this.graphic.setOrientation(orientation);
 	}
 }, 
-/**@lends Ui.ToggleButton#*/
+/** @lends Ui.Button# */
 {
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
@@ -67,10 +71,10 @@ Ui.Togglable.extend('Ui.ToggleButton',
 		this.graphic.setIsEnable(true);
 	}
 }, 
-/**@lends Ui.ToggleButton*/
+/** @lends Ui.Button */
 {
 	style: {
-		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+		color: new Ui.Color({ r: 0.31, g: 1, b: 0.66 }),
 		focusColor: Ui.Color.create('#f6caa2'),
 		radius: 4,
 		spacing: 3

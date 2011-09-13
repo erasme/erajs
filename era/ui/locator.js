@@ -8,10 +8,8 @@ Ui.Container.extend('Ui.Locator', {
 	spacing: 2,
 
 	constructor: function(config) {
-		if(config.path != undefined)
-			this.setPath(config.path);
-
 		this.addEvents('change');
+		this.autoConfig(config, 'path');
 	},
 
 	setPath: function(path) {
@@ -194,8 +192,7 @@ Ui.Shape.extend('Ui.LocatorRightArrow', {
 	radius: 8,
 
 	constructor: function(config) {
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
+		this.autoConfig(config, 'radius');
 	},
 
 	setRadius: function(radius) {
@@ -216,8 +213,7 @@ Ui.Shape.extend('Ui.LocatorLeftArrow', {
 	radius: 8,
 
 	constructor: function(config) {
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
+		this.autoConfig(config, 'radius');
 	},
 
 	setRadius: function(radius) {

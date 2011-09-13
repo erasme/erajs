@@ -13,57 +13,31 @@ Core.Object.extend('Core.HttpRequest',
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
-		if('url' in config)
-			this.setUrl(config.url);
-		if('method' in config)
-			this.setMethod(config.method);
-		if('binary' in config)
-			this.binary = config.binary;
-		if('arguments' in config)
-			this.arguments = config.arguments;
-
-//		if(Core.HttpRequest.supportXDomainRequest) {
-//			this.request = new XDomainRequest();
-//
-//			var wrapperLoad = function() {
-//				var httprequest = arguments.callee.httprequest;
-//				httprequest.fireEvent('done');
-//			}
-//			wrapperLoad.httprequest = this;
-//			this.request.onload = wrapperLoad;
-//
-//			var wrapperError = function() {
-//				var httprequest = arguments.callee.httprequest;
-//				httprequest.fireEvent('error');
-//			}
-//			wrapperError.httprequest = this;
-//			this.request.onerror = wrapperError;
-//
-//			this.request.open(this.method, this.url);
-//		}
-//		else {
-			this.request = new XMLHttpRequest();
-
-			if(this.binary)
-				this.request.overrideMimeType('text/plain; charset=x-user-defined');
-
-			var wrapper = function() {
-				var httprequest = arguments.callee.httprequest;
-				if(httprequest.request.readyState == 4) {
-					if(httprequest.request.status == 200)
-						httprequest.fireEvent('done', httprequest);
-					else
-						httprequest.fireEvent('error', httprequest, httprequest.request.status);
-				}
-			}
-			wrapper.httprequest = this;
-			this.request.onreadystatechange = wrapper;
-//		}
 		this.addEvents('error', 'done');
+
+		this.autoConfig(config, 'url', 'method', 'arguments', 'binary');
+
+		this.request = new XMLHttpRequest();
+
+		var wrapper = function() {
+			var httprequest = arguments.callee.httprequest;
+			if(httprequest.request.readyState == 4) {
+				if(httprequest.request.status == 200)
+					httprequest.fireEvent('done', httprequest);
+				else
+					httprequest.fireEvent('error', httprequest, httprequest.request.status);
+			}
+		}
+		wrapper.httprequest = this;
+		this.request.onreadystatechange = wrapper;
 	},
 
 	setUrl: function(url) {
 		this.url = url;
+	},
+
+	setBinary: function(binary) {
+		this.binary = binary;
 	},
 
 	setMethod: function(method) {
@@ -72,6 +46,10 @@ Core.Object.extend('Core.HttpRequest',
 
 	setRequestHeader: function(header, value) {
 		this.request.setRequestHeader(header, value);
+	},
+
+	setArguments: function(arguments) {
+		this.arguments = arguments;
 	},
 
 	addArgument: function(argName, argValue) {
@@ -111,6 +89,8 @@ Core.Object.extend('Core.HttpRequest',
 				url += '&'+args;
 		}
 		this.request.open(this.method, url, true);
+		if(this.binary)
+			this.request.overrideMimeType('text/plain; charset=x-user-defined');
 		this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 		if(this.method == 'POST')
 			this.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -178,12 +158,4 @@ Core.Object.extend('Core.HttpRequest',
 		return undefined;
 	}
 });
-
-
-//Core.HttpRequest.supportXDomainRequest = false;
-//try {
-//	new XDomainRequest();
-//	Core.HttpRequest.supportXDomainRequest = true;
-//}
-//catch(e) {}
 

@@ -130,6 +130,7 @@ include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
 include(eraBaseDirectory+'ui/togglebutton.js');
 include(eraBaseDirectory+'ui/uploadbutton.js');
+include(eraBaseDirectory+'ui/downloadbutton.js');
 include(eraBaseDirectory+'ui/checkbox.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');

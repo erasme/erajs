@@ -10,8 +10,7 @@ Ui.Transition.extend('Ui.Flip',
 	 * @extends Ui.Transition
 	 */
 	constructor: function(config) {
-		if(config.orientation != undefined)
-			this.setOrientation(config.orientation);
+		this.autoConfig(config, 'orientation');
 	},
 
 	setOrientation: function(orientation) {

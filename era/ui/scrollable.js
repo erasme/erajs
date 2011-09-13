@@ -44,11 +44,6 @@ Ui.Container.extend('Ui.Scrollable',
 	 * @param {Boolean} [config.overScroll] If true, let user scroll over the container content on touch devices. If false, oblige him to use the scrollbar.
 	 */
 	constructor: function(config) {
-		if('scrollHorizontal' in config)
-			this.setScrollHorizontal(config.scrollHorizontal);
-		if('scrollVertical' in config)
-			this.setScrollVertical(config.scrollVertical);
-
 		this.scrollbarHorizontalBox = new Ui.LBox();
 		this.appendChild(this.scrollbarHorizontalBox);
 
@@ -74,9 +69,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'fingerdown', this.onHorizontalFingerDown);
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'fingerdown', this.onVerticalFingerDown);
 
-		if('overScroll' in config)
-			this.setOverScroll(config.overScroll);
-
+		this.autoConfig(config, 'overScroll', 'scrollHorizontal', 'scrollVertical');
 //		this.connect(this, 'keydown', this.onKeyDown);
 	},
 
@@ -300,7 +293,7 @@ Ui.Container.extend('Ui.Scrollable',
 			deltaY = -event.wheelDeltaY / 12;
 		}
 		else if(event.wheelDelta != undefined)
-			deltaY = -event.wheelDelta / 8;
+			deltaY = -event.wheelDelta / 4;
 		else if(event.detail != undefined)
 			deltaY = event.detail * 10 / 3;
 		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);

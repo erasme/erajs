@@ -55,14 +55,8 @@ Ui.LBox.extend('Ui.TextButtonField',
 		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.buttonContentBox.append(this.iconBox);
 
-		if('buttonText' in config)
-			this.setButtonText(config.buttonText);
-		if('buttonIcon' in config)
-			this.setButtonIcon(config.buttonIcon);
-		if('value' in config)
-			this.setValue(config.value);
-
 		this.addEvents('change', 'validate', 'buttonpress');
+		this.autoConfig(config, 'buttonText', 'buttonIcon', 'value');
 	},
 
 	setWidthText: function(nbchar) {

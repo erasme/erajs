@@ -15,10 +15,8 @@ Ui.LBox.extend('Ui.Embed',
 		if(Ui.App.current == undefined)
 			new Ui.App();
 		this.getDrawing().style.cursor = 'default';
-		if('div' in config)
-			this.setDiv(config.div);
-		else if('divId' in config)
-			this.setDivId(config.divId);
+
+		this.autoConfig(config, 'div', 'divId');
 		this.setIsLoaded(true);
 		this.connect(Ui.App.current, 'ready', this.onReady);
 	},

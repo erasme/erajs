@@ -9,8 +9,7 @@ Anim.EasingFunction.extend('Anim.PowerEase',
     *   @extends Anim.EasingFunction
 	*/
 	constructor: function(config) {
-		if(config.power != undefined)
-			this.setPower(config.power);
+		this.autoConfig(config, 'power');
 	},
 
 	setPower: function(power) {

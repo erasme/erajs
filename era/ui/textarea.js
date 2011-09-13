@@ -15,45 +15,25 @@ Ui.Element.extend('Ui.TextArea',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		if(config.fontSize != undefined)
-			this.setFontSize(config.fontSize);
-		if(config.fontFamily != undefined)
-			this.setFontFamily(config.fontFamily);
-		if(config.fontWeight != undefined)
-			this.setFontWeight(config.fontWeight);
-		if(config.color != undefined)
-			this.setColor(config.color);
+		this.addEvents('change', 'scroll');
 
 		this.getDrawing().selectable = true;
 
 		this.connect(this.textareaDrawing, 'mousedown', function(event) {
-//			console.log('entry mousedown');
 			this.textareaDrawing.focus();
 		});
-
-//		this.setFocusable(true);
-
-		this.connect(this.textareaDrawing, 'focus', function(event) {
-//			console.log('textarea focus');
-		});
-		this.connect(this.textareaDrawing, 'blur', function(event) {
-//			console.log('textarea blur');
-		});
-
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
-
-		this.addEvents('change', 'scroll');
 
 		this.connect(this.textareaDrawing, 'scroll', function() {
 //			console.log(this+' scroll event ('+this.textareaDrawing.scrollLeft+','+this.textareaDrawing.scrollTop+')');
-
 			if((this.getMeasureWidth() != this.textareaDrawing.scrollWidth) || (this.getMeasureHeight() != this.textareaDrawing.scrollHeight)) {
 //				console.log('invalidateMeasure');
 				this.invalidateMeasure();
 			}
-
 			this.fireEvent('scroll', this, this.textareaDrawing.scrollLeft, this.textareaDrawing.scrollTop);
 		});
+
+		this.autoConfig(config, 'fontSize', 'fontFamily', 'fontWeight', 'color');
 	},
 
 	setFontSize: function(fontSize) {

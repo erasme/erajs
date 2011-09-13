@@ -17,16 +17,8 @@ Ui.Container.extend('Ui.LBox',
      * @param {String} [config.paddingRight]
      */ 
 	constructor: function(config) {
-		if(config.padding != undefined)
-			this.setPadding(config.padding);
-		if(config.paddingTop != undefined)
-			this.setPaddingTop(config.paddingTop);
-		if(config.paddingBottom != undefined)
-			this.setPaddingBottom(config.paddingBottom);
-		if(config.paddingLeft != undefined)
-			this.setPaddingLeft(config.paddingLeft);
-		if(config.paddingRight != undefined)
-			this.setPaddingRight(config.paddingRight);
+		this.autoConfig(config, 'padding', 'paddingTop', 'paddingBottom',
+			'paddingLeft', 'paddingRight');
 	},
 
 	//

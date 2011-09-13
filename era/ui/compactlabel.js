@@ -5,7 +5,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	fontSize: 16,
 	fontFamily: 'Sans-serif',
 	fontWeight: 'normal',
-	color: 'black',
+	color: undefined,
 	textDrawing: undefined,
 	maxLine: undefined,
 	textAlign: 'left',
@@ -20,22 +20,9 @@ Ui.Element.extend('Ui.CompactLabel',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		if('text' in config)
-			this.setText(config.text);
-		if('fontSize' in config)
-			this.setFontSize(config.fontSize);
-		if('fontFamily' in config)
-			this.setFontFamily(config.fontFamily);
-		if('fontWeight' in config)
-			this.setFontWeight(config.fontWeight);
-		if('color' in config)
-			this.setColor(config.color);
-		else
-			this.setColor(this.color);
-		if('maxLine' in config)
-			this.setMaxLine(config.maxLine);
-		if('textAlign' in config)
-			this.setTextAlign(config.textAlign);
+		this.setColor('black');
+		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
+			'color', 'maxLine', 'textAlign');
 	},
 
 	getMaxLine: function() {
