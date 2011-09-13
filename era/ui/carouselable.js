@@ -31,12 +31,9 @@ Ui.Container.extend('Ui.Carouselable',
 		this.box = new Ui.CarouselableBox();
 		this.movable.setContent(this.box);
 
-		if('ease' in config)
-			this.setEase(config.ease);
-		else
-			this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
-		if('lock' in config)
-			this.setLock(config.lock);
+		this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
+
+		this.autoConfig(config, 'ease', 'lock');
 	},
 
 	getLock: function() {

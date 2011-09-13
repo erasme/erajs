@@ -16,9 +16,6 @@ Ui.LBox.extend('Ui.Downloadable',
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'download');
 
-		if(config.src != undefined)
-			this.setSrc(config.src);
-
 		this.getDrawing().style.cursor = 'pointer';
 		this.setFocusable(true);
 		this.setRole('button');
@@ -26,8 +23,7 @@ Ui.LBox.extend('Ui.Downloadable',
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
-		if('forceTarget' in config)
-			this.setForceTarget(config.forceTarget);
+		this.autoConfig(config, 'src', 'forceTarget');
 	},
 
 	setSrc: function(src) {

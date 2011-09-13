@@ -10,8 +10,8 @@ Ui.Element.extend('Ui.Image', {
 	constructor: function(config) {
 		this.addEvents('ready');
 		this.connect(this.imageDrawing, 'load', this.onImageLoad);
-		if('src' in config)
-			this.setSrc(config.src);
+
+		this.autoConfig(config, 'src');
 	},
 
 	/**

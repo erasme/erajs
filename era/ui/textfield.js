@@ -26,12 +26,7 @@ Ui.LBox.extend('Ui.TextField',
 		this.connect(this.entry, 'validate', this.onEntryValidate);
 
 		this.addEvents('change', 'validate');
-
-		if("passwordMode" in config)
-			this.setPasswordMode(config.passwordMode);
-
-		if("value" in config)
-			this.setValue(config.value);
+		this.autoConfig(config, 'passwordMode', 'value');
 	},
 
 	setPasswordMode: function(passwordMode) {

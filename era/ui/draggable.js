@@ -27,19 +27,17 @@ Ui.LBox.extend('Ui.Draggable',
 	constructor: function(config) {
 		this.addEvents('select', 'unselect', 'dragstart', 'dragend', 'activate', 'menu');
 
-		if(config.data != undefined) 
-			this.setData(config.mimetype, config.data);
-		if(config.downloadUrl != undefined)
-			this.setDownloadUrl(config.downloadUrl, config.downloadMimetype, config.downloadFilename);
-
 		this.getDrawing().setAttribute('draggable', true);
 		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
 		this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
-
-		// handle touches
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
+		if(config.data != undefined) 
+			this.setData(config.mimetype, config.data);
+		if(config.downloadUrl != undefined)
+			this.setDownloadUrl(config.downloadUrl, config.downloadMimetype, config.downloadFilename);
 	},
      
 	setLock: function(lock) {

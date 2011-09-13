@@ -292,11 +292,6 @@ Core.Object.extend('Ui.NotebookPage',
 	constructor: function(config) {
 		this.addEvents('select', 'unselect', 'close');
 
-		if('header' in config)
-			this.setHeader(config.header);
-		if('content' in config)
-			this.setContent(config.content);
-
 		this.headerBox = new Ui.Pressable();
 		this.headerBox.setFocusable(false);
 		this.connect(this.headerBox, 'press', this.onHeaderPress);
@@ -305,6 +300,8 @@ Core.Object.extend('Ui.NotebookPage',
 		this.contentBox.hide();
 
 		this.background = new Ui.NotebookBackground();
+
+		this.autoConfig(config, 'header', 'content');
 	},
 
 	/**
@@ -436,12 +433,9 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 		this.background = new Ui.Shape({ fill: gradient });
 		this.append(this.background);
 
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
-		if(config.fill != undefined)
-			this.setFill(config.fill);
-
 		this.connect(this, 'resize', this.onResize);
+
+		this.autoConfig(config, 'radius', 'fill');
 	},
 
 	setTab: function(offset, width, height) {

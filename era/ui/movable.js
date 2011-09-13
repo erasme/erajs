@@ -35,24 +35,16 @@ Ui.LBox.extend('Ui.Movable', {
 		this.addEvents('down', 'up', 'move');
 		this.setFocusable(true);
 
-		if(config.moveHorizontal != undefined)
-			this.setMoveHorizontal(config.moveHorizontal);
-		if(config.moveVertical != undefined)
-			this.setMoveVertical(config.moveVertical);
-		if(config.inertia != undefined)
-			this.setInertia(config.inertia);
-
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 
 		this.contentBox.getDrawing().style.cursor = 'move';
 
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
-
 		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
-
-		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+
+		this.autoConfig(config, 'moveHorizontal', 'moveVertical', 'inertia');
 	},
 
 	setLock: function(lock) {

@@ -12,8 +12,7 @@ Anim.EasingFunction.extend('Anim.BounceEase',
 	*	@param config.oscillations
 	*/
 	constructor: function(config) {
-		if(config.oscillations != undefined)
-			this.setOscillations(config.oscillations);
+		this.autoConfig(config, 'oscillations');
 	},
 
 	/**

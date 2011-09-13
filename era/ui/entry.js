@@ -16,17 +16,7 @@ Ui.Element.extend('Ui.Entry',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		if(config.fontSize != undefined)
-			this.setFontSize(config.fontSize);
-		if(config.fontFamily != undefined)
-			this.setFontFamily(config.fontFamily);
-		if(config.fontWeight != undefined)
-			this.setFontWeight(config.fontWeight);
-		if(config.color != undefined)
-			this.setColor(config.color);
-		if(config.passwordMode != undefined)
-			this.setPasswordMode(config.passwordMode);
-
+		this.addEvents('change', 'validate');
 		this.getDrawing().selectable = true;
 
 		this.connect(this.entryDrawing, 'mousedown', this.onMouseDown);
@@ -40,7 +30,8 @@ Ui.Element.extend('Ui.Entry',
 //			console.log('entry blur');
 //		});
 
-		this.addEvents('change', 'validate');
+		this.autoConfig(config, 'fontSize', 'fontFamily', 'fontWeight',
+			'color', 'passwordMode');
 	},
 
 	setPasswordMode: function(passwordMode) {

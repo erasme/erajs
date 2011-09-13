@@ -18,19 +18,15 @@ Ui.LBox.extend('Ui.TransitionBox',
 	 * @param {String} [config.transition] Transition type [slide|fade|flip]
 	 */
 	constructor: function(config) {
-		if(config.duration != undefined)
-			this.setDuration(config.duration);
-		if(config.ease != undefined)
-			this.setEase(config.ease);
-		if(config.transition != undefined)
-			this.setTransition(config.transition);
-		else
-			this.setTransition('fade');
-		this.connect(this, 'load', this.onTransitionBoxLoad);
-		this.connect(this, 'unload', this.onTransitionBoxUnload);
 		this.addEvents('change');
 
+		this.connect(this, 'load', this.onTransitionBoxLoad);
+		this.connect(this, 'unload', this.onTransitionBoxUnload);
+
 		this.setClipToBounds(true);
+
+		this.setTransition('fade');
+		this.autoConfig(config, 'duration', 'ease', 'transition');
 	},
 
 	getPosition: function() {

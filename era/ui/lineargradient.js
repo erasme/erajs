@@ -138,6 +138,5 @@ Core.Object.extend('Ui.LinearGradient', {
 		}
 		return fill;
 	}
-}, {
 });
 

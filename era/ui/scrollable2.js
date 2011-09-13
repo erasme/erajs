@@ -32,11 +32,6 @@ Ui.Container.extend('Ui.Scrollable2', {
 	scrollbarVertical: undefined,
 
 	constructor: function(config) {
-		if(config.scrollHorizontal != undefined)
-			this.setScrollHorizontal(config.scrollHorizontal);
-		if(config.scrollVertical != undefined)
-			this.setScrollVertical(config.scrollVertical);
-
 		this.contentBox = new Ui.ScrollableContent2();
 		this.appendChild(this.contentBox);
 		this.connect(this.contentBox, 'scroll', function(content, offsetX, offsetY) {
@@ -66,6 +61,8 @@ Ui.Container.extend('Ui.Scrollable2', {
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'mousedown', this.onVerticalMouseDown);
 
 //		this.connect(this, 'keydown', this.onKeyDown);
+
+		this.autoConfig(config, 'scrollHorizontal', 'scrollVertical');
 	},
 
 	setContent: function(content) {

@@ -13,8 +13,7 @@ Ui.Container.extend('Ui.Flow',
 	 * @extends Ui.Container
 	 */	
 	constructor: function(config) {
-		if(config.uniform != undefined)
-			this.setUniform(config.uniform);
+		this.autoConfig(config, 'uniform');
 	},
 
 	/**

@@ -6,16 +6,8 @@ Ui.Shape.extend('Ui.Rectangle', {
 	radiusBottomRight: 0,
 
 	constructor: function(config) {
-		if('radius' in config)
-			this.setRadius(config.radius);
-		if('radiusTopLeft' in config)
-			this.setRadiusTopLeft(config.radiusTopLeft);
-		if('radiusTopRight' in config)
-			this.setRadiusTopRight(config.radiusTopRight);
-		if('radiusBottomLeft' in config)
-			this.setRadiusBottomLeft(config.radiusBottomLeft);
-		if('radiusBottomRight' in config)
-			this.setRadiusBottomRight(config.radiusBottomRight);
+		this.autoConfig(config, 'radius', 'radiusTopLeft', 'radiusTopRight',
+			'radiusBottomLeft', 'radiusBottomRight');
 	},
 
 	setRadius: function(radius) {
@@ -69,6 +61,10 @@ Ui.Shape.extend('Ui.Rectangle', {
 		}
 	},
 
+	/**#@+
+	 * @private
+	 */
+
 	genPath: function(width, height) {
 		var radius = this.radiusTopLeft;
 		var radius2 = this.radiusTopLeft;
@@ -95,6 +91,8 @@ Ui.Shape.extend('Ui.Rectangle', {
 		path += 'z';
 		return path;
 	}
+
+	/**#@-*/
 
 }, /* overrided */ {
 	arrangeCore: function(width, height) {

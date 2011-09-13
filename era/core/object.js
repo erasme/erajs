@@ -302,3 +302,19 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	}
 };
 
+Core.Object.prototype.autoConfig = function(config) {
+	for(var i = 1; i < arguments.length; i++) {
+		var c = arguments[i];
+		var required = false;
+		if(c.indexOf('*') == 0) {
+			c = c.substr(1);
+			required = true;
+		}
+		var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
+		if((func in this) && (typeof(this[func]) == 'function') && (c in config))
+			this[func].call(this, config[c]);
+		else if(required)
+			throw('config parameter "'+c+'" is REQUIRED for '+this.classType);
+	}
+};
+
