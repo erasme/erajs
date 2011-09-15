@@ -1,12 +1,14 @@
-Ui.LBox.extend('Ui.Downloadable', 
-/**@lends Ui.Downloadable#*/
+
+Ui.LBox.extend('Ui.Linkable', 
+/**@lends Ui.Linkable#*/
 {
 	content: undefined,
 	link: undefined,
 	isDown: false,
 	mouseStartX: undefined,
 	mouseStartY: undefined,
-	forceTarget: true,
+	openWindow: true,
+	target: undefined,
 
 	/**
 	 * @constructs
@@ -14,7 +16,7 @@ Ui.LBox.extend('Ui.Downloadable',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.addEvents('down', 'up', 'download');
+		this.addEvents('down', 'up', 'link');
 
 		this.getDrawing().style.cursor = 'pointer';
 		this.setFocusable(true);
@@ -23,7 +25,7 @@ Ui.LBox.extend('Ui.Downloadable',
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
-		this.autoConfig(config, 'src', 'forceTarget');
+		this.autoConfig(config, 'src', 'openWindow', 'target');
 	},
 
 	setSrc: function(src) {
@@ -41,8 +43,28 @@ Ui.LBox.extend('Ui.Downloadable',
 		}
 	},
 
-	setForceTarget: function(forceTarget) {
-		this.forceTarget = forceTarget;
+	setOpenWindow: function(openWindow) {
+		this.openWindow = openWindow;
+		if(openWindow) {
+			if(this.target != undefined)
+				this.getDrawing().target = this.target;
+			else
+				this.getDrawing().target = Core.Util.generateId();
+		}
+		else
+			this.getDrawing().target = '';
+	},
+
+	setTarget: function(target) {
+		this.target = target;
+		if(this.openWindow) {
+			if(this.target != undefined)
+				this.getDrawing().target = this.target;
+			else
+				this.getDrawing().target = Core.Util.generateId();
+		}
+		else
+			this.getDrawing().target = '';
 	},
 
 	getIsDown: function() {
@@ -112,14 +134,9 @@ Ui.LBox.extend('Ui.Downloadable',
 
 			this.getDrawing().setAttribute('href', this.link);
 			this.onUp();
-			this.fireEvent('download', this);
+			this.fireEvent('link', this);
 			this.focus();
 		}
-	},
-
-	onClick: function(event) {
-		console.log('onClick');
-		this.fireEvent('download', this);
 	},
 
 	onDown: function() {
@@ -135,14 +152,13 @@ Ui.LBox.extend('Ui.Downloadable',
 		this.fireEvent('up', this);
 	}
 }, 
-/**@lends Ui.Downloadable#*/
+/**@lends Ui.Linkable#*/
 {
 	renderDrawing: function() {
 		var linkDrawing = document.createElement('a');
 		linkDrawing.style.display = 'block';
 		linkDrawing.style.textDecoration = 'none';
-		if(this.forceTarget)
-			linkDrawing.target = 'download-'+Core.Util.generateId();
+		linkDrawing.target = Core.Util.generateId();
 		return linkDrawing;
 	}
 });
