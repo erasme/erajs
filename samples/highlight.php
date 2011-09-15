@@ -2,7 +2,7 @@
 
 $file = $_GET['file'];
 
-if(!isset($file) || !file_exists($file.".highlight"))
+if(!isset($file) || preg_match('/\.\.\//', $file) || !file_exists($file.".highlight"))
 	exit();
 
 echo "<pre>";
