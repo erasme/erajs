@@ -141,9 +141,7 @@ Ui.LBox.extend('Ui.Downloadable',
 		var linkDrawing = document.createElement('a');
 		linkDrawing.style.display = 'block';
 		linkDrawing.style.textDecoration = 'none';
-		if('download' in linkDrawing)
-			linkDrawing.download = true;
-		else if(this.forceTarget)
+		if(this.forceTarget)
 			linkDrawing.target = 'download-'+Core.Util.generateId();
 		return linkDrawing;
 	}
