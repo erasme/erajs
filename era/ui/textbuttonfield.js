@@ -388,11 +388,13 @@ Ui.LBox.extend('Ui.TextButtonField',
 
 
 	onDisable: function() {
-		Ui.TextField.base.onDisable.call(this);
+		Ui.TextButtonField.base.onDisable.call(this);
+		this.entry.setOpacity(0.2);
 	},
 
 	onEnable: function() {
-		Ui.TextField.base.onEnable.call(this);
+		Ui.TextButtonField.base.onEnable.call(this);
+		this.entry.setOpacity(1);
 	}
 }, 
 /**@lends Ui.TextButtonField*/
