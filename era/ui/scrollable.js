@@ -816,10 +816,10 @@ Ui.Container.extend('Ui.Scrollable',
 
 
 	arrangeCore: function(width, height) {
+//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
+
 		if(this.contentBox == undefined)
 			return;
-
-//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
 
 		if(this.scrollbarVerticalNeeded)
 			this.scrollbarVerticalBox.show();
