@@ -18,6 +18,10 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			color: new Ui.Color({ r: 0, g: 0,  b: 0 })
 		},
 		"Ui.ToolBar": {
+			"Ui.Label": {
+				fontSize: 16,
+				color: new Ui.Color({ r: 1, g: 1,  b: 1 })
+			},
 			"Ui.Button": {
 				color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 })
 			},
