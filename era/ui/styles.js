@@ -50,6 +50,11 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 				dayColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.3 }),
 				currentDayColor: new Ui.Color({ r: 1, g: 0.31, b: 0.66, a: 0.5 })
 			}
+		},
+		"Ui.MenuDialog": {
+			"Ui.Separator": {
+				color: new Ui.Color({ r: 0.4, g: 0.4, b: 0.4 })
+			}
 		}
 	}
 });

@@ -14,17 +14,20 @@ var menubar = new Ui.MenuBar();
 vbox.append(menubar);
 
 var menu = new Ui.Menu({ header: 'File' });
-menu.appendItem(new Ui.Label({ text: 'Item 1', horizontalAlign: 'left' }));
-menu.appendItem(new Ui.Label({ text: 'Item 2', horizontalAlign: 'left' }));
-menu.appendItem(new Ui.Label({ text: 'Item 3', horizontalAlign: 'left' }));
+menu.appendItem('Item 1', function() {
+	console.log('select Item 1 '+this);
+});
+menu.appendItem('Item 2');
+menu.appendItem('Item 3');
 menu.appendSeparator();
-menu.appendItem(new Ui.Label({ text: 'Exit', horizontalAlign: 'left' }));
+menu.appendItem('Exit');
 menubar.append(menu);
 
-var menu2 = new Ui.Menu({ header: 'Edition' });
-menu2.appendItem(new Ui.Label({ text: 'Funny 1', horizontalAlign: 'left' }));
-menu2.appendItem(new Ui.Label({ text: 'Funny 2', horizontalAlign: 'left' }));
-menu2.appendItem(new Ui.Label({ text: 'Funny 3', horizontalAlign: 'left' }));
+var menu2 = new Ui.Menu({ header: 'Edition', scope: app, items: [
+	{ item: 'Funny 1', callback: function() { console.log('Funny 1 '+this); } },
+	{ item: 'Funny 2', callback: function() { console.log('Funny 2 '+this); }, scope: menubar },
+	{ item: 'Funny 3' }
+] });
 menubar.append(menu2);
 
 var menu3 = new Ui.Menu({ header: 'Preferences' });

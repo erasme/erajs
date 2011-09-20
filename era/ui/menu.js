@@ -6,6 +6,7 @@ Ui.Pressable.extend('Ui.Menu',
 	headerLabel: undefined,
 	header: undefined,
 	dialog: undefined,
+	scope: undefined,
 
 	constructor: function(config) {
 		this.addEvents('item');
@@ -21,7 +22,7 @@ Ui.Pressable.extend('Ui.Menu',
 		this.connect(this, 'press', this.onTitlePress);
 		this.connect(window, 'resize', this.onWindowResize);
 
-		this.autoConfig(config, 'header');
+		this.autoConfig(config, 'header', 'scope', 'items');
 	},
 
 	setHeader: function(header) {
@@ -32,8 +33,32 @@ Ui.Pressable.extend('Ui.Menu',
 		}
 	},
 
-	appendItem: function(item) {
-		this.dialog.appendItem(item);
+	appendItem: function(item, callback, scope) {
+		if(typeof(item) == 'string')
+			item = new Ui.Label({ horizontalAlign: 'left', text: item });
+		var menu = this;
+		var pressable = this.dialog.appendItem(item);
+		if(callback != undefined) {
+			if(scope == undefined) {
+				if(this.scope == undefined)
+					scope = this;
+				else
+					scope = this.scope;
+			}
+			scope.connect(pressable, 'press', function(pressable) {
+				callback.call(this, menu, pressable.getChildren()[0]);
+			});
+		}
+	},
+
+	setScope: function(scope) {
+		this.scope = scope;
+	},
+
+	setItems: function(items) {
+		for(var i = 0; i < items.length; i++) {
+			this.appendItem(items[i].item, items[i].callback, items[i].scope);
+		}
 	},
 
 	appendSeparator: function() {
@@ -93,18 +118,19 @@ Ui.Container.extend('Ui.MenuDialog', {
 	},
 
 	appendItem: function(item) {
-		var pressable = new Ui.Pressable({ margin: 5, marginLeft: 10, marginRight: 10 });
-		pressable.append(item);
-		this.connect(pressable, 'press', this.onItemPress);
-		this.content.append(pressable);
+		var menuItem = new Ui.MenuItem();
+		menuItem.setContent(item);
+		this.connect(menuItem, 'press', this.onItemPress);
+		this.content.append(menuItem);
+		return menuItem;
 	},
 	
 	appendSeparator: function() {
 		this.content.append(new Ui.Separator());
 	},
 
-	onItemPress: function(pressable) {
-		var item = pressable.getChildren()[0];
+	onItemPress: function(menuitem) {
+		var item = menuitem.getContent();
 		this.fireEvent('item', this, item);
 		this.hide();
 	},
@@ -169,14 +195,13 @@ Ui.Container.extend('Ui.MenuDialog', {
 		var offset = 0;
 		if(this.scroll.getMeasureWidth() > width - point1.x)
 			offset = point1.x - (width - this.scroll.getMeasureWidth());
-		this.scroll.arrange(point1.x - offset, point2.y, this.scroll.getMeasureWidth(), this.scroll.getMeasureHeight());
+		this.scroll.arrange(point1.x - offset, point2.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.scroll.getMeasureHeight());
 
 		this.background.setTab(offset, this.header.getMeasureWidth(), this.header.getMeasureHeight());
 
 		this.background.arrange(point1.x - offset, point1.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.header.getMeasureHeight() + this.scroll.getMeasureHeight());
 	}
 });
-
 
 Ui.Container.extend('Ui.MenuBackground', {
 	darkShadow: undefined,
@@ -275,4 +300,50 @@ Ui.Container.extend('Ui.MenuBackground', {
 	}
 });
 
+Ui.MouseOverable.extend('Ui.MenuItem', {
+	background: undefined,
+	pressable: undefined,
+
+	constructor: function() {
+		this.addEvents('press');
+
+		this.background = new Ui.Rectangle({ fill: new Ui.Color.create('#1c8ef2'), opacity: 0, radius: 4 });
+		this.append(this.background);
+
+		this.pressable = new Ui.Pressable({ padding: 5, paddingLeft: 10, paddingRight: 10 });
+		this.append(this.pressable);
+		this.connect(this.pressable, 'press', function() {
+			this.fireEvent('press', this);
+		});
+
+		this.connect(this, 'enter', this.onEnter);
+		this.connect(this, 'leave', this.onLeave);
+		this.connect(this.pressable, 'down', this.onDown);
+		this.connect(this.pressable, 'up', this.onUp);
+	},
+
+	setContent: function(content) {
+		this.pressable.append(content);
+	},
+
+	getContent: function() {
+		return this.pressable.getChildren()[0];
+	},
+
+	onEnter: function() {
+		this.background.setOpacity(0.6);
+	},
+
+	onLeave: function() {
+		this.background.setOpacity(0);
+	},
+
+	onDown: function() {
+		this.background.setOpacity(1);
+	},
+
+	onUp: function() {
+		this.background.setOpacity(0);
+	}
+});
 
