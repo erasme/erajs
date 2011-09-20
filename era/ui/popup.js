@@ -9,6 +9,7 @@ Ui.Container.extend('Ui.Popup',
 	attachedElement: undefined,
 	lbox: undefined,
 	autoHide: true,
+	expandable: false,
 
 	/**
      * @constructs
@@ -37,7 +38,14 @@ Ui.Container.extend('Ui.Popup',
 
 		this.connect(window, 'resize', this.onWindowResize);
 
-		this.autoConfig(config, 'autoHide');
+		this.autoConfig(config, 'autoHide', 'expandable');
+	},
+
+	setExpandable: function(expandable) {
+		if(this.expandable != expandable) {
+			this.expandable = expandable;
+			this.invalidateMeasure();
+		}
 	},
 
 	setAutoHide: function(autoHide) {
@@ -134,7 +142,11 @@ Ui.Container.extend('Ui.Popup',
 		var constraintWidth = Math.max(width - 80, 0);
 		var constraintHeight = Math.max(height - 80, 0);
 
-		if((this.posX != undefined) || (this.attachedElement != undefined)) {
+//		if((this.posX != undefined) || (this.attachedElement != undefined)) {
+//			constraintWidth = 0;
+//			constraintHeight = 0;
+//		}
+		if(!this.expandable) {
 			constraintWidth = 0;
 			constraintHeight = 0;
 		}

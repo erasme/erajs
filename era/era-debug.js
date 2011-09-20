@@ -128,6 +128,7 @@ include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
+include(eraBaseDirectory+'ui/combo.js');
 include(eraBaseDirectory+'ui/togglebutton.js');
 include(eraBaseDirectory+'ui/uploadbutton.js');
 include(eraBaseDirectory+'ui/linkbutton.js');
