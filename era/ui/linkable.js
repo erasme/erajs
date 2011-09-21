@@ -25,12 +25,18 @@ Ui.LBox.extend('Ui.Linkable',
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
+		// handle touches
+		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
+
 		this.autoConfig(config, 'src', 'openWindow', 'target');
 	},
 
 	setSrc: function(src) {
 		this.link = src;
-		this.getDrawing().setAttribute('href', src);
 	},
 
 	setContent: function(content) {
@@ -45,26 +51,10 @@ Ui.LBox.extend('Ui.Linkable',
 
 	setOpenWindow: function(openWindow) {
 		this.openWindow = openWindow;
-		if(openWindow) {
-			if(this.target != undefined)
-				this.getDrawing().target = this.target;
-			else
-				this.getDrawing().target = Core.Util.generateId();
-		}
-		else
-			this.getDrawing().target = '';
 	},
 
 	setTarget: function(target) {
 		this.target = target;
-		if(this.openWindow) {
-			if(this.target != undefined)
-				this.getDrawing().target = this.target;
-			else
-				this.getDrawing().target = Core.Util.generateId();
-		}
-		else
-			this.getDrawing().target = '';
 	},
 
 	getIsDown: function() {
@@ -74,8 +64,6 @@ Ui.LBox.extend('Ui.Linkable',
 	onMouseDown: function(event) {
 		if((event.button != 0) || this.getIsDisabled())
 			return;
-
-		this.getDrawing().setAttribute('href', this.link);
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -104,8 +92,6 @@ Ui.LBox.extend('Ui.Linkable',
 
 			this.onUp();
 
-			this.getDrawing().removeAttribute('href');
-
 			if('createEvent' in document) {
 				this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
@@ -132,10 +118,95 @@ Ui.LBox.extend('Ui.Linkable',
 			this.disconnect(window, 'mousemove', this.onMouseMove, true);
 			this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
-			this.getDrawing().setAttribute('href', this.link);
 			this.onUp();
 			this.fireEvent('link', this);
 			this.focus();
+
+			if(this.openWindow)
+				window.open(this.link, this.target);
+			else
+				window.location = this.link;
+		}
+	},
+
+	onFingerDown: function(event) {
+		if(this.getIsDisabled() || this.isDown)
+			return;
+
+		this.getDrawing().setAttribute('href', this.link);
+
+		this.connect(event.finger, 'fingermove', this.onFingerMove);
+		this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.finger.capture(this.getDrawing());
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.touchStartX = event.finger.getX();
+		this.touchStartY = event.finger.getY();
+		this.onDown();
+	},
+
+	onFingerMove: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var deltaX = event.finger.getX() - this.touchStartX;
+		var deltaY = event.finger.getY() - this.touchStartY;
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		// if the user move to much, release the touch event
+		if(delta > 10) {
+			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+			this.onUp();
+
+			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+			event.finger.release();
+			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+		}
+	},
+	
+	onFingerUp: function(event) {
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.onUp();
+		this.fireEvent('link', this);
+		this.focus();
+
+		if(this.openWindow)
+			window.open(this.link, this.target);
+		else
+			window.location = this.link;
+	},
+
+	onKeyDown: function(event) {
+		var key = event.which;
+		console.log('onKeyDown: '+key);
+		if((key == 13) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onDown();
+		}
+	},
+
+	onKeyUp: function(event) {
+		var key = event.which;
+		console.log('onKeyUp: '+key);
+		if((key == 13) && !this.getIsDisabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.onUp();
+			this.fireEvent('link', this);
+			if(this.openWindow)
+				window.open(this.link, this.target);
+			else
+				window.location = this.link;
 		}
 	},
 
@@ -150,16 +221,6 @@ Ui.LBox.extend('Ui.Linkable',
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
  		this.isDown = false;
 		this.fireEvent('up', this);
-	}
-}, 
-/**@lends Ui.Linkable#*/
-{
-	renderDrawing: function() {
-		var linkDrawing = document.createElement('a');
-		linkDrawing.style.display = 'block';
-		linkDrawing.style.textDecoration = 'none';
-		linkDrawing.target = Core.Util.generateId();
-		return linkDrawing;
 	}
 });
 
