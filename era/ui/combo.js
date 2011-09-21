@@ -10,6 +10,16 @@ Ui.Pressable.extend('Ui.Combo',
 	current: undefined,
 	placeHolder: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Pressable
+	 * @param {String} [config.field] Name of the data's field to display in the list
+	 * @param [config.data] Object List
+	 * @param [currentAt] Default selected object position
+	 * @param [current] Default selected object
+	 * @param [placeHolder] Text displays when no selection
+	 */
 	constructor: function(config) {
 		this.addEvents('change');
 
