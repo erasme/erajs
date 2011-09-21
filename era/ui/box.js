@@ -273,6 +273,7 @@ Ui.Container.extend('Ui.Box',
 		var minWidth = 0;
 		var minHeight = 0;
 		var loop = true;
+		var star = 0;
 
 		while(loop) {
 			for(var i = 0; i < this.getChildren().length; i++) {
@@ -300,7 +301,7 @@ Ui.Container.extend('Ui.Box',
 		if(countResizable > 0) {
 			var remainHeight = constraintHeight - minHeight;
 			var starFound = true;
-			var star = remainHeight / countResizable;
+			star = remainHeight / countResizable;
 			do {
 				starFound = true;
 				for(var i = 0; i < this.getChildren().length; i++) {
@@ -329,6 +330,8 @@ Ui.Container.extend('Ui.Box',
 			minHeight += star * countResizable;
 			this.star = star;
 		}
+		else
+			this.star = 0;
 		return { width: minWidth, height: minHeight };
 	},
 
@@ -399,6 +402,8 @@ Ui.Container.extend('Ui.Box',
 			minWidth += star * countResizable;
 			this.star = star;
 		}
+		else
+			this.star = 0;
 		return { width: minWidth, height: minHeight };
 	}
 	/**#@-*/

@@ -133,13 +133,13 @@ Core.Object.extend('Ui.Element',
 		this.connect(this.drawing, 'focus', this.onFocus);
 		this.connect(this.drawing, 'blur', this.onBlur);
 
+		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur',
+			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
+
 		this.autoConfig(config, 'width', 'height', 'verticalAlign',
 			'horizontalAlign', 'margin', 'marginTop', 'marginBottom',
 			'marginLeft', 'marginRight', 'opacity', 'focusable',
 			'keyboardRequired', 'clipToBounds', 'id', 'style');
-
-		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur',
-			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
 	},
 
 	/*

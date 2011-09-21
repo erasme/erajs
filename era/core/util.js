@@ -65,6 +65,7 @@ Core = {};
 *	@namespace	A set of utilities.
 */
 Core.Util = {};
+
 Core.Util.idGenerator = 0;
 Core.Util.generateId = function() {
 	return ++Core.Util.idGenerator;

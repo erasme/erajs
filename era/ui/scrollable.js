@@ -806,7 +806,31 @@ Ui.Container.extend('Ui.Scrollable',
 
 //			console.log(this+'.measureCore('+width+','+height+') => min ('+minWidth+' x '+minHeight+')');
 
-			return { width: minWidth, height: minHeight };
+			var resWidth;
+			var resHeight;
+
+			if(this.contentBox.getMeasureWidth() <= contentWidth)
+				resWidth = this.contentBox.getMeasureWidth();
+			else
+				resWidth = contentWidth;
+			if(this.scrollbarVerticalNeeded)
+				resWidth += this.scrollbarVerticalBox.getMeasureWidth();
+			resWidth = Math.max(resWidth, minWidth);
+
+			if(this.contentBox.getMeasureHeight() <= contentHeight)
+				resHeight = this.contentBox.getMeasureHeight();
+			else
+				resHeight = contentHeight;
+			if(this.scrollbarHorizontalNeeded)
+				resHeight += this.scrollbarHorizontalBox.getMeasureHeight();
+			resHeight = Math.max(resHeight, minHeight);
+
+			return { width: resWidth, height: resHeight };
+
+//			return {
+//				width: (this.contentBox.getMeasureWidth() <= contentWidth)?(this.contentBox.getMeasureWidth() + (this.scrollbarVerticalNeeded?this.scrollbarVerticalBox.getMeasureWidth():0)):contentWidth,
+//				height: (this.contentBox.getMeasureHeight() <= contentHeight)?this.contentBox.getMeasureHeight():contentHeight };
+//			return { width: minWidth, height: minHeight };
 		}
 		else {
 //			console.log(this+'.measureCore('+width+','+height+') => full ('+this.contentBox.getMeasureWidth()+' x '+this.contentBox.getMeasureHeight()+')');
@@ -816,10 +840,10 @@ Ui.Container.extend('Ui.Scrollable',
 
 
 	arrangeCore: function(width, height) {
+//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
+
 		if(this.contentBox == undefined)
 			return;
-
-//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
 
 		if(this.scrollbarVerticalNeeded)
 			this.scrollbarVerticalBox.show();
