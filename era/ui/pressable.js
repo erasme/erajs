@@ -85,9 +85,9 @@ Ui.LBox.extend('Ui.Pressable',
 		event.preventDefault();
 		event.stopPropagation();
 		if(event.button == 0) {
+			this.focus();
 			this.onUp();
 			this.fireEvent('press', this);
-			this.focus();
 		}
 	},
 
@@ -135,9 +135,9 @@ Ui.LBox.extend('Ui.Pressable',
 		event.preventDefault();
 		event.stopPropagation();
 
+		this.focus();
 		this.onUp();
 		this.fireEvent('press', this);
-		this.focus();
 	},
 
 	onKeyDown: function(event) {
