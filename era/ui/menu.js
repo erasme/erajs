@@ -252,12 +252,14 @@ Ui.Container.extend('Ui.MenuBackground', {
 		if(this.fill != fill) {
 			this.fill = Ui.Color.create(fill);
 			var yuv = this.fill.getYuva();
-			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) },
-				{ offset: this.tabHeight/(this.getLayoutHeight()*2), color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) }
-			] });
-			this.background.setFill(gradient);
+			if(this.getLayoutHeight() > 0) {
+				var gradient = new Ui.LinearGradient({ stops: [
+					{ offset: 0, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) },
+					{ offset: this.tabHeight/(this.getLayoutHeight()*2), color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
+					{ offset: 1, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) }
+				] });
+				this.background.setFill(gradient);
+			}
 			this.darkShadow.setFill(new Ui.Color({ y: yuv.y - 0.4, u: yuv.u, v: yuv.v }));
 			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }));
 		}
