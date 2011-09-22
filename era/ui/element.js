@@ -820,14 +820,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	getIsVisible: function() {
-		if(this.visible != undefined)
-			return this.visible;
-		else {
-			if(this.parentVisible != undefined)
-				return this.parentVisible;
-			else
-				return true;
-		}
+		return ((this.parentVisible !== false) && (this.visible !== false));
 	},
 
 	setParentVisible: function(visible) {
