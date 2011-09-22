@@ -6,7 +6,7 @@ Ui.Linkable.extend('Ui.LinkButton',
     /**
      * @constructs
 	 * @class A LinkButton is a button that is an hyper link
-     * @extends Ui.LinkButton
+     * @extends Ui.Linkable
      * @param {String} [config.text] Button's text
      * @param {String} [config.icon] Icon name
      * @param {String} [config.orientation] 'vertical' or 'horizontal'
