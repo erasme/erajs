@@ -187,7 +187,6 @@ Ui.LBox.extend('Ui.Linkable',
 
 	onKeyDown: function(event) {
 		var key = event.which;
-		console.log('onKeyDown: '+key);
 		if((key == 13) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -197,7 +196,6 @@ Ui.LBox.extend('Ui.Linkable',
 
 	onKeyUp: function(event) {
 		var key = event.which;
-		console.log('onKeyUp: '+key);
 		if((key == 13) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
