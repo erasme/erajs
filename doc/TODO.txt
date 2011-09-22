@@ -234,3 +234,5 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 - dans le composant HTML, permettre la récupération des évènenements sur
   les liens (balise A)
 
+
+
