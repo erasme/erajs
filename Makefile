@@ -16,3 +16,5 @@ jsdoc:
 clean:
 	find samples -iname \*.html.highlight -type f -exec rm {} \;
 
+changelog:
+	git log --pretty="* %s" > changelog
