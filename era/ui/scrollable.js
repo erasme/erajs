@@ -135,20 +135,20 @@ Ui.Container.extend('Ui.Scrollable',
 	setScrollbarVertical: function(scrollbarVertical) {
 		if(this.scrollbarVertical != scrollbarVertical) {
 			if(this.scrollbarVertical != undefined)
-				this.scrollbarVerticalBox.removeChild(this.scrollbarVertical);
+				this.scrollbarVerticalBox.remove(this.scrollbarVertical);
 			this.scrollbarVertical = scrollbarVertical;
 			if(this.scrollbarVertical != undefined)
-				this.scrollbarVerticalBox.appendChild(this.scrollbarVertical);
+				this.scrollbarVerticalBox.append(this.scrollbarVertical);
 		}
 	},
 
 	setScrollbarHorizontal: function(scrollbarHorizontal) {
 		if(this.scrollbarHorizontal != scrollbarHorizontal) {
 			if(this.scrollbarHorizontal != undefined)
-				this.scrollbarHorizontalBox.removeChild(this.scrollbarHorizontal);
+				this.scrollbarHorizontalBox.remove(this.scrollbarHorizontal);
 			this.scrollbarHorizontal = scrollbarHorizontal;
 			if(this.scrollbarHorizontal != undefined)
-				this.scrollbarHorizontalBox.appendChild(this.scrollbarHorizontal);
+				this.scrollbarHorizontalBox.append(this.scrollbarHorizontal);
 		}
 	},
 
