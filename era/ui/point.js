@@ -5,14 +5,7 @@ Core.Object.extend('Ui.Point', {
 	y: 0,
 
 	constructor: function(config) {
-		if('point' in config) {
-			this.x = config.point.x;
-			this.y = config.point.y;
-		}
-		if('x' in config)
-			this.x = config.x;
-		if('y' in config)
-			this.y = config.y;
+		this.autoConfig(config, 'point', 'x', 'y');
 	},
 
 	matrixTransform: function(matrix) {
@@ -22,9 +15,9 @@ Core.Object.extend('Ui.Point', {
 		this.y = y;
 	},
 
-	setPoint: function(x, y) {
-		this.x = x;
-		this.y = y;
+	setPoint: function(point) {
+		this.x = point.x;
+		this.y = point.y;
 	},
 
 	getX: function() {

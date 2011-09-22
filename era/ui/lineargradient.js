@@ -17,6 +17,11 @@ Core.Object.extend('Ui.LinearGradient', {
 
 		for(var i = 0; i < this.stops.length; i++)
 			this.stops[i].color = Ui.Color.create(this.stops[i].color);
+	},
+
+	getBackgroundImage: function() {
+		if(this.image != undefined)
+			return this.image;
 
 		if(navigator.isWebkit) {
 			this.image = '-webkit-gradient(linear, 0% 0%, ';
@@ -72,9 +77,6 @@ Core.Object.extend('Ui.LinearGradient', {
 		else {
 			this.image = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAAXNSR0IArs4c6QAAAAZiS0dEAO8AUQBRItXOlAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9gJDxcIBl8Z3A0AAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAC0lEQVQI12NgwAUAABoAASRETuUAAAAASUVORK5CYII%3D)';
 		}
-	},
-
-	getBackgroundImage: function() {
 		return this.image;
 	},
 
@@ -138,6 +140,5 @@ Core.Object.extend('Ui.LinearGradient', {
 		}
 		return fill;
 	}
-}, {
 });
 

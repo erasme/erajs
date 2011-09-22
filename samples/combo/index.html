@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+app.setContent(vbox);
+
+var combo = new Ui.Combo({ field: 'text', placeHolder: 'choice...' });
+var data = [];
+for(var i = 0; i < 25; i++)
+	data.push({ text: 'item '+i, id: i });
+combo.setData(data);
+vbox.append(combo);
+
+app.connect(combo, 'change', function(combo, val, position) {
+	console.log('Combo change: '+val.text);
+});
+
+</script>
+  </head>
+</html>

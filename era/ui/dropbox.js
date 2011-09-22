@@ -51,6 +51,8 @@ Ui.LBox.extend('Ui.DropBox',
 //		console.log('onDragEnter allowText: '+this.allowText+', allowFiles: '+this.allowFiles);
 		if(event.dataTransfer.types != undefined) {
 //			console.log('onDragEnter: '+event.dataTransfer.types);
+//			for(var i = 0; i < event.dataTransfer.types.length; i++)
+//				console.log('detail: '+event.dataTransfer.types[i]);
 			var foundFiles = false;
 			var foundText = false;
 			for(var i = 0; i < event.dataTransfer.types.length; i++) {
@@ -141,6 +143,24 @@ Ui.LBox.extend('Ui.DropBox',
 				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }));
 		}
 		else {
+			// look for native types
+			if('types' in event.dataTransfer) {
+				for(var i = 0; i < event.dataTransfer.types.length; i++) {
+					var mimetype = event.dataTransfer.types[i];
+					for(var i2 = 0; i2 < this.allowedMimetypes.length; i2++) {
+						if(this.allowedMimetypes[i2] == mimetype) {
+							var data = event.dataTransfer.getData(mimetype);
+							// accept the drop
+							event.preventDefault();
+							event.stopPropagation();
+							this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
+							return;
+						}
+					}
+				}
+			}
+
+			// handle "text encoded" mimetypes
 			var data = event.dataTransfer.getData('Text');
 //			console.log('onDrop data Text: '+data);
 

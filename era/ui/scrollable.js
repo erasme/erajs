@@ -44,11 +44,6 @@ Ui.Container.extend('Ui.Scrollable',
 	 * @param {Boolean} [config.overScroll] If true, let user scroll over the container content on touch devices. If false, oblige him to use the scrollbar.
 	 */
 	constructor: function(config) {
-		if('scrollHorizontal' in config)
-			this.setScrollHorizontal(config.scrollHorizontal);
-		if('scrollVertical' in config)
-			this.setScrollVertical(config.scrollVertical);
-
 		this.scrollbarHorizontalBox = new Ui.LBox();
 		this.appendChild(this.scrollbarHorizontalBox);
 
@@ -74,9 +69,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'fingerdown', this.onHorizontalFingerDown);
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'fingerdown', this.onVerticalFingerDown);
 
-		if('overScroll' in config)
-			this.setOverScroll(config.overScroll);
-
+		this.autoConfig(config, 'overScroll', 'scrollHorizontal', 'scrollVertical');
 //		this.connect(this, 'keydown', this.onKeyDown);
 	},
 
@@ -142,20 +135,20 @@ Ui.Container.extend('Ui.Scrollable',
 	setScrollbarVertical: function(scrollbarVertical) {
 		if(this.scrollbarVertical != scrollbarVertical) {
 			if(this.scrollbarVertical != undefined)
-				this.scrollbarVerticalBox.removeChild(this.scrollbarVertical);
+				this.scrollbarVerticalBox.remove(this.scrollbarVertical);
 			this.scrollbarVertical = scrollbarVertical;
 			if(this.scrollbarVertical != undefined)
-				this.scrollbarVerticalBox.appendChild(this.scrollbarVertical);
+				this.scrollbarVerticalBox.append(this.scrollbarVertical);
 		}
 	},
 
 	setScrollbarHorizontal: function(scrollbarHorizontal) {
 		if(this.scrollbarHorizontal != scrollbarHorizontal) {
 			if(this.scrollbarHorizontal != undefined)
-				this.scrollbarHorizontalBox.removeChild(this.scrollbarHorizontal);
+				this.scrollbarHorizontalBox.remove(this.scrollbarHorizontal);
 			this.scrollbarHorizontal = scrollbarHorizontal;
 			if(this.scrollbarHorizontal != undefined)
-				this.scrollbarHorizontalBox.appendChild(this.scrollbarHorizontal);
+				this.scrollbarHorizontalBox.append(this.scrollbarHorizontal);
 		}
 	},
 
@@ -300,7 +293,7 @@ Ui.Container.extend('Ui.Scrollable',
 			deltaY = -event.wheelDeltaY / 12;
 		}
 		else if(event.wheelDelta != undefined)
-			deltaY = -event.wheelDelta / 8;
+			deltaY = -event.wheelDelta / 4;
 		else if(event.detail != undefined)
 			deltaY = event.detail * 10 / 3;
 		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);
@@ -813,7 +806,31 @@ Ui.Container.extend('Ui.Scrollable',
 
 //			console.log(this+'.measureCore('+width+','+height+') => min ('+minWidth+' x '+minHeight+')');
 
-			return { width: minWidth, height: minHeight };
+			var resWidth;
+			var resHeight;
+
+			if(this.contentBox.getMeasureWidth() <= contentWidth)
+				resWidth = this.contentBox.getMeasureWidth();
+			else
+				resWidth = contentWidth;
+			if(this.scrollbarVerticalNeeded)
+				resWidth += this.scrollbarVerticalBox.getMeasureWidth();
+			resWidth = Math.max(resWidth, minWidth);
+
+			if(this.contentBox.getMeasureHeight() <= contentHeight)
+				resHeight = this.contentBox.getMeasureHeight();
+			else
+				resHeight = contentHeight;
+			if(this.scrollbarHorizontalNeeded)
+				resHeight += this.scrollbarHorizontalBox.getMeasureHeight();
+			resHeight = Math.max(resHeight, minHeight);
+
+			return { width: resWidth, height: resHeight };
+
+//			return {
+//				width: (this.contentBox.getMeasureWidth() <= contentWidth)?(this.contentBox.getMeasureWidth() + (this.scrollbarVerticalNeeded?this.scrollbarVerticalBox.getMeasureWidth():0)):contentWidth,
+//				height: (this.contentBox.getMeasureHeight() <= contentHeight)?this.contentBox.getMeasureHeight():contentHeight };
+//			return { width: minWidth, height: minHeight };
 		}
 		else {
 //			console.log(this+'.measureCore('+width+','+height+') => full ('+this.contentBox.getMeasureWidth()+' x '+this.contentBox.getMeasureHeight()+')');
@@ -823,10 +840,10 @@ Ui.Container.extend('Ui.Scrollable',
 
 
 	arrangeCore: function(width, height) {
+//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
+
 		if(this.contentBox == undefined)
 			return;
-
-//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
 
 		if(this.scrollbarVerticalNeeded)
 			this.scrollbarVerticalBox.show();

@@ -4,12 +4,7 @@ Ui.Element.extend('Ui.Html', {
 	selectable: false,
 
 	constructor: function(config) {
-		if('html' in config)
-			this.setHtml(config.html);
-		if('selectable' in config)
-			this.setSelectable(config.selectable);
-		else
-			this.setSelectable(this.selectable);
+		this.autoConfig(config, 'html', 'selectable');
 	},
 
 	getHtml: function() {

@@ -12,12 +12,7 @@ Ui.Togglable.extend('Ui.ToggleButton',
 		this.graphic = new Ui.ButtonGraphic();
 		this.append(this.graphic);
 
-		if('text' in config)
-			this.setText(config.text);
-		if('icon' in config)
-			this.setIcon(config.icon);
-		if('orientation' in config)
-			this.setOrientation(config.orientation);
+		this.autoConfig(config, 'text', 'icon', 'orientation');
 
 		this.connect(this, 'down', function() {	this.graphic.setIsDown(true); });
 		this.connect(this, 'up', function() { this.graphic.setIsDown(this.getIsDown() || this.getIsToggled()); });
@@ -36,11 +31,11 @@ Ui.Togglable.extend('Ui.ToggleButton',
 	},
 
 	getIcon: function() {
-		return this.getIcon();
+		return this.graphic.getIcon();
 	},
 
 	setIcon: function(icon) {
-		this.setIcon(icon);
+		this.graphic.setIcon(icon);
 	},
 
 	getOrientation: function() {

@@ -9,6 +9,7 @@ Ui.Container.extend('Ui.Popup',
 	attachedElement: undefined,
 	lbox: undefined,
 	autoHide: true,
+	expandable: false,
 
 	/**
      * @constructs
@@ -17,9 +18,6 @@ Ui.Container.extend('Ui.Popup',
      * @param {Boolean} [config.autoHide]
 	 */
 	constructor: function(config) {
-		if(config.autoHide != undefined)
-			this.setAutoHide(config.autoHide);
-
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
@@ -39,6 +37,15 @@ Ui.Container.extend('Ui.Popup',
 //		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onContentTouchStart);
 
 		this.connect(window, 'resize', this.onWindowResize);
+
+		this.autoConfig(config, 'autoHide', 'expandable');
+	},
+
+	setExpandable: function(expandable) {
+		if(this.expandable != expandable) {
+			this.expandable = expandable;
+			this.invalidateMeasure();
+		}
 	},
 
 	setAutoHide: function(autoHide) {
@@ -135,7 +142,11 @@ Ui.Container.extend('Ui.Popup',
 		var constraintWidth = Math.max(width - 80, 0);
 		var constraintHeight = Math.max(height - 80, 0);
 
-		if((this.posX != undefined) || (this.attachedElement != undefined)) {
+//		if((this.posX != undefined) || (this.attachedElement != undefined)) {
+//			constraintWidth = 0;
+//			constraintHeight = 0;
+//		}
+		if(!this.expandable) {
 			constraintWidth = 0;
 			constraintHeight = 0;
 		}
@@ -331,14 +342,9 @@ Ui.Fixed.extend('Ui.PopupBackground',
 		this.background = new Ui.Shape({ fill: gradient });
 		this.append(this.background);
 
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
-		if(config.fill != undefined)
-			this.setFill(config.fill);
-		if(config.arrowBorder != undefined)
-			this.setArrowBorder(config.arrowBorder);
-
 		this.connect(this, 'resize', this.onResize);
+
+		this.autoConfig(config, 'radius', 'fill', 'arrowBorder');
 	},
 
 	setArrowBorder: function(arrowBorder) {

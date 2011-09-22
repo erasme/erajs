@@ -108,7 +108,7 @@ include(eraBaseDirectory+'ui/video.js');
 include(eraBaseDirectory+'ui/pressable.js');
 include(eraBaseDirectory+'ui/togglable.js');
 include(eraBaseDirectory+'ui/selectable.js');
-include(eraBaseDirectory+'ui/downloadable.js');
+include(eraBaseDirectory+'ui/linkable.js');
 include(eraBaseDirectory+'ui/uploadable.js');
 include(eraBaseDirectory+'ui/movable.js');
 include(eraBaseDirectory+'ui/transformable.js');
@@ -128,8 +128,11 @@ include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
+include(eraBaseDirectory+'ui/combo.js');
 include(eraBaseDirectory+'ui/togglebutton.js');
 include(eraBaseDirectory+'ui/uploadbutton.js');
+include(eraBaseDirectory+'ui/linkbutton.js');
+include(eraBaseDirectory+'ui/downloadbutton.js');
 include(eraBaseDirectory+'ui/checkbox.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');
@@ -157,6 +160,7 @@ include(eraBaseDirectory+'ui/embed.js');
 include(eraBaseDirectory+'ui/monthcalendar.js');
 include(eraBaseDirectory+'ui/datepicker.js');
 include(eraBaseDirectory+'ui/notebook.js');
+include(eraBaseDirectory+'ui/menu.js');
 
 //
 // Ui styles

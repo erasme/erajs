@@ -23,22 +23,9 @@ Ui.Container.extend('Ui.Box',
 	 * @param {String}  [config.orientation] A Box can be either "vertical" (VBox) or "horizontal" (HBox). Very usefull for mobil device. 
 	 */
 	constructor: function(config) {
-		if(config.padding != undefined)
-			this.setPadding(config.padding);
-		if(config.paddingTop != undefined)
-			this.setPaddingTop(config.paddingTop);
-		if(config.paddingBottom != undefined)
-			this.setPaddingBottom(config.paddingBottom);
-		if(config.paddingLeft != undefined)
-			this.setPaddingLeft(config.paddingLeft);
-		if(config.paddingRight != undefined)
-			this.setPaddingRight(config.paddingRight);
-		if(config.uniform != undefined)
-			this.setUniform(config.uniform);
-		if(config.spacing != undefined)
-			this.setSpacing(config.spacing);
-		if(config.orientation != undefined)
-			this.setOrientation(config.orientation);
+		this.autoConfig(config, 'padding', 'paddingTop', 'paddingBottom',
+			'paddingLeft', 'paddingRight', 'uniform', 'spacing',
+			'orientation');
 	},
 
 	/**
@@ -286,6 +273,7 @@ Ui.Container.extend('Ui.Box',
 		var minWidth = 0;
 		var minHeight = 0;
 		var loop = true;
+		var star = 0;
 
 		while(loop) {
 			for(var i = 0; i < this.getChildren().length; i++) {
@@ -313,7 +301,7 @@ Ui.Container.extend('Ui.Box',
 		if(countResizable > 0) {
 			var remainHeight = constraintHeight - minHeight;
 			var starFound = true;
-			var star = remainHeight / countResizable;
+			star = remainHeight / countResizable;
 			do {
 				starFound = true;
 				for(var i = 0; i < this.getChildren().length; i++) {
@@ -342,6 +330,8 @@ Ui.Container.extend('Ui.Box',
 			minHeight += star * countResizable;
 			this.star = star;
 		}
+		else
+			this.star = 0;
 		return { width: minWidth, height: minHeight };
 	},
 
@@ -412,6 +402,8 @@ Ui.Container.extend('Ui.Box',
 			minWidth += star * countResizable;
 			this.star = star;
 		}
+		else
+			this.star = 0;
 		return { width: minWidth, height: minHeight };
 	}
 	/**#@-*/

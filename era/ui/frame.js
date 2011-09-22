@@ -14,18 +14,8 @@ Ui.Shape.extend('Ui.Frame',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		if('radius' in config)
-			this.setRadius(config.radius);
-		if('radiusTopLeft' in config)
-			this.setRadiusTopLeft(config.radiusTopLeft);
-		if('radiusTopRight' in config)
-			this.setRadiusTopRight(config.radiusTopRight);
-		if('radiusBottomLeft' in config)
-			this.setRadiusBottomLeft(config.radiusBottomLeft);
-		if('radiusBottomRight' in config)
-			this.setRadiusBottomRight(config.radiusBottomRight);
-		if('frameWidth' in config)
-			this.setFrameWidth(config.frameWidth);
+		this.autoConfig(config, 'radius', 'radiusTopLeft', 'radiusTopRight',
+			'radiusBottomLeft',	'radiusBottomRight', 'frameWidth');
 	},
 
 	getFrameWidth: function() {

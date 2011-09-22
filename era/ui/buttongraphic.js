@@ -64,20 +64,22 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.contentBox.append(this.iconBox);
 
-		if('text' in config)
-			this.setText(config.text);
-		if('icon' in config)
-			this.setIcon(config.icon);
-		if('orientation' in config)
-			this.setOrientation(config.orientation);
-		if('color' in config)
-			this.setColor(config.color);
-		if('spacing' in config)
-			this.setSpacing(config.spacing);
-		if('radius' in config)
-			this.setRadius(config.radius);
+		this.autoConfig(config, 'text', 'icon', 'orientation', 'color', 'spacing', 'radius');
 
 		this.updateColors();
+	},
+
+	getContent: function() {
+		return this.content;
+	},
+
+	setContent: function(content) {
+		if(this.content != content) {
+			while(this.contentBox.getFirstChild() != undefined)
+				this.contentBox.remove(this.contentBox.getFirstChild());
+			this.content = content;
+			this.contentBox.append(this.content);
+		}
 	},
 
 	getText: function() {

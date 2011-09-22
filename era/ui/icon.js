@@ -9,17 +9,21 @@ Ui.Shape.extend('Ui.Icon',
 	 */
 	constructor: function(config) {
 	}
-}, /* overrided */ {
+}, 
+/**@lends Ui.Icon# */ 
+{
 	arrangeCore: function(width, height) {
 		Ui.Icon.base.arrangeCore.call(this, width, height);
 		var scale = Math.min(width, height) / 48;
 		this.setScale(scale);
 	}
-}, /* static */ {
+}, 
+/**@lends Ui.Icon# */ 
+{
 
 	/**
 	List of all the registered Icons which can be accessible by their names
-	'check', 'home', 'search', 'close', 'arrowleft', 'arrowright', 'arrowtop', 'arrowbottom', 'refresh', 'deny', 'warning', 'trash', 'new', 'star', 'exit', 'loading', 'edit', 'upload', 'lock', 'savecloud', 'calendar'
+	'check', 'home', 'search', 'close', 'arrowleft', 'arrowright', 'arrowtop', 'arrowbottom', 'refresh', 'deny', 'warning', 'trash', 'new', 'star', 'exit', 'loading', 'edit', 'upload', 'lock', 'savecloud', 'calendar', 'phone'
 	*/
 	icons: {},
 

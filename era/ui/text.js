@@ -32,20 +32,7 @@ Ui.Element.extend('Ui.Text',
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
-		if('text' in config)
-			this.setText(config.text);
-		if('fontSize' in config)
-			this.setFontSize(config.fontSize);
-		if('fontFamily' in config)
-			this.setFamilySize(config.fontFamily);
-		if('fontWeight' in config)
-			this.setFontWeight(config.fontWeight);
-		if('color' in config)
-			this.setColor(config.color);
-		if('selectable' in config)
-			this.setSelectable(config.selectable);
-		else
-			this.setSelectable(this.selectable);
+		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight', 'color', 'selectable');
 	},
 
 	getText: function() {
@@ -243,6 +230,7 @@ Ui.Element.extend('Ui.Text',
 		this.textDrawing.style.position = 'absolute';
 		this.textDrawing.style.left = '0px';
 		this.textDrawing.style.top = '0px';
+		this.textDrawing.selectable = this.selectable;
 		return this.textDrawing;
 	},
 

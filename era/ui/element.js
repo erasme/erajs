@@ -100,10 +100,6 @@ Core.Object.extend('Ui.Element',
      * @constructs
 	 * @class Define the base class for all GUI elements
      * @extends Core.Object
-     * @param {String} [config.width]
-     * @param {String} [config.height]
-     * @param {String} [config.verticalAlign]
-     * @param {String} [config.horizontalAlign]
      * @param {String} [config.margin]
      * @param {String} [config.width]
      * @param {String} [config.height]
@@ -134,43 +130,16 @@ Core.Object.extend('Ui.Element',
 		if(content != undefined)
 			this.drawing.appendChild(content);
 
-		if(config.width != undefined)
-			this.setWidth(config.width);
-		if(config.height != undefined)
-			this.setHeight(config.height);
-		if(config.verticalAlign != undefined)
-			this.setVerticalAlign(config.verticalAlign);
-		if(config.horizontalAlign != undefined)
-			this.setHorizontalAlign(config.horizontalAlign);
-
-		if(config.margin != undefined)
-			this.setMargin(config.margin);
-		if(config.marginTop != undefined)
-			this.setMarginTop(config.marginTop);
-		if(config.marginBottom != undefined)
-			this.setMarginBottom(config.marginBottom);
-		if(config.marginLeft != undefined)
-			this.setMarginLeft(config.marginLeft);
-		if(config.marginRight != undefined)
-			this.setMarginRight(config.marginRight);
-		if(config.opacity != undefined)
-			this.setOpacity(config.opacity);
-		if(config.focusable != undefined)
-			this.setFocusable(config.focusable);
-		if(config.keyboardRequired != undefined)
-			this.setKeyboardRequired(config.keyboardRequired);
-		if(config.clipToBounds != undefined)
-			this.setClipToBounds(config.clipToBounds);
-		if(config.id != undefined)
-			this.setId(config.id);
-		if('style' in config)
-			this.setStyle(config.style);
-
 		this.connect(this.drawing, 'focus', this.onFocus);
 		this.connect(this.drawing, 'blur', this.onBlur);
 
 		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur',
 			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
+
+		this.autoConfig(config, 'width', 'height', 'verticalAlign',
+			'horizontalAlign', 'margin', 'marginTop', 'marginBottom',
+			'marginLeft', 'marginRight', 'opacity', 'focusable',
+			'keyboardRequired', 'clipToBounds', 'id', 'style');
 	},
 
 	/*
@@ -851,14 +820,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	getIsVisible: function() {
-		if(this.visible != undefined)
-			return this.visible;
-		else {
-			if(this.parentVisible != undefined)
-				return this.parentVisible;
-			else
-				return true;
-		}
+		return ((this.parentVisible !== false) && (this.visible !== false));
 	},
 
 	setParentVisible: function(visible) {

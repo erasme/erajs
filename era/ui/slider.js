@@ -14,8 +14,7 @@ Ui.Container.extend('Ui.Slider',
 	 * @extends Ui.Container
 	 */
 	constructor: function(config) {
-		if(config.value != undefined)
-			this.value = config.value;
+		this.addEvents('change');
 
 		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4 });
 		this.appendChild(this.lightShadow);
@@ -49,7 +48,7 @@ Ui.Container.extend('Ui.Slider',
 		this.buttonContent = new Ui.SliderContentDrawing({ marginTop: 5, marginLeft: 10, marginRight: 10});
 		this.button.setContent(this.buttonContent);
 
-		this.addEvents('change');
+		this.autoConfig(config, 'value');
 	},
 
 	getValue: function() {
@@ -200,10 +199,7 @@ Ui.LBox.extend('Ui.SliderContentDrawing',
 		this.background = new Ui.Shape({ margin: 1 });
 		this.append(this.background);
 
-		if(config.radius != undefined)
-			this.setRadius(config.radius);
-		if(config.fill != undefined)
-			this.setFill(config.fill);
+		this.autoConfig(config, 'radius', 'fill');
 	},
 
 	setRadius: function(radius) {

@@ -216,7 +216,23 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 - améliorer Ui.ButtonGraphic pour permettre de mutualiser le code aussi avec
   TextButtonField et des listes de bouttons par exemple
 
-- fournir le CompactLabel dans erajs et l'optimiser
+* - fournir le CompactLabel dans erajs et l'optimiser
 
 - permettre d'avoir des boutons qui ne s'affichent que au survol
+
+- optimiser le CompactLabel
+
+- dans Firefox 6.0, si on clic sur un UploadButton, il demande l'autorisation
+  à l'utilisateur, c'est pas cool
+
+* - fournir des menus
+
+- rajouter le support du clavier dans les menus
+
+- pour les popup "fullscreen", ne pas fermer lors d'un redimentionnement
+
+- dans le composant HTML, permettre la récupération des évènenements sur
+  les liens (balise A)
+
+
 

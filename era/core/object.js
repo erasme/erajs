@@ -2,7 +2,7 @@
 *	@class Object class from which every Era classes derives.
 *	It handles inheritance, serialization, dump function, manages events connections.
 */
-Core.Object = function Core() {
+Core.Object = function() {
 };
 
 Core.Object.prototype.classType = 'Core.Object';
@@ -101,9 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var shortName = tab[tab.length-1];
-
-	var func = eval("( "+classType+" = function "+shortName+" (config) { this.constructorHelper.call(this, config); } )");
+	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -299,6 +297,22 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 				i--;
 			}
 		}
+	}
+};
+
+Core.Object.prototype.autoConfig = function(config) {
+	for(var i = 1; i < arguments.length; i++) {
+		var c = arguments[i];
+		var required = false;
+		if(c.indexOf('*') == 0) {
+			c = c.substr(1);
+			required = true;
+		}
+		var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
+		if((func in this) && (typeof(this[func]) == 'function') && (c in config))
+			this[func].call(this, config[c]);
+		else if(required)
+			throw('config parameter "'+c+'" is REQUIRED for '+this.classType);
 	}
 };
 

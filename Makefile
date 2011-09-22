@@ -2,7 +2,7 @@
 all: compact sampleshighlight jsdoc
 
 compact:
-	grep '^include(eraBaseDirectory' era/era-debug.js | sed "s/include(eraBaseDirectory+'\(.*\)');/era\/\1/" | xargs cat > era/era-tmp.js
+	grep '^include(eraBaseDirectory' era/era-debug.js | sed "s/include(eraBaseDirectory+'\(.*\)');/era\/\1/" | xargs tools/preprocessor -o era/era-tmp.js
 	yui-compressor era/era-tmp.js > era/era.js
 	rm era/era-tmp.js
 
@@ -12,3 +12,7 @@ sampleshighlight:
 
 jsdoc:
 	jsdoc -c=doc/jsdoc/conf/era.conf -d=doc/jsdoc/
+
+clean:
+	find samples -iname \*.html.highlight -type f -exec rm {} \;
+

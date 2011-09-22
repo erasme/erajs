@@ -11,6 +11,7 @@ Ui.Element.extend('Ui.Shape',
 
 	fill: 'black',
 	path: undefined,
+	vmlPath: undefined,
 	scale: 1,
 
 	/**
@@ -19,12 +20,7 @@ Ui.Element.extend('Ui.Shape',
 	 * @extends Ui.Element
 	*/
 	constructor: function(config) {
-		if(config.path != undefined)
-			this.setPath(config.path);
-		if(config.fill != undefined)
-			this.setFill(config.fill);
-		if(config.scale != undefined)
-			this.setScale(config.scale);
+		this.autoConfig(config, 'path', 'fill', 'scale');
 	},
 
 	setScale: function(scale) {
@@ -94,8 +90,10 @@ Ui.Element.extend('Ui.Shape',
 				this.updateCanvas();
 			else if(navigator.supportSVG)
 				this.svgPath.setAttributeNS(null, 'd', this.path, null);
-			else if(navigator.supportVML)
-				this.shapeDrawing.path = this.pathToVML(path);
+			else if(navigator.supportVML) {
+				this.vmlPath = this.pathToVML(path);
+				this.shapeDrawing.path = this.vmlPath;
+			}
 		}
 	},
 
@@ -374,6 +372,35 @@ Ui.Element.extend('Ui.Shape',
 			this.shapeDrawing.setAttribute('width', width, null);
 			this.shapeDrawing.setAttribute('height', height, null);
 			this.updateCanvas();
+		}
+	},
+
+	onVisible: function() {
+		if(!Ui.Shape.forceCanvas && !navigator.supportSVG && navigator.supportVML) {
+			var width = this.getLayoutWidth();
+			var height = this.getLayoutHeight();
+
+			this.shapeDrawing.style.width = width+'px';
+			this.shapeDrawing.style.height = height+'px';
+			this.shapeDrawing.path = this.vmlPath;
+			this.shapeDrawing.coordorigin = '0 0';
+			this.shapeDrawing.coordsize = (width * 100 / this.scale)+' '+(height * 100 / this.scale);
+
+			if(this.vmlFill != undefined) {
+				this.shapeDrawing.removeChild(this.vmlFill);
+				this.vmlFill = undefined;
+			}
+			if(Ui.Color.hasInstance(this.fill)) {
+				this.vmlFill = document.createElement('vml:fill');
+				this.vmlFill.type = 'solid';
+				this.vmlFill.color = this.fill.getCssHtml();
+				this.vmlFill.opacity = this.fill.getRgba().a * this.vmlOpacity;
+				this.shapeDrawing.appendChild(this.vmlFill);
+			}
+			else if(Ui.LinearGradient.hasInstance(this.fill)) {
+				this.vmlFill = this.fill.getVMLFill();
+				this.shapeDrawing.appendChild(this.vmlFill);
+			}
 		}
 	},
 

@@ -4,10 +4,10 @@ Ui.IFrame.extend('Ui.Program', {
 
 	constructor: function(config) {
 		this.connect(window, 'message', this.onMessage, false);
-		if(config.location == undefined)
+		if(!('location' in config))
 			throw("location config parameter is NEEDED");
 		var location = config.location;
-		if(config.arguments != undefined)
+		if('arguments' in config)
 			location += '?base64='+encodeURIComponent(JSON.stringify(config.arguments).toBase64());
 		this.setSrc(location);
 		this.addEvents('message');

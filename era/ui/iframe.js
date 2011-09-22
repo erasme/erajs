@@ -5,9 +5,8 @@ Ui.Element.extend('Ui.IFrame', {
 
 	constructor: function(config) {
 		this.connect(this.iframeDrawing, 'load', this.onIFrameLoad);
-		if(config.src != undefined)
-			this.setSrc(config.src);
 		this.addEvents('ready');
+		this.autoConfig(config, 'src');
 	},
 
 	getSrc: function() {

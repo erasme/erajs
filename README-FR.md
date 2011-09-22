@@ -1,9 +1,9 @@
 # Description
 
-Era est un framework JavaScript développé par Daniel Lacroix au sein
+Era est une API JavaScript développée par Daniel Lacroix au sein
 du service Erasme (www.erasme.org) du département du Rhône.
 
-Ses principals caractéristiques sont :
+Ses principales caractéristiques sont :
 
 - Le développement d'application se fait exclusivement en
   JavaScript. Pas d'html, de CSS ou autre.
@@ -12,12 +12,11 @@ Ses principals caractéristiques sont :
   appareils.
 - Utilisation massive des nouvelles propriétés des navigateurs
   (Drag&Drop, audio, vidéo, animation).
-- Un fonctionnement identique d'un navigateur à l'autre. Ex : Gradient
-  et bord arrondis même sous IE 8, système d'évènement recoder pour
-  être générique.
+- Un fonctionnement identique d'un navigateur à l'autre. Ex : Dégradés linéaires 
+et bords arrondis même sous IE 7, système d'évènement recoder pour être générique.
 - Une compatibilité assurée pour Firefox 3.6+, Chrome 6+, Safari 5+,
-  IE8+ et Opera 10+. Ainsi que pour iOs 4+ et Android 2.2+
-- Un système de layout avancé similaire à GTK ou autre framework natif
+  IE7+ et Opera 10+. Ainsi que pour iOs 4+ et Android 2.2+
+- Un système de layout avancé similaire à GTK ou autres frameworks natifs
 - Une gestion du redimensionnement
 - Un système d'animation haut de gamme
 - Des composants réutilisable et stylables sans passer par CSS

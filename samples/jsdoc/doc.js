@@ -54,15 +54,8 @@ Core.Object.extend('Sample.MyObject',
 	 */
 	myvar4: 42,
 
-	/**
-	 * This one is a field treated as a function
-	 * @function
-	 */
-	myvar3: Sample.MyObject.myStaticMethod(),
-
 	//This one will be documented with the property tag
 	documentedInConsctructor: 24,
-
 
 	/**
 	 * @constructs This tag precises that this function is the constructor

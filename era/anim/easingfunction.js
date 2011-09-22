@@ -16,8 +16,7 @@ Core.Object.extend('Anim.EasingFunction',
 	*	@param config.mode
 	*/
 	constructor: function(config) {
-		if(config.mode != undefined)
-			this.setMode(config.mode);
+		this.autoConfig(config, 'mode');
 	},
 
 	/** 

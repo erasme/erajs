@@ -1,0 +1,205 @@
+#!/usr/bin/node
+
+var fs = require('fs');
+
+/**
+ * ReadFile class
+ */
+function ReadFile(lines) {
+	this.pos = -1;
+	this.lines = lines;
+}
+ReadFile.prototype.getPos = function() {
+	return this.pos;
+}
+ReadFile.prototype.getLine = function() {
+	return this.lines[this.pos];
+}
+ReadFile.prototype.next = function() {
+	return ++this.pos < this.lines.length;
+}
+
+
+/**
+ * RemoveDefines class
+ */
+function RemoveDefines(reader, defines) {
+	this.reader = reader;
+	this.line = undefined;
+	this.define = undefined;
+	this.defines = defines;
+}
+RemoveDefines.prototype.getPos = function() {
+	return this.reader.getPos();
+}
+RemoveDefines.prototype.getLine = function() {
+	return this.line;
+}
+RemoveDefines.prototype.next = function() {
+	if(!this.reader.next())
+		return false;
+	this.line = this.reader.getLine();
+	if(this.line.indexOf('//#') == 0) {
+		var order = this.line.substr(3).split(/[\s\t]+/);
+		if(this.define == undefined) {
+			if(order[0] == 'if')
+				this.define = order[1];
+		}
+		else if(order[0] == 'end')
+			this.define = undefined;
+		this.line = '';
+	}
+	else if((this.define != undefined) && !(this.define in this.defines))
+		this.line = '';
+
+	return true;
+}
+
+/**
+ * RemoveComment class
+ */
+function RemoveComment(reader) {
+	this.reader = reader;
+	this.line = undefined;
+	this.comment = false;
+}
+RemoveComment.prototype.getPos = function() {
+	return this.reader.getPos();
+}
+RemoveComment.prototype.getLine = function() {
+	return this.line;
+}
+RemoveComment.prototype.next = function() {
+	if(!this.reader.next())
+		return false;
+	this.line = this.reader.getLine();
+	if(this.comment) {
+		var iSlashStarEnd = this.line.indexOf('*/');
+		if(iSlashStarEnd != -1) {
+			this.comment = false;
+			this.line = this.line.substring(iSlashStarEnd+2);
+		}
+		else
+			this.line = '';
+	}
+	if(!this.comment) {
+		// remove double slash
+		var iSlash = this.line.indexOf('//');
+		if((iSlash != -1) && ((iSlash == 0) || (this.line.indexOf('\\//') != iSlash - 1))) {
+			// test if in string
+//			var dsc = 0; var sc = 0;
+//			for(var i = iSlash; i >= 0; i--) {
+//				if(this.line[i] == '\'')
+//					sc++;
+//				else if(this.line[i] == '"')
+//					dsc++;
+//			}
+			var inString = false;
+			for(var i = iSlash; (i >= 0) && !inString; i--)
+				inString = (this.line[i] == '\'') || (this.line[i] == '"');
+			if(!inString)
+				this.line = this.line.substring(0, iSlash);
+		}
+		// remove slash star
+		var iSlashStar = this.line.indexOf('/*');
+		if(iSlashStar != -1) {
+			if((iSlashStar == 0) || (this.line.indexOf('\\/*') != iSlashStar - 1)) {
+				var iSlashStarEnd = this.line.indexOf('*/');
+				if((iSlashStarEnd != -1) && (iSlashStarEnd > iSlashStar)) {
+					this.line = this.line.substring(0, iSlashStar) + this.line.substring(iSlashStarEnd+2);
+				}
+				else {
+					this.comment = true;
+					this.line = this.line.substring(0, iSlashStar);
+				}
+			}
+		}
+	}
+	return true;
+}
+
+/**
+ * Compact class
+ */
+function Compact(reader) {
+	this.reader = reader;
+	this.line = undefined;
+}
+Compact.prototype.getPos = function() {
+	return this.reader.getPos();
+}
+Compact.prototype.getLine = function() {
+	return this.line;
+}
+Compact.prototype.next = function() {
+	if(!this.reader.next())
+		return false;
+	this.line = this.reader.getLine();
+	while(this.line.match(/^[\s\t]*$/)) {
+		if(!this.reader.next())
+			return false;
+		this.line = this.reader.getLine();
+	}
+	var res = this.line.match(/^[\s\t]*(.*?)[\s\t]*$/);
+	this.line = res[1];
+	return true;
+}
+
+
+/**
+ * Main Program
+ */
+
+var defines = {};
+var inputs = [];
+var output = undefined;
+
+function help() {
+	console.log('TODO: HELP');
+}
+
+// parse arguments
+for(var i = 2; i < process.argv.length; i++) {
+	var arg = process.argv[i];
+	if(arg == '-o')
+		output = process.argv[++i];
+	else if(arg == '--help') {
+		help();
+		process.exit();
+	}
+	else if(arg.indexOf('-') == 0)
+		defines[arg.substr(1)] = true;
+	else
+		inputs.push(arg);
+}
+
+if(inputs.length == 0) {
+	help();
+	process.exit(1);
+}
+
+var out = undefined;
+if(output != undefined)
+	out = fs.openSync(output, 'w');
+
+inputs.forEach(function(input) {
+	console.log('input: '+input);
+
+	var content = fs.readFileSync(input, 'utf-8');
+	var lines = content.split(/\n/);
+
+	var readfile = new ReadFile(lines);
+	var removedefines = new RemoveDefines(readfile, defines);
+//	var nocomment = new RemoveComment(removedefines);
+//	var compact = new Compact(nocomment);
+	while(removedefines.next()) {
+		if(out)
+			fs.writeSync(out, removedefines.getLine()+'\n', null);
+		else
+			console.log(removedefines.getLine());
+	}
+});
+
+if(out)
+	fs.closeSync(out);
+
