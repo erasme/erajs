@@ -92,11 +92,15 @@ Ui.Container.extend('Ui.MenuDialog', {
 	header: undefined,
 	scroll: undefined,
 	content: undefined,
+	shadow: undefined,
 
 	constructor: function(config) {
 		this.addEvents('item');
 
 		this.element = config.element;
+
+		this.shadow = new Ui.Rectangle({ opacity: 0, fill: new Ui.Color({ a: 0 }) });
+		this.appendChild(this.shadow);
 
 		this.background = new Ui.MenuBackground({ fill: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }), radius: 4 });
 		this.appendChild(this.background);
@@ -162,21 +166,22 @@ Ui.Container.extend('Ui.MenuDialog', {
 	visible: false,
 
 	show: function() {
+		Ui.App.current.appendDialog(this);
 		if(!this.getIsVisible()) {
 			this.header.setFontWeight(this.element.headerLabel.getFontWeight());
 			this.header.setFontSize(this.element.headerLabel.getFontSize());
-			Ui.App.current.appendDialog(this);
 		}
 		Ui.MenuDialog.base.show.call(this);
 	},
 
 	hide: function() {
-		if(this.getIsVisible())
-			Ui.App.current.removeDialog(this);
+		Ui.App.current.removeDialog(this);
 		Ui.MenuDialog.base.hide.call(this);
 	},
 
 	measureCore: function(width, height) {
+		this.shadow.measure(width, height);
+
 		var point1 = this.element.pointToWindow({ x: 0, y: 0 });
 		var point2 = this.element.pointToWindow({ x: this.element.getLayoutWidth(), y: this.element.getLayoutHeight() });
 		
@@ -187,6 +192,8 @@ Ui.Container.extend('Ui.MenuDialog', {
 	},
 
 	arrangeCore: function(width, height) {
+		this.shadow.arrange(0, 0, width, height);
+
 		var point1 = this.element.pointToWindow({ x: 0, y: 0 });
 		var point2 = this.element.pointToWindow({ x: this.element.getLayoutWidth(), y: this.element.getLayoutHeight() });
 
