@@ -4,7 +4,7 @@ Ui.IFrame.extend('Ui.Program', {
 
 	constructor: function(config) {
 		this.connect(window, 'message', this.onMessage, false);
-		if('location' in config)
+		if(!('location' in config))
 			throw("location config parameter is NEEDED");
 		var location = config.location;
 		if('arguments' in config)
