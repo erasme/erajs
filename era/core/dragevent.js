@@ -138,8 +138,8 @@ Core.Object.extend('Core.DragDataTransfer',
 //				}
 
 				this.image = this.draggable.cloneNode(true);
-				if(navigator.isIE7 || navigator.isIE8)
-					this.image.innerHTML = this.draggable.innerHTML;
+//				if(navigator.isIE7 || navigator.isIE8)
+//					this.image.innerHTML = this.draggable.innerHTML;
 
 //				document.body.appendChild(this.image);
 				this.rootWindow.document.body.appendChild(this.image);
@@ -193,7 +193,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
 			this.image.style.top = (this.startImagePoint.y + deltaY)+'px';
 
-			if(overElement != undefined) {
+			if((overElement != undefined) && ('dispatchEvent' in overElement)) {
 				var dragEvent = document.createEvent('DragEvent');
 				if(this.overElement != overElement)
 					dragEvent.initDragEvent('dragenter', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
@@ -219,7 +219,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.rootWindow.document.body.removeChild(this.image);
 //			document.body.removeChild(this.image);
 
-			if(this.overElement != undefined) {
+			if((this.overElement != undefined) && ('dispatchEvent' in this.overElement)) {
 //				console.log('drag mouseup over: '+this.overElement.className);
 				var dragEvent = document.createEvent('DragEvent');
 				dragEvent.initDragEvent('drop', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
