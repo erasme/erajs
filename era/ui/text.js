@@ -2,6 +2,12 @@ Ui.Element.extend('Ui.Text',
 /**@lends Ui.Text#*/
 {
 	text: '',
+	fontSize: undefined,
+	fontFamily: undefined,
+	fontWeight: undefined,
+	color: undefined,
+	textAlign: undefined,
+
 	measureDrawing: undefined,
 	textDrawing: undefined,
 	// var needed to update the layout
@@ -14,10 +20,6 @@ Ui.Element.extend('Ui.Text',
 	spaceWidth: undefined,
 	maxWidth: undefined,
 	lineHeight: undefined,
-	fontSize: undefined,
-	fontFamily: undefined,
-	fontWeight: undefined,
-	color: undefined,
 	selectable: false,
 	textMeasureValid: false,
 
@@ -34,7 +36,8 @@ Ui.Element.extend('Ui.Text',
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
-		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight', 'color', 'selectable');
+		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
+			'color', 'selectable', 'textAlign');
 	},
 
 	getText: function() {
@@ -45,6 +48,20 @@ Ui.Element.extend('Ui.Text',
 		if(this.text != text) {
 			this.text = text;
 			this.splitText();
+			this.invalidateMeasure();
+		}
+	},
+
+	getTextAlign: function() {
+		if(this.textAlign !== undefined)
+			return this.textAlign;
+		else
+			return this.getStyleProperty('textAlign');
+	},
+
+	setTextAlign: function(textAlign) {
+		if(this.textAlign != textAlign) {
+			this.textAlign = textAlign;
 			this.invalidateMeasure();
 		}
 	},
@@ -183,7 +200,13 @@ Ui.Element.extend('Ui.Text',
 			tspan.style.whiteSpace = 'nowrap';
 			tspan.style.display = 'inline';
 			tspan.style.position = 'absolute';
-			tspan.style.left = '0px';
+			var align = this.getTextAlign();
+			if(align == 'left')
+				tspan.style.left = '0px';
+			else if(align == 'right')
+				tspan.style.left = (this.maxWidth - lineWidth)+'px';
+			else
+				tspan.style.left = ((this.maxWidth - lineWidth)/2)+'px';
 			tspan.style.top = this.offsetY+'px';
 			if('textContent' in tspan)
 				tspan.textContent = this.line;
@@ -240,7 +263,8 @@ Ui.Element.extend('Ui.Text',
 
 	updateMeasure: function() {
 		if(!this.textMeasureValid) {
-			this.spaceWidth = Ui.Label.measureText('x', this.getFontSize(), this.getFontFamily(), this.getFontWeight()).width;
+			this.spaceWidth = Ui.Label.measureText('. .', this.getFontSize(), this.getFontFamily(), this.getFontWeight()).width;
+			this.spaceWidth -= Ui.Label.measureText('..', this.getFontSize(), this.getFontFamily(), this.getFontWeight()).width;
 			for(var i = 0; i < this.words.length; i++) {
 				var word = this.words[i];
 				if(word.type == 'word')
@@ -297,6 +321,7 @@ Ui.Element.extend('Ui.Text',
 		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
-		fontWeight: 'normal'
+		fontWeight: 'normal',
+		textAlign: 'left'
 	}
 });
