@@ -210,8 +210,8 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 * - si on place un uploadable dans une dropbox sous Firefox 3.6, on ne peut
     pas cliquer (rien ne se passe) sur l'uploadable
 
-- améliorer Ui.Text pour que le text utilise mieux l'espace (pb des espaces)
-  et permettre de changer l'alignement du texte: left, right, center
+* - améliorer Ui.Text pour que le text utilise mieux l'espace (pb des espaces)
+    et permettre de changer l'alignement du texte: left, right, center
 
 - améliorer Ui.ButtonGraphic pour permettre de mutualiser le code aussi avec
   TextButtonField et des listes de bouttons par exemple
@@ -241,4 +241,18 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 - BUG dans Ui.Combo, si on lui affecte plus de place que requis, les flêches et
   la barre ne sont pas alignés à droite
+
+* - improve Ui.Text measurement pref
+
+* - permettre de styliser Ui.Text
+
+- BUG, la mesure du text n'est pas bonne si le programme tourne dans un
+  IFrame et que l'IFrame n'est pas chargé dans le DOM de la fenêtre.
+  Ce problème concerne IE* (y compris le 9) et Firefox 6.0.2
+
+- les problèmes de VML ne sont pas résolu. Des fois le VML n'est pas affiché.
+  par exemple, sur le site ERAjs, le frame des textes en bas, ne s'affiche pas
+
+- permettre aux Ui.ScrollingArea de prendre le focus, le rendre visible sur
+  les barres de scroll (les 2 à la fois)
 
