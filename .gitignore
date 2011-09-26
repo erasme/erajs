@@ -6,6 +6,7 @@ tests/
 doc/jsdoc/*.html
 doc/jsdoc/symbols/
 vrac/
+site/
 
 # Emacs
 *~
