@@ -468,11 +468,12 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	removeDialog: function(dialog) {
-		this.dialogs.remove(dialog);
-		if(this.dialogs.getChildren().length == 0) {
-			this.remove(this.dialogs);
-			this.dialogs = undefined;
-//			console.log('last dialog removed');
+		if(this.dialogs != undefined) {
+			this.dialogs.remove(dialog);
+			if(this.dialogs.getChildren().length == 0) {
+				this.remove(this.dialogs);
+				this.dialogs = undefined;
+			}
 		}
 	},
 
