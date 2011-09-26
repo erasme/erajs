@@ -183,7 +183,7 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 * - faire fonctionner le "doubleclick" dans IE < 9
 
-* - BUG dans le drag & drop émulé, les parties VML n'apparaissent pas
+- BUG dans le drag & drop émulé, les parties VML n'apparaissent pas
 
 - BUG dans le drag & drop émulé, les parties VML apparaissent en blanc
 
@@ -229,10 +229,16 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 - rajouter le support du clavier dans les menus
 
-- pour les popup "fullscreen", ne pas fermer lors d'un redimentionnement
+* - pour les popup "fullscreen", ne pas fermer lors d'un redimentionnement
 
 - dans le composant HTML, permettre la récupération des évènenements sur
   les liens (balise A)
 
+- dans les popup, faire une animation pour show et hide
 
+- dans les popup, empêcher le focus d'autre chose que le contenu
+  de la popup
+
+- BUG dans Ui.Combo, si on lui affecte plus de place que requis, les flêches et
+  la barre ne sont pas alignés à droite
 

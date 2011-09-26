@@ -1,7 +1,7 @@
 # Description
 
-Era is a JavaScript framework written by Daniel Lacroix at ERASME
-(http://www.erasme.org) in the departement of Rhône.
+Era is a JavaScript framework written by ERASME
+(http://www.erasme.org/) in the Departement of Rhône.
 
 The main features of the framework are :
 

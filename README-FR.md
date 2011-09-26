@@ -1,19 +1,19 @@
 # Description
 
-Era est une API JavaScript développée par Daniel Lacroix au sein
-du service Erasme (www.erasme.org) du département du Rhône.
+ERAjs est une bibliothèque javascript développée par le service
+Erasme (www.erasme.org) du Département du Rhône.
 
 Ses principales caractéristiques sont :
 
 - Le développement d'application se fait exclusivement en
-  JavaScript. Pas d'html, de CSS ou autre.
+  javascript. Pas d'HTML, de CSS ou autre.
 - Pensé pour les appareils multi-touch (iPad, Android). Toute
-  application développée avec Era une ergonomie compatible avec ces
+  application développée avec ERAjs a une ergonomie compatible avec ces
   appareils.
 - Utilisation massive des nouvelles propriétés des navigateurs
   (Drag&Drop, audio, vidéo, animation).
 - Un fonctionnement identique d'un navigateur à l'autre. Ex : Dégradés linéaires 
-et bords arrondis même sous IE 7, système d'évènement recoder pour être générique.
+  et bords arrondis même sous IE 7, système d'évènement recoder pour être générique.
 - Une compatibilité assurée pour Firefox 3.6+, Chrome 6+, Safari 5+,
   IE7+ et Opera 10+. Ainsi que pour iOs 4+ et Android 2.2+
 - Un système de layout avancé similaire à GTK ou autres frameworks natifs
@@ -23,7 +23,7 @@ et bords arrondis même sous IE 7, système d'évènement recoder pour être gé
 
 # Sources du projet
 
-> git clone git@forge.erasme.org:era
+> git clone git@forge.erasme.org:erajs
 
 Commande pour générer la doc :
 
