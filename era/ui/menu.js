@@ -14,7 +14,7 @@ Ui.Pressable.extend('Ui.Menu',
 		this.headerLabel = new Ui.Label({ margin: 5, horizontalAlign: 'left' });
 		this.append(this.headerLabel);
 
-		this.dialog = new Ui.MenuDialog({ element: this });
+		this.dialog = new Ui.MenuDialog({ element: this.headerLabel });
 		this.connect(this.dialog, 'item', function(dialog, item) {
 			this.fireEvent('item', this, item);
 		});
@@ -56,6 +56,7 @@ Ui.Pressable.extend('Ui.Menu',
 	},
 
 	setItems: function(items) {
+		this.dialog.clearItems();
 		for(var i = 0; i < items.length; i++) {
 			this.appendItem(items[i].item, items[i].callback, items[i].scope);
 		}
@@ -121,6 +122,12 @@ Ui.Container.extend('Ui.MenuDialog', {
 		this.header.setText(header);
 	},
 
+	clearItems: function() {
+		while(this.content.getFirstChild() != undefined) {
+			this.content.remove(this.content.getFirstChild());
+		}
+	},
+
 	appendItem: function(item) {
 		var menuItem = new Ui.MenuItem();
 		menuItem.setContent(item);
@@ -168,8 +175,8 @@ Ui.Container.extend('Ui.MenuDialog', {
 	show: function() {
 		Ui.App.current.appendDialog(this);
 		if(!this.getIsVisible()) {
-			this.header.setFontWeight(this.element.headerLabel.getFontWeight());
-			this.header.setFontSize(this.element.headerLabel.getFontSize());
+			this.header.setFontWeight(this.element.getFontWeight());
+			this.header.setFontSize(this.element.getFontSize());
 		}
 		Ui.MenuDialog.base.show.call(this);
 	},
@@ -197,16 +204,16 @@ Ui.Container.extend('Ui.MenuDialog', {
 		var point1 = this.element.pointToWindow({ x: 0, y: 0 });
 		var point2 = this.element.pointToWindow({ x: this.element.getLayoutWidth(), y: this.element.getLayoutHeight() });
 
-		this.header.arrange(point1.x, point1.y, this.header.getMeasureWidth(), this.header.getMeasureHeight());
+		this.header.arrange(point1.x - 5, point1.y - 5, this.header.getMeasureWidth(), this.header.getMeasureHeight());
 
 		var offset = 0;
-		if(this.scroll.getMeasureWidth() > width - point1.x)
-			offset = point1.x - (width - this.scroll.getMeasureWidth());
-		this.scroll.arrange(point1.x - offset, point2.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.scroll.getMeasureHeight());
+		if(this.scroll.getMeasureWidth() > width - point1.x - 5)
+			offset = point1.x - (width - this.scroll.getMeasureWidth()) - 5;
+		this.scroll.arrange(point1.x - offset - 5, point2.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.scroll.getMeasureHeight());
 
-		this.background.setTab(offset, this.header.getMeasureWidth(), this.header.getMeasureHeight());
+		this.background.setTab(offset, this.header.getMeasureWidth(), this.header.getMeasureHeight() - 5);
 
-		this.background.arrange(point1.x - offset, point1.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.header.getMeasureHeight() + this.scroll.getMeasureHeight());
+		this.background.arrange(point1.x - offset - 5, point1.y - 5, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.header.getMeasureHeight() + this.scroll.getMeasureHeight() - 5);
 	}
 });
 
