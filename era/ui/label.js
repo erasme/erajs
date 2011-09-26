@@ -107,7 +107,7 @@ Ui.Element.extend('Ui.Label',
 		if(this.color != undefined)
 			return this.color;
 		else
-			return this.getStyleProperty('color');
+			return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
 	getOrientation: function() {
@@ -127,8 +127,6 @@ Ui.Element.extend('Ui.Label',
 	horizontalAlign: 'center',
 
 	onStyleChange: function() {
-//		console.log(this+'.onStyleChange color: '+this.getColor()+' ('+this.getStyleProperty('color')+')');
-
 		this.labelDrawing.style.fontSize = this.getFontSize()+'px';
 		this.labelDrawing.style.fontFamily = this.getFontFamily();
 		this.labelDrawing.style.fontWeight = this.getFontWeight();
