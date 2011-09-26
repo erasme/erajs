@@ -9,6 +9,8 @@ Ui.Container.extend('Ui.Carouselable',
 	animNext: 0,
 	animStart: 0,
 	ease: undefined,
+	autoPlay: undefined,
+	autoTask: undefined,
 
 	/**
 	 * @constructs
@@ -33,7 +35,20 @@ Ui.Container.extend('Ui.Carouselable',
 
 		this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
 
-		this.autoConfig(config, 'ease', 'lock');
+		this.autoConfig(config, 'ease', 'lock', 'autoPlay');
+	},
+
+	setAutoPlay: function(delay) {
+		if(this.autoPlay != delay) {
+			if(this.autoTask != undefined) {
+				this.autoTask.abort();
+				this.autoTask = undefined;
+			}
+			this.autoPlay = delay;
+			if(this.autoPlay != undefined) {
+				this.autoTask = new Core.DelayedTask({ delay: this.autoPlay, scope: this, callback: this.onAutoPlay });
+			}
+		}
 	},
 
 	getLock: function() {
@@ -217,6 +232,14 @@ Ui.Container.extend('Ui.Carouselable',
 			this.alignClock.stop();
 			this.alignClock = undefined;
 		}
+	},
+
+	onAutoPlay: function() {
+		this.autoTask = new Core.DelayedTask({ delay: this.autoPlay, scope: this, callback: this.onAutoPlay });
+		if(this.getCurrentPosition() >= this.getLogicalChildren().length - 1)
+			this.setCurrentAt(0);
+		else
+			this.next();
 	}
 
 	/**#@-*/
