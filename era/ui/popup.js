@@ -63,7 +63,7 @@ Ui.Container.extend('Ui.Popup',
 	},
 
 	onWindowResize: function() {
-		if(this.visible && this.autoHide) {
+		if(this.visible && this.autoHide && (this.posX != undefined)) {
 			this.hide();
 		}
 	},
