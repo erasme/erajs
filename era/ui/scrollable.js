@@ -241,8 +241,27 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.stopInertia();
 
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-		this.connect(window, 'mousemove', this.onMouseMove, true);
+		this.window = window;
+		this.iframe = undefined;
+		if(navigator.isWebkit) {
+			var rootWindow = Ui.App.getRootWindow();
+			if(rootWindow != window) {
+				this.window = rootWindow;
+				this.iframe = Ui.App.getWindowIFrame();
+			}
+		}
+
+		this.connect(this.window, 'mouseup', this.onMouseUp, true);
+		this.connect(this.window, 'mousemove', this.onMouseMove, true);
+
+		this.catcher = document.createElement('div');
+		this.catcher.style.position = 'absolute';
+		this.catcher.style.left = '0px';
+		this.catcher.style.right = '0px';
+		this.catcher.style.top = '0px';
+		this.catcher.style.bottom = '0px';
+		this.catcher.zIndex = 1000;
+		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
@@ -255,7 +274,10 @@ Ui.Container.extend('Ui.Scrollable',
 		event.stopPropagation();
 
 		this.hasMoved = true;
-		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		var point = { x: event.clientX, y: event.clientY };
+		if(this.iframe != undefined)
+			point = this.window.webkitConvertPointFromPageToNode(this.iframe, new WebKitPoint(event.clientX, event.clientY));
+		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetX = this.startOffsetX - deltaX;
@@ -270,8 +292,10 @@ Ui.Container.extend('Ui.Scrollable',
 		if(event.button != this.mouseButton)
 			return;
 
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
+		this.window.document.body.removeChild(this.catcher);
+
+		this.disconnect(this.window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(this.window, 'mouseup', this.onMouseUp, true);
 
 		this.stopComputeInertia();
 		this.startInertia();
