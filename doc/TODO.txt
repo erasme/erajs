@@ -144,7 +144,7 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 - Améliorer le clipping du contenu dans Ui.Switch
 
-- Gérer le problème de la capture des évènements de la souris par les IFrames
+* - Gérer le problème de la capture des évènements de la souris par les IFrames
 
 - Améliorer la gestion de la vidéo pour le gestion du buffering
 
@@ -236,8 +236,8 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 - dans les popup, faire une animation pour show et hide
 
-- dans les popup, empêcher le focus d'autre chose que le contenu
-  de la popup
+* - dans les popup, empêcher le focus d'autre chose que le contenu
+    de la popup
 
 - BUG dans Ui.Combo, si on lui affecte plus de place que requis, les flêches et
   la barre ne sont pas alignés à droite
@@ -255,4 +255,17 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 - permettre aux Ui.ScrollingArea de prendre le focus, le rendre visible sur
   les barres de scroll (les 2 à la fois)
+
+- voir si on modifie Ui.ToolBar pour permettre de choisir une style 'none'
+
+- Ui.CheckBox est trop moche, la relooker
+
+* - Autoriser la fermeture de Ui.Popup avec la touch "Echap" pour implémenter
+    le autoHide au clavier
+
+* - Lorsque l'on ouvre un Popup, donner le focus au premier élement qui l'accepte
+
+* - Lorsque l'on ferme une Popup, rendre le focus à l'élément qui l'avait précédemment
+
+- Améliorer le look de Ui.Popup
 

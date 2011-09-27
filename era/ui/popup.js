@@ -38,6 +38,9 @@ Ui.Container.extend('Ui.Popup',
 
 		this.connect(window, 'resize', this.onWindowResize);
 
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
+
 		this.autoConfig(config, 'autoHide', 'expandable');
 	},
 
@@ -59,6 +62,16 @@ Ui.Container.extend('Ui.Popup',
 			this.content = content;
 			if(this.content != undefined)
 				this.contentBox.append(this.content);
+		}
+	},
+
+	onKeyUp: function(event) {
+		var key = event.which;
+		// escape
+		if((key == 27) && (this.autoHide)) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.hide();
 		}
 	},
 
@@ -373,7 +386,7 @@ Ui.Fixed.extend('Ui.PopupBackground',
 			this.fill = Ui.Color.create(fill);
 			var yuv = this.fill.getYuv();
 			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
+				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) },
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
 			] });
 			this.background.setFill(gradient);

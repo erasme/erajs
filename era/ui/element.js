@@ -883,8 +883,11 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalDisable: function() {
-		if(this.focusable)
+		if(this.focusable) {
 			this.drawing.setAttribute('tabindex', -1);
+			if(this.hasFocus)
+				this.blur();
+		}
 		this.onDisable();
 		this.fireEvent('disable', this);
 	},
@@ -1060,7 +1063,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onBlur: function(event) {
-		if(this.focusable && !this.getIsDisabled()) {
+		if(this.focusable) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.hasFocus = false;
