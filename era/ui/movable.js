@@ -30,6 +30,8 @@ Ui.LBox.extend('Ui.Movable', {
 	isInMoveEvent: false,
 	cumulMove: 0,
 	catcher: undefined,
+	window: undefined,
+	iframe: undefined,
 
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
@@ -169,6 +171,19 @@ Ui.LBox.extend('Ui.Movable', {
 
 		this.onDown();
 
+		this.window = window;
+		this.iframe = undefined;
+		if(navigator.isWebkit) {
+			var rootWindow = Ui.App.getRootWindow();
+			if(rootWindow != window) {
+				this.window = rootWindow;
+				this.iframe = Ui.App.getWindowIFrame();
+			}
+		}
+
+		this.connect(this.window, 'mouseup', this.onMouseUp, true);
+		this.connect(this.window, 'mousemove', this.onMouseMove, true);
+
 		this.catcher = document.createElement('div');
 		this.catcher.style.position = 'absolute';
 		this.catcher.style.left = '0px';
@@ -176,10 +191,7 @@ Ui.LBox.extend('Ui.Movable', {
 		this.catcher.style.top = '0px';
 		this.catcher.style.bottom = '0px';
 		this.catcher.zIndex = 1000;
-		document.body.appendChild(this.catcher);
-
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-		this.connect(window, 'mousemove', this.onMouseMove, true);
+		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.mouseLast = this.mouseStart;
@@ -192,7 +204,10 @@ Ui.LBox.extend('Ui.Movable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		var point = { x: event.clientX, y: event.clientY };
+		if(this.iframe != undefined)
+			point = this.window.webkitConvertPointFromPageToNode(this.iframe, new WebKitPoint(event.clientX, event.clientY));
+		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 
@@ -212,10 +227,10 @@ Ui.LBox.extend('Ui.Movable', {
 		if(event.button != 0)
 			return;
 
-		document.body.removeChild(this.catcher);
+		this.window.document.body.removeChild(this.catcher);
 
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
+		this.disconnect(this.window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(this.window, 'mouseup', this.onMouseUp, true);
 
 		this.stopComputeInertia();
 		if(this.inertia)

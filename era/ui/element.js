@@ -731,9 +731,7 @@ Core.Object.extend('Ui.Element',
 	 * coordinate system
 	 */
 	transformFromWindow: function() {
-		var matrix = this.transformToWindow();
-		matrix.inverse();
-		return matrix;
+		return Ui.Element.transformFromWindow(this.drawing);
 	},
 
 	/**
@@ -760,13 +758,7 @@ Core.Object.extend('Ui.Element',
 	 * system to the current element coordinate system
 	 */
 	pointFromWindow: function(point) {
-		if(navigator.isWebkit)
-			return window.webkitConvertPointFromPageToNode(this.drawing, new WebKitPoint(point.x, point.y));
-		else {
-			point = new Ui.Point({ point: point });
-			point.matrixTransform(this.transformFromWindow());
-			return point;
-		}
+		return Ui.Element.pointFromWindow(this.drawing, point);
 	},
 
 	/**
@@ -1355,6 +1347,12 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
+	transformFromWindow: function(element) {
+		var matrix = Ui.Element.transformToWindow(element);
+		matrix.inverse();
+		return matrix;
+	},
+
 	/**
 	* @return the given point converted from the givent element
 	* coordinate system to the page coordinate system
@@ -1364,7 +1362,17 @@ Core.Object.extend('Ui.Element',
 			return window.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
 		else {
 			point = new Ui.Point({point: point });
-			point.matrixTransform(this.transformToWindow(element));
+			point.matrixTransform(Ui.Element.transformToWindow(element));
+			return point;
+		}
+	},
+
+	pointFromWindow: function(element, point) {
+		if(navigator.isWebkit)
+			return window.webkitConvertPointFromPageToNode(element, new WebKitPoint(point.x, point.y));
+		else {
+			point = new Ui.Point({ point: point });
+			point.matrixTransform(Ui.Element.transformFromWindow(element));
 			return point;
 		}
 	}
