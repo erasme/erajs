@@ -36,6 +36,7 @@ Ui.Element.extend('Ui.Text',
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
+		this.words = [];
 		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
 			'color', 'selectable', 'textAlign');
 	},
@@ -48,6 +49,7 @@ Ui.Element.extend('Ui.Text',
 		if(this.text != text) {
 			this.text = text;
 			this.splitText();
+			this.textMeasureValid = false;
 			this.invalidateMeasure();
 		}
 	},
