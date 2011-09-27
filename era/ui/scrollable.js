@@ -3,6 +3,8 @@ Ui.Container.extend('Ui.Scrollable',
 {
 	viewWidth: 0,
 	viewHeight: 0,
+	contentWidth: 0,
+	contentHeight: 0,
 	horizontalBarWidth: 0,
 	verticalBarHeight: 0,
 	offsetX: 0,
@@ -179,6 +181,15 @@ Ui.Container.extend('Ui.Scrollable',
 			offsetY = this.offsetY;
 		else if(!absolute)
 				offsetY *= this.contentHeight - this.viewHeight;
+
+		if(offsetX < 0)
+			offsetX = 0;
+		else if(this.viewWidth + offsetX > this.contentWidth)
+			offsetX = this.contentWidth - this.viewWidth;
+		if(offsetY < 0)
+			offsetY = 0;
+		else if(this.viewHeight + offsetY > this.contentHeight)
+			offsetY = this.contentHeight - this.viewHeight;
 
 		this.contentBox.setOffset(offsetX, offsetY);
 
