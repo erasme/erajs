@@ -173,17 +173,18 @@ Ui.Container.extend('Ui.MenuDialog', {
 	visible: false,
 
 	show: function() {
-		Ui.App.current.appendDialog(this);
-		if(!this.getIsVisible()) {
+		var oldVisible = this.getIsVisible();
+		Ui.MenuDialog.base.show.call(this);
+
+		if(!oldVisible) {
 			this.header.setFontWeight(this.element.getFontWeight());
 			this.header.setFontSize(this.element.getFontSize());
+			Ui.App.current.appendDialog(this);
 		}
-		Ui.MenuDialog.base.show.call(this);
 	},
 
-	hide: function() {
+	onHidden: function() {
 		Ui.App.current.removeDialog(this);
-		Ui.MenuDialog.base.hide.call(this);
 	},
 
 	measureCore: function(width, height) {
