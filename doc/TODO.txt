@@ -246,9 +246,9 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 * - permettre de styliser Ui.Text
 
-- BUG, la mesure du text n'est pas bonne si le programme tourne dans un
-  IFrame et que l'IFrame n'est pas chargé dans le DOM de la fenêtre.
-  Ce problème concerne IE* (y compris le 9) et Firefox 6.0.2
+* - BUG, la mesure du text n'est pas bonne si le programme tourne dans un
+    IFrame et que l'IFrame n'est pas affiché dans le DOM de la fenêtre (display: none).
+    Ce problème concerne IE* (y compris le 9) et Firefox 6.0.2
 
 - les problèmes de VML ne sont pas résolu. Des fois le VML n'est pas affiché.
   par exemple, sur le site ERAjs, le frame des textes en bas, ne s'affiche pas
@@ -268,4 +268,6 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 * - Lorsque l'on ferme une Popup, rendre le focus à l'élément qui l'avait précédemment
 
 - Améliorer le look de Ui.Popup
+
+- Gérer le focus des popups dans IE < 9
 

@@ -233,15 +233,19 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	createMeasure: function() {
-		if(document.body == undefined) {
-			var body = document.createElement('body');
-			document.body = body;
+		var measureWindow = window;
+		if(navigator.isIE || navigator.isGecko)
+			measureWindow = Ui.App.getRootWindow();
+
+		if(measureWindow.document.body == undefined) {
+			var body = measureWindow.document.createElement('body');
+			measureWindow.document.body = body;
 		}
-		Ui.Label.measureBox = document.createElement('div');
+		Ui.Label.measureBox = measureWindow.document.createElement('div');
 		Ui.Label.measureBox.style.whiteSpace = 'nowrap';
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
-		document.body.appendChild(Ui.Label.measureBox);
+		measureWindow.document.body.appendChild(Ui.Label.measureBox);
 	},
 
 	style: {
