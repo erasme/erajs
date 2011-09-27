@@ -116,6 +116,9 @@ Ui.Container.extend('Ui.MenuDialog', {
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 	},
 
 	setHeader: function(header) {
@@ -167,6 +170,50 @@ Ui.Container.extend('Ui.MenuDialog', {
 			this.hide();
 			event.preventDefault();
 			event.stopPropagation();
+		}
+	},
+
+	onKeyDown: function(event) {
+		var key = event.which;
+		// escape
+		if(key == 27) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.hide();
+		}
+		// arrow down
+		else if(key == 40) {
+			for(var i = 0; i < this.content.getChildren().length; i++) {
+				if(!Ui.MenuItem.hasInstance(this.content.getChildren()[i]))
+					continue;
+				if(this.content.getChildren()[i].getIsCurrent()) {
+					for(i = i+1;i < this.content.getChildren().length; i++) {
+						if(Ui.MenuItem.hasInstance(this.content.getChildren()[i])) {
+							event.preventDefault();
+							event.stopPropagation();
+							this.content.getChildren()[i].setCurrent();
+							break;
+						}
+					}
+				}
+			}
+		}
+		// arrow up
+		else if(key == 38) {
+			var prev = undefined;
+			for(var i = 0; i < this.content.getChildren().length; i++) {
+				if(!Ui.MenuItem.hasInstance(this.content.getChildren()[i]))
+					continue;
+				if(this.content.getChildren()[i].getIsCurrent()) {
+					if(prev != undefined) {
+						event.preventDefault();
+						event.stopPropagation();
+						prev.setCurrent();
+					}
+					break;
+				}
+				prev = this.content.getChildren()[i];
+			}
 		}
 	}
 }, {
@@ -337,6 +384,18 @@ Ui.MouseOverable.extend('Ui.MenuItem', {
 		this.connect(this, 'leave', this.onLeave);
 		this.connect(this.pressable, 'down', this.onDown);
 		this.connect(this.pressable, 'up', this.onUp);
+
+		this.connect(this.pressable, 'focus', this.onItemFocus);
+		this.connect(this.pressable, 'blur', this.onItemBlur);
+
+	},
+
+	getIsCurrent: function() {
+		return this.pressable.getHasFocus();
+	},
+
+	setCurrent: function() {
+		this.pressable.focus();
 	},
 
 	setContent: function(content) {
@@ -360,6 +419,14 @@ Ui.MouseOverable.extend('Ui.MenuItem', {
 	},
 
 	onUp: function() {
+		this.background.setOpacity(0);
+	},
+
+	onItemFocus: function() {
+		this.background.setOpacity(0.6);
+	},
+
+	onItemBlur: function() {
 		this.background.setOpacity(0);
 	}
 });
