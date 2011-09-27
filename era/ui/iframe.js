@@ -36,6 +36,8 @@ Ui.Element.extend('Ui.IFrame', {
 		this.iframeDrawing.style.padding = '0px';
 		this.iframeDrawing.style.left = '0px';
 		this.iframeDrawing.style.top = '0px';
+		if(navigator.isIE)
+			this.iframeDrawing.frameBorder = '0';
 		return this.iframeDrawing;
 	},
 
