@@ -796,6 +796,9 @@ Core.Object.extend('Ui.Element',
 			var old = this.getIsVisible();
 			this.visible = false;
 			this.drawing.style.display = 'none';
+
+//			console.log(this.classType+'.hide old: '+old);
+
 			if(old)
 				this.onInternalHidden();
 		}
@@ -806,13 +809,16 @@ Core.Object.extend('Ui.Element',
 			var old = this.getIsVisible();
 			this.visible = true;
 			this.drawing.style.display = 'block';
-			if(!old)
+
+//			console.log(this.classType+'.show old: '+old+', new: '+this.getIsVisible());
+
+			if(this.getIsVisible() && !old)
 				this.onInternalVisible();
 		}
 	},
 
 	getIsVisible: function() {
-		return ((this.parentVisible !== false) && (this.visible !== false));
+		return ((this.parentVisible === true) && (this.visible !== false));
 	},
 
 	setParentVisible: function(visible) {
@@ -827,6 +833,9 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalHidden: function() {
+//		console.log(this.classType+'.onInternalHidden');
+		// DEBUG
+//		this.checkVisible();
 		this.onHidden();
 		this.fireEvent('hidden', this);
 	},
@@ -835,9 +844,35 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalVisible: function() {
+//		console.log(this.classType+'.onInternalVisible');
+		// DEBUG
+//		this.checkVisible();
 		this.onVisible();
 		this.fireEvent('visible', this);
 	},
+
+//////////
+	checkVisible: function() {
+		if(this.getDrawing() == undefined)
+			return;
+		var visible = false;
+		var current = this.getDrawing();
+		while(current != undefined) {
+			if(current.style.display == 'none') {
+				visible = false;
+				break;
+			}
+			if(current == document.body) {
+				visible = true;
+				break;
+			}
+			current = current.parentNode;
+		}
+		if(this.getIsVisible() !== visible)
+			console.log('checkVisible expect: '+this.getIsVisible()+', got: '+visible+' (on '+this+')');
+//			throw('checkVisible expect: '+this.getIsVisible()+', got: '+visible+' (on '+this+')');
+	},
+//////////
 
 	onVisible: function() {
 	},

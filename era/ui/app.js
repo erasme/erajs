@@ -232,6 +232,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	onWindowResize: function() {
+//		console.log('onWindowResize iframe ? '+(window != Ui.App.getRootWindow())+' ('+document.body.clientWidth+' x '+document.body.clientHeight+')');
 //		console.log(this+'.onWindowResize start updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 
 		this.fireEvent('resize', this);
@@ -567,6 +568,7 @@ Ui.LBox.extend('Ui.App',
 
 			this.update();
 			this.setIsLoaded(true);
+			this.setParentVisible(true);
 			this.fireEvent('ready');
 		}
 	},
@@ -725,6 +727,8 @@ Ui.LBox.extend('Ui.App',
 //		}
 	}
 }, {
+	current: undefined,
+
 	getWindowIFrame: function(currentWindow) {
 		if(currentWindow == undefined)
 			currentWindow = window;
@@ -750,6 +754,4 @@ Ui.LBox.extend('Ui.App',
 		return rootWindow;
 	}
 });
-
-Ui.App.current = undefined;
 
