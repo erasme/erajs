@@ -1,4 +1,3 @@
-
 Ui.LBox.extend('Ui.Uploadable', 
 /**@lends Ui.Uploadable#*/
 {

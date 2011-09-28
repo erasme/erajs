@@ -1,8 +1,13 @@
-
-
-Ui.ScrollingArea.extend('Ui.IconList', {
+Ui.ScrollingArea.extend('Ui.IconList', 
+/**@lends Ui.IconList#*/
+{
 	flow: undefined,
 
+	/**
+     * @constructs
+	 * @class
+     * @extends Ui.ScrollingArea
+	 */
 	constructor: function(config) {
 		this.flow = new Ui.Flow({ uniform: true });
 		this.setContent(this.flow);
@@ -23,7 +28,14 @@ Ui.ScrollingArea.extend('Ui.IconList', {
 	}
 });
 
-Ui.Selectable.extend('Ui.IconListItem', {
+Ui.Selectable.extend('Ui.IconListItem', 
+/**@lends Ui.IconListItem#*/
+{
+	/**
+     * @constructs
+	 * @class
+     * @extends Ui.Selectable
+	 */
 	constructor: function(config) {
 		this.setPadding(10);
 		this.setVerticalAlign('top');

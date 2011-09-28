@@ -1,4 +1,3 @@
-
 Ui.Element.extend('Ui.TextArea', 
 /**@lends Ui.TextArea#*/
 {

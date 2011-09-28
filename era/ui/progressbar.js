@@ -1,7 +1,6 @@
-//
-// Define the ProgressBar class.
-//
-Ui.Container.extend('Ui.ProgressBar', {
+Ui.Container.extend('Ui.ProgressBar', 
+/**@lends Ui.ProgressBar#*/
+{
 	value: 0,
 	barBox: undefined,
 	barBackground: undefined,
@@ -12,6 +11,11 @@ Ui.Container.extend('Ui.ProgressBar', {
 	lightBorder: undefined,
 	background: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  });
 		this.appendChild(this.lightShadow);
@@ -54,10 +58,9 @@ Ui.Container.extend('Ui.ProgressBar', {
 		return this.value;
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+
+	 * @private
+	 */
 	getGradient: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
@@ -75,7 +78,10 @@ Ui.Container.extend('Ui.ProgressBar', {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.Color({ y: yuv.y + 0.30, u: yuv.u, v: yuv.v });
 	}
-}, {
+	/**#@-*/
+}, 
+/**@lends Ui.ProgressBar#*/
+{
 	measureCore: function(width, height) {
 		var minHeight = 0;
 		var minWidth = 0;
@@ -124,7 +130,9 @@ Ui.Container.extend('Ui.ProgressBar', {
 		this.barBackground.setRadius(radius);
 		this.barBackground.setFill(this.getBarBorderColor());
 	}
-}, {
+}, 
+/**@lends Ui.ProgressBar*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.39, g: 0.92, b: 0.39 }),
 		radius: 4

@@ -1,9 +1,14 @@
-
-
-Core.Object.extend('Ui.Point', {
+Core.Object.extend('Ui.Point', 
+/**@lends Ui.Point#*/
+{
 	x: 0,
 	y: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Core.Object
+	 */
 	constructor: function(config) {
 		this.autoConfig(config, 'point', 'x', 'y');
 	},
@@ -39,7 +44,9 @@ Core.Object.extend('Ui.Point', {
 	clone: function() {
 		return new Ui.Point({ x: this.x, y: this.y });
 	}
-}, {
+}, 
+/**@lends Ui.Point#*/
+{
 	toString: function() {
 		return 'point('+this.x.toFixed(4)+', '+this.y.toFixed(4)+')';
 	}

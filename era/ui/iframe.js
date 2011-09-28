@@ -1,8 +1,14 @@
-
-Ui.Element.extend('Ui.IFrame', {
+Ui.Element.extend('Ui.IFrame', 
+/**@lends Ui.IFrame#*/
+{
 	iframeDrawing: undefined,
 	isReady: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.connect(this.iframeDrawing, 'load', this.onIFrameLoad);
 		this.addEvents('ready');
@@ -27,7 +33,9 @@ Ui.Element.extend('Ui.IFrame', {
 			this.fireEvent('ready', this);
 		}
 	}
-}, {
+}, 
+/**@lends Ui.IFrame#*/
+{
 	render: function() {
 		this.iframeDrawing = document.createElement('iframe');
 		this.iframeDrawing.style.position = 'absolute';
