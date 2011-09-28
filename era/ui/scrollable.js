@@ -325,10 +325,12 @@ Ui.Container.extend('Ui.Scrollable',
 			deltaX = -event.wheelDeltaX / 12;
 			deltaY = -event.wheelDeltaY / 12;
 		}
+		// Opera, Chrome, IE
 		else if(event.wheelDelta != undefined)
 			deltaY = -event.wheelDelta / 4;
+		// Firefox
 		else if(event.detail != undefined)
-			deltaY = event.detail * 10 / 3;
+			deltaY = event.detail * 10;
 		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);
 	},
 
