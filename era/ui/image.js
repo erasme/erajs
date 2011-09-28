@@ -1,5 +1,7 @@
 
-Ui.Element.extend('Ui.Image', {
+Ui.Element.extend('Ui.Image', 
+/**@lends Ui.Image#*/
+{
 	src: undefined,
 	loaddone: false,
 	naturalWidth: undefined,
@@ -7,6 +9,11 @@ Ui.Element.extend('Ui.Image', {
 	imageDrawing: undefined,
 	setSrcLock: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.addEvents('ready');
 		this.connect(this.imageDrawing, 'load', this.onImageLoad);
@@ -98,7 +105,9 @@ Ui.Element.extend('Ui.Image', {
 	}
 
 	/**#@-*/
-}, {
+}, 
+/**@lends Ui.Image#*/
+{
 	render: function() {
 		/**#nocode+ Avoid Jsdoc warnings...*/
 		this.imageDrawing = document.createElement('img');
