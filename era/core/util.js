@@ -13,8 +13,9 @@ navigator.isChrome = (navigator.userAgent.match(/ Chrome\//) != null);
 navigator.isSafari = (navigator.userAgent.match(/ Safari\//) != null);
 
 navigator.isFirefox = (navigator.userAgent.match(/ Firefox\//) != null);
-navigator.isFirefox35 = (navigator.userAgent.match(/ Firefox\/3\.5\./) != null);
-navigator.isFirefox36 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null);
+navigator.isFirefox3 = (navigator.userAgent.match(/ Firefox\/3\./) != null);
+navigator.isFirefox3_5 = (navigator.userAgent.match(/ Firefox\/3\.5\./) != null);
+navigator.isFirefox3_6 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null);
 
 navigator.iPad = (navigator.userAgent.match(/iPad/i) != null);
 navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
