@@ -22,8 +22,12 @@ Ui.Container.extend('Ui.Grid',
 					this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: 1 });
 				else if(col.match(/^[0-9]+\.?[0-9]*\*$/))
 					this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: new Number(col.slice(0, col.length-1)) });
-				else
+				else if(col.match(/^[0-9]+$/))
 					this.cols.push({ auto: false, star: false, absolute: true, actualWidth: 0, offset: 0, width: new Number(col) });
+//#if DEBUG
+				else
+					throw('Ui.Grid column definition "'+col+'" not supported');
+//#end
 			}
 		}
 		else
@@ -39,8 +43,12 @@ Ui.Container.extend('Ui.Grid',
 					this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: 1 });
 				else if(row.match(/^[0-9]+\.?[0-9]*\*$/))
 					this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: new Number(row.slice(0, row.length-1)) });
-				else
+				else if(row.match(/^[0-9]+$/))
 					this.rows.push({ auto: false, star: false, absolute: true, actualHeight: 0, offset: 0, height: new Number(row) });
+//#if DEBUG
+				else
+					throw('Ui.Grid row definition "'+row+'" not supported');
+//#end
 			}
 
 		}
