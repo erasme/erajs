@@ -258,8 +258,7 @@ Ui.Element.extend('Ui.Text',
 		}
 		if(word != '')
 			words.push({ type: 'word', word: word });
-		if(this.line != '')
-			words.push({ type: 'newline' });
+		words.push({ type: 'newline' });
 		this.words = words;
 	},
 

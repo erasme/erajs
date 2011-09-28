@@ -438,11 +438,10 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	},
 
 	onEnter: function() {
-		this.background.setOpacity(0.6);
+		this.pressable.focus();
 	},
 
 	onLeave: function() {
-		this.background.setOpacity(0);
 	},
 
 	onDown: function() {
