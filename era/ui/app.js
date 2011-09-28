@@ -518,6 +518,10 @@ Ui.LBox.extend('Ui.App',
 		}
 	},
 
+	getIsReady: function() {
+		return this.ready;
+	},
+
 	onReady: function() {
 		if(this.loaded) {
 			this.ready = true;
