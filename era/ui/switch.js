@@ -137,6 +137,7 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	onDown: function(movable) {
+		this.focus();
 		this.stopAnimation();
 	},
 
