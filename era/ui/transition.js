@@ -1,4 +1,3 @@
-
 Core.Object.extend('Ui.Transition', 
 /**@lends Ui.Transition#*/
 {

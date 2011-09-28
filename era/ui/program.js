@@ -1,7 +1,13 @@
-
-Ui.IFrame.extend('Ui.Program', {
+Ui.IFrame.extend('Ui.Program', 
+/**@lends Ui.Program#*/
+{
 	arguments: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.IFrame
+	 */
 	constructor: function(config) {
 		this.connect(window, 'message', this.onMessage, false);
 		if(!('location' in config))
@@ -17,9 +23,7 @@ Ui.IFrame.extend('Ui.Program', {
 		this.getIFrame().contentWindow.postMessage(msg.serialize(), '*');
 	},
 
-	//
-	// Private
-	//
+	/**@private*/
 	onMessage: function(event) {
 		if(this.getIFrame().contentWindow === event.source) {
 			event.preventDefault();

@@ -1,6 +1,3 @@
-//
-// Define the Switch class.
-//
 Ui.LBox.extend('Ui.Switch',
 /** @lends Ui.Switch#*/
 {

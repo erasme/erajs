@@ -1,7 +1,6 @@
-//
-// Define the Movable class.
-//
-Ui.LBox.extend('Ui.Movable', {
+Ui.LBox.extend('Ui.Movable', 
+/**@lends Ui.Movable#*/
+{
 	moveHorizontal: true,
 	moveVertical: true,
 	mouseStart: undefined,
@@ -33,6 +32,11 @@ Ui.LBox.extend('Ui.Movable', {
 	window: undefined,
 	iframe: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
 		this.setFocusable(true);
@@ -119,9 +123,9 @@ Ui.LBox.extend('Ui.Movable', {
 		return this.posY;
 	},
 
-	//
-	// Private
-	//
+	/**#@+
+	 * @private
+	 */
 
 	onDown: function() {
 		this.cumulMove = 0;
@@ -388,6 +392,7 @@ Ui.LBox.extend('Ui.Movable', {
 			this.inertiaClock = undefined;
 		}
 	}
+	/**#@-*/
 }, {
 	arrangeCore: function(width, height) {
 		this.getDrawing().style.width = '0px';

@@ -1,13 +1,19 @@
 
 Ui.ToolBar.extend('Ui.MenuBar', {});
 
-Ui.Pressable.extend('Ui.Menu', 
+Ui.Pressable.extend('Ui.Menu',
+/**@lends Ui.Menu#*/
 {
 	headerLabel: undefined,
 	header: undefined,
 	dialog: undefined,
 	scope: undefined,
 
+    /**
+     * @constructs
+	 * @class   
+     * @extends Ui.Pressable
+     */ 
 	constructor: function(config) {
 		this.addEvents('item');
 
@@ -87,7 +93,9 @@ Ui.Pressable.extend('Ui.Menu',
 	}
 });
 
-Ui.Container.extend('Ui.MenuDialog', {
+Ui.Container.extend('Ui.MenuDialog', 
+/**@lends Ui.MenuDialog#*/
+{
 	element: undefined,
 	background: undefined,
 	header: undefined,
@@ -95,6 +103,11 @@ Ui.Container.extend('Ui.MenuDialog', {
 	content: undefined,
 	shadow: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.addEvents('item');
 
@@ -216,7 +229,9 @@ Ui.Container.extend('Ui.MenuDialog', {
 			}
 		}
 	}
-}, {
+}, 
+/**@lends Ui.MenuDialog#*/
+{
 	visible: false,
 
 	show: function() {
@@ -265,7 +280,9 @@ Ui.Container.extend('Ui.MenuDialog', {
 	}
 });
 
-Ui.Container.extend('Ui.MenuBackground', {
+Ui.Container.extend('Ui.MenuBackground', 
+/**@lends Ui.MenuBackground#*/
+{
 	darkShadow: undefined,
 	lightShadow: undefined,
 	background: undefined,
@@ -276,6 +293,11 @@ Ui.Container.extend('Ui.MenuBackground', {
 	tabWidth: 10,
 	tabHeight: 10,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 
 		this.darkShadow = new Ui.Shape({ fill: '#010002' });
@@ -343,7 +365,9 @@ Ui.Container.extend('Ui.MenuBackground', {
 		return str;
 	}
 	/**#@-*/
-}, {
+}, 
+/**@lends Ui.MenuBackground#*/
+{
 	arrangeCore: function(width, height) {
 		this.darkShadow.setPath(this.genPath(width, height, this.radius, this.tabOffset, this.tabWidth, this.tabHeight));
 		this.darkShadow.arrange(0, 0, width, height);
@@ -364,10 +388,17 @@ Ui.Container.extend('Ui.MenuBackground', {
 	}
 });
 
-Ui.MouseOverable.extend('Ui.MenuItem', {
+Ui.MouseOverable.extend('Ui.MenuItem', 
+/**@lends Ui.MenuItem#*/
+{
 	background: undefined,
 	pressable: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.MouseOverable
+	 */
 	constructor: function() {
 		this.addEvents('press');
 

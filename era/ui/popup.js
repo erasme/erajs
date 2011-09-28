@@ -16,6 +16,7 @@ Ui.Container.extend('Ui.Popup',
 	 * @class
      * @extends Ui.Container
      * @param {Boolean} [config.autoHide]
+	 * @param {Boolean} [config.expandable]
 	 */
 	constructor: function(config) {
 		this.setHorizontalAlign('stretch');

@@ -1,4 +1,3 @@
-
 Ui.LBox.extend('Ui.TextAreaField', 
 /**@lends Ui.TextAreaField#*/
 {

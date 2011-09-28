@@ -1,4 +1,3 @@
-
 Ui.Element.extend('Ui.Video', 
 /**@lends Ui.Video#*/
 {

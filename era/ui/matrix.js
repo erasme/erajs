@@ -1,6 +1,6 @@
-
-
-Core.Object.extend('Ui.Matrix', {
+Core.Object.extend('Ui.Matrix', 
+/**@lends Ui.Matrix#*/
+{
 	a: 1,
 	b: 0,
 	c: 0,
@@ -8,6 +8,11 @@ Core.Object.extend('Ui.Matrix', {
 	e: 0,
 	f: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Core.Object
+	 */
 	constructor: function(config) {
 	},
 
@@ -94,11 +99,15 @@ Core.Object.extend('Ui.Matrix', {
 	clone: function() {
 		return Ui.Matrix.createMatrix(this.a, this.b, this.c, this.d, this.e, this.f);
 	}
-}, {
+}, 
+/**@lends Ui.Matrix#*/
+{
 	toString: function() {
 		return 'matrix('+this.a.toFixed(4)+', '+this.b.toFixed(4)+', '+this.c.toFixed(4)+', '+this.d.toFixed(4)+', '+this.e.toFixed(4)+', '+this.f.toFixed(4)+')';
 	}
-}, {
+}, 
+/**@lends Ui.Matrix*/
+{
 	createMatrix: function(a, b, c, d, e, f) {
 		var matrix = new Ui.Matrix();
 		matrix.setMatrix(a, b, c, d, e, f);

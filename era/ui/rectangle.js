@@ -1,10 +1,16 @@
-
-Ui.Shape.extend('Ui.Rectangle', {
+Ui.Shape.extend('Ui.Rectangle', 
+/**@lends Ui.Rectangle#*/
+{
 	radiusTopLeft: 0,
 	radiusTopRight: 0,
 	radiusBottomLeft: 0,
 	radiusBottomRight: 0,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Shape
+	 */
 	constructor: function(config) {
 		this.autoConfig(config, 'radius', 'radiusTopLeft', 'radiusTopRight',
 			'radiusBottomLeft', 'radiusBottomRight');
@@ -94,7 +100,9 @@ Ui.Shape.extend('Ui.Rectangle', {
 
 	/**#@-*/
 
-}, /* overrided */ {
+}, 
+/**@lends Ui.Rectangle#*/ 
+{
 	arrangeCore: function(width, height) {
 		Ui.Rectangle.base.arrangeCore.call(this, width, height);
 		this.setPath(this.genPath(width, height));

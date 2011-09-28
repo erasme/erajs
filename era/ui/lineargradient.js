@@ -1,10 +1,15 @@
-
-
-Core.Object.extend('Ui.LinearGradient', {
+Core.Object.extend('Ui.LinearGradient', 
+/**@lends Ui.LinearGradient#*/
+{
 	orientation: 'vertical',
 	stops: undefined,
 	image: undefined,
 
+    /**
+     * @constructs
+	 * @class   
+     * @extends Core.Object
+     */ 
 	constructor: function(config) {
 		if(config.stops != undefined)
 			this.stops = config.stops;
