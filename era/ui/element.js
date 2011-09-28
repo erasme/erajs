@@ -731,9 +731,7 @@ Core.Object.extend('Ui.Element',
 	 * coordinate system
 	 */
 	transformFromWindow: function() {
-		var matrix = this.transformToWindow();
-		matrix.inverse();
-		return matrix;
+		return Ui.Element.transformFromWindow(this.drawing);
 	},
 
 	/**
@@ -760,13 +758,7 @@ Core.Object.extend('Ui.Element',
 	 * system to the current element coordinate system
 	 */
 	pointFromWindow: function(point) {
-		if(navigator.isWebkit)
-			return window.webkitConvertPointFromPageToNode(this.drawing, new WebKitPoint(point.x, point.y));
-		else {
-			point = new Ui.Point({ point: point });
-			point.matrixTransform(this.transformFromWindow());
-			return point;
-		}
+		return Ui.Element.pointFromWindow(this.drawing, point);
 	},
 
 	/**
@@ -804,6 +796,9 @@ Core.Object.extend('Ui.Element',
 			var old = this.getIsVisible();
 			this.visible = false;
 			this.drawing.style.display = 'none';
+
+//			console.log(this.classType+'.hide old: '+old);
+
 			if(old)
 				this.onInternalHidden();
 		}
@@ -814,20 +809,16 @@ Core.Object.extend('Ui.Element',
 			var old = this.getIsVisible();
 			this.visible = true;
 			this.drawing.style.display = 'block';
-			if(!old)
+
+//			console.log(this.classType+'.show old: '+old+', new: '+this.getIsVisible());
+
+			if(this.getIsVisible() && !old)
 				this.onInternalVisible();
 		}
 	},
 
 	getIsVisible: function() {
-		if(this.visible != undefined)
-			return this.visible;
-		else {
-			if(this.parentVisible != undefined)
-				return this.parentVisible;
-			else
-				return true;
-		}
+		return ((this.parentVisible === true) && (this.visible !== false));
 	},
 
 	setParentVisible: function(visible) {
@@ -842,6 +833,9 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalHidden: function() {
+//		console.log(this.classType+'.onInternalHidden');
+		// DEBUG
+//		this.checkVisible();
 		this.onHidden();
 		this.fireEvent('hidden', this);
 	},
@@ -850,9 +844,35 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalVisible: function() {
+//		console.log(this.classType+'.onInternalVisible');
+		// DEBUG
+//		this.checkVisible();
 		this.onVisible();
 		this.fireEvent('visible', this);
 	},
+
+//////////
+	checkVisible: function() {
+		if(this.getDrawing() == undefined)
+			return;
+		var visible = false;
+		var current = this.getDrawing();
+		while(current != undefined) {
+			if(current.style.display == 'none') {
+				visible = false;
+				break;
+			}
+			if(current == document.body) {
+				visible = true;
+				break;
+			}
+			current = current.parentNode;
+		}
+		if(this.getIsVisible() !== visible)
+			console.log('checkVisible expect: '+this.getIsVisible()+', got: '+visible+' (on '+this+')');
+//			throw('checkVisible expect: '+this.getIsVisible()+', got: '+visible+' (on '+this+')');
+	},
+//////////
 
 	onVisible: function() {
 	},
@@ -898,8 +918,11 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalDisable: function() {
-		if(this.focusable)
+		if(this.focusable) {
 			this.drawing.setAttribute('tabindex', -1);
+			if(this.hasFocus)
+				this.blur();
+		}
 		this.onDisable();
 		this.fireEvent('disable', this);
 	},
@@ -1075,7 +1098,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onBlur: function(event) {
-		if(this.focusable && !this.getIsDisabled()) {
+		if(this.focusable) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.hasFocus = false;
@@ -1362,6 +1385,12 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
+	transformFromWindow: function(element) {
+		var matrix = Ui.Element.transformToWindow(element);
+		matrix.inverse();
+		return matrix;
+	},
+
 	/**
 	* @return the given point converted from the givent element
 	* coordinate system to the page coordinate system
@@ -1371,7 +1400,17 @@ Core.Object.extend('Ui.Element',
 			return window.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
 		else {
 			point = new Ui.Point({point: point });
-			point.matrixTransform(this.transformToWindow(element));
+			point.matrixTransform(Ui.Element.transformToWindow(element));
+			return point;
+		}
+	},
+
+	pointFromWindow: function(element, point) {
+		if(navigator.isWebkit)
+			return window.webkitConvertPointFromPageToNode(element, new WebKitPoint(point.x, point.y));
+		else {
+			point = new Ui.Point({ point: point });
+			point.matrixTransform(Ui.Element.transformFromWindow(element));
 			return point;
 		}
 	}

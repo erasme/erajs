@@ -1,0 +1,22 @@
+#!/bin/bash
+
+rm -Rf /tmp/jsdoc
+mkdir /tmp/jsdoc
+
+if [ $1 ]; then
+	jsdoc --quiet --test -d=/tmp/jsdoc $1 > /dev/null 2> /dev/null;
+	if [ $? != 0 ]; then
+		echo "$1 ERROR";
+	else
+		echo "$1 OK";
+	fi
+else
+	for i in `grep '^include(eraBaseDirectory' era/era-debug.js | sed "s/include(eraBaseDirectory+'\(.*\)');/era\/\1/"`; do
+		jsdoc --quiet --test -d=/tmp/jsdoc $i > /dev/null 2> /dev/null;
+		if [ $? != 0 ]; then
+			echo "$i ERROR";
+		fi
+	done
+fi
+
+rm -Rf /tmp/jsdoc

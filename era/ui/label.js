@@ -107,7 +107,7 @@ Ui.Element.extend('Ui.Label',
 		if(this.color != undefined)
 			return this.color;
 		else
-			return this.getStyleProperty('color');
+			return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
 	getOrientation: function() {
@@ -127,8 +127,6 @@ Ui.Element.extend('Ui.Label',
 	horizontalAlign: 'center',
 
 	onStyleChange: function() {
-//		console.log(this+'.onStyleChange color: '+this.getColor()+' ('+this.getStyleProperty('color')+')');
-
 		this.labelDrawing.style.fontSize = this.getFontSize()+'px';
 		this.labelDrawing.style.fontFamily = this.getFontFamily();
 		this.labelDrawing.style.fontWeight = this.getFontWeight();
@@ -235,15 +233,19 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	createMeasure: function() {
-		if(document.body == undefined) {
-			var body = document.createElement('body');
-			document.body = body;
+		var measureWindow = window;
+		if(navigator.isIE || navigator.isGecko)
+			measureWindow = Ui.App.getRootWindow();
+
+		if(measureWindow.document.body == undefined) {
+			var body = measureWindow.document.createElement('body');
+			measureWindow.document.body = body;
 		}
-		Ui.Label.measureBox = document.createElement('div');
+		Ui.Label.measureBox = measureWindow.document.createElement('div');
 		Ui.Label.measureBox.style.whiteSpace = 'nowrap';
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
-		document.body.appendChild(Ui.Label.measureBox);
+		measureWindow.document.body.appendChild(Ui.Label.measureBox);
 	},
 
 	style: {
