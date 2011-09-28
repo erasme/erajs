@@ -9,7 +9,7 @@ Ui.Element.extend('Ui.Shape',
 	svgGradient: undefined,
 	svgDefs: undefined,
 
-	fill: 'black',
+	fill: undefined,
 	path: undefined,
 	vmlPath: undefined,
 	scale: 1,
@@ -37,9 +37,9 @@ Ui.Element.extend('Ui.Shape',
 
 	setFill: function(fill) {
 		if(this.fill != fill) {
-			this.fill = fill;
 			if(typeof(fill) == 'string')
 				fill = Ui.Color.create(fill);
+			this.fill = fill;
 			if(Ui.Shape.forceCanvas) {
 				this.updateCanvas();
 			}
