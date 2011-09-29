@@ -1,12 +1,16 @@
-//
-// Define the Locator class.
-//
-Ui.Container.extend('Ui.Locator', {
+Ui.Container.extend('Ui.Locator', 
+/**@lends Ui.Locator#*/
+{
 	path: undefined,
 	backgrounds: undefined,
 	foregrounds: undefined,
 	spacing: 2,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.addEvents('change');
 		this.autoConfig(config, 'path');
@@ -133,10 +137,9 @@ Ui.Container.extend('Ui.Locator', {
 	onPathUp: function(pathItem) {
 		this.backgrounds[pathItem.locatorPos].getChildren()[0].setFill('lightblue');
 	}
-}, {
-	//
-	// Return the required size for the current element
-	//
+}, 
+/**@lends Ui.Locator#*/
+{
 	measureCore: function(width, height) {
 		if(this.foregrounds.length == 0)
 			return { width: 0, height: 0 };
@@ -161,9 +164,6 @@ Ui.Container.extend('Ui.Locator', {
 		}
 	},
 
-	//
-	// Arrange children
-	//
 	arrangeCore: function(width, height) {
 		if(this.foregrounds.length == 1) {
 			this.foregrounds[0].arrange(0, 0, width, height);
@@ -188,9 +188,16 @@ Ui.Container.extend('Ui.Locator', {
 	}
 });
 
-Ui.Shape.extend('Ui.LocatorRightArrow', {
+Ui.Shape.extend('Ui.LocatorRightArrow', 
+/**@lends Ui.LocatorRightArrow#*/
+{
 	radius: 8,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Shape
+	 */
 	constructor: function(config) {
 		this.autoConfig(config, 'radius');
 	},
@@ -198,7 +205,9 @@ Ui.Shape.extend('Ui.LocatorRightArrow', {
 	setRadius: function(radius) {
 		this.radius = radius;
 	}
-}, {
+}, 
+/**@lends Ui.LocatorRightArrow#*/
+{
 	arrangeCore: function(width, height) {
 		Ui.LocatorRightArrow.base.arrangeCore.call(this, width, height);
 		var v1 = width - height/2;
@@ -209,9 +218,16 @@ Ui.Shape.extend('Ui.LocatorRightArrow', {
 	}
 });
 
-Ui.Shape.extend('Ui.LocatorLeftArrow', {
+Ui.Shape.extend('Ui.LocatorLeftArrow', 
+/**@lends Ui.LocatorLeftArrow#*/
+{
 	radius: 8,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Shape
+	 */
 	constructor: function(config) {
 		this.autoConfig(config, 'radius');
 	},
@@ -219,7 +235,9 @@ Ui.Shape.extend('Ui.LocatorLeftArrow', {
 	setRadius: function(radius) {
 		this.radius = radius;
 	}
-}, {
+}, 
+/**@lends Ui.LocatorLeftArrow#*/
+{
 	arrangeCore: function(width, height) {
 		Ui.LocatorLeftArrow.base.arrangeCore.call(this, width, height);
 		var v2 = width - this.radius;
@@ -230,14 +248,22 @@ Ui.Shape.extend('Ui.LocatorLeftArrow', {
 	}
 });
 
-Ui.Shape.extend('Ui.LocatorLeftRightArrow', {
-
+Ui.Shape.extend('Ui.LocatorLeftRightArrow', 
+/**@lends Ui.LocatorLeftRightArrow#*/
+{
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Shape
+	 */
 	constructor: function(config) {
 	},
 
 	setRadius: function(radius) {
 	}
-}, {
+}, 
+/**@lends Ui.LocatorLeftRightArrow#*/
+{
 	arrangeCore: function(width, height) {
 		Ui.LocatorLeftRightArrow.base.arrangeCore.call(this, width, height);
 		var v1 = width - height/2;

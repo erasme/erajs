@@ -1,4 +1,3 @@
-
 Ui.LBox.extend('Ui.Togglable', 
 /**@lends Ui.Togglable#*/
 {

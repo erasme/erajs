@@ -1,4 +1,3 @@
-
 Ui.LBox.extend('Ui.Uploadable', 
 /**@lends Ui.Uploadable#*/
 {
@@ -19,7 +18,7 @@ Ui.LBox.extend('Ui.Uploadable',
 
 		this.addEvents('file', 'down', 'up');
 
-		if(navigator.isOpera || navigator.isFirefox35 || navigator.isFirefox36 || navigator.isIE7 || navigator.isIE8)
+		if(navigator.isOpera || navigator.isFirefox3 || navigator.isIE7 || navigator.isIE8)
 			this.input = new Ui.UploadableWrapper();
 		else
 			this.input = new Ui.UploadableFileWrapper();

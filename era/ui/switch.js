@@ -1,6 +1,3 @@
-//
-// Define the Switch class.
-//
 Ui.LBox.extend('Ui.Switch',
 /** @lends Ui.Switch#*/
 {
@@ -137,6 +134,7 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	onDown: function(movable) {
+		this.focus();
 		this.stopAnimation();
 	},
 

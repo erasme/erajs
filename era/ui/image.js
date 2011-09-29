@@ -1,5 +1,7 @@
 
-Ui.Element.extend('Ui.Image', {
+Ui.Element.extend('Ui.Image', 
+/**@lends Ui.Image#*/
+{
 	src: undefined,
 	loaddone: false,
 	naturalWidth: undefined,
@@ -7,6 +9,11 @@ Ui.Element.extend('Ui.Image', {
 	imageDrawing: undefined,
 	setSrcLock: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.addEvents('ready');
 		this.connect(this.imageDrawing, 'load', this.onImageLoad);
@@ -80,25 +87,36 @@ Ui.Element.extend('Ui.Image', {
 		}
 	},
 
+	onAppReady: function() {
+		this.disconnect(Ui.App.current, 'ready', this.onAppReady);
+		this.onImageDelayReady();
+	},
+
 	onImageDelayReady: function() {
-		this.loaddone = true;
-		if(document.body == undefined) {
-			var body = document.createElement('body');
-			document.body = body;
+		if(!Ui.App.current.getIsReady())
+			this.connect(Ui.App.current, 'ready', this.onAppReady);
+		else {
+			this.loaddone = true;
+			if(document.body == undefined) {
+				var body = document.createElement('body');
+				document.body = body;
+			}
+			var imgClone = document.createElement('img');
+			imgClone.style.visibility = 'hidden';
+			imgClone.setAttribute('src', this.src);
+			document.body.appendChild(imgClone);
+			this.naturalWidth = imgClone.width;
+			this.naturalHeight = imgClone.height;
+			document.body.removeChild(imgClone);
+			this.fireEvent('ready', this);
+			this.invalidateMeasure();
 		}
-		var imgClone = document.createElement('img');
-		imgClone.style.visibility = 'hidden';
-		imgClone.setAttribute('src', this.src);
-		document.body.appendChild(imgClone);
-		this.naturalWidth = imgClone.width;
-		this.naturalHeight = imgClone.height;
-		document.body.removeChild(imgClone);
-		this.fireEvent('ready', this);
-		this.invalidateMeasure();
 	}
 
 	/**#@-*/
-}, {
+}, 
+/**@lends Ui.Image#*/
+{
 	render: function() {
 		/**#nocode+ Avoid Jsdoc warnings...*/
 		this.imageDrawing = document.createElement('img');

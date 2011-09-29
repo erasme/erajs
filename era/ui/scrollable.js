@@ -3,6 +3,8 @@ Ui.Container.extend('Ui.Scrollable',
 {
 	viewWidth: 0,
 	viewHeight: 0,
+	contentWidth: 0,
+	contentHeight: 0,
 	horizontalBarWidth: 0,
 	verticalBarHeight: 0,
 	offsetX: 0,
@@ -20,6 +22,8 @@ Ui.Container.extend('Ui.Scrollable',
 	horizontalFingerStart: undefined,
 	touchId: undefined,
 	catcher: undefined,
+	window: undefined,
+	iframe: undefined,
 
 	scrollHorizontal: true,
 	scrollVertical: true,
@@ -58,10 +62,6 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDownCapture, true);
-
-//		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
 
 		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'mousedown', this.onHorizontalMouseDown);
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'mousedown', this.onVerticalMouseDown);
@@ -182,6 +182,15 @@ Ui.Container.extend('Ui.Scrollable',
 		else if(!absolute)
 				offsetY *= this.contentHeight - this.viewHeight;
 
+		if(offsetX < 0)
+			offsetX = 0;
+		else if(this.viewWidth + offsetX > this.contentWidth)
+			offsetX = this.contentWidth - this.viewWidth;
+		if(offsetY < 0)
+			offsetY = 0;
+		else if(this.viewHeight + offsetY > this.contentHeight)
+			offsetY = this.contentHeight - this.viewHeight;
+
 		this.contentBox.setOffset(offsetX, offsetY);
 
 /*		if(!force) {
@@ -243,8 +252,27 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.stopInertia();
 
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-		this.connect(window, 'mousemove', this.onMouseMove, true);
+		this.window = window;
+		this.iframe = undefined;
+		if(navigator.isWebkit || navigator.isFirefox3) {
+			var rootWindow = Ui.App.getRootWindow();
+			if(rootWindow != window) {
+				this.window = rootWindow;
+				this.iframe = Ui.App.getWindowIFrame();
+			}
+		}
+
+		this.connect(this.window, 'mouseup', this.onMouseUp, true);
+		this.connect(this.window, 'mousemove', this.onMouseMove, true);
+
+		this.catcher = document.createElement('div');
+		this.catcher.style.position = 'absolute';
+		this.catcher.style.left = '0px';
+		this.catcher.style.right = '0px';
+		this.catcher.style.top = '0px';
+		this.catcher.style.bottom = '0px';
+		this.catcher.zIndex = 1000;
+		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
@@ -257,7 +285,10 @@ Ui.Container.extend('Ui.Scrollable',
 		event.stopPropagation();
 
 		this.hasMoved = true;
-		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		var point = { x: event.clientX, y: event.clientY };
+		if(this.iframe != undefined)
+			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
+		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetX = this.startOffsetX - deltaX;
@@ -272,8 +303,10 @@ Ui.Container.extend('Ui.Scrollable',
 		if(event.button != this.mouseButton)
 			return;
 
-		this.disconnect(window, 'mousemove', this.onMouseMove);
-		this.disconnect(window, 'mouseup', this.onMouseUp);
+		this.window.document.body.removeChild(this.catcher);
+
+		this.disconnect(this.window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(this.window, 'mouseup', this.onMouseUp, true);
 
 		this.stopComputeInertia();
 		this.startInertia();
@@ -292,10 +325,12 @@ Ui.Container.extend('Ui.Scrollable',
 			deltaX = -event.wheelDeltaX / 12;
 			deltaY = -event.wheelDeltaY / 12;
 		}
+		// Opera, Chrome, IE
 		else if(event.wheelDelta != undefined)
 			deltaY = -event.wheelDelta / 4;
+		// Firefox
 		else if(event.detail != undefined)
-			deltaY = event.detail * 10 / 3;
+			deltaY = event.detail * 10;
 		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);
 	},
 
@@ -487,6 +522,19 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.stopInertia();
 
+		this.window = window;
+		this.iframe = undefined;
+		if(navigator.isWebkit || navigator.isFirefox3) {
+			var rootWindow = Ui.App.getRootWindow();
+			if(rootWindow != window) {
+				this.window = rootWindow;
+				this.iframe = Ui.App.getWindowIFrame();
+			}
+		}
+
+		this.connect(this.window, 'mouseup', this.onVerticalMouseUp, true);
+		this.connect(this.window, 'mousemove', this.onVerticalMouseMove, true);
+
 		this.catcher = document.createElement('div');
 		this.catcher.style.position = 'absolute';
 		this.catcher.style.left = '0px';
@@ -494,10 +542,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.catcher.style.top = '0px';
 		this.catcher.style.bottom = '0px';
 		this.catcher.zIndex = 1000;
-		document.body.appendChild(this.catcher);
-
-		this.connect(window, 'mouseup', this.onVerticalMouseUp, true);
-		this.connect(window, 'mousemove', this.onVerticalMouseMove, true);
+		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
@@ -516,7 +561,10 @@ Ui.Container.extend('Ui.Scrollable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		var point = { x: event.clientX, y: event.clientY };
+		if(this.iframe != undefined)
+			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
+		var mousePos = this.pointFromWindow(point);
 		var deltaY = mousePos.y - this.mouseStart.y;
 		offsetY = this.startOffsetY + deltaY * this.contentHeight / this.viewHeight;
 		this.setOffset(undefined, offsetY, true);
@@ -534,10 +582,10 @@ Ui.Container.extend('Ui.Scrollable',
 //			this.measureSpeedTimer = undefined;
 //		}
 
-		document.body.removeChild(this.catcher);
+		this.window.document.body.removeChild(this.catcher);
 
-		this.disconnect(window, 'mousemove', this.onVerticalMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onVerticalMouseUp, true);
+		this.disconnect(this.window, 'mousemove', this.onVerticalMouseMove, true);
+		this.disconnect(this.window, 'mouseup', this.onVerticalMouseUp, true);
 //		if(!this.speedComputed) {
 //			// compute speed
 //			var currentTime = (new Date().getTime())/1000;
@@ -608,6 +656,19 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.stopInertia();
 
+		this.window = window;
+		this.iframe = undefined;
+		if(navigator.isWebkit || navigator.isFirefox3) {
+			var rootWindow = Ui.App.getRootWindow();
+			if(rootWindow != window) {
+				this.window = rootWindow;
+				this.iframe = Ui.App.getWindowIFrame();
+			}
+		}
+
+		this.connect(this.window, 'mouseup', this.onHorizontalMouseUp, true);
+		this.connect(this.window, 'mousemove', this.onHorizontalMouseMove, true);
+
 		this.catcher = document.createElement('div');
 		this.catcher.style.position = 'absolute';
 		this.catcher.style.left = '0px';
@@ -615,10 +676,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.catcher.style.top = '0px';
 		this.catcher.style.bottom = '0px';
 		this.catcher.zIndex = 1000;
-		document.body.appendChild(this.catcher);
-
-		this.connect(window, 'mouseup', this.onHorizontalMouseUp, true);
-		this.connect(window, 'mousemove', this.onHorizontalMouseMove, true);
+		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
@@ -637,7 +695,10 @@ Ui.Container.extend('Ui.Scrollable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		var mousePos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		var point = { x: event.clientX, y: event.clientY };
+		if(this.iframe != undefined)
+			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
+		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
 		offsetX = this.startOffsetX + deltaX * this.contentWidth / this.viewWidth;
 		this.setOffset(offsetX, this.startOffsetY, true);
@@ -650,10 +711,10 @@ Ui.Container.extend('Ui.Scrollable',
 		if(event.button != 0)
 			return;
 
-		document.body.removeChild(this.catcher);
+		this.window.document.body.removeChild(this.catcher);
 
-		this.disconnect(window, 'mousemove', this.onHorizontalMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onHorizontalMouseUp, true);
+		this.disconnect(this.window, 'mousemove', this.onHorizontalMouseMove, true);
+		this.disconnect(this.window, 'mouseup', this.onHorizontalMouseUp, true);
 	},
 
 	onHorizontalFingerDown: function(event) {

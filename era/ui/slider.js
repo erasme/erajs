@@ -1,6 +1,3 @@
-//
-// Define the Slider class.
-//
 Ui.Container.extend('Ui.Slider', 
 /**@lends Ui.Slider#*/
 {

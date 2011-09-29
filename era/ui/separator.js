@@ -1,6 +1,11 @@
 Ui.Rectangle.extend('Ui.Separator', 
 /** @lends Ui.Separator# */
 {
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Rectangle
+	 */
 	constructor: function(config) {
 		this.setMargin(3);
 		this.setHeight(1);

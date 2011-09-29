@@ -232,6 +232,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	onWindowResize: function() {
+//		console.log('onWindowResize iframe ? '+(window != Ui.App.getRootWindow())+' ('+document.body.clientWidth+' x '+document.body.clientHeight+')');
 //		console.log(this+'.onWindowResize start updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 
 		this.fireEvent('resize', this);
@@ -461,18 +462,34 @@ Ui.LBox.extend('Ui.App',
 
 	appendDialog: function(dialog) {
 		if(this.dialogs == undefined) {
+			this.focusStack = [];
 			this.dialogs = new Ui.LBox();
 			this.append(this.dialogs);
 		}
+		this.focusStack.push(this.focusElement);
 		this.dialogs.append(dialog);
+		this.contentBox.disable();
+		for(var i = 0; i < this.dialogs.getChildren().length - 1; i++)
+			this.dialogs.getChildren()[i].disable();
+		// find the first focusable element in the new dialog
+		var focusElement = this.findFocusableDiv(dialog.getDrawing());
+		if(focusElement != undefined)
+			focusElement.focus();
 	},
 
 	removeDialog: function(dialog) {
-		this.dialogs.remove(dialog);
-		if(this.dialogs.getChildren().length == 0) {
-			this.remove(this.dialogs);
-			this.dialogs = undefined;
-//			console.log('last dialog removed');
+		if(this.dialogs != undefined) {
+			this.dialogs.remove(dialog);
+			if(this.dialogs.getChildren().length == 0) {
+				this.remove(this.dialogs);
+				this.dialogs = undefined;
+				this.contentBox.enable();
+			}
+			else
+				this.dialogs.getLastChild().enable();
+			var focus = this.focusStack.pop();
+			if(focus != undefined)
+				try { focus.focus(); } catch(e) {}
 		}
 	},
 
@@ -499,6 +516,10 @@ Ui.LBox.extend('Ui.App',
 				this.setTransform(undefined);
 			this.invalidateMeasure();
 		}
+	},
+
+	getIsReady: function() {
+		return this.ready;
 	},
 
 	onReady: function() {
@@ -551,6 +572,7 @@ Ui.LBox.extend('Ui.App',
 
 			this.update();
 			this.setIsLoaded(true);
+			this.setParentVisible(true);
 			this.fireEvent('ready');
 		}
 	},
@@ -567,7 +589,21 @@ Ui.LBox.extend('Ui.App',
 
 	sendMessageToParent: function(msg) {
 		parent.postMessage(msg.serialize(), "*");
+	},
+
+	findFocusableDiv: function(current) {
+		if(('tabIndex' in current) && (current.tabIndex >= 0))
+			return current;
+		if('childNodes' in current) {
+			for(var i = 0; i < current.childNodes.length; i++) {
+				var res = this.findFocusableDiv(current.childNodes[i]);
+				if(res != undefined)
+					return res;
+			}
+		}
+		return undefined;
 	}
+
 /*
 	findNextFocusable: function() {
 		console.log('findNextFocusable');
@@ -695,6 +731,8 @@ Ui.LBox.extend('Ui.App',
 //		}
 	}
 }, {
+	current: undefined,
+
 	getWindowIFrame: function(currentWindow) {
 		if(currentWindow == undefined)
 			currentWindow = window;
@@ -720,6 +758,4 @@ Ui.LBox.extend('Ui.App',
 		return rootWindow;
 	}
 });
-
-Ui.App.current = undefined;
 

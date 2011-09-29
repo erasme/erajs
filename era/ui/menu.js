@@ -1,20 +1,26 @@
 
 Ui.ToolBar.extend('Ui.MenuBar', {});
 
-Ui.Pressable.extend('Ui.Menu', 
+Ui.Pressable.extend('Ui.Menu',
+/**@lends Ui.Menu#*/
 {
 	headerLabel: undefined,
 	header: undefined,
 	dialog: undefined,
 	scope: undefined,
 
+    /**
+     * @constructs
+	 * @class   
+     * @extends Ui.Pressable
+     */ 
 	constructor: function(config) {
 		this.addEvents('item');
 
 		this.headerLabel = new Ui.Label({ margin: 5, horizontalAlign: 'left' });
 		this.append(this.headerLabel);
 
-		this.dialog = new Ui.MenuDialog({ element: this });
+		this.dialog = new Ui.MenuDialog({ element: this.headerLabel });
 		this.connect(this.dialog, 'item', function(dialog, item) {
 			this.fireEvent('item', this, item);
 		});
@@ -56,6 +62,7 @@ Ui.Pressable.extend('Ui.Menu',
 	},
 
 	setItems: function(items) {
+		this.dialog.clearItems();
 		for(var i = 0; i < items.length; i++) {
 			this.appendItem(items[i].item, items[i].callback, items[i].scope);
 		}
@@ -86,7 +93,9 @@ Ui.Pressable.extend('Ui.Menu',
 	}
 });
 
-Ui.Container.extend('Ui.MenuDialog', {
+Ui.Container.extend('Ui.MenuDialog', 
+/**@lends Ui.MenuDialog#*/
+{
 	element: undefined,
 	background: undefined,
 	header: undefined,
@@ -94,6 +103,11 @@ Ui.Container.extend('Ui.MenuDialog', {
 	content: undefined,
 	shadow: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 		this.addEvents('item');
 
@@ -115,10 +129,19 @@ Ui.Container.extend('Ui.MenuDialog', {
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 	},
 
 	setHeader: function(header) {
 		this.header.setText(header);
+	},
+
+	clearItems: function() {
+		while(this.content.getFirstChild() != undefined) {
+			this.content.remove(this.content.getFirstChild());
+		}
 	},
 
 	appendItem: function(item) {
@@ -161,22 +184,69 @@ Ui.Container.extend('Ui.MenuDialog', {
 			event.preventDefault();
 			event.stopPropagation();
 		}
+	},
+
+	onKeyDown: function(event) {
+		var key = event.which;
+		// escape
+		if(key == 27) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.hide();
+		}
+		// arrow down
+		else if(key == 40) {
+			for(var i = 0; i < this.content.getChildren().length; i++) {
+				if(!Ui.MenuItem.hasInstance(this.content.getChildren()[i]))
+					continue;
+				if(this.content.getChildren()[i].getIsCurrent()) {
+					for(i = i+1;i < this.content.getChildren().length; i++) {
+						if(Ui.MenuItem.hasInstance(this.content.getChildren()[i])) {
+							event.preventDefault();
+							event.stopPropagation();
+							this.content.getChildren()[i].setCurrent();
+							break;
+						}
+					}
+				}
+			}
+		}
+		// arrow up
+		else if(key == 38) {
+			var prev = undefined;
+			for(var i = 0; i < this.content.getChildren().length; i++) {
+				if(!Ui.MenuItem.hasInstance(this.content.getChildren()[i]))
+					continue;
+				if(this.content.getChildren()[i].getIsCurrent()) {
+					if(prev != undefined) {
+						event.preventDefault();
+						event.stopPropagation();
+						prev.setCurrent();
+					}
+					break;
+				}
+				prev = this.content.getChildren()[i];
+			}
+		}
 	}
-}, {
+}, 
+/**@lends Ui.MenuDialog#*/
+{
 	visible: false,
 
 	show: function() {
-		Ui.App.current.appendDialog(this);
-		if(!this.getIsVisible()) {
-			this.header.setFontWeight(this.element.headerLabel.getFontWeight());
-			this.header.setFontSize(this.element.headerLabel.getFontSize());
-		}
+		var oldVisible = this.getIsVisible();
 		Ui.MenuDialog.base.show.call(this);
+
+		if(!oldVisible) {
+			this.header.setFontWeight(this.element.getFontWeight());
+			this.header.setFontSize(this.element.getFontSize());
+			Ui.App.current.appendDialog(this);
+		}
 	},
 
-	hide: function() {
+	onHidden: function() {
 		Ui.App.current.removeDialog(this);
-		Ui.MenuDialog.base.hide.call(this);
 	},
 
 	measureCore: function(width, height) {
@@ -197,20 +267,22 @@ Ui.Container.extend('Ui.MenuDialog', {
 		var point1 = this.element.pointToWindow({ x: 0, y: 0 });
 		var point2 = this.element.pointToWindow({ x: this.element.getLayoutWidth(), y: this.element.getLayoutHeight() });
 
-		this.header.arrange(point1.x, point1.y, this.header.getMeasureWidth(), this.header.getMeasureHeight());
+		this.header.arrange(point1.x - 5, point1.y - 5, this.header.getMeasureWidth(), this.header.getMeasureHeight());
 
 		var offset = 0;
-		if(this.scroll.getMeasureWidth() > width - point1.x)
-			offset = point1.x - (width - this.scroll.getMeasureWidth());
-		this.scroll.arrange(point1.x - offset, point2.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.scroll.getMeasureHeight());
+		if(this.scroll.getMeasureWidth() > width - point1.x - 5)
+			offset = point1.x - (width - this.scroll.getMeasureWidth()) - 5;
+		this.scroll.arrange(point1.x - offset - 5, point2.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.scroll.getMeasureHeight());
 
-		this.background.setTab(offset, this.header.getMeasureWidth(), this.header.getMeasureHeight());
+		this.background.setTab(offset, this.header.getMeasureWidth(), this.header.getMeasureHeight() - 5);
 
-		this.background.arrange(point1.x - offset, point1.y, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.header.getMeasureHeight() + this.scroll.getMeasureHeight());
+		this.background.arrange(point1.x - offset - 5, point1.y - 5, Math.max(this.header.getMeasureWidth(), this.scroll.getMeasureWidth()), this.header.getMeasureHeight() + this.scroll.getMeasureHeight() - 5);
 	}
 });
 
-Ui.Container.extend('Ui.MenuBackground', {
+Ui.Container.extend('Ui.MenuBackground', 
+/**@lends Ui.MenuBackground#*/
+{
 	darkShadow: undefined,
 	lightShadow: undefined,
 	background: undefined,
@@ -221,6 +293,11 @@ Ui.Container.extend('Ui.MenuBackground', {
 	tabWidth: 10,
 	tabHeight: 10,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Container
+	 */
 	constructor: function(config) {
 
 		this.darkShadow = new Ui.Shape({ fill: '#010002' });
@@ -288,7 +365,9 @@ Ui.Container.extend('Ui.MenuBackground', {
 		return str;
 	}
 	/**#@-*/
-}, {
+}, 
+/**@lends Ui.MenuBackground#*/
+{
 	arrangeCore: function(width, height) {
 		this.darkShadow.setPath(this.genPath(width, height, this.radius, this.tabOffset, this.tabWidth, this.tabHeight));
 		this.darkShadow.arrange(0, 0, width, height);
@@ -309,10 +388,17 @@ Ui.Container.extend('Ui.MenuBackground', {
 	}
 });
 
-Ui.MouseOverable.extend('Ui.MenuItem', {
+Ui.MouseOverable.extend('Ui.MenuItem', 
+/**@lends Ui.MenuItem#*/
+{
 	background: undefined,
 	pressable: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.MouseOverable
+	 */
 	constructor: function() {
 		this.addEvents('press');
 
@@ -329,6 +415,18 @@ Ui.MouseOverable.extend('Ui.MenuItem', {
 		this.connect(this, 'leave', this.onLeave);
 		this.connect(this.pressable, 'down', this.onDown);
 		this.connect(this.pressable, 'up', this.onUp);
+
+		this.connect(this.pressable, 'focus', this.onItemFocus);
+		this.connect(this.pressable, 'blur', this.onItemBlur);
+
+	},
+
+	getIsCurrent: function() {
+		return this.pressable.getHasFocus();
+	},
+
+	setCurrent: function() {
+		this.pressable.focus();
 	},
 
 	setContent: function(content) {
@@ -340,11 +438,10 @@ Ui.MouseOverable.extend('Ui.MenuItem', {
 	},
 
 	onEnter: function() {
-		this.background.setOpacity(0.6);
+		this.pressable.focus();
 	},
 
 	onLeave: function() {
-		this.background.setOpacity(0);
 	},
 
 	onDown: function() {
@@ -352,6 +449,14 @@ Ui.MouseOverable.extend('Ui.MenuItem', {
 	},
 
 	onUp: function() {
+		this.background.setOpacity(0);
+	},
+
+	onItemFocus: function() {
+		this.background.setOpacity(0.6);
+	},
+
+	onItemBlur: function() {
 		this.background.setOpacity(0);
 	}
 });

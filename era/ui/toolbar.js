@@ -1,4 +1,3 @@
-
 Ui.VBox.extend('Ui.ToolBar', 
 /**@lends Ui.ToolBar*/
 {

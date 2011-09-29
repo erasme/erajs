@@ -166,9 +166,5 @@ Ui.LBox.extend('Ui.TransitionBox',
 	}
 });
 
-
-Ui.LBox.extend('Ui.TransitionBoxContent', {
-	constructor: function(config) {
-	}
-});
+Ui.LBox.extend('Ui.TransitionBoxContent', {});
 

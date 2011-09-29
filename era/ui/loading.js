@@ -1,10 +1,14 @@
-//
-// Define the Loading class.
-//
-Ui.LBox.extend('Ui.Loading', {
+Ui.LBox.extend('Ui.Loading', 
+/**@lends Ui.Loading#*/
+{
 	icon: undefined,
 	clock: undefined,
 
+    /**
+     * @constructs
+	 * @class   
+     * @extends Ui.LBox
+     */ 
 	constructor: function(config) {
 		this.icon = Ui.Icon.create('loading', 4, 4, 'black');
 		this.icon.setTransformOrigin(0.5, 0.5);
@@ -12,14 +16,13 @@ Ui.LBox.extend('Ui.Loading', {
 		this.clock = new Anim.Clock({ repeat: 'forever', duration: 2, callback: this.onTick, scope: this });
 	},
 
-	//
-	// Private
-	//
-
+	/**@private*/
 	onTick: function(clock, progress) {
 		this.icon.setTransform(Ui.Matrix.createRotate(progress * 360));
 	}
-}, {
+}, 
+/**@lends Ui.Loading#*/
+{
 	onLoad: function() {
 		Ui.Loading.base.onLoad.call(this);
 		this.clock.begin();
@@ -33,7 +36,9 @@ Ui.LBox.extend('Ui.Loading', {
 	onStyleChange: function() {
 		this.icon.setFill(this.getStyleProperty('color'));
 	}
-}, {
+}, 
+/**@lends Ui.Loading*/
+{
 	style: {
 		color: new Ui.Color({ r: 0.39, g: 0.39, b: 0.39 })
 	}

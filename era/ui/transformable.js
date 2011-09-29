@@ -1,4 +1,3 @@
-
 Ui.LBox.extend('Ui.Transformable', 
 /**@lends Ui.Transformable#*/
 {
