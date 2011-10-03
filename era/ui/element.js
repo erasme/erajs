@@ -1245,14 +1245,16 @@ Core.Object.extend('Ui.Element',
 	* from the given element coordinate system to the page
 	* coordinate system
 	*/
-	transformToWindow: function(element) {
+	transformToWindow: function(element, win) {
+		if(win == undefined)
+			win = window;
 		if(navigator.isWebkit) {
 			var matrix = new Ui.Matrix();
 			var current = element;
 			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-webkit-transform');
+				var trans = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform');
 				if(trans != 'none') {
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
+					var origin = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
 					var originX = 0;
 					var originY = 0;
 					if(origin != '0px 0px') {
@@ -1276,7 +1278,7 @@ Core.Object.extend('Ui.Element',
 			var matrix = new Ui.Matrix();
 			var current = element;
 			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-moz-transform');
+				var trans = win.getComputedStyle(current, null).getPropertyValue('-moz-transform');
 				if(trans != 'none') {
 					var splits = trans.split(' ');
 					var a = new Number(splits[0].slice(7, splits[0].length-1));
@@ -1285,7 +1287,7 @@ Core.Object.extend('Ui.Element',
 					var d = new Number(splits[3].slice(0, splits[3].length-1));
 					var e = new Number(splits[4].slice(0, splits[4].length-3));
 					var f = new Number(splits[5].slice(0, splits[5].length-3));
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-moz-transform-origin');
+					var origin = win.getComputedStyle(current, null).getPropertyValue('-moz-transform-origin');
 					var originX = 0;
 					var originY = 0;
 					if(origin != '0px 0px') {
@@ -1308,7 +1310,7 @@ Core.Object.extend('Ui.Element',
 			var matrix = new Ui.Matrix();
 			var current = element;
 			while(current != undefined) {
-				var trans = window.getComputedStyle(current, null).getPropertyValue('-o-transform');
+				var trans = win.getComputedStyle(current, null).getPropertyValue('-o-transform');
 				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
 					var splits = trans.split(' ');
 					var a = new Number(splits[0].slice(7, splits[0].length-1));
@@ -1317,7 +1319,7 @@ Core.Object.extend('Ui.Element',
 					var d = new Number(splits[3].slice(0, splits[3].length-1));
 					var e = new Number(splits[4].slice(0, splits[4].length-1));
 					var f = new Number(splits[5].slice(0, splits[5].length-1));
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-o-transform-origin');
+					var origin = win.getComputedStyle(current, null).getPropertyValue('-o-transform-origin');
 					var originX = 0;
 					var originY = 0;
 					if(origin != '0px 0px') {
@@ -1342,7 +1344,7 @@ Core.Object.extend('Ui.Element',
 			while(current != undefined) {
 				var trans;
 				try {
-					trans = window.getComputedStyle(current, null).getPropertyValue('-ms-transform');
+					trans = win.getComputedStyle(current, null).getPropertyValue('-ms-transform');
 				} catch(e) {
 					trans = 'none';
 				}
@@ -1354,7 +1356,7 @@ Core.Object.extend('Ui.Element',
 					var d = new Number(splits[3].slice(0, splits[3].length-1));
 					var e = new Number(splits[4].slice(0, splits[4].length-1));
 					var f = new Number(splits[5].slice(0, splits[5].length-1));
-					var origin = window.getComputedStyle(current, null).getPropertyValue('-ms-transform-origin');
+					var origin = win.getComputedStyle(current, null).getPropertyValue('-ms-transform-origin');
 					var originX = 0;
 					var originY = 0;
 					if(origin != '0px 0px') {
@@ -1385,8 +1387,8 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
-	transformFromWindow: function(element) {
-		var matrix = Ui.Element.transformToWindow(element);
+	transformFromWindow: function(element, win) {
+		var matrix = Ui.Element.transformToWindow(element, win);
 		matrix.inverse();
 		return matrix;
 	},
@@ -1395,22 +1397,28 @@ Core.Object.extend('Ui.Element',
 	* @return the given point converted from the givent element
 	* coordinate system to the page coordinate system
 	*/
-	pointToWindow: function(element, point) {
-		if(navigator.isWebkit)
-			return window.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
+	pointToWindow: function(element, point, win) {
+		if(navigator.isWebkit) {
+			if(win == undefined)
+				win = window;
+			return win.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
+		}
 		else {
 			point = new Ui.Point({point: point });
-			point.matrixTransform(Ui.Element.transformToWindow(element));
+			point.matrixTransform(Ui.Element.transformToWindow(element, win));
 			return point;
 		}
 	},
 
-	pointFromWindow: function(element, point) {
-		if(navigator.isWebkit)
-			return window.webkitConvertPointFromPageToNode(element, new WebKitPoint(point.x, point.y));
+	pointFromWindow: function(element, point, win) {
+		if(navigator.isWebkit) {
+			if(win == undefined)
+				win = window;
+			return win.webkitConvertPointFromPageToNode(element, new WebKitPoint(point.x, point.y));
+		}
 		else {
 			point = new Ui.Point({ point: point });
-			point.matrixTransform(Ui.Element.transformFromWindow(element));
+			point.matrixTransform(Ui.Element.transformFromWindow(element, win));
 			return point;
 		}
 	}

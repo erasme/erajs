@@ -177,9 +177,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			event.stopPropagation();
 
 			this.rootWindow.document.body.removeChild(this.image);
-//			document.body.removeChild(this.image);
 			var overElement = this.rootWindow.document.elementFromPoint(event.clientX, event.clientY);
-//			document.body.appendChild(this.image);
 			this.rootWindow.document.body.appendChild(this.image);
 
 			// if SVG, find the first HTML element to avoid
@@ -188,7 +186,7 @@ Core.Object.extend('Core.DragDataTransfer',
 				overElement = overElement.parentNode;
 			}
 
-//			console.log('dragover: '+overElement.className);
+			//console.log('dragover: '+overElement+' ('+event.clientX+','+event.clientY+')');
 
 			this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
 			this.image.style.top = (this.startImagePoint.y + deltaY)+'px';

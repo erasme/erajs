@@ -177,7 +177,7 @@ Ui.LBox.extend('Ui.Movable',
 
 		this.window = window;
 		this.iframe = undefined;
-		if(navigator.isWebkit) {
+		if(navigator.isWebkit || navigator.isFirefox3) {
 			var rootWindow = Ui.App.getRootWindow();
 			if(rootWindow != window) {
 				this.window = rootWindow;
@@ -210,7 +210,7 @@ Ui.LBox.extend('Ui.Movable',
 
 		var point = { x: event.clientX, y: event.clientY };
 		if(this.iframe != undefined)
-			point = this.window.webkitConvertPointFromPageToNode(this.iframe, new WebKitPoint(event.clientX, event.clientY));
+			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
 		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;

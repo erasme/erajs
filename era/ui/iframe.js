@@ -74,8 +74,10 @@ Ui.Element.extend('Ui.IFrame',
 		// to fire the resize event
 		if(navigator.isIE7 || navigator.isIE8) {
 			var cWin = this.iframeDrawing.contentWindow;
-			cWin.document.body.clientWidth;
-			cWin.document.body.clientHeight;
+			if(cWin.document.body != undefined) {
+				cWin.document.body.clientWidth;
+				cWin.document.body.clientHeight;
+			}
 		}
 	}
 });

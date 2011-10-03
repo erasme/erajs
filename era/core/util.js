@@ -13,8 +13,9 @@ navigator.isChrome = (navigator.userAgent.match(/ Chrome\//) != null);
 navigator.isSafari = (navigator.userAgent.match(/ Safari\//) != null);
 
 navigator.isFirefox = (navigator.userAgent.match(/ Firefox\//) != null);
-navigator.isFirefox35 = (navigator.userAgent.match(/ Firefox\/3\.5\./) != null);
-navigator.isFirefox36 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null);
+navigator.isFirefox3 = (navigator.userAgent.match(/ Firefox\/3\./) != null);
+navigator.isFirefox3_5 = (navigator.userAgent.match(/ Firefox\/3\.5\./) != null);
+navigator.isFirefox3_6 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null);
 
 navigator.iPad = (navigator.userAgent.match(/iPad/i) != null);
 navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
@@ -214,6 +215,23 @@ if(navigator.isIE) {
 		styleSheet.addRule('vml\\:rect', 'behavior:url(#default#VML)');
 		styleSheet.addRule('vml\\:roundrect', 'behavior:url(#default#VML)');
 		navigator.supportVML = true;
+	}
+	// re-write elementFromPoint for IE7 & IE8 when in iframe because it dont work
+	if((navigator.isIE7 || navigator.isIE8) && (window.parent != window)) {
+		document.elementFromPoint = function(x, y, el) {
+			if(el == undefined)
+				el = document.body;
+			if(!(('childNodes' in el) && ('offsetLeft' in el) && ('offsetTop' in el)))
+				return undefined;
+			for(var i = 0; i < el.childNodes.length; i++) {
+				var res = document.elementFromPoint(x - el.offsetLeft, y - el.offsetTop, el.childNodes[i]);
+				if(res != undefined)
+					return res;
+			}
+			if((x >= el.offsetLeft) && (y >= el.offsetTop) && (x - el.offsetLeft <= el.clientWidth) && (y - el.offsetTop <= el.clientHeight))
+				return el;
+			return undefined;
+		}
 	}
 }
 

@@ -273,3 +273,9 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 
 * - bug dans IE < 9, l'iframe ne semble pas connaitre sa taille comme il faut
 
+- dans Ui.Carouselable, si autoPlay activé, le rendre inoperant quand l'utilisateur
+  commence une action (pour ne pas avoir 2 animations en même temps)
+
+- dans Ui.Carouselable, n'activer l'autoPlay que lorsque l'élément est visible
+  (utiliser le système d'animation natif)
+

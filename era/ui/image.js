@@ -87,21 +87,30 @@ Ui.Element.extend('Ui.Image',
 		}
 	},
 
+	onAppReady: function() {
+		this.disconnect(Ui.App.current, 'ready', this.onAppReady);
+		this.onImageDelayReady();
+	},
+
 	onImageDelayReady: function() {
-		this.loaddone = true;
-		if(document.body == undefined) {
-			var body = document.createElement('body');
-			document.body = body;
+		if(!Ui.App.current.getIsReady())
+			this.connect(Ui.App.current, 'ready', this.onAppReady);
+		else {
+			this.loaddone = true;
+			if(document.body == undefined) {
+				var body = document.createElement('body');
+				document.body = body;
+			}
+			var imgClone = document.createElement('img');
+			imgClone.style.visibility = 'hidden';
+			imgClone.setAttribute('src', this.src);
+			document.body.appendChild(imgClone);
+			this.naturalWidth = imgClone.width;
+			this.naturalHeight = imgClone.height;
+			document.body.removeChild(imgClone);
+			this.fireEvent('ready', this);
+			this.invalidateMeasure();
 		}
-		var imgClone = document.createElement('img');
-		imgClone.style.visibility = 'hidden';
-		imgClone.setAttribute('src', this.src);
-		document.body.appendChild(imgClone);
-		this.naturalWidth = imgClone.width;
-		this.naturalHeight = imgClone.height;
-		document.body.removeChild(imgClone);
-		this.fireEvent('ready', this);
-		this.invalidateMeasure();
 	}
 
 	/**#@-*/
