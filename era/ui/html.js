@@ -1,8 +1,14 @@
-
-Ui.Element.extend('Ui.Html', {
+Ui.Element.extend('Ui.Html', 
+/**@lends Ui.Html#*/
+{
 	htmlDrawing: undefined,
 	selectable: false,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.autoConfig(config, 'html', 'selectable');
 	},
