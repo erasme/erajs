@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test SegmentBar</title>
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center', spacing: 5 });
+app.setContent(vbox);
+
+var label = new Ui.Label({ horizontalAlign: 'center' });
+vbox.append(label);
+
+var segmentbar = new Ui.SegmentBar({
+	field: 'text', data: [
+		{ text: 'Home' }, { text: 'Download' }, { text: 'API' }, { text: 'Samples' }
+	] });
+vbox.append(segmentbar);
+
+app.connect(segmentbar, 'change', function(segmentbar, data) {
+	label.setText('Choice: '+data.text);
+});
+segmentbar.setCurrentPosition(0);
+
+</script>
+  </head>
+</html>
