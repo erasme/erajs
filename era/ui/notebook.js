@@ -270,7 +270,7 @@ Ui.Container.extend('Ui.Notebook',
 }, {
 	style: {
 		color: 'white',
-		focusColor: Ui.Color.create('#f6caa2')
+		focusColor: '#f6caa2'
 	}
 });
 

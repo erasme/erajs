@@ -264,9 +264,9 @@ Ui.LBox.extend('Ui.Switch',
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
-		focusColor: Ui.Color.create('#f6caa2'),
-		trueColor: Ui.Color.create('#91f5c5'),
-		falseColor: Ui.Color.create('#ff9797')
+		focusColor: '#f6caa2',
+		trueColor: '#91f5c5',
+		falseColor: '#ff9797'
 	}
 });
 

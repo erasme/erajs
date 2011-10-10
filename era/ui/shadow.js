@@ -29,7 +29,7 @@ Ui.LBox.extend('Ui.Shadow',
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
+			this.color = Ui.Color.create(color);
 			this.updateOpacityColor();
 		}
 	},

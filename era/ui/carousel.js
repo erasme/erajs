@@ -201,7 +201,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	}
 }, {
 	style: {
-		focusColor: Ui.Color.create('#5d3109')
+		focusColor: '#5d3109'
 	}
 });
 

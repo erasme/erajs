@@ -228,7 +228,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
+			this.color = Ui.Color.create(color);
 			this.updateColors();
 		}
 	},
