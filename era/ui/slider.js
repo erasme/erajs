@@ -44,8 +44,6 @@ Ui.Container.extend('Ui.Slider',
 
 		this.buttonContent = new Ui.SliderContentDrawing({ marginTop: 5, marginLeft: 10, marginRight: 10});
 		this.button.setContent(this.buttonContent);
-
-		this.autoConfig(config, 'value');
 	},
 
 	getValue: function() {
@@ -195,8 +193,6 @@ Ui.LBox.extend('Ui.SliderContentDrawing',
 
 		this.background = new Ui.Shape({ margin: 1 });
 		this.append(this.background);
-
-		this.autoConfig(config, 'radius', 'fill');
 	},
 
 	setRadius: function(radius) {

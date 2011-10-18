@@ -64,22 +64,11 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.contentBox.append(this.iconBox);
 
-		this.autoConfig(config, 'text', 'icon', 'orientation', 'color', 'spacing', 'radius');
-
 		this.updateColors();
 	},
 
 	getContent: function() {
 		return this.content;
-	},
-
-	setContent: function(content) {
-		if(this.content != content) {
-			while(this.contentBox.getFirstChild() != undefined)
-				this.contentBox.remove(this.contentBox.getFirstChild());
-			this.content = content;
-			this.contentBox.append(this.content);
-		}
 	},
 
 	getText: function() {
@@ -446,5 +435,10 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		this.rect2.setFill(this.getLightColor());
 	}
 	/**#@-*/
+}, {
+	setContent: function(content) {
+		this.content = Core.Object.create(content, this);
+		this.contentBox.setContent(this.content);
+	}
 });
 

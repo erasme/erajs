@@ -24,9 +24,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 		this.connect(this, 'unload', this.onTransitionBoxUnload);
 
 		this.setClipToBounds(true);
-
 		this.setTransition('fade');
-		this.autoConfig(config, 'duration', 'ease', 'transition');
 	},
 
 	getPosition: function() {

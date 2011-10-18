@@ -29,9 +29,6 @@ Ui.Element.extend('Ui.Entry',
 //		this.connect(this.entryDrawing, 'blur', function(event) {
 //			console.log('entry blur');
 //		});
-
-		this.autoConfig(config, 'fontSize', 'fontFamily', 'fontWeight',
-			'color', 'passwordMode');
 	},
 
 	setPasswordMode: function(passwordMode) {

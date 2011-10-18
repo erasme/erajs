@@ -11,7 +11,6 @@ Ui.Transition.extend('Ui.Slide',
 	 * @extends Ui.Transition
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'direction')
 	},
 
 	setDirection: function(direction) {

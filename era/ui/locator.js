@@ -14,7 +14,6 @@ Ui.Container.extend('Ui.Locator',
 	 */
 	constructor: function(config) {
 		this.addEvents('change');
-		this.autoConfig(config, 'path');
 	},
 
 	setPath: function(path) {
@@ -205,7 +204,6 @@ Ui.Shape.extend('Ui.LocatorRightArrow',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'radius');
 	},
 
 	setRadius: function(radius) {
@@ -235,7 +233,6 @@ Ui.Shape.extend('Ui.LocatorLeftArrow',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'radius');
 	},
 
 	setRadius: function(radius) {

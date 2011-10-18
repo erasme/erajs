@@ -2,7 +2,6 @@
 Ui.LBox.extend('Ui.Linkable', 
 /**@lends Ui.Linkable#*/
 {
-	content: undefined,
 	link: undefined,
 	isDown: false,
 	mouseStartX: undefined,
@@ -31,22 +30,10 @@ Ui.LBox.extend('Ui.Linkable',
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
-
-		this.autoConfig(config, 'src', 'openWindow', 'target');
 	},
 
 	setSrc: function(src) {
 		this.link = src;
-	},
-
-	setContent: function(content) {
-		if(this.content != content) {
-			if(this.content != undefined)
-				this.remove(this.content);
-			if(content != undefined)
-				this.append(content);
-			this.content = content;
-		}
 	},
 
 	setOpenWindow: function(openWindow) {

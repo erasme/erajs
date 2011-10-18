@@ -6,7 +6,6 @@ Ui.LBox.extend('Ui.Movable',
 	mouseStart: undefined,
 	mouseLast: undefined,
 	contentBox: undefined,
-	content: undefined,
 	posX: 0,
 	posY: 0,
 	isMoving: false,
@@ -49,8 +48,6 @@ Ui.LBox.extend('Ui.Movable',
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
-
-		this.autoConfig(config, 'moveHorizontal', 'moveVertical', 'inertia');
 	},
 
 	setLock: function(lock) {
@@ -89,16 +86,6 @@ Ui.LBox.extend('Ui.Movable',
 
 	setMoveVertical: function(moveVertical) {
 		this.moveVertical = moveVertical;
-	},
-
-	setContent: function(content) {
-		if(content != this.content) {
-			if(this.content != undefined)
-				this.contentBox.removeChild(this.content);
-			this.content = content;
-			if(this.content != undefined)
-				this.contentBox.appendChild(this.content);
-		}
 	},
 
 	setPosition: function(x, y) {
@@ -398,5 +385,9 @@ Ui.LBox.extend('Ui.Movable',
 		this.getDrawing().style.width = '0px';
 		this.getDrawing().style.height = '0px';
 		Ui.Movable.base.arrangeCore.call(this, width, height);
+	},
+
+	setContent: function(content) {
+		this.contentBox.setContent(content);
 	}
 });

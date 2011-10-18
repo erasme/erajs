@@ -3,7 +3,6 @@ Ui.LBox.extend('Ui.Transformable',
 {
 	mouseStart: undefined,
 	contentBox: undefined,
-	content: undefined,
 
 	speedComputed: false,
 	lastTranslateX: undefined,
@@ -47,16 +46,6 @@ Ui.LBox.extend('Ui.Transformable',
 
 	getIsDown: function() {
 		return this.isDown;
-	},
-
-	setContent: function(content) {
-		if(content != this.content) {
-			if(this.content != undefined)
-				this.contentBox.removeChild(this.content);
-			this.content = content;
-			if(this.content != undefined)
-				this.contentBox.appendChild(this.content);
-		}
 	},
 
 	getAngle: function() {
@@ -373,4 +362,8 @@ Ui.LBox.extend('Ui.Transformable',
 		}
 	}
 	/**#@-*/
+}, {
+	setContent: function(content) {
+		this.contentBox.setContent(content);
+	}
 });

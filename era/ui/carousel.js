@@ -47,8 +47,6 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		Ui.Carousel.base.append.call(this, this.buttonNext);
 //		this.buttonNext.hide();
 		this.connect(this.buttonNext, 'press', this.onNextPress);
-
-		this.autoConfig(config, 'autoPlay');
 	},
 
 	setAutoPlay: function(delay) {

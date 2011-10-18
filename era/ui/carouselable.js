@@ -34,8 +34,6 @@ Ui.Container.extend('Ui.Carouselable',
 		this.movable.setContent(this.box);
 
 		this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
-
-		this.autoConfig(config, 'ease', 'lock', 'autoPlay');
 	},
 
 	setAutoPlay: function(delay) {

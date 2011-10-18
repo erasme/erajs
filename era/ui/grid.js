@@ -54,7 +54,6 @@ Ui.Container.extend('Ui.Grid',
 		}
 		else
 			this.rows = [ { auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 } ];
-		this.autoConfig(config, 'content');
 	},
 
 	setContent: function(content) {

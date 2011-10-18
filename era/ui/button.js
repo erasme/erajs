@@ -17,8 +17,6 @@ Ui.Pressable.extend('Ui.Button',
 		this.graphic = new Ui.ButtonGraphic();
 		this.append(this.graphic);
 
-		this.autoConfig(config, 'text', 'icon', 'orientation');
-
 		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
 		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
 		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });

@@ -18,7 +18,6 @@ Ui.Container.extend('Ui.Accordeonable',
 	constructor: function(config) {
 		this.addEvents('change');
 		this.setClipToBounds(true);
-		this.autoConfig(config, 'orientation');
 	},
 
 	/**
@@ -290,8 +289,6 @@ Ui.Container.extend('Ui.AccordeonPage',
 		this.headerBox = new Ui.Pressable();
 		this.appendChild(this.headerBox);
 		this.connect(this.headerBox, 'press', this.onHeaderPress);
-
-		this.autoConfig(config, 'header', 'content', 'orientation');
 	},
 
 	/**

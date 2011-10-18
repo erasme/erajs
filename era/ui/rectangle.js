@@ -12,8 +12,6 @@ Ui.Shape.extend('Ui.Rectangle',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'radius', 'radiusTopLeft', 'radiusTopRight',
-			'radiusBottomLeft', 'radiusBottomRight');
 	},
 
 	setRadius: function(radius) {

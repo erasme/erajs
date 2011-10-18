@@ -17,20 +17,20 @@ Ui.Container.extend('Ui.LBox',
      * @param {String} [config.paddingRight]
      */ 
 	constructor: function(config) {
-		this.autoConfig(config, 'padding', 'paddingTop', 'paddingBottom',
-			'paddingLeft', 'paddingRight');//, 'content');
 	},
 
-/*	setContent: function(content) {
+	setContent: function(content) {
 		while(this.getFirstChild() != undefined)
 			this.removeChild(this.getFirstChild());
-		for(var i = 0; i < content.length; i++) {
-			var child = content[i];
-			if(!Ui.Element.hasInstance(child))
-				child = new child.type(child);
-			this.append(child);
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.append(Core.Object.create(content[i], this));
+			}
+			else
+				this.append(Core.Object.create(content, this));
 		}
-	},*/
+	},
 
 	//
 	// Set the padding for all borders

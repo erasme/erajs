@@ -37,8 +37,6 @@ Ui.Element.extend('Ui.Text',
      */ 
 	constructor: function(config) {
 		this.words = [];
-		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
-			'color', 'selectable', 'textAlign');
 	},
 
 	getText: function() {

@@ -20,7 +20,6 @@ Ui.Element.extend('Ui.Shape',
 	 * @extends Ui.Element
 	*/
 	constructor: function(config) {
-		this.autoConfig(config, 'path', 'fill', 'scale');
 	},
 
 	setScale: function(scale) {

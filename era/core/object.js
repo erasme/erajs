@@ -101,7 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); } )");
+	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); this.autoConfig(config); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -317,26 +317,28 @@ Core.Object.scopeHelper = function(config, scope) {
 };
 
 Core.Object.prototype.autoConfig = function(config) {
+	if(config == undefined)
+		return;
+	console.log(this+'.autoConfig');
+
 	Core.Object.scopeHelper(config, this);
 	var scope = ('scope' in config)?config.scope:this;
-	for(var i = 1; i < arguments.length; i++) {
-		var c = arguments[i];
-		var required = false;
-		if(c.indexOf('*') == 0) {
-			c = c.substr(1);
-			required = true;
-		}
-		var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
-		if((func in this) && (typeof(this[func]) == 'function') && (c in config)) {
-			this[func].call(this, config[c]);
-			delete(config[c]);
-		}
-		else if(required)
-			throw('config parameter "'+c+'" is REQUIRED for '+this.classType);
-	}
-	// look for attached properties
+
 	for(var prop in config) {
-		if(prop.indexOf('.') != -1) {
+		// look for name
+		if(prop == 'name') {
+			scope[config.name] = this;
+			delete(config.name);
+			continue;
+		}
+		// look for normal properties
+		var func = 'set'+prop.charAt(0).toUpperCase()+prop.substr(1);
+		if((func in this) && (typeof(this[func]) == 'function')) {
+			this[func].call(this, config[prop]);
+			delete(config[prop]);
+		}
+		// look for attached properties
+		else if(prop.indexOf('.') != -1) {
 			var props = prop.split('.');
 			var current = window;
 			for(var i = 0; i < props.length - 1; i++) {
@@ -349,10 +351,7 @@ Core.Object.prototype.autoConfig = function(config) {
 				delete(config[prop]);
 			}
 		}
-	}
-	// look for event
-	for(var prop in config) {
-		if(prop.indexOf('on') == 0) {
+		else if(prop.indexOf('on') == 0) {
 			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
 			if((this.events != undefined) && (eventName in this.events)) {
 				scope.connect(this, eventName, config[prop]);
@@ -360,10 +359,19 @@ Core.Object.prototype.autoConfig = function(config) {
 			}
 		}
 	}
-	// look for name
-	if('name' in config) {
-		scope[config.name] = this;
-		delete(config.name);
+};
+
+
+Core.Object.create = function(element, scope) {
+	if(element == undefined)
+		return undefined;
+	else if(Ui.Element.hasInstance(element))
+		return element;
+	else {
+		if(!('scope' in element))
+			element.scope = scope;
+		return new element.type(element);
 	}
 };
+
 

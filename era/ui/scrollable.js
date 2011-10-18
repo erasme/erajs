@@ -69,7 +69,6 @@ Ui.Container.extend('Ui.Scrollable',
 		this.connect(this.scrollbarHorizontalBox.getDrawing(), 'fingerdown', this.onHorizontalFingerDown);
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'fingerdown', this.onVerticalFingerDown);
 
-		this.autoConfig(config, 'overScroll', 'scrollHorizontal', 'scrollVertical');
 //		this.connect(this, 'keydown', this.onKeyDown);
 	},
 

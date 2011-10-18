@@ -23,16 +23,19 @@ Ui.Container.extend('Ui.Box',
 	 * @param {String}  [config.orientation] A Box can be either "vertical" (VBox) or "horizontal" (HBox). Very usefull for mobil device. 
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'padding', 'paddingTop', 'paddingBottom',
-			'paddingLeft', 'paddingRight', 'uniform', 'spacing',
-			'orientation', 'content');
 	},
 
 	setContent: function(content) {
 		while(this.getFirstChild() != undefined)
 			this.removeChild(this.getFirstChild());
-		for(var i = 0; i < content.length; i++)
-			this.append(Ui.Element.create(content[i], this));
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.append(Core.Object.create(content[i], this));
+			}
+			else
+				this.append(Core.Object.create(content, this));
+		}
 	},
 
 	/**

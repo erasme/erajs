@@ -27,8 +27,6 @@ Ui.Pressable.extend('Ui.Menu',
 
 		this.connect(this, 'press', this.onTitlePress);
 		this.connect(window, 'resize', this.onWindowResize);
-
-		this.autoConfig(config, 'header', 'scope', 'items');
 	},
 
 	setHeader: function(header) {
@@ -314,8 +312,6 @@ Ui.Container.extend('Ui.MenuBackground',
 
 		this.background = new Ui.Shape({ fill: gradient });
 		this.appendChild(this.background);
-
-		this.autoConfig(config, 'radius', 'fill');
 	},
 
 	setTab: function(offset, width, height) {
@@ -429,10 +425,6 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 		this.pressable.focus();
 	},
 
-	setContent: function(content) {
-		this.pressable.append(content);
-	},
-
 	getContent: function() {
 		return this.pressable.getChildren()[0];
 	},
@@ -458,6 +450,10 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 
 	onItemBlur: function() {
 		this.background.setOpacity(0);
+	}
+}, {
+	setContent: function(content) {
+		this.pressable.append(Core.Object.create(content, this));
 	}
 });
 

@@ -137,11 +137,6 @@ Core.Object.extend('Ui.Element',
 
 		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur',
 			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
-
-		this.autoConfig(config, 'width', 'height', 'verticalAlign',
-			'horizontalAlign', 'margin', 'marginTop', 'marginBottom',
-			'marginLeft', 'marginRight', 'opacity', 'focusable',
-			'keyboardRequired', 'clipToBounds', 'id', 'style', 'name');
 	},
 
 	/*
@@ -1256,16 +1251,6 @@ Core.Object.extend('Ui.Element',
 	}
 	/**#@-*/
 }, {}, {
-
-	create: function(element, scope) {
-		if(Ui.Element.hasInstance(element))
-			return element;
-		else {
-			if(!('scope' in element))
-				element.scope = scope;
-			return new element.type(element);
-		}
-	},
 
 	/**
 	* @return Return the transform matrix to convert coordinates

@@ -61,8 +61,6 @@ Ui.Container.extend('Ui.Scrollable2', {
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'mousedown', this.onVerticalMouseDown);
 
 //		this.connect(this, 'keydown', this.onKeyDown);
-
-		this.autoConfig(config, 'scrollHorizontal', 'scrollVertical');
 	},
 
 	setContent: function(content) {

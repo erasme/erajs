@@ -28,8 +28,6 @@ Ui.Container.extend('Ui.Fold',
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 		this.contentBox.hide();
-
-		this.autoConfig(config, 'header', 'content', 'over', 'mode', 'orientation');
 	},
 
 	getIsFolded: function() {

@@ -26,8 +26,6 @@ Ui.LBox.extend('Ui.SegmentBar',
 		this.connect(this, 'focus', this.updateColors);
 		this.connect(this, 'blur', this.updateColors);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
-
-		this.autoConfig(config, 'data', 'field', 'currentPosition');
 	},
 
 	setField: function(field) {
@@ -161,8 +159,6 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 
 		this.connect(this, 'select', this.onButtonSelect);
 		this.connect(this, 'unselect', this.onButtonUnselect);
-
-		this.autoConfig(config, 'mode', 'text', 'data', 'fill');
 	},
 
 	getData: function() {

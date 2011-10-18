@@ -370,8 +370,6 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 
 		this.connect(this, 'down', this.onListViewHeaderDown);
 		this.connect(this, 'up', this.onListViewHeaderUp);
-
-		this.autoConfig(config, 'title');
 	},
 
 	getTitle: function() {
@@ -473,8 +471,6 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 
 		this.connect(this, 'select', this.onCellSelect);
 		this.connect(this, 'unselect', this.onCellUnselect);
-
-		this.autoConfig(config, 'title');
 	},
 
 	getKey: function() {

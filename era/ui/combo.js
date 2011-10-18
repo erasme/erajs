@@ -53,8 +53,6 @@ Ui.Pressable.extend('Ui.Combo',
 		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
 		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
 		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
-
-		this.autoConfig(config, 'field', 'data', 'currentAt', 'current', 'placeHolder');
 	},
 
 	setPlaceHolder: function(placeHolder) {
@@ -219,10 +217,6 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 		this.connect(this.pressable, 'up', this.onUp);
 	},
 
-	setContent: function(content) {
-		this.pressable.append(content);
-	},
-
 	getContent: function() {
 		return this.pressable.getChildren()[0];
 	},
@@ -241,6 +235,10 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 
 	onUp: function() {
 		this.background.setOpacity(0);
+	}
+}, {
+	setContent: function(content) {
+		this.pressable.setContent(Core.Object.create(content, this));
 	}
 });
 

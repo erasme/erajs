@@ -13,7 +13,6 @@ Ui.Container.extend('Ui.Flow',
 	 * @extends Ui.Container
 	 */	
 	constructor: function(config) {
-		this.autoConfig(config, 'uniform');
 	},
 
 	/**
