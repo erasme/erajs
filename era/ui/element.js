@@ -6,6 +6,8 @@
 Core.Object.extend('Ui.Element', 
 /**@lends Ui.Element#*/
 {
+//	name: undefined,
+
 	marginTop: 0,
 	marginBottom: 0,
 	marginLeft: 0,
@@ -139,7 +141,7 @@ Core.Object.extend('Ui.Element',
 		this.autoConfig(config, 'width', 'height', 'verticalAlign',
 			'horizontalAlign', 'margin', 'marginTop', 'marginBottom',
 			'marginLeft', 'marginRight', 'opacity', 'focusable',
-			'keyboardRequired', 'clipToBounds', 'id', 'style');
+			'keyboardRequired', 'clipToBounds', 'id', 'style', 'name');
 	},
 
 	/*
@@ -148,6 +150,21 @@ Core.Object.extend('Ui.Element',
 	 */
 	getDrawing: function() {
 		return this.drawing;
+	},
+
+/*	getName: function() {
+		return this.name;
+	},
+
+	setName: function(name) {
+		this.name = name;
+	},*/
+
+	get: function(name) {
+		if(this.name == name)
+			return this;
+		else
+			return undefined;
 	},
 
 	getLayoutX: function() {
@@ -1239,6 +1256,16 @@ Core.Object.extend('Ui.Element',
 	}
 	/**#@-*/
 }, {}, {
+
+	create: function(element, scope) {
+		if(Ui.Element.hasInstance(element))
+			return element;
+		else {
+			if(!('scope' in element))
+				element.scope = scope;
+			return new element.type(element);
+		}
+	},
 
 	/**
 	* @return Return the transform matrix to convert coordinates

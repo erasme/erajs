@@ -54,6 +54,18 @@ Ui.Container.extend('Ui.Grid',
 		}
 		else
 			this.rows = [ { auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 } ];
+		this.autoConfig(config, 'content');
+	},
+
+	setContent: function(content) {
+		while(this.getFirstChild() != undefined)
+			this.removeChild(this.getFirstChild());
+		for(var i = 0; i < content.length; i++) {
+			var child = content[i];
+			if(!Ui.Element.hasInstance(child))
+				child = new child.type(child);
+			this.appendChild(child);
+		}
 	},
 
 	/**
@@ -64,10 +76,16 @@ Ui.Container.extend('Ui.Grid',
 			colSpan = 1;
 		if(rowSpan == undefined)
 			rowSpan = 1;
-		child.gridCol = col;
-		child.gridRow = row;
-		child.gridColSpan = colSpan;
-		child.gridRowSpan = rowSpan;
+
+		Ui.Grid.setCol(child, col);
+		Ui.Grid.setRow(child, row);
+		Ui.Grid.setColSpan(child, colSpan);
+		Ui.Grid.setRowSpan(child, rowSpan);
+
+//		child.gridCol = col;
+//		child.gridRow = row;
+//		child.gridColSpan = colSpan;
+//		child.gridRowSpan = rowSpan;
 		this.appendChild(child);
 	},
 
@@ -75,10 +93,10 @@ Ui.Container.extend('Ui.Grid',
 	 * Remove a given child from the grid
 	 */
 	detach: function(child) {
-		child.gridCol = undefined;
-		child.gridRow = undefined;
-		child.gridColSpan = undefined;
-		child.gridRowSpan = undefined;
+//		child.gridCol = undefined;
+//		child.gridRow = undefined;
+//		child.gridColSpan = undefined;
+//		child.gridRowSpan = undefined;
 		this.removeChild(child);
 	},
 
@@ -91,8 +109,8 @@ Ui.Container.extend('Ui.Grid',
 		var min = 0;
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var childCol = child.gridCol;
-			var childColSpan = child.gridColSpan;
+			var childCol = Ui.Grid.getCol(child);
+			var childColSpan = Ui.Grid.getColSpan(child);
 				
 			if((childColSpan == 1) && (childCol == colPos)) {
 				if(child.getMeasureWidth() > min)
@@ -141,8 +159,8 @@ Ui.Container.extend('Ui.Grid',
 
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var childRow = child.gridRow;
-			var childRowSpan = child.gridRowSpan;
+			var childRow = Ui.Grid.getRow(child);
+			var childRowSpan = Ui.Grid.getRowSpan(child);
 			
 			if((childRowSpan == 1) && (childRow == rowPos)) {
 				if(child.getMeasureHeight() > min)
@@ -193,8 +211,8 @@ Ui.Container.extend('Ui.Grid',
 
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var constraintWidth = (width * child.gridColSpan) / this.cols.length;
-			var constraintHeight = (height * child.gridRowSpan) / this.rows.length;
+			var constraintWidth = (width * Ui.Grid.getColSpan(child)) / this.cols.length;
+			var constraintHeight = (height * Ui.Grid.getRowSpan(child)) / this.rows.length;
 			child.measure(constraintWidth, constraintHeight);
 		}
 
@@ -237,8 +255,8 @@ Ui.Container.extend('Ui.Grid',
 		// redo the element measure with the correct width constraint
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var col = child.gridCol;
-			var colSpan = child.gridColSpan;
+			var col = Ui.Grid.getCol(child);
+			var colSpan = Ui.Grid.getColSpan(child);
 				
 			var childX = this.cols[col].offset;
 			var childWidth = 0.0;
@@ -270,8 +288,8 @@ Ui.Container.extend('Ui.Grid',
 		// redo the element measure with the correct width constraint
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var col = child.gridCol;
-			var colSpan = child.gridColSpan;
+			var col = Ui.Grid.getCol(child);
+			var colSpan = Ui.Grid.getColSpan(child);
 				
 			var childX = this.cols[col].offset;
 			var childWidth = 0.0;
@@ -316,8 +334,8 @@ Ui.Container.extend('Ui.Grid',
 		// redo the element measure height the correct height constraint
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var col = child.gridCol;
-			var colSpan = child.gridColSpan;
+			var col = Ui.Grid.getCol(child);
+			var colSpan = Ui.Grid.getColSpan(child);
 				
 			var childX = this.cols[col].offset;
 			var childWidth = 0.0;
@@ -325,9 +343,9 @@ Ui.Container.extend('Ui.Grid',
 			for(var x = col; x < col+colSpan; x++)
 				childWidth += this.cols[x].actualWidth;
 				
-			var row = child.gridRow;
-			var rowSpan = child.gridRowSpan;
-				
+			var row = Ui.Grid.getRow(child);
+			var rowSpan = Ui.Grid.getRowSpan(child);
+			
 			var childY = this.rows[row].offset;
 			var childHeight = 0.0;
 				
@@ -361,10 +379,10 @@ Ui.Container.extend('Ui.Grid',
 	arrangeCore: function(width, height) {
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			var col = child.gridCol;
-			var colSpan = child.gridColSpan;
-			var row = child.gridRow;
-			var rowSpan = child.gridRowSpan;
+			var col = Ui.Grid.getCol(child);
+			var colSpan = Ui.Grid.getColSpan(child);
+			var row = Ui.Grid.getRow(child);
+			var rowSpan = Ui.Grid.getRowSpan(child);
 				
 			var childX = this.cols[col].offset;
 			var childY = this.rows[row].offset;
@@ -377,6 +395,50 @@ Ui.Container.extend('Ui.Grid',
 				childHeight += this.rows[y].actualHeight;
 			
 			child.arrange(childX, childY, childWidth, childHeight);
+		}
+	}
+}, {
+	getCol: function(child) {
+		return (child['Ui.Grid.col'] != undefined)?child['Ui.Grid.col']:0;
+	},
+
+	setCol: function(child, col) {
+		if(Ui.Grid.getCol(child) != col) {
+			child['Ui.Grid.col'] = col;
+			child.invalidateMeasure();
+		}
+	},
+
+	getRow: function(child) {
+		return (child['Ui.Grid.row'] != undefined)?child['Ui.Grid.row']:0;
+	},
+
+	setRow: function(child, row) {
+		if(Ui.Grid.getRow(child) != row) {
+			child['Ui.Grid.row'] = row;
+			child.invalidateMeasure();
+		}
+	},
+
+	getColSpan: function(child) {
+		return (child['Ui.Grid.colSpan'] != undefined)?child['Ui.Grid.colSpan']:1;
+	},
+
+	setColSpan: function(child, colSpan) {
+		if(Ui.Grid.getColSpan(child) != colSpan) {
+			child['Ui.Grid.colSpan'] = colSpan;
+			child.invalidateMeasure();
+		}
+	},
+
+	getRowSpan: function(child) {
+		return (child['Ui.Grid.rowSpan'] != undefined)?child['Ui.Grid.rowSpan']:1;
+	},
+
+	setRowSpan: function(child, rowSpan) {
+		if(Ui.Grid.getRowSpan(child) != rowSpan) {
+			child['Ui.Grid.rowSpan'] = rowSpan;
+			child.invalidateMeasure();
 		}
 	}
 });

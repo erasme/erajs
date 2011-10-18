@@ -80,7 +80,7 @@ Core.Object.prototype.constructorHelper = function(config, proto) {
 			this.constructorHelper.call(this, config, proto.__proto__);
 	if(proto.__constructor != undefined)
 		proto.__constructor.call(this, config);
-}; 
+};
 
 /**
 *	Extend a Class to create a new class.
@@ -300,7 +300,25 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	}
 };
 
+Core.Object.scopeHelper = function(config, scope) {
+	if('scope' in config)
+		scope = config.scope;
+	else if('type' in config)
+		config.scope = scope;
+	for(var prop in config) {
+		var val = config[prop];
+		if(typeof(val) == 'object') {
+			if(val.constructor == Array)
+				Core.Object.scopeHelper(val, scope);
+			else if(val.constructor == Object)
+				Core.Object.scopeHelper(val, scope);
+		}
+	}
+};
+
 Core.Object.prototype.autoConfig = function(config) {
+	Core.Object.scopeHelper(config, this);
+	var scope = ('scope' in config)?config.scope:this;
 	for(var i = 1; i < arguments.length; i++) {
 		var c = arguments[i];
 		var required = false;
@@ -309,10 +327,43 @@ Core.Object.prototype.autoConfig = function(config) {
 			required = true;
 		}
 		var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
-		if((func in this) && (typeof(this[func]) == 'function') && (c in config))
+		if((func in this) && (typeof(this[func]) == 'function') && (c in config)) {
 			this[func].call(this, config[c]);
+			delete(config[c]);
+		}
 		else if(required)
 			throw('config parameter "'+c+'" is REQUIRED for '+this.classType);
+	}
+	// look for attached properties
+	for(var prop in config) {
+		if(prop.indexOf('.') != -1) {
+			var props = prop.split('.');
+			var current = window;
+			for(var i = 0; i < props.length - 1; i++) {
+				current = current[props[i]];
+			}
+			var c = props[props.length-1];
+			var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
+			if((func in current) && (typeof(current[func] == 'function'))) {
+				current[func].call(current, this, config[prop]);
+				delete(config[prop]);
+			}
+		}
+	}
+	// look for event
+	for(var prop in config) {
+		if(prop.indexOf('on') == 0) {
+			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
+			if((this.events != undefined) && (eventName in this.events)) {
+				scope.connect(this, eventName, config[prop]);
+				delete(config[prop]);
+			}
+		}
+	}
+	// look for name
+	if('name' in config) {
+		scope[config.name] = this;
+		delete(config.name);
 	}
 };
 

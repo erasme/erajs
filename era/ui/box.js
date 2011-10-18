@@ -25,7 +25,14 @@ Ui.Container.extend('Ui.Box',
 	constructor: function(config) {
 		this.autoConfig(config, 'padding', 'paddingTop', 'paddingBottom',
 			'paddingLeft', 'paddingRight', 'uniform', 'spacing',
-			'orientation');
+			'orientation', 'content');
+	},
+
+	setContent: function(content) {
+		while(this.getFirstChild() != undefined)
+			this.removeChild(this.getFirstChild());
+		for(var i = 0; i < content.length; i++)
+			this.append(Ui.Element.create(content[i], this));
 	},
 
 	/**
@@ -41,7 +48,7 @@ Ui.Container.extend('Ui.Box',
 
 	/**
 	 * Set the layout orientation.
-	 * Possible values: [vertical|horizontal|
+	 * Possible values: [vertical|horizontal]
 	 */
 	setOrientation: function(orientation) {
 		var vertical = true;
@@ -172,9 +179,8 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the end of the box
 	 */
 	append: function(child, resizable) {
-		if(resizable == undefined)
-			resizable = false;
-		child.boxResizable = resizable;
+		if(resizable)
+			Ui.Box.setResizable(child, true);
 		this.appendChild(child);
 	},
 
@@ -182,9 +188,8 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the begining of the box
 	 */
 	prepend: function(child, resizable) {
-		if(resizable == undefined)
-			resizable = false;
-		child.boxResizable = resizable;
+		if(resizable)
+			Ui.Box.setResizable(child, true);
 		this.prependChild(child);
 	},
 
@@ -198,19 +203,19 @@ Ui.Container.extend('Ui.Box',
 	/**
 	 * Return if the given child is resizable or not 
 	 */
-	getResizable: function(child) {
+/*	getResizable: function(child) {
 		return child.boxResizable;
-	},
+	},*/
 
 	/**
 	 * Setup if the given child is resizable or not
 	 */
-	setResizable: function(child, resizable) {
+/*	setResizable: function(child, resizable) {
 		if(child.boxResizable != resizable) {
 			child.boxResizable = resizable;
 			this.invalidateMeasure();
 		}
-	},
+	},*/
 
 	/**#@+
 	* @private
@@ -229,7 +234,7 @@ Ui.Container.extend('Ui.Box',
 		while(loop) {
 			for(var i = 0; i < this.getChildren().length; i++) {
 				var child = this.getChildren()[i];
-				if(child.boxResizable)
+				if(Ui.Box.getResizable(child))
 					countResizable++;
 				var size;
 				if(this.vertical)
@@ -281,7 +286,7 @@ Ui.Container.extend('Ui.Box',
 				var size = child.measure(constraintWidth, 0);
 				if(size.width > minWidth)
 					minWidth = size.width;
-				if(!child.boxResizable) {
+				if(!Ui.Box.getResizable(child)) {
 					minHeight += size.height;
 				}
 				else {
@@ -306,7 +311,7 @@ Ui.Container.extend('Ui.Box',
 				starFound = true;
 				for(var i = 0; i < this.getChildren().length; i++) {
 					var child = this.getChildren()[i];
-					if(child.boxResizable) {
+					if(Ui.Box.getResizable(child)) {
 						if(!child.boxStarDone) {
 							if(child.getMeasureHeight() > star) {
 								child.boxStarDone = true;
@@ -353,7 +358,7 @@ Ui.Container.extend('Ui.Box',
 			// handle not resizable
 			for(var i = 0; i < this.getChildren().length; i++) {
 				var child = this.getChildren()[i];
-				if(!child.boxResizable) {
+				if(!Ui.Box.getResizable(child)) {
 					var size = child.measure(0, constraintHeight);
 					if(size.height > minHeight)
 						minHeight = size.height;
@@ -372,7 +377,7 @@ Ui.Container.extend('Ui.Box',
 					starFound = true;
 					for(var i = 0; i < this.getChildren().length; i++) {
 						var child = this.getChildren()[i];
-						if(child.boxResizable) {
+						if(Ui.Box.getResizable(child)) {
 							if(!child.boxStarDone) {
 								var size = child.measure(star, constraintHeight);
 								if(size.height > minHeight)
@@ -454,7 +459,7 @@ Ui.Container.extend('Ui.Box',
 				offset += this.uniformSize;
 			}
 			else {
-				if((child.boxResizable) && ((this.vertical?child.getMeasureHeight():child.getMeasureWidth()) < this.star)) {
+				if((Ui.Box.getResizable(child)) && ((this.vertical?child.getMeasureHeight():child.getMeasureWidth()) < this.star)) {
 					if(this.vertical)
 						child.arrange(left, offset, width, this.star);
 					else
@@ -472,6 +477,17 @@ Ui.Container.extend('Ui.Box',
 					}
 				}
 			}
+		}
+	}
+}, {
+	getResizable: function(child) {
+		return child['Ui.Box.resizable']?true:false;
+	},
+
+	setResizable: function(child, resizable) {
+		if(Ui.Box.getResizable(child) != resizable) {
+			child['Ui.Box.resizable'] = resizable;
+			child.invalidateMeasure();
 		}
 	}
 });

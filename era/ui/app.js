@@ -155,6 +155,8 @@ Ui.LBox.extend('Ui.App',
 		}
 		else
 			this.arguments = {};
+
+		this.autoConfig(config, 'content');
 	},
 
 	/**#@+
@@ -434,6 +436,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	setContent: function(content) {
+		content = Ui.Element.create(content, this);
 		if(this.content != content) {
 			document.documentElement.style.padding = '0px';
 			document.documentElement.style.margin = '0px';
