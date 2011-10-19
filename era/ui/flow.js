@@ -15,6 +15,19 @@ Ui.Container.extend('Ui.Flow',
 	constructor: function(config) {
 	},
 
+	setContent: function(content) {
+		while(this.getFirstChild() != undefined)
+			this.removeChild(this.getFirstChild());
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.appendChild(Ui.Element.create(content[i], this));
+			}
+			else
+				this.appendChild(Ui.Element.create(content, this));
+		}
+	},
+
 	/**
 	 * True if all children will be arrange to have the
 	 * same width and height

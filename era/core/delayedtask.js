@@ -17,16 +17,24 @@ Core.Object.extend('Core.DelayedTask',
 	*	@param config.callback
 	*/
 	constructor: function(config) {
-		if(config.delay != undefined)
+		if('delay' in config) {
 			this.delay = config.delay;
-		if(config.scope != undefined)
+			delete(config.delay);
+		}
+		if('scope' in config) {
 			this.scope = config.scope;
-		if(config.arguments != undefined)
+			delete(config.scope);
+		}
+		if('arguments' in config) {
 			this.arguments = config.arguments;
+			delete(config.arguments);
+		}
 		else
 			this.arguments = [];
-		if(config.callback != undefined)
+		if('callback' in config) {
 			this.callback = config.callback;
+			delete(config.callback);
+		}
 		else
 			throw('callback MUST be given for a DelayedTask');
 

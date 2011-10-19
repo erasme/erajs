@@ -28,8 +28,8 @@ Ui.Container.extend('Ui.Locator',
 		var button;
 
 		var gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: Ui.Color.create('#fbfbfb') },
-			{ offset: 1, color: Ui.Color.create('#c8c8c8') }
+			{ offset: 0, color: '#fbfbfb' },
+			{ offset: 1, color: '#c8c8c8' }
 		] });
 
 		if(path == '/') {
@@ -50,7 +50,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
 
-			var home = Ui.Icon.create('home', 25, 25, 'black');
+			var home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);
@@ -87,7 +87,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
 
-			var home = Ui.Icon.create('home', 25, 25, 'black');
+			var home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);

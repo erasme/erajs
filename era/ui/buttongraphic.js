@@ -134,8 +134,8 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 						this.iconBox.remove(this.icon1);
 					if(this.icon2 != undefined)
 						this.iconBox.remove(this.icon2);
-					this.icon1 = Ui.Icon.create(icon, 24, 24, this.getContentLightColor());
-					this.icon2 = Ui.Icon.create(icon, 24, 24, this.getContentColor());
+					this.icon1 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: this.getContentLightColor() });
+					this.icon2 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: this.getContentColor() });
 					this.iconBox.append(this.icon1);
 					this.iconBox.append(this.icon2);
 				}
@@ -437,7 +437,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	/**#@-*/
 }, {
 	setContent: function(content) {
-		this.content = Core.Object.create(content, this);
+		this.content = Ui.Element.create(content, this);
 		this.contentBox.setContent(this.content);
 	}
 });

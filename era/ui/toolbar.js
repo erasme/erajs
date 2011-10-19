@@ -66,6 +66,10 @@ Ui.VBox.extend('Ui.ToolBar',
 		this.hbox.remove(child);
 	},
 
+	setContent: function(content) {
+		this.hbox.setContent(content);
+	},
+
 	onStyleChange: function() {
 		var gradient;
 		var lightColor;

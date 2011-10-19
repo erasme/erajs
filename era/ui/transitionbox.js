@@ -74,7 +74,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 
 			this.transition.run(this.current, this.next, 0);
 
-			this.transitionClock = new Anim.Clock({ duration: this.duration, scope: this, callback: this.onTransitionTick, ease: this.ease });
+			this.transitionClock = new Anim.Clock({ duration: this.duration, scope: this, onTimeupdate: this.onTransitionTick, ease: this.ease });
 			this.connect(this.transitionClock, 'complete', this.onTransitionComplete);
 			this.transitionClock.begin();
 

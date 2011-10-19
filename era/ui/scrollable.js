@@ -450,7 +450,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.speedY = 0;
 		this.speedComputed = false;
 		this.hasMoved = false;
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
+		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, onTimeupdate: this.measureSpeed });
 	},
 
 	stopComputeInertia: function() {
@@ -476,8 +476,8 @@ Ui.Container.extend('Ui.Scrollable',
 
 	startInertia: function() {
 		if(this.inertiaClock == undefined) {
-			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this,
-				callback: function(clock, progress, delta) {
+			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
+				onTimeupdate: function(clock, progress, delta) {
 					if(delta == 0)
 						return;
 

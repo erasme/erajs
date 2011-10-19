@@ -114,6 +114,15 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	func.prototype['__baseclass__'] = this.prototype;
 	func['base'] = this.prototype;
 
+	// inherit static methods
+//	console.log('defined class: '+classType+', base: '+func['base']);
+	for(var prop in func['base'].constructor) {
+		if(typeof(func['base'].constructor[prop]) == 'function') {
+//			console.log('parent static: '+prop);
+			func[prop] = func['base'].constructor[prop];
+		}
+	}
+
 	if(classStatic != undefined) {
 		for(var prop in classStatic)
 			func[prop] = classStatic[prop];
@@ -167,7 +176,7 @@ Function.prototype.hasInstance = function(obj) {
 };
 
 /**
-* @return true if the current object if class or subclass of
+* @return true if the current object is class or subclass of
 * the given class name
 */
 Core.Object.prototype.isSubclassOf = function(parentClassName) {
@@ -319,11 +328,8 @@ Core.Object.scopeHelper = function(config, scope) {
 Core.Object.prototype.autoConfig = function(config) {
 	if(config == undefined)
 		return;
-	console.log(this+'.autoConfig');
-
 	Core.Object.scopeHelper(config, this);
 	var scope = ('scope' in config)?config.scope:this;
-
 	for(var prop in config) {
 		// look for name
 		if(prop == 'name') {
@@ -350,27 +356,59 @@ Core.Object.prototype.autoConfig = function(config) {
 				current[func].call(current, this, config[prop]);
 				delete(config[prop]);
 			}
+			else
+				throw('Attached property \''+prop+'\' not found');
 		}
 		else if(prop.indexOf('on') == 0) {
 			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
 			if((this.events != undefined) && (eventName in this.events)) {
+//#if DEBUG
+				if(typeof(config[prop]) != 'function')
+					throw('function is need to connect to the \''+eventName+'\' on '+this.classType);
+//#end
 				scope.connect(this, eventName, config[prop]);
 				delete(config[prop]);
 			}
+			else
+				throw('event \''+eventName+'\' not found on '+this.classType);
 		}
+		else if(prop != 'scope')
+			throw('Property \''+prop+'\' not found on '+this.classType);
 	}
 };
 
 
 Core.Object.create = function(element, scope) {
+	if(scope === undefined)
+		scope = this;
 	if(element == undefined)
 		return undefined;
-	else if(Ui.Element.hasInstance(element))
+	else if(typeof(element) == 'string') {
+		if('parse' in this)
+			return this.parse(element);
+		else
+			throw('static parse need to be defined in class '+this.prototype.classType+' to create from a string');
+	}
+	else if(Core.Object.hasInstance(element))
 		return element;
 	else {
 		if(!('scope' in element))
 			element.scope = scope;
-		return new element.type(element);
+		var type = element.type;
+		if(type == undefined)
+			type = this;
+//#if DEBUG
+		else {
+			var current = type;
+			while((current !== undefined) && (current !== this)) {
+				if(current.base == undefined)
+					throw('Expecting class '+this.prototype.classType+' got '+type.prototype.classType);
+				current = current.base.constructor;
+			}
+		}
+//#end
+		delete(element.type);
+		return new type(element);
 	}
 };
 

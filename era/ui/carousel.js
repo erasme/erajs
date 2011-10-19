@@ -34,7 +34,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		
 		this.buttonPrevious = new Ui.Pressable({ horizontalAlign: 'left', verticalAlign: 'center', opacity: 0 });
 		this.buttonPrevious.setFocusable(false);
-		this.buttonPreviousIcon = Ui.Icon.create('arrowleft', 48, 48);
+		this.buttonPreviousIcon = new Ui.Icon({ icon: 'arrowleft', width: 48, height: 48 });
 		this.buttonPrevious.append(this.buttonPreviousIcon);
 		Ui.Carousel.base.append.call(this, this.buttonPrevious);
 //		this.buttonPrevious.hide();
@@ -42,7 +42,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 
 		this.buttonNext = new Ui.Pressable({ horizontalAlign: 'right', verticalAlign: 'center', opacity: 0 });
 		this.buttonNext.setFocusable(false);
-		this.buttonNextIcon = Ui.Icon.create('arrowright', 48, 48);
+		this.buttonNextIcon = new Ui.Icon({ icon: 'arrowright', width: 48, height: 48 });
 		this.buttonNext.append(this.buttonNextIcon);
 		Ui.Carousel.base.append.call(this, this.buttonNext);
 //		this.buttonNext.hide();
@@ -120,7 +120,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		}
 
 		if(this.showClock == undefined) {
-			this.showClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onShowTick });
+			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onShowTick });
 			this.showClock.begin();
 		}
 	},
@@ -133,7 +133,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		this.showPrevious = false;
 		this.showNext = false;
 		if(this.showClock == undefined) {
-			this.showClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onShowTick });
+			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onShowTick });
 			this.showClock.begin();
 		}
 	},

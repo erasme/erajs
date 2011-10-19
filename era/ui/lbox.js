@@ -25,10 +25,10 @@ Ui.Container.extend('Ui.LBox',
 		if((content != undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.append(Core.Object.create(content[i], this));
+					this.append(Ui.Element.create(content[i], this));
 			}
 			else
-				this.append(Core.Object.create(content, this));
+				this.append(Ui.Element.create(content, this));
 		}
 	},
 

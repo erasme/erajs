@@ -16,7 +16,6 @@ Core.Object.extend('Anim.EasingFunction',
 	*	@param config.mode
 	*/
 	constructor: function(config) {
-		this.autoConfig(config, 'mode');
 	},
 
 	/** 
@@ -60,21 +59,8 @@ Core.Object.extend('Anim.EasingFunction',
 		this.eases[easeName] = classType;
 	},
 
-	create: function(ease) {
-		if(ease == undefined)
-			return undefined;
-		if(typeof(ease) == 'string')
-			return new this.eases[ease]();
-		else if(typeof(ease) == 'object') {
-			if(Anim.EasingFunction.hasInstance(ease))
-				return ease;
-			else if(ease.type != undefined) {
-				var type = ease.type;
-				ease.type = undefined;
-				return new this.eases[type](ease);
-			}
-		}
-		throw('invalid easing function ('+ease+')');
+	parse: function(ease) {
+		return new this.eases[ease]();
 	}
 });
 

@@ -11,49 +11,49 @@ Ui.Container.extend('Ui.Grid',
 	 * @extends Ui.Container
 	 */
 	constructor: function(config) {
-		if(config.cols != undefined) {
-			this.cols = [];
-			var cols = config.cols.split(',');
-			for(var i = 0; i < cols.length; i++) {
-				var col = cols[i];
-				if(col == 'auto')
-					this.cols.push({ auto: true, star: false, absolute: false, actualWidth: 0, offset: 0, width: 0 });
-				else if(col == '*')
-					this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: 1 });
-				else if(col.match(/^[0-9]+\.?[0-9]*\*$/))
-					this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: new Number(col.slice(0, col.length-1)) });
-				else if(col.match(/^[0-9]+$/))
-					this.cols.push({ auto: false, star: false, absolute: true, actualWidth: 0, offset: 0, width: new Number(col) });
-//#if DEBUG
-				else
-					throw('Ui.Grid column definition "'+col+'" not supported');
-//#end
-			}
-		}
-		else
-			this.cols = [ { auto: true, star: false, absolute: false, actualWidth: 0, offset: 0, width: 0 } ];
-		if(config.rows != undefined) {
-			this.rows = [];
-			var rows = config.rows.split(',');
-			for(var i = 0; i < rows.length; i++) {
-				var row = rows[i];
-				if(row == 'auto')
-					this.rows.push({ auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 });
-				else if(row == '*')
-					this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: 1 });
-				else if(row.match(/^[0-9]+\.?[0-9]*\*$/))
-					this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: new Number(row.slice(0, row.length-1)) });
-				else if(row.match(/^[0-9]+$/))
-					this.rows.push({ auto: false, star: false, absolute: true, actualHeight: 0, offset: 0, height: new Number(row) });
-//#if DEBUG
-				else
-					throw('Ui.Grid row definition "'+row+'" not supported');
-//#end
-			}
+		this.cols = [ { auto: true, star: false, absolute: false, actualWidth: 0, offset: 0, width: 0 } ];
+		this.rows = [ { auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 } ];
+	},
 
+	setCols: function(cols) {
+		this.cols = [];
+		cols = cols.split(',');
+		for(var i = 0; i < cols.length; i++) {
+			var col = cols[i];
+			if(col == 'auto')
+				this.cols.push({ auto: true, star: false, absolute: false, actualWidth: 0, offset: 0, width: 0 });
+			else if(col == '*')
+				this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: 1 });
+			else if(col.match(/^[0-9]+\.?[0-9]*\*$/))
+				this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: new Number(col.slice(0, col.length-1)) });
+			else if(col.match(/^[0-9]+$/))
+				this.cols.push({ auto: false, star: false, absolute: true, actualWidth: 0, offset: 0, width: new Number(col) });
+//#if DEBUG
+			else
+				throw('Ui.Grid column definition "'+col+'" not supported');
+//#end
 		}
-		else
-			this.rows = [ { auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 } ];
+		this.invalidateMeasure();
+	},
+
+	setRows: function(rows) {
+		this.rows = [];
+		rows = rows.split(',');
+		for(var i = 0; i < rows.length; i++) {
+			var row = rows[i];
+			if(row == 'auto')
+				this.rows.push({ auto: true, star: false, absolute: false, actualHeight: 0, offset: 0, height: 0 });
+			else if(row == '*')
+				this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: 1 });
+			else if(row.match(/^[0-9]+\.?[0-9]*\*$/))
+				this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: new Number(row.slice(0, row.length-1)) });
+			else if(row.match(/^[0-9]+$/))
+				this.rows.push({ auto: false, star: false, absolute: true, actualHeight: 0, offset: 0, height: new Number(row) });
+//#if DEBUG
+			else
+				throw('Ui.Grid row definition "'+row+'" not supported');
+//#end
+		}
 	},
 
 	setContent: function(content) {

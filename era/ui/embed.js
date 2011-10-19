@@ -84,7 +84,7 @@ Ui.LBox.extend('Ui.Embed',
 	},
 
 	setContent: function(content) {
-		content = Core.Object.create(content, this);
+		content = Ui.Element.create(content, this);
 		if(this.content != content) {
 			if(this.content != undefined)
 				this.remove(this.content);

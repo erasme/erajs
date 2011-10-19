@@ -7,18 +7,18 @@ Anim.EasingFunction.extend('Anim.LinearEase',
     *   @extends Anim.EasingFunction
 	*/
 	constructor: function(config) {
-	},
+	}
 }, 
 /**@lends Anim.LinearEase#*/
 {
 	easeInCore: function(normalizedTime) {
 		return normalizedTime;
-	},
+	}
 },
 /**@lends Anim.LinearEase*/
 {
 	constructor: function() {
 		Anim.EasingFunction.register('linear', this);
-	},
+	}
 });
 

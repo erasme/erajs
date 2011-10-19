@@ -109,7 +109,12 @@ Ui.Container.extend('Ui.MenuDialog',
 	constructor: function(config) {
 		this.addEvents('item');
 
-		this.element = config.element;
+		if('element' in config) {
+			this.element = config.element;
+			delete(config.element);
+		}
+		else
+			throw('element property is NEEDED for Ui.MenuDialog');
 
 		this.shadow = new Ui.Rectangle({ opacity: 0, fill: new Ui.Color({ a: 0 }) });
 		this.appendChild(this.shadow);
@@ -398,7 +403,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	constructor: function() {
 		this.addEvents('press');
 
-		this.background = new Ui.Rectangle({ fill: new Ui.Color.create('#1c8ef2'), opacity: 0, radius: 4 });
+		this.background = new Ui.Rectangle({ fill: '#1c8ef2', opacity: 0, radius: 4 });
 		this.append(this.background);
 
 		this.pressable = new Ui.Pressable({ padding: 5, paddingLeft: 10, paddingRight: 10 });
@@ -453,7 +458,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	}
 }, {
 	setContent: function(content) {
-		this.pressable.append(Core.Object.create(content, this));
+		this.pressable.append(Ui.Element.create(content, this));
 	}
 });
 

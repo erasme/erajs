@@ -11,17 +11,20 @@ Core.Object.extend('Ui.LinearGradient',
      * @extends Core.Object
      */ 
 	constructor: function(config) {
-		if(config.stops != undefined)
+		if('stops' in config) {
 			this.stops = config.stops;
+			delete(config.stops);
+		}
 		else
 			this.stops = [
 				{ offset: 0, color: new Ui.Color({ r: 1, g: 1, b: 1, a: 1}) },
 				{ offset: 1, color: new Ui.Color({ r: 0, g: 0, b: 0, a: 1}) }];
-		if(config.orientation != undefined)
+		if(config.orientation != undefined) {
 			this.orientation = config.orientation;
-
+			delete(config.orientation);
+		}
 		for(var i = 0; i < this.stops.length; i++)
-			this.stops[i].color = Ui.Color.create(this.stops[i].color);
+			this.stops[i].color = Ui.Color.create(this.stops[i].color);		
 	},
 
 	getBackgroundImage: function() {

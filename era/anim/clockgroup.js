@@ -15,6 +15,18 @@ Anim.Clock.extend('Anim.ClockGroup',
 	appendChild: function(child) {
 		child.setParent(this);
 		this.children.push(child);
+	},
+
+	setContent: function(content) {
+		this.children = [];
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.appendChild(Anim.Clock.create(content[i], this));
+			}
+			else
+				this.appendChild(Anim.Clock.create(content, this));
+		}
 	}
 }, 
 /**@lends Anim.ClockGroup#*/

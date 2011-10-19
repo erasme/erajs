@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test Animation</title>
+	<script src='../../era/era-debug.js'></script>
+<script>
+
+var app = new Ui.App({
+	content: {
+		type: Ui.VBox,
+		content: [{
+			type: Ui.ToolBar,
+			content: [{
+				type: Ui.Button, text: 'begin',
+				onPress: function() { clock.begin(); }
+			}, {
+				type: Ui.Button, text: 'pause',
+				onPress: function() { clock.pause(); }
+			}, {
+				type: Ui.Button, text: 'resume',
+				onPress: function() { clock.resume(); }
+			}, {
+				type: Ui.Button, text: 'stop',
+				onPress: function() { clock.stop(); }
+			}]
+		}, {
+			type: Ui.Rectangle, name: 'rect',
+			width: 200, height: 100, fill: 'green',
+			verticalAlign: 'center', horizontalAlign: 'center',
+			'Ui.Box.resizable': true
+		}]
+	}
+});
+
+var clock = new Anim.ClockGroup({
+	scope: app.rect, speed: 2, repeat: 2,
+	content: [{
+		type: Anim.Clock, duration: 4,
+		ease: { type: Anim.ElasticEase, mode: 'out' },
+		onTimeupdate: function(clock, progress) {
+			this.setTransform(Ui.Matrix.createRotate(progress * 360));
+		}
+	}, {
+		type: Anim.Clock, beginTime: 1, duration: 2, autoReverse: true,
+		onTimeupdate: function(clock, progress) {
+			this.setOpacity(1 - progress/2);
+		}
+	}]
+});
+
+</script>
+	</head>
+</html>

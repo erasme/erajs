@@ -705,8 +705,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	setContent: function(content) {
-		console.log(this+'.setContent('+content+') contentBox: '+this.contentBox);
-		content = Core.Object.create(content, this);
+		content = Ui.Element.create(content, this);
 		if(this.content != content) {
 			document.documentElement.style.padding = '0px';
 			document.documentElement.style.margin = '0px';

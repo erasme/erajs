@@ -42,7 +42,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.background = new Ui.Rectangle({ fill: 'darkgray', radius: 3, marginTop: 12, marginBottom: 12, marginLeft: 11, marginRight: 11 });
 		this.checkBox.append(this.background);
 
-		this.check = Ui.Icon.create('check', 24, 24, 'green');
+		this.check = new Ui.Icon({ icon: 'check', width: 24, height: 24, fill: 'green' });
 		this.check.setMargin(12);
 		this.check.hide();
 		this.checkBox.append(this.check);
@@ -190,7 +190,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 	},
 
 	setContent: function(content) {
-		content = Core.Object.create(content, this);
+		content = Ui.Element.create(content, this);
 
 		if(content == undefined) {
 			if(this.contentBox != undefined) {

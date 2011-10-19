@@ -45,6 +45,7 @@ include(eraBaseDirectory+'core/filepostuploader.js');
 include(eraBaseDirectory+'anim/timemanager.js');
 include(eraBaseDirectory+'anim/animationmanager.js');
 include(eraBaseDirectory+'anim/easingfunction.js');
+include(eraBaseDirectory+'anim/linearease.js');
 include(eraBaseDirectory+'anim/powerease.js');
 include(eraBaseDirectory+'anim/elasticease.js');
 include(eraBaseDirectory+'anim/bounceease.js');
