@@ -8,6 +8,12 @@ Ui.Shape.extend('Ui.Icon',
      * @extends Ui.Shape
 	 */
 	constructor: function(config) {
+		this.setWidth(24);
+		this.setHeight(24);
+	},
+
+	setIcon: function(icon) {
+		this.setPath(Ui.Icon.icons[icon]);
 	}
 }, 
 /**@lends Ui.Icon# */ 
@@ -69,12 +75,8 @@ Ui.Shape.extend('Ui.Icon',
 		Ui.Icon.icons[iconName] = iconPath;
 	},
 
-	create: function(iconName, width, height, fill) {
-		return new Ui.Icon({
-			path: Ui.Icon.icons[iconName],
-			width: (width != undefined)?width:48,
-			height: (height != undefined)?height:48,
-			fill: (fill != undefined)?fill:'black' });
+	parse: function(icon) {
+		return new Ui.Icon({ icon: icon });
 	}
 });
 

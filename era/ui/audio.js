@@ -16,6 +16,7 @@ Ui.Element.extend('Ui.Audio',
 	*	@extends Ui.Element
 	*/
 	constructor: function(config) {
+		this.addEvents('ready', 'ended', 'timeupdate');
 		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.wavSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Audio.supportOgg))
 				this.setSrc(config.oggSrc);
@@ -23,14 +24,10 @@ Ui.Element.extend('Ui.Audio',
 				this.setSrc(config.mp3Src);
 			else if((config.wavSrc != undefined) && (Ui.Audio.supportWav))
 				this.setSrc(config.wavSrc);
+			delete(config.oggSrc);
+			delete(config.mp3Src);
+			delete(config.wavSrc);
 		}
-		else if(config.src != undefined)
-			this.setSrc(config.src);
-
-		if(config.volume != undefined)
-			this.setVolume(config.volume);
-
-		this.addEvents('ready', 'ended', 'timeupdate');
 	},
 
 	/**
@@ -39,7 +36,6 @@ Ui.Element.extend('Ui.Audio',
 	setSrc: function(src) {
 		this.loaddone = false;
 		this.src = src;
-
 		if(Ui.Audio.htmlAudio)
 			this.audioDrawing.setAttribute('src', src);
 	},

@@ -10,7 +10,6 @@ Ui.Element.extend('Ui.Html',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'html', 'selectable');
 	},
 
 	getHtml: function() {

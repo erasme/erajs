@@ -20,7 +20,6 @@ Ui.Element.extend('Ui.Shape',
 	 * @extends Ui.Element
 	*/
 	constructor: function(config) {
-		this.autoConfig(config, 'path', 'fill', 'scale');
 	},
 
 	setScale: function(scale) {
@@ -39,6 +38,7 @@ Ui.Element.extend('Ui.Shape',
 		if(this.fill != fill) {
 			if(typeof(fill) == 'string')
 				fill = Ui.Color.create(fill);
+			fill = Ui.Element.create(fill, this);
 			this.fill = fill;
 			if(Ui.Shape.forceCanvas) {
 				this.updateCanvas();

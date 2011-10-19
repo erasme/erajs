@@ -41,8 +41,6 @@ Ui.Container.extend('Ui.Popup',
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
-
-		this.autoConfig(config, 'autoHide', 'expandable');
 	},
 
 	setExpandable: function(expandable) {
@@ -357,8 +355,6 @@ Ui.Fixed.extend('Ui.PopupBackground',
 		this.append(this.background);
 
 		this.connect(this, 'resize', this.onResize);
-
-		this.autoConfig(config, 'radius', 'fill', 'arrowBorder');
 	},
 
 	setArrowBorder: function(arrowBorder) {

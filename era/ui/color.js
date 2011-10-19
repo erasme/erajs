@@ -6,7 +6,6 @@ Core.Object.extend('Ui.Color',
 	b: 0,
 	a: 1,
 
-
 	/**
 	 * @constructs
 	 * @class
@@ -14,28 +13,30 @@ Core.Object.extend('Ui.Color',
  	 */
 	constructor: function(config) {
 		// define from RGB model
-		if((config.r != undefined) || (config.g != undefined) || (config.b != undefined)) {
-			if(config.r != undefined)
-				this.r = Math.min(Math.max(config.r, 0), 1);
-			if(config.g != undefined)
-				this.g = Math.min(Math.max(config.g, 0), 1);
-			if(config.b != undefined)
-				this.b = Math.min(Math.max(config.b, 0), 1);
+		if((config.r != undefined) && (config.g != undefined) && (config.b != undefined)) {
+			this.r = Math.min(Math.max(config.r, 0), 1);
+			this.g = Math.min(Math.max(config.g, 0), 1);
+			this.b = Math.min(Math.max(config.b, 0), 1);
+			delete(config.r); delete(config.g);	delete(config.b);
 		}
-		else if((config.h != undefined) || (config.s != undefined) || (config.l != undefined)) {
+		else if((config.h != undefined) && (config.s != undefined) && (config.l != undefined)) {
 			var h = (config.h != undefined)?config.h:0;
 			var s = (config.s != undefined)?config.s:0;
 			var l = (config.l != undefined)?config.l:0;
 			this.initFromHsl(h, s, l);
+			delete(config.h); delete(config.s); delete(config.l);
 		}
-		else if((config.y != undefined) || (config.u != undefined) || (config.v != undefined)) {
+		else if((config.y != undefined) && (config.u != undefined) && (config.v != undefined)) {
 			var y = Math.max((config.y != undefined)?config.y:0, 0);
 			var u = (config.u != undefined)?config.u:0;
 			var v = (config.v != undefined)?config.v:0;
 			this.initFromYuv(y, u, v);
+			delete(config.y); delete(config.u); delete(config.v);
 		}
-		if(config.a != undefined)
-			this.a = config.a;
+		if(config.a != undefined) {
+			this.a = Math.min(Math.max(config.a, 0), 1);
+			delete(config.a);
+		}
 	},
 
 	getCssRgba: function() {
@@ -157,23 +158,25 @@ Core.Object.extend('Ui.Color',
 	}
 }, {
 	knownColor: {
-		white: { r: 1, g: 1, b: 1 },
-		black: { r: 0, g: 0, b: 0 },
-		red: { r: 1, g: 0, b: 0 },
-		green: { r: 0, g: 0.5, b: 0 },
-		blue: { r: 0, g: 0, b: 1 },
-		lightblue: { r: 0.678, g: 0.847, b: 0.902 },
-		lightgreen: { r: 0.565, g: 0.933, b: 0.565 },
-		orange: { r: 1, g: 0.647, b: 0 },
-		purple: { r: 0.5, g: 0, b: 0.5 },
-		lightgray: { r: 0.827, g: 0.827, b: 0.827 },
-		darkgray: { r: 0.66, g: 0.66, b: 0.66 },
-		pink: { r: 1, g: 0.753, b: 0.796 },
-		brown: { r: 0.647, g: 0.165, b: 0.165 }
+		white: '#ffffff',
+		black: '#000000',
+		red: '#ff0000',
+		green: '#008000',
+		blue: '#0000ff',
+		lightblue: '#add8e6',
+		lightgreen: '#90ee90',
+		orange: '#ffa500',
+		purple: '#800080',
+		lightgray: '#d3d3d3',
+		darkgray: '#a9a9a9',
+		pink: '#ffc0cb',
+		brown: '#a52a2a'
 	},
 
-	create: function(color) {
+	parse: function(color) {
 		if(typeof(color) == 'string') {
+			if(color in Ui.Color.knownColor)
+				color = Ui.Color.knownColor[color];
 			// parse the color
 			var res;
 			if((res = color.match(/^rgba\((\d+),(\d+),(\d+),(\d+\.?\d*)\)$/)) != null) {
@@ -203,11 +206,7 @@ Core.Object.extend('Ui.Color',
 					return new Ui.Color({ r: r, g: g, b: b });
 				}
 			}
-			else if(color in Ui.Color.knownColor)
-				return new Ui.Color(Ui.Color.knownColor[color]);
 		}
-		else if(Ui.Color.hasInstance(color))
-			return color;
 		throw('Unknown color format ('+color+')');
 	}
 });

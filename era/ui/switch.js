@@ -67,7 +67,7 @@ Ui.LBox.extend('Ui.Switch',
 		if('ease' in config)
 			this.setEase(config.ease);
 		else
-			this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
+			this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' }, this);
 		if('value' in config) {
 			this.value = config.value;
 			if(this.value)
@@ -78,7 +78,7 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	setEase: function(ease) {
-		this.ease = Anim.EasingFunction.create(ease);
+		this.ease = Anim.EasingFunction.create(ease, this);
 	},
 
 	setTrueContent: function(trueContent) {
@@ -183,7 +183,7 @@ Ui.LBox.extend('Ui.Switch',
 		else
 			this.animNext = 0;
 		if(this.animStart != this.animNext) {
-			this.alignClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onAlignTick });
+			this.alignClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onAlignTick });
 			this.alignClock.begin();
 		}
 		else {

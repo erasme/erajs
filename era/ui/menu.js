@@ -27,8 +27,6 @@ Ui.Pressable.extend('Ui.Menu',
 
 		this.connect(this, 'press', this.onTitlePress);
 		this.connect(window, 'resize', this.onWindowResize);
-
-		this.autoConfig(config, 'header', 'scope', 'items');
 	},
 
 	setHeader: function(header) {
@@ -111,7 +109,12 @@ Ui.Container.extend('Ui.MenuDialog',
 	constructor: function(config) {
 		this.addEvents('item');
 
-		this.element = config.element;
+		if('element' in config) {
+			this.element = config.element;
+			delete(config.element);
+		}
+		else
+			throw('element property is NEEDED for Ui.MenuDialog');
 
 		this.shadow = new Ui.Rectangle({ opacity: 0, fill: new Ui.Color({ a: 0 }) });
 		this.appendChild(this.shadow);
@@ -314,8 +317,6 @@ Ui.Container.extend('Ui.MenuBackground',
 
 		this.background = new Ui.Shape({ fill: gradient });
 		this.appendChild(this.background);
-
-		this.autoConfig(config, 'radius', 'fill');
 	},
 
 	setTab: function(offset, width, height) {
@@ -402,7 +403,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	constructor: function() {
 		this.addEvents('press');
 
-		this.background = new Ui.Rectangle({ fill: new Ui.Color.create('#1c8ef2'), opacity: 0, radius: 4 });
+		this.background = new Ui.Rectangle({ fill: '#1c8ef2', opacity: 0, radius: 4 });
 		this.append(this.background);
 
 		this.pressable = new Ui.Pressable({ padding: 5, paddingLeft: 10, paddingRight: 10 });
@@ -427,10 +428,6 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 
 	setCurrent: function() {
 		this.pressable.focus();
-	},
-
-	setContent: function(content) {
-		this.pressable.append(content);
 	},
 
 	getContent: function() {
@@ -458,6 +455,10 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 
 	onItemBlur: function() {
 		this.background.setOpacity(0);
+	}
+}, {
+	setContent: function(content) {
+		this.pressable.append(Ui.Element.create(content, this));
 	}
 });
 

@@ -38,20 +38,6 @@ Ui.LBox.extend('Ui.Uploadable',
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
-	setContent: function(content) {
-		if(this.content != content) {
-			if(this.content != undefined)
-				this.remove(this.content);
-			if(content != undefined) {
-				if(Ui.UploadableWrapper.hasInstance(this.input))
-					this.prepend(content);
-				else
-					this.append(content);
-			}
-			this.content = content;
-		}
-	},
-
 	/**#@+
 	 * @private
 	 */
@@ -225,6 +211,21 @@ Ui.LBox.extend('Ui.Uploadable',
 		this.fireEvent('file', this, file);
 	}
 	/**#@-*/
+}, {
+	setContent: function(content) {
+		content = Ui.Element.create(content, this);
+		if(this.content != content) {
+			if(this.content != undefined)
+				this.remove(this.content);
+			if(content != undefined) {
+				if(Ui.UploadableWrapper.hasInstance(this.input))
+					this.prepend(content);
+				else
+					this.append(content);
+			}
+			this.content = content;
+		}
+	}
 });
 
 Ui.Element.extend('Ui.UploadableFileWrapper', 

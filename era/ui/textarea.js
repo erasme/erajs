@@ -31,8 +31,6 @@ Ui.Element.extend('Ui.TextArea',
 			}
 			this.fireEvent('scroll', this, this.textareaDrawing.scrollLeft, this.textareaDrawing.scrollTop);
 		});
-
-		this.autoConfig(config, 'fontSize', 'fontFamily', 'fontWeight', 'color');
 	},
 
 	setFontSize: function(fontSize) {

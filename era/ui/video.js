@@ -18,6 +18,7 @@ Ui.Element.extend('Ui.Video',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
+		this.addEvents('ready', 'ended', 'timeupdate');
 		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Video.supportOgg))
 				this.setSrc(config.oggSrc);
@@ -25,14 +26,11 @@ Ui.Element.extend('Ui.Video',
 				this.setSrc(config.mp4Src);
 			else if((config.webmSrc != undefined) && (Ui.Video.supportWebm))
 				this.setSrc(config.webmSrc);
+			delete(config.oggSrc);
+			delete(config.mp4Src);
+			delete(config.webmSrc);
 		}
-		else if(config.src != undefined)
-			this.setSrc(config.src);
 
-		if(config.volume != undefined)
-			this.setVolume(config.volume);
-
-		this.addEvents('ready', 'ended', 'timeupdate');
 	},
 
 	/**

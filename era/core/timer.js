@@ -2,8 +2,6 @@ Core.Object.extend('Core.Timer',
 /**@lends Core.Timer#*/
 {
 	interval: 1,
-	scope: undefined,
-	callback: undefined,
 	arguments: undefined,
 
 	/**
@@ -12,23 +10,23 @@ Core.Object.extend('Core.Timer',
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
-		if(config.interval != undefined)
+		this.addEvents('timeupdate');
+
+		if('interval' in config) {
 			this.interval = config.interval;
-		if(config.scope != undefined)
-			this.scope = config.scope;
-		if(config.arguments != undefined)
+			delete(config.interval);
+		}
+		if('arguments' in config) {
 			this.arguments = config.arguments;
+			delete(config.arguments);
+		}
 		else
 			this.arguments = [];
-		if(config.callback != undefined)
-			this.callback = config.callback;
-		else
-			throw('callback MUST be given for a Timer');
 
 		this.wrapper = function() {
 			var startTime = (new Date().getTime())/1000;
 			var timer = arguments.callee.timer;
-			timer.callback.apply(timer.scope, timer.arguments);
+			timer.fireEvent('timeupdate', timer, timer.arguments);
 			var endTime = (new Date().getTime())/1000;
 			var deltaTime = endTime - startTime;
 			if(deltaTime < 0)

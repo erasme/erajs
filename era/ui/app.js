@@ -433,33 +433,6 @@ Ui.LBox.extend('Ui.App',
 		return this.content;
 	},
 
-	setContent: function(content) {
-		if(this.content != content) {
-			document.documentElement.style.padding = '0px';
-			document.documentElement.style.margin = '0px';
-			document.documentElement.style.border = '0px solid black';
-			document.documentElement.style.overflow = 'hidden';
-			document.documentElement.style.width = '100%';
-			document.documentElement.style.height = '100%';
-
-			if(this.content != undefined)
-				this.contentBox.remove(this.content);
-			if(content != undefined)
-				this.contentBox.append(content);
-			this.content = content;
-
-			if((this.content != undefined) && this.ready) {
-				document.body.style.padding = '0px';
-				document.body.style.margin = '0px';
-				document.body.style.border = '0px solid black';
-				document.body.style.overflow = 'hidden';
-				document.body.style.width = '100%';
-				document.body.style.height = '100%';
-				document.body.appendChild(this.getDrawing());
-			}
-		}
-	},
-
 	appendDialog: function(dialog) {
 		if(this.dialogs == undefined) {
 			this.focusStack = [];
@@ -729,6 +702,34 @@ Ui.LBox.extend('Ui.App',
 			if((this.updateTask == undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 //		}
+	},
+
+	setContent: function(content) {
+		content = Ui.Element.create(content, this);
+		if(this.content != content) {
+			document.documentElement.style.padding = '0px';
+			document.documentElement.style.margin = '0px';
+			document.documentElement.style.border = '0px solid black';
+			document.documentElement.style.overflow = 'hidden';
+			document.documentElement.style.width = '100%';
+			document.documentElement.style.height = '100%';
+
+			if(this.content != undefined)
+				this.contentBox.remove(this.content);
+			if(content != undefined)
+				this.contentBox.append(content);
+			this.content = content;
+
+			if((this.content != undefined) && this.ready) {
+				document.body.style.padding = '0px';
+				document.body.style.margin = '0px';
+				document.body.style.border = '0px solid black';
+				document.body.style.overflow = 'hidden';
+				document.body.style.width = '100%';
+				document.body.style.height = '100%';
+				document.body.appendChild(this.getDrawing());
+			}
+		}
 	}
 }, {
 	current: undefined,

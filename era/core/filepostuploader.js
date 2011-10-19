@@ -18,17 +18,14 @@ Core.Object.extend('Core.FilePostUploader',
 	*/
 	constructor: function(config) {
 		this.addEvents('progress', 'complete', 'error');
-
-		if(config.file != undefined)
-			this.file = config.file;
-		if(config.service != undefined)
-			this.setService(config.service);
-		if(config.destination != undefined)
-			this.setDestination(config.destination);
 	},
 
 	getFile: function() {
 		return this.file;
+	},
+
+	setFile: function(file) {
+		this.file = file;
 	},
 
 	setService: function(service) {

@@ -12,16 +12,16 @@ var app = new Ui.App();
 
 var googlemap = [ 
     new Extras.Ui.Google.Map(
-        { latitude: 48.858405, longitude: 2.294823, zoom: 18, maptype: google.maps.MapTypeId.SATELLITE,
+        { latitude: 48.858405, longitude: 2.294823, zoom: 18, mapType: google.maps.MapTypeId.SATELLITE,
 	      panControl: false, zoomControl: false, mapTypeControl: false,  streetViewControl: false,
         }),
     
 	new Extras.Ui.Google.Map({
-		latitude: 45.750385, longitude: 4.426436, zoom: 18, maptype: google.maps.MapTypeId.ROADMAP
+		latitude: 45.750385, longitude: 4.426436, zoom: 18, mapType: google.maps.MapTypeId.ROADMAP
 	}) ];
 
 var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
-var transbox = new Ui.TransitionBox({ transition: 'flip', orientation: 'horizontal' });
+var transbox = new Ui.TransitionBox({ transition: 'flip' });
 
 var buttontrans = new Ui.Button({ text: 'Swap Map' });
 var buttonroad = new Ui.Button({ text: 'Roadmap' });

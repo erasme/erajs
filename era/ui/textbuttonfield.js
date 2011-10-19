@@ -15,6 +15,7 @@ Ui.LBox.extend('Ui.TextButtonField',
 	 * @param {String} [config.value] Default TextField value
 	 */
 	constructor: function(config) {
+		this.addEvents('change', 'validate', 'buttonpress');
 		this.setPadding(3);
 
 		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  });
@@ -54,9 +55,6 @@ Ui.LBox.extend('Ui.TextButtonField',
 
 		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.buttonContentBox.append(this.iconBox);
-
-		this.addEvents('change', 'validate', 'buttonpress');
-		this.autoConfig(config, 'buttonText', 'buttonIcon', 'value');
 	},
 
 	setWidthText: function(nbchar) {
@@ -93,8 +91,8 @@ Ui.LBox.extend('Ui.TextButtonField',
 						this.iconBox.remove(this.icon1);
 					if(this.icon2 != undefined)
 						this.iconBox.remove(this.icon2);
-					this.icon1 = Ui.Icon.create(icon, 24, 24, new Ui.Color({ r: 1, g: 1, b: 1 }));
-					this.icon2 = Ui.Icon.create(icon, 24, 24,  new Ui.Color({ r: 0, g: 0, b: 0 }));
+					this.icon1 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: 'white'});
+					this.icon2 = new Ui.Icon({ icon: icon, width: 24, height: 24 });
 					this.iconBox.append(this.icon1);
 					this.iconBox.append(this.icon2);
 				}

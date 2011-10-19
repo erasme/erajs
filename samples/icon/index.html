@@ -10,11 +10,11 @@ var app = new Ui.App({ });
 var fbox = new Ui.Flow({ margin: 40 });
 app.setContent(fbox);
 
-fbox.append(Ui.Icon.create('home', 48, 48, 'lightblue'));
+fbox.setContent({ type: Ui.Icon, icon: 'home', width: 48, height: 48, fill: 'lightblue' });
 
 var colors = ['lightblue', 'pink', 'lightgreen' ];
 for(var i = 0; i < Ui.Icon.getNames().length; i++)
-	fbox.append(Ui.Icon.create(Ui.Icon.getNames()[i], 48, 48, colors[i % colors.length]));
+	fbox.append(new Ui.Icon({ icon: Ui.Icon.getNames()[i], width: 48, height: 48, fill: colors[i % colors.length] }));
 
 </script>
   </head>

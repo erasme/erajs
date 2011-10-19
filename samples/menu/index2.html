@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+var app = new Ui.App({
+	content: {
+		type: Ui.VBox,
+		content: {
+			type: Ui.MenuBar,
+			content: [{
+				type: Ui.Menu,
+				header: 'File',
+				items: [
+					{ item: 'Funny 1', callback: function() { console.log('Funny 1 '+this); } },
+					{ item: 'Funny 2', callback: function() { console.log('Funny 2'); } },
+					{ item: 'Funny 3', callback: function() { console.log('Funny 3'); } }
+				],
+				onItem: function(menu, item) { console.log('Item selected: '+item); }
+			}]
+		}
+	}
+});
+
+/*
+var app = new Ui.App();
+app.setContent({
+	type: Ui.VBox,
+	content: {
+		type: Ui.MenuBar
+	}
+});*/
+
+/*var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var menubar = new Ui.MenuBar();
+vbox.append(menubar);
+
+var menu = new Ui.Menu({ header: 'File' });
+menu.appendItem('Item 1', function() {
+	console.log('select Item 1 '+this);
+});
+menu.appendItem('Item 2');
+menu.appendItem('Item 3');
+menu.appendSeparator();
+menu.appendItem('Exit');
+menubar.append(menu);
+
+var menu2 = new Ui.Menu({ header: 'Edition', scope: app, items: [
+	{ item: 'Funny 1', callback: function() { console.log('Funny 1 '+this); } },
+	{ item: 'Funny 2', callback: function() { console.log('Funny 2 '+this); }, scope: menubar },
+	{ item: 'Funny 3' }
+] });
+menubar.append(menu2);
+
+var menu3 = new Ui.Menu({ header: 'Preferences' });
+menu3.appendItem(new Ui.Label({ text: 'Pref 1', horizontalAlign: 'left' }));
+menu3.appendItem(new Ui.Label({ text: 'Pref 2', horizontalAlign: 'left' }));
+menu3.appendItem(new Ui.Label({ text: 'Pref 3', horizontalAlign: 'left' }));
+menubar.append(menu3);
+
+var menu4 = new Ui.Menu({ header: 'Long menu' });
+for(var i = 0; i < 35; i++) {
+	menu4.appendItem(new Ui.Label({ text: 'Long long item '+i, horizontalAlign: 'left' }));
+}
+menubar.append(menu4);
+app.connect(menu4, 'item', function(menu, item) {
+	console.log('Menu item: '+item.getText());
+});
+*/
+</script>
+  </head>
+</html>

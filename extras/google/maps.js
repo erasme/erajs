@@ -46,28 +46,35 @@ Ui.Fixed.extend('Extras.Ui.Google.Map',
 		var zoom = 10;
         var maptype = google.maps.MapTypeId.ROADMAP;
 
-		if(('latitude' in config) && ('longitude' in config))
+		if(('latitude' in config) && ('longitude' in config)) {
 			latlng = new google.maps.LatLng(config.latitude, config.longitude);
-		if('zoom' in config)
-			zoom = config.zoom;
-		if('maptype' in config)
-            maptype =  config.maptype;
+			delete(config.latitude);
+			delete(config.longitude);
+		}
 
 		var myOptions = {
-			zoom: zoom,
+			zoom: 1,
 			center: latlng,
-			mapTypeId: maptype,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
 		};
 
 		// when the map object is alive
-		if ('panControl' in config)
+		if ('panControl' in config) {
             myOptions.panControl = config.panControl;
-		if ('zoomControl' in config)
+			delete(config.panControl);
+		}
+		if ('zoomControl' in config) {
             myOptions.zoomControl = config.zoomControl;
-		if ('mapTypeControl' in config)
+			delete(config.zoomControl);
+		}
+		if ('mapTypeControl' in config) {
             myOptions.mapTypeControl = config.mapTypeControl;
-		if ('streetViewControl' in config)
+			delete(config.mapTypeControl);
+		}
+		if ('streetViewControl' in config) {
 			myOptions.streetViewControl = config.streetViewControl;
+			delete(config.streetViewControl);
+		}
 
 		this.map = new google.maps.Map(this.getDrawing(), myOptions);
 
@@ -149,7 +156,6 @@ Ui.Fixed.extend('Extras.Ui.Google.Map',
 	setMapType: function(type) {
 		this.maptype = type;
 		if (this.map) {
-            console.log('setting maptype to ' + this.maptype);
 			this.map.setMapTypeId(this.maptype);
         }
 	},

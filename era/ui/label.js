@@ -25,8 +25,6 @@ Ui.Element.extend('Ui.Label',
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
-		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
-			'color', 'orientation');
 	},
 
 	getText: function() {

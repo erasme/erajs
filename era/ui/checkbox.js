@@ -42,7 +42,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.background = new Ui.Rectangle({ fill: 'darkgray', radius: 3, marginTop: 12, marginBottom: 12, marginLeft: 11, marginRight: 11 });
 		this.checkBox.append(this.background);
 
-		this.check = Ui.Icon.create('check', 24, 24, 'green');
+		this.check = new Ui.Icon({ icon: 'check', width: 24, height: 24, fill: 'green' });
 		this.check.setMargin(12);
 		this.check.hide();
 		this.checkBox.append(this.check);
@@ -51,8 +51,6 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.connect(this, 'up', this.onCheckBoxUp);
 		this.connect(this, 'toggle', this.onCheckBoxToggle);
 		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
-
-		this.autoConfig(config, 'text', 'content', 'value');
 	},
 
 	getValue: function() {
@@ -94,35 +92,6 @@ Ui.Togglable.extend('Ui.CheckBox',
 
 	getText: function() {
 		return this.text;
-	},
-
-	setContent: function(content) {
-		if(content == undefined) {
-			if(this.contentBox != undefined) {
-				this.hbox.remove(this.contentBox);
-				this.contentBox = undefined;
-			}
-			this.text = undefined;
-			this.content = undefined;
-		}
-		else {
-			if(this.text != undefined) {
-				this.hbox.remove(this.contentBox);
-				this.text = undefined;
-			}
-			if(this.content != undefined)
-				this.contentBox.remove(this.content);
-			else {
-				this.contentBox = new Ui.LBox({ padding: 8 });
-				this.hbox.append(this.contentBox);
-			}
-			this.content = content;
-			this.contentBox.append(this.content);
-		}
-	},
-
-	getContent: function() {
-		return this.content;
 	},
 
 	/**
@@ -218,6 +187,33 @@ Ui.Togglable.extend('Ui.CheckBox',
 	onUntoggle: function() {
 		Ui.CheckBox.base.onUntoggle.call(this);
 		this.fireEvent('change', this, false);
+	},
+
+	setContent: function(content) {
+		content = Ui.Element.create(content, this);
+
+		if(content == undefined) {
+			if(this.contentBox != undefined) {
+				this.hbox.remove(this.contentBox);
+				this.contentBox = undefined;
+			}
+			this.text = undefined;
+			this.content = undefined;
+		}
+		else {
+			if(this.text != undefined) {
+				this.hbox.remove(this.contentBox);
+				this.text = undefined;
+			}
+			if(this.content != undefined)
+				this.contentBox.remove(this.content);
+			else {
+				this.contentBox = new Ui.LBox({ padding: 8 });
+				this.hbox.append(this.contentBox);
+			}
+			this.content = content;
+			this.contentBox.append(this.content);
+		}
 	}
 }, 
 /**Ui.CheckBox*/
