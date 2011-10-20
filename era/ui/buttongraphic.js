@@ -64,22 +64,11 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 		this.contentBox.append(this.iconBox);
 
-		this.autoConfig(config, 'text', 'icon', 'orientation', 'color', 'spacing', 'radius');
-
 		this.updateColors();
 	},
 
 	getContent: function() {
 		return this.content;
-	},
-
-	setContent: function(content) {
-		if(this.content != content) {
-			while(this.contentBox.getFirstChild() != undefined)
-				this.contentBox.remove(this.contentBox.getFirstChild());
-			this.content = content;
-			this.contentBox.append(this.content);
-		}
 	},
 
 	getText: function() {
@@ -145,8 +134,8 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 						this.iconBox.remove(this.icon1);
 					if(this.icon2 != undefined)
 						this.iconBox.remove(this.icon2);
-					this.icon1 = Ui.Icon.create(icon, 24, 24, this.getContentLightColor());
-					this.icon2 = Ui.Icon.create(icon, 24, 24, this.getContentColor());
+					this.icon1 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: this.getContentLightColor() });
+					this.icon2 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: this.getContentColor() });
 					this.iconBox.append(this.icon1);
 					this.iconBox.append(this.icon2);
 				}
@@ -228,7 +217,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
+			this.color = Ui.Color.create(color);
 			this.updateColors();
 		}
 	},
@@ -446,5 +435,10 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		this.rect2.setFill(this.getLightColor());
 	}
 	/**#@-*/
+}, {
+	setContent: function(content) {
+		this.content = Ui.Element.create(content, this);
+		this.contentBox.setContent(this.content);
+	}
 });
 

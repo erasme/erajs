@@ -28,8 +28,6 @@ Ui.Container.extend('Ui.Fold',
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 		this.contentBox.hide();
-
-		this.autoConfig(config, 'header', 'content', 'over', 'mode', 'orientation');
 	},
 
 	getIsFolded: function() {
@@ -199,7 +197,7 @@ Ui.Container.extend('Ui.Fold',
 		if(!this.isFolded)
 			this.contentBox.show();
 
-		this.clock = new Anim.Clock({ duration: 2, target: this, callback: this.onClockTick });
+		this.clock = new Anim.Clock({ duration: 2, scope: this, target: this, onTimeupdate: this.onClockTick });
 		this.clock.begin();
 	},
 

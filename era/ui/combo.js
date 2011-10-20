@@ -41,8 +41,8 @@ Ui.Pressable.extend('Ui.Combo',
 		var vbox = new Ui.VBox();
 		content.append(vbox);
 
-		vbox.append(Ui.Icon.create('arrowtop', 10, 10, 'black'));
-		vbox.append(Ui.Icon.create('arrowbottom', 10, 10, 'black'));
+		vbox.append(new Ui.Icon({ icon: 'arrowtop', width: 10, height: 10, fill: 'black' }));
+		vbox.append(new Ui.Icon({ icon: 'arrowbottom', width: 10, height: 10, fill: 'black' }));
 
 		this.dialog = new Ui.ComboDialog();
 		this.connect(this.dialog, 'item', this.onItemPress);
@@ -53,8 +53,6 @@ Ui.Pressable.extend('Ui.Combo',
 		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
 		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
 		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
-
-		this.autoConfig(config, 'field', 'data', 'currentAt', 'current', 'placeHolder');
 	},
 
 	setPlaceHolder: function(placeHolder) {
@@ -151,7 +149,7 @@ Ui.Pressable.extend('Ui.Combo',
 {
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
-		focusColor: Ui.Color.create('#f6caa2'),
+		focusColor: '#f6caa2',
 		radius: 4,
 		spacing: 3
 	}
@@ -204,7 +202,7 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 	constructor: function() {
 		this.addEvents('press');
 
-		this.background = new Ui.Rectangle({ fill: new Ui.Color.create('#1c8ef2'), opacity: 0, radius: 4 });
+		this.background = new Ui.Rectangle({ fill: '#1c8ef2', opacity: 0, radius: 4 });
 		this.append(this.background);
 
 		this.pressable = new Ui.Pressable({ padding: 5, paddingLeft: 10, paddingRight: 10 });
@@ -217,10 +215,6 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 		this.connect(this, 'leave', this.onLeave);
 		this.connect(this.pressable, 'down', this.onDown);
 		this.connect(this.pressable, 'up', this.onUp);
-	},
-
-	setContent: function(content) {
-		this.pressable.append(content);
 	},
 
 	getContent: function() {
@@ -241,6 +235,10 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 
 	onUp: function() {
 		this.background.setOpacity(0);
+	}
+}, {
+	setContent: function(content) {
+		this.pressable.setContent(Ui.Element.create(content, this));
 	}
 });
 

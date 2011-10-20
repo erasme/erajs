@@ -279,3 +279,26 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 - dans Ui.Carouselable, n'activer l'autoPlay que lorsque l'élément est visible
   (utiliser le système d'animation natif)
 
+- dans Opera et IE 8&7 le touche "Esc" pour fermer les popups ne fonctionne pas
+
+- dans Opera et Firefox *, le gestion de la scrollbar de Ui.TextAreaField c'est
+  un peu n'importe quoi.
+
+- BUG dans Ui.Image, si on fait un setWidth (et pas seHeight), l'image définie
+  la hauteur en fonction du ratio naturel. Mais si l'image à une "margin",
+  le ratio n'est pas conservé
+
+- BUG dans Ui.Carouselable, si on se trouve en 3 ieme position par exemple,
+  qu'il y a un boutton qui prend le focus et que l'on se trouve sur un
+  iPhone/iPad, alors le navigateur scroll la fenêtre pour aller jusqu'au
+  boutton, comme si il ne tenait pas compte de la transformation matricielle
+  du contenu du Ui.Carouselable
+
+- BUG dans Ui.Carouselable, si on change sa taille et que l'on ne se trouve pas à
+  la première position, on se retrouve dans une position mauvaise.
+  Le contenu de chaque élément ne semble pas avoir été agrandi (pour un 
+  contenu qui stretch)
+
+- BUG dans ClockGroup, autoReverse, repeat et beginTime ne fonctionne pas
+  au niveau d'un ClockGroup
+

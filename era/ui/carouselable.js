@@ -33,9 +33,7 @@ Ui.Container.extend('Ui.Carouselable',
 		this.box = new Ui.CarouselableBox();
 		this.movable.setContent(this.box);
 
-		this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
-
-		this.autoConfig(config, 'ease', 'lock', 'autoPlay');
+		this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' }, this);
 	},
 
 	setAutoPlay: function(delay) {
@@ -222,7 +220,7 @@ Ui.Container.extend('Ui.Carouselable',
 		else
 			this.animNext = next;
 		if(this.animStart != this.animNext) {
-			this.alignClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onAlignTick });
+			this.alignClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onAlignTick });
 			this.alignClock.begin();
 		}
 	},

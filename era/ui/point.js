@@ -10,7 +10,6 @@ Core.Object.extend('Ui.Point',
 	 * @extends Core.Object
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'point', 'x', 'y');
 	},
 
 	matrixTransform: function(matrix) {

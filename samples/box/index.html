@@ -37,10 +37,10 @@ app.connect(uniformButton, 'press', function() {
 var resizableButton = new Ui.Button({ text: 'change resizable (green)' });
 toolbar.append(resizableButton, true);
 app.connect(resizableButton, 'press', function() {
-	if(box.getResizable(greenRect))
-		box.setResizable(greenRect, false);
+	if(Ui.Box.getResizable(greenRect))
+		Ui.Box.setResizable(greenRect, false);
 	else
-		box.setResizable(greenRect, true);
+		Ui.Box.setResizable(greenRect, true);
 });
 
 var box = new Ui.Box();

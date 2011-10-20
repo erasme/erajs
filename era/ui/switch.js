@@ -67,7 +67,7 @@ Ui.LBox.extend('Ui.Switch',
 		if('ease' in config)
 			this.setEase(config.ease);
 		else
-			this.ease = Anim.EasingFunction.create({ type: 'power', mode: 'out' });
+			this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' }, this);
 		if('value' in config) {
 			this.value = config.value;
 			if(this.value)
@@ -78,7 +78,7 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	setEase: function(ease) {
-		this.ease = Anim.EasingFunction.create(ease);
+		this.ease = Anim.EasingFunction.create(ease, this);
 	},
 
 	setTrueContent: function(trueContent) {
@@ -183,7 +183,7 @@ Ui.LBox.extend('Ui.Switch',
 		else
 			this.animNext = 0;
 		if(this.animStart != this.animNext) {
-			this.alignClock = new Anim.Clock({ duration: 'forever', target: this, callback: this.onAlignTick });
+			this.alignClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onAlignTick });
 			this.alignClock.begin();
 		}
 		else {
@@ -264,9 +264,9 @@ Ui.LBox.extend('Ui.Switch',
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
-		focusColor: Ui.Color.create('#f6caa2'),
-		trueColor: Ui.Color.create('#91f5c5'),
-		falseColor: Ui.Color.create('#ff9797')
+		focusColor: '#f6caa2',
+		trueColor: '#91f5c5',
+		falseColor: '#ff9797'
 	}
 });
 

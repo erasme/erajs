@@ -5,6 +5,7 @@ Ui.Container.extend('Ui.Locator',
 	backgrounds: undefined,
 	foregrounds: undefined,
 	spacing: 2,
+	border: undefined,
 
 	/**
 	 * @constructs
@@ -13,7 +14,6 @@ Ui.Container.extend('Ui.Locator',
 	 */
 	constructor: function(config) {
 		this.addEvents('change');
-		this.autoConfig(config, 'path');
 	},
 
 	setPath: function(path) {
@@ -26,6 +26,11 @@ Ui.Container.extend('Ui.Locator',
 		this.foregrounds = [];
 
 		var button;
+
+		var gradient = new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: '#fbfbfb' },
+			{ offset: 1, color: '#c8c8c8' }
+		] });
 
 		if(path == '/') {
 			var bg = new Ui.Pressable();
@@ -45,7 +50,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
 
-			var home = Ui.Icon.create('home', 25, 25, 'black');
+			var home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);
@@ -71,7 +76,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(bg, 'press', this.onPathPress);
 			this.connect(bg, 'down', this.onPathDown);
 			this.connect(bg, 'up', this.onPathUp);
-			bg.appendChild(new Ui.LocatorRightArrow({ fill: 'lightblue', radius: 8 }));
+			bg.appendChild(new Ui.LocatorRightArrow({ fill: gradient, radius: 8 }));
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
@@ -82,7 +87,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
 
-			var home = Ui.Icon.create('home', 25, 25, 'black');
+			var home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);
@@ -199,7 +204,6 @@ Ui.Shape.extend('Ui.LocatorRightArrow',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'radius');
 	},
 
 	setRadius: function(radius) {
@@ -229,7 +233,6 @@ Ui.Shape.extend('Ui.LocatorLeftArrow',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'radius');
 	},
 
 	setRadius: function(radius) {
@@ -244,7 +247,6 @@ Ui.Shape.extend('Ui.LocatorLeftArrow',
 		var v3 = height - this.radius;
 		var v4 = height/2;
 		this.setPath('M0,0 L'+v2+',0 Q'+width+',0 '+width+','+this.radius+' L'+width+','+v3+' Q'+width+','+height+' '+v2+','+height+' L0,'+height+' L'+v4+','+v4+' z');
-//		this.arrowDrawing.setAttributeNS(null, 'd', 'M0,0 L'+v2+',0 A'+this.radius+','+this.radius+' 0 0,1 '+width+','+this.radius+' L'+width+','+v3+' A'+this.radius+','+this.radius+' 0 0,1 '+v2+','+height+' L0,'+height+' L'+v4+','+v4+' z');
 	}
 });
 

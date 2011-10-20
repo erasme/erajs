@@ -120,6 +120,20 @@ Ui.Element.extend('Ui.Container',
 }, 
 /** @lends Ui.Container#*/
 {
+	get: function(name) {
+		if(this.name == name)
+			return this;
+		else {
+			for(var i = 0; i < this.children.length; i++) {
+				var child = this.children[i];
+				var res = child.get(name);
+				if(res != undefined)
+					return res;
+			}
+		}
+		return undefined;
+	},
+
 	/**#@+
 	 * @private
 	 */

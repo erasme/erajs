@@ -16,8 +16,6 @@ Ui.Linkable.extend('Ui.LinkButton',
 		this.graphic = new Ui.ButtonGraphic();
 		this.setContent(this.graphic);
 
-		this.autoConfig(config, 'text', 'icon', 'orientation');
-
 		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
 		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
 		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
@@ -74,8 +72,8 @@ Ui.Linkable.extend('Ui.LinkButton',
 /** @lends Ui.LinkButton */
 {
 	style: {
-		color: new Ui.Color({ r: 0.31, g: 1, b: 0.66 }),
-		focusColor: Ui.Color.create('#f6caa2'),
+		color: '#4fa8ff',
+		focusColor: '#f6caa2',
 		radius: 4,
 		spacing: 3
 	}

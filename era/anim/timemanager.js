@@ -19,7 +19,7 @@ Core.Object.extend('Anim.TimeManager',
 	add: function(clock) {
 		this.clocks.push(clock);
 		if(this.clocks.length == 1)
-			this.timer = new Core.Timer({ callback: this.onTick, scope: this, interval: 1/60 });
+			this.timer = new Core.Timer({ onTimeupdate: this.onTick, scope: this, interval: 1/60 });
 	},
 
 	remove: function(clock) {

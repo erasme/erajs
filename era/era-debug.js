@@ -45,6 +45,7 @@ include(eraBaseDirectory+'core/filepostuploader.js');
 include(eraBaseDirectory+'anim/timemanager.js');
 include(eraBaseDirectory+'anim/animationmanager.js');
 include(eraBaseDirectory+'anim/easingfunction.js');
+include(eraBaseDirectory+'anim/linearease.js');
 include(eraBaseDirectory+'anim/powerease.js');
 include(eraBaseDirectory+'anim/elasticease.js');
 include(eraBaseDirectory+'anim/bounceease.js');
@@ -161,6 +162,7 @@ include(eraBaseDirectory+'ui/monthcalendar.js');
 include(eraBaseDirectory+'ui/datepicker.js');
 include(eraBaseDirectory+'ui/notebook.js');
 include(eraBaseDirectory+'ui/menu.js');
+include(eraBaseDirectory+'ui/segmentbar.js');
 
 //
 // Ui styles

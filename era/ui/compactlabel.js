@@ -21,8 +21,6 @@ Ui.Element.extend('Ui.CompactLabel',
 	 */
 	constructor: function(config) {
 		this.setColor('black');
-		this.autoConfig(config, 'text', 'fontSize', 'fontFamily', 'fontWeight',
-			'color', 'maxLine', 'textAlign');
 	},
 
 	getMaxLine: function() {

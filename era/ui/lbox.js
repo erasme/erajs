@@ -17,8 +17,19 @@ Ui.Container.extend('Ui.LBox',
      * @param {String} [config.paddingRight]
      */ 
 	constructor: function(config) {
-		this.autoConfig(config, 'padding', 'paddingTop', 'paddingBottom',
-			'paddingLeft', 'paddingRight');
+	},
+
+	setContent: function(content) {
+		while(this.getFirstChild() != undefined)
+			this.removeChild(this.getFirstChild());
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.append(Ui.Element.create(content[i], this));
+			}
+			else
+				this.append(Ui.Element.create(content, this));
+		}
 	},
 
 	//

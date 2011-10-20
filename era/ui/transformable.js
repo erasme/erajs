@@ -3,7 +3,6 @@ Ui.LBox.extend('Ui.Transformable',
 {
 	mouseStart: undefined,
 	contentBox: undefined,
-	content: undefined,
 
 	speedComputed: false,
 	lastTranslateX: undefined,
@@ -47,16 +46,6 @@ Ui.LBox.extend('Ui.Transformable',
 
 	getIsDown: function() {
 		return this.isDown;
-	},
-
-	setContent: function(content) {
-		if(content != this.content) {
-			if(this.content != undefined)
-				this.contentBox.removeChild(this.content);
-			this.content = content;
-			if(this.content != undefined)
-				this.contentBox.appendChild(this.content);
-		}
 	},
 
 	getAngle: function() {
@@ -307,7 +296,7 @@ Ui.LBox.extend('Ui.Transformable',
 		this.speedY = 0;
 		this.speedAngle = 0;
 		this.speedComputed = false;
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, callback: this.measureSpeed });
+		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, onTimeupdate: this.measureSpeed });
 	},
 
 	stopComputeInertia: function() {
@@ -330,8 +319,8 @@ Ui.LBox.extend('Ui.Transformable',
 
 	startInertia: function() {
 		if(this.inertiaClock == undefined) {
-			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this,
-				callback: function(clock, progress, delta) {
+			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
+				onTimeupdate: function(clock, progress, delta) {
 					if(delta == 0)
 						return;
 
@@ -373,4 +362,8 @@ Ui.LBox.extend('Ui.Transformable',
 		}
 	}
 	/**#@-*/
+}, {
+	setContent: function(content) {
+		this.contentBox.setContent(content);
+	}
 });

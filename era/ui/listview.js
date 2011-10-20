@@ -19,8 +19,10 @@ Ui.Container.extend('Ui.ListView',
 		this.rowContainer = new Ui.Container();
 		this.appendChild(this.rowContainer);
 
-		if(config.headers != undefined)
+		if(config.headers != undefined) {
 			this.headers = config.headers;
+			delete(config.headers);
+		}
 		else
 			this.headers = [ { width: 100, type: 'string', title: 'Title', key: 'default' }];
 		this.data = [];
@@ -31,11 +33,6 @@ Ui.Container.extend('Ui.ListView',
 			header.rows = [];
 			header.colWidth = header.width;
 			this.appendChild(header.ui);
-		}
-
-		if(config.data != undefined) {
-			for(var i = 0; i < config.data.length; i++)
-				this.appendData(config.data[i]);
 		}
 	},
 
@@ -140,6 +137,14 @@ Ui.Container.extend('Ui.ListView',
 	*/
 	getData: function() {
 		return this.data;
+	},
+
+	setData: function(data) {
+		this.clearData();
+		if(data != undefined) {
+			for(var i = 0; i < data.length; i++)
+				this.appendData(data[i]);
+		}
 	},
 
 	/**
@@ -370,8 +375,6 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 
 		this.connect(this, 'down', this.onListViewHeaderDown);
 		this.connect(this, 'up', this.onListViewHeaderUp);
-
-		this.autoConfig(config, 'title');
 	},
 
 	getTitle: function() {
@@ -461,8 +464,6 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 	 * @extends Ui.Selectable
 	 */
 	constructor: function(config) {
-		this.key = config.key;
-
 		this.border = new Ui.Rectangle({ height: 1, verticalAlign: 'bottom' });
 		this.append(this.border);
 
@@ -473,12 +474,14 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 
 		this.connect(this, 'select', this.onCellSelect);
 		this.connect(this, 'unselect', this.onCellUnselect);
-
-		this.autoConfig(config, 'title');
 	},
 
 	getKey: function() {
 		return this.key;
+	},
+
+	setKey: function(key) {
+		this.key = key;
 	},
 
 	getString: function() {

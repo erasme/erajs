@@ -17,18 +17,22 @@ Ui.VBox.extend('Ui.MonthCalendar',
 	constructor: function(config) {
 		this.addEvents('dayselect');
 
-		if('date' in config)
+		if('date' in config) {
 			this.date = new Date(config.date.getTime());
+			delete(config.date);
+		}
 		else
 			this.date = new Date();
-		if('selectedDate' in config)
+		if('selectedDate' in config) {
 			this.selectedDate = config.selectedDate;
+			delete(config.selectedDate);
+		}
 
 		var hbox = new Ui.HBox();
 		this.append(hbox);
 
 		var button = new Ui.Pressable({ verticalAlign: 'center' });
-		this.leftarrow = Ui.Icon.create('arrowleft', 24, 24, 'black');
+		this.leftarrow = new Ui.Icon({ icon: 'arrowleft', width: 24, height: 24 });
 		button.append(this.leftarrow);
 		hbox.append(button);
 		this.connect(button, 'press', this.onLeftButtonPress);
@@ -37,7 +41,7 @@ Ui.VBox.extend('Ui.MonthCalendar',
 		hbox.append(this.title, true);
 
 		button = new Ui.Pressable({ verticalAlign: 'center' });
-		this.rightarrow = Ui.Icon.create('arrowright', 24, 24, 'black');
+		this.rightarrow = new Ui.Icon({ icon: 'arrowright', width: 24, height: 24 });
 		button.append(this.rightarrow);
 		hbox.append(button);
 		this.connect(button, 'press', this.onRightButtonPress);

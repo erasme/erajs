@@ -270,7 +270,7 @@ Ui.Container.extend('Ui.Notebook',
 }, {
 	style: {
 		color: 'white',
-		focusColor: Ui.Color.create('#f6caa2')
+		focusColor: '#f6caa2'
 	}
 });
 
@@ -300,8 +300,6 @@ Core.Object.extend('Ui.NotebookPage',
 		this.contentBox.hide();
 
 		this.background = new Ui.NotebookBackground();
-
-		this.autoConfig(config, 'header', 'content');
 	},
 
 	/**
@@ -434,8 +432,6 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 		this.append(this.background);
 
 		this.connect(this, 'resize', this.onResize);
-
-		this.autoConfig(config, 'radius', 'fill');
 	},
 
 	setTab: function(offset, width, height) {

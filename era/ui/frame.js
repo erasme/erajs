@@ -14,8 +14,6 @@ Ui.Shape.extend('Ui.Frame',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.autoConfig(config, 'radius', 'radiusTopLeft', 'radiusTopRight',
-			'radiusBottomLeft',	'radiusBottomRight', 'frameWidth');
 	},
 
 	getFrameWidth: function() {

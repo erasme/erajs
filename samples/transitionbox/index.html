@@ -44,7 +44,7 @@ app.connect(flipButton, 'press', function() {
 var flipverticalButton = new Ui.Button({ text: 'flip vertical' });
 toolbar2.append(flipverticalButton);
 app.connect(flipverticalButton, 'press', function() {
-	transitionbox.setTransition({ type: 'flip', orientation: 'vertical' });
+	transitionbox.setTransition({ type: Ui.Flip, orientation: 'vertical' });
 });
 
 var slideButton = new Ui.Button({ text: 'slide right' });
@@ -56,19 +56,19 @@ app.connect(slideButton, 'press', function() {
 var slideleftButton = new Ui.Button({ text: 'slide left' });
 toolbar2.append(slideleftButton);
 app.connect(slideleftButton, 'press', function() {
-	transitionbox.setTransition({ type: 'slide', direction: 'left' });
+	transitionbox.setTransition({ type: Ui.Slide, direction: 'left' });
 });
 
 var slidetopButton = new Ui.Button({ text: 'slide top' });
 toolbar2.append(slidetopButton);
 app.connect(slidetopButton, 'press', function() {
-	transitionbox.setTransition({ type: 'slide', direction: 'top' });
+	transitionbox.setTransition({ type: Ui.Slide, direction: 'top' });
 });
 
 var slidebottomButton = new Ui.Button({ text: 'slide bottom' });
 toolbar2.append(slidebottomButton);
 app.connect(slidebottomButton, 'press', function() {
-	transitionbox.setTransition({ type: 'slide', direction: 'bottom' });
+	transitionbox.setTransition({ type: Ui.Slide, direction: 'bottom' });
 });
 
 
@@ -99,7 +99,7 @@ app.connect(powerButton, 'press', function() {
 var poweroutButton = new Ui.Button({ text: 'power out' });
 toolbar.append(poweroutButton);
 app.connect(poweroutButton, 'press', function() {
-	transitionbox.setEase({ type: 'power', mode: 'out' });
+	transitionbox.setEase({ type: Anim.PowerEase, mode: 'out' });
 });
 
 var transitionbox = new Ui.TransitionBox({ transition: 'fade', duration: 0.5 });

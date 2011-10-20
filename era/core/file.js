@@ -13,14 +13,22 @@ Core.Object.extend('Core.File',
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
-		if(config.form != undefined)
+		if(config.form != undefined) {
 			this.form = config.form;
-		if(config.iframe != undefined)
+			delete(config.form);
+		}
+		if(config.iframe != undefined) {
 			this.iframe = config.iframe;
-		if(config.fileInput != undefined)
+			delete(config.iframe);
+		}
+		if(config.fileInput != undefined) {
 			this.fileInput = config.fileInput;
-		if(config.fileApi != undefined)
+			delete(config.fileInput);
+		}
+		if(config.fileApi != undefined) {
 			this.fileApi = config.fileApi;
+			delete(config.fileApi);
+		}
 	},
 
 	/**

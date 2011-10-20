@@ -20,9 +20,9 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		this.connect(this, 'buttonpress', this.onDatePickerButtonPress);
 		this.connect(this, 'change', this.onDatePickerChange);
 
-		if('selectedDate' in config){
-			this.setSelectedDate(config.selectedDate);
-		}
+//		if('selectedDate' in config){
+//			this.setSelectedDate(config.selectedDate);
+//		}
 	},
 
 	getIsValid: function() {

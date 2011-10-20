@@ -80,7 +80,7 @@ Core.Object.prototype.constructorHelper = function(config, proto) {
 			this.constructorHelper.call(this, config, proto.__proto__);
 	if(proto.__constructor != undefined)
 		proto.__constructor.call(this, config);
-}; 
+};
 
 /**
 *	Extend a Class to create a new class.
@@ -101,7 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); } )");
+	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); this.autoConfig(config); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -113,6 +113,15 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	}
 	func.prototype['__baseclass__'] = this.prototype;
 	func['base'] = this.prototype;
+
+	// inherit static methods
+//	console.log('defined class: '+classType+', base: '+func['base']);
+	for(var prop in func['base'].constructor) {
+		if(typeof(func['base'].constructor[prop]) == 'function') {
+//			console.log('parent static: '+prop);
+			func[prop] = func['base'].constructor[prop];
+		}
+	}
 
 	if(classStatic != undefined) {
 		for(var prop in classStatic)
@@ -167,7 +176,7 @@ Function.prototype.hasInstance = function(obj) {
 };
 
 /**
-* @return true if the current object if class or subclass of
+* @return true if the current object is class or subclass of
 * the given class name
 */
 Core.Object.prototype.isSubclassOf = function(parentClassName) {
@@ -300,19 +309,107 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	}
 };
 
-Core.Object.prototype.autoConfig = function(config) {
-	for(var i = 1; i < arguments.length; i++) {
-		var c = arguments[i];
-		var required = false;
-		if(c.indexOf('*') == 0) {
-			c = c.substr(1);
-			required = true;
+Core.Object.scopeHelper = function(config, scope) {
+	if('scope' in config)
+		scope = config.scope;
+	else if('type' in config)
+		config.scope = scope;
+	for(var prop in config) {
+		var val = config[prop];
+		if(typeof(val) == 'object') {
+			if(val.constructor == Array)
+				Core.Object.scopeHelper(val, scope);
+			else if(val.constructor == Object)
+				Core.Object.scopeHelper(val, scope);
 		}
-		var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
-		if((func in this) && (typeof(this[func]) == 'function') && (c in config))
-			this[func].call(this, config[c]);
-		else if(required)
-			throw('config parameter "'+c+'" is REQUIRED for '+this.classType);
 	}
 };
+
+Core.Object.prototype.autoConfig = function(config) {
+	if(config == undefined)
+		return;
+	Core.Object.scopeHelper(config, this);
+	var scope = ('scope' in config)?config.scope:this;
+	for(var prop in config) {
+		// look for name
+		if(prop == 'name') {
+			scope[config.name] = this;
+			delete(config.name);
+			continue;
+		}
+		// look for normal properties
+		var func = 'set'+prop.charAt(0).toUpperCase()+prop.substr(1);
+		if((func in this) && (typeof(this[func]) == 'function')) {
+			this[func].call(this, config[prop]);
+			delete(config[prop]);
+		}
+		// look for attached properties
+		else if(prop.indexOf('.') != -1) {
+			var props = prop.split('.');
+			var current = window;
+			for(var i = 0; i < props.length - 1; i++) {
+				current = current[props[i]];
+			}
+			var c = props[props.length-1];
+			var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
+			if((func in current) && (typeof(current[func] == 'function'))) {
+				current[func].call(current, this, config[prop]);
+				delete(config[prop]);
+			}
+			else
+				throw('Attached property \''+prop+'\' not found');
+		}
+		else if(prop.indexOf('on') == 0) {
+			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
+			if((this.events != undefined) && (eventName in this.events)) {
+//#if DEBUG
+				if(typeof(config[prop]) != 'function')
+					throw('function is need to connect to the \''+eventName+'\' on '+this.classType);
+//#end
+				scope.connect(this, eventName, config[prop]);
+				delete(config[prop]);
+			}
+			else
+				throw('event \''+eventName+'\' not found on '+this.classType);
+		}
+		else if(prop != 'scope')
+			throw('Property \''+prop+'\' not found on '+this.classType);
+	}
+};
+
+
+Core.Object.create = function(element, scope) {
+	if(scope === undefined)
+		scope = this;
+	if(element == undefined)
+		return undefined;
+	else if(typeof(element) == 'string') {
+		if('parse' in this)
+			return this.parse(element);
+		else
+			throw('static parse need to be defined in class '+this.prototype.classType+' to create from a string');
+	}
+	else if(Core.Object.hasInstance(element))
+		return element;
+	else {
+		if(!('scope' in element))
+			element.scope = scope;
+		var type = element.type;
+		if(type == undefined)
+			type = this;
+//#if DEBUG
+		else {
+			var current = type;
+			while((current !== undefined) && (current !== this)) {
+				if(current.base == undefined)
+					throw('Expecting class '+this.prototype.classType+' got '+type.prototype.classType);
+				current = current.base.constructor;
+			}
+		}
+//#end
+		delete(element.type);
+		return new type(element);
+	}
+};
+
 

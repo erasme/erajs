@@ -15,8 +15,6 @@ Ui.LBox.extend('Ui.Embed',
 		if(Ui.App.current == undefined)
 			new Ui.App();
 		this.getDrawing().style.cursor = 'default';
-
-		this.autoConfig(config, 'div', 'divId');
 		this.setIsLoaded(true);
 		this.connect(Ui.App.current, 'ready', this.onReady);
 	},
@@ -46,16 +44,6 @@ Ui.LBox.extend('Ui.Embed',
 
 	getContent: function() {
 		return this.content;
-	},
-
-	setContent: function(content) {
-		if(this.content != content) {
-			if(this.content != undefined)
-				this.remove(this.content);
-			if(content != undefined)
-				this.append(content);
-			this.content = content;
-		}
 	},
 
 	update: function() {
@@ -93,6 +81,17 @@ Ui.LBox.extend('Ui.Embed',
 		this.arrangeValid = false;
 		if(this.updateTask == undefined)
 			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+	},
+
+	setContent: function(content) {
+		content = Ui.Element.create(content, this);
+		if(this.content != content) {
+			if(this.content != undefined)
+				this.remove(this.content);
+			if(content != undefined)
+				this.append(content);
+			this.content = content;
+		}
 	}
 });
 

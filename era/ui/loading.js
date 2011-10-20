@@ -10,10 +10,10 @@ Ui.LBox.extend('Ui.Loading',
      * @extends Ui.LBox
      */ 
 	constructor: function(config) {
-		this.icon = Ui.Icon.create('loading', 4, 4, 'black');
+		this.icon = new Ui.Icon({ icon: 'loading' });
 		this.icon.setTransformOrigin(0.5, 0.5);
 		this.append(this.icon);
-		this.clock = new Anim.Clock({ repeat: 'forever', duration: 2, callback: this.onTick, scope: this });
+		this.clock = new Anim.Clock({ repeat: 'forever', duration: 2, onTimeupdate: this.onTick, scope: this });
 	},
 
 	/**@private*/

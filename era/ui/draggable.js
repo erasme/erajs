@@ -1,3 +1,4 @@
+
 Ui.LBox.extend('Ui.Draggable', 
 /**@lends Ui.Draggable#*/
 {
@@ -34,10 +35,12 @@ Ui.LBox.extend('Ui.Draggable',
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
-		if(config.data != undefined) 
-			this.setData(config.mimetype, config.data);
-		if(config.downloadUrl != undefined)
+		if(config.downloadUrl != undefined) {
 			this.setDownloadUrl(config.downloadUrl, config.downloadMimetype, config.downloadFilename);
+			delete(config.downloadUrl);
+			delete(config.downloadMimetype);
+			delete(config.downloadFilename);
+		}
 	},
      
 	setLock: function(lock) {
@@ -50,13 +53,19 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	/**
-	 * Set the data that we drag & drop
+	 * Set the mimetype of the data
 	 */
-	setData: function(mimetype, data) {
+	setMimetype: function(mimetype) {
 		if(mimetype == undefined)
 			this.mimetype = 'application/era-framework';
 		else
 			this.mimetype = mimetype;
+	},
+
+	/**
+	 * Set the data that we drag & drop
+	 */
+	setData: function(data) {
 		this.data = data;
 	},
 

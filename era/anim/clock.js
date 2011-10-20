@@ -22,8 +22,6 @@ Core.Object.extend('Anim.Clock',
 	// [forever|count]
 	repeat: 1,
 	target: undefined,
-	scope: undefined,
-	callback: undefined,
 	ease: undefined,
 
 	/**
@@ -36,7 +34,6 @@ Core.Object.extend('Anim.Clock',
 	*	@param config.duration
 	*	@param config.repeat
 	*	@param config.speed
-	*	@param config.callback
 	*	@param config.target
 	*	@param config.scope
 	*	@param config.ease
@@ -44,34 +41,41 @@ Core.Object.extend('Anim.Clock',
 	*/
 	constructor: function(config) {
 		this.addEvents('complete', 'timeupdate');
+	},
 
-		if(config.parent != undefined)
-			this.parent = config.parent;
-		if(config.beginTime != undefined)
-			this.beginTime = config.beginTime;
-		if(config.autoReverse != undefined)
-			this.autoReverse = config.autoReverse;
-		if(config.duration != undefined)
-			this.duration = config.duration;
-		if(config.repeat != undefined)
-			this.repeat = config.repeat;
-		if(config.speed != undefined)
-			this.speed = config.speed;
-		if(config.callback != undefined)
-			this.callback = config.callback;
-		if(config.target != undefined)
-			this.target = config.target;
-		if(config.scope != undefined)
-			this.scope = config.scope;
-		else
-			this.scope = this.target;
-		if(config.ease != undefined)
-			this.ease = Anim.EasingFunction.create(config.ease);
-		if('animation' in config)
-			this.animation = config.animation;
+	setAnimation: function(animation) {
+		this.animation = animation;
+	},
 
-		if(this.duration == 'automatic')
+	setRepeat: function(repeat) {
+		this.repeat = repeat;
+	},
+
+	setSpeed: function(speed) {
+		this.speed = speed;
+	},
+	
+	setAutoReverse: function(autoReverse) {
+		this.autoReverse = autoReverse;
+	},
+
+	setBeginTime: function(beginTime) {
+		this.beginTime = beginTime;
+	},
+
+	setEase: function(ease) {
+		this.ease = Anim.EasingFunction.create(ease, this);
+	},
+
+	setTarget: function(target) {
+		this.target = target;
+	},
+
+	setDuration: function(duration) {
+		if(duration == 'automatic')
 			this.duration = 'forever';
+		else
+			this.duration = duration;
 	},
 
 	setParent: function(parent) {
@@ -146,8 +150,6 @@ Core.Object.extend('Anim.Clock',
 		var progress = this.getProgress();
 		if(this.ease != undefined)
 			progress = this.ease.ease(progress);
-		if(this.callback != undefined)
-			this.callback.call(this.scope, this, progress, deltaTick);
 		this.fireEvent('timeupdate', this, progress, deltaTick);
 	},
 

@@ -6,6 +6,8 @@
 Core.Object.extend('Ui.Element', 
 /**@lends Ui.Element#*/
 {
+//	name: undefined,
+
 	marginTop: 0,
 	marginBottom: 0,
 	marginLeft: 0,
@@ -135,11 +137,6 @@ Core.Object.extend('Ui.Element',
 
 		this.addEvents('keypress', 'keydown', 'keyup', 'focus', 'blur',
 			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
-
-		this.autoConfig(config, 'width', 'height', 'verticalAlign',
-			'horizontalAlign', 'margin', 'marginTop', 'marginBottom',
-			'marginLeft', 'marginRight', 'opacity', 'focusable',
-			'keyboardRequired', 'clipToBounds', 'id', 'style');
 	},
 
 	/*
@@ -148,6 +145,21 @@ Core.Object.extend('Ui.Element',
 	 */
 	getDrawing: function() {
 		return this.drawing;
+	},
+
+/*	getName: function() {
+		return this.name;
+	},
+
+	setName: function(name) {
+		this.name = name;
+	},*/
+
+	get: function(name) {
+		if(this.name == name)
+			return this;
+		else
+			return undefined;
 	},
 
 	getLayoutX: function() {
