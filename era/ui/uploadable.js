@@ -306,7 +306,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 
 	/**#@-*/
 }, 
-/**@lends Ui.Uploadable#*/
+/**@lends Ui.UploadableFileWrapper#*/
 {
 	onLoad: function() {
 		Ui.UploadableFileWrapper.base.onLoad.call(this);
