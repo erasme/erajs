@@ -115,10 +115,8 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	func['base'] = this.prototype;
 
 	// inherit static methods
-//	console.log('defined class: '+classType+', base: '+func['base']);
 	for(var prop in func['base'].constructor) {
 		if(typeof(func['base'].constructor[prop]) == 'function') {
-//			console.log('parent static: '+prop);
 			func[prop] = func['base'].constructor[prop];
 		}
 	}
@@ -126,8 +124,6 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	if(classStatic != undefined) {
 		for(var prop in classStatic)
 			func[prop] = classStatic[prop];
-		if(classStatic['constructor'] != undefined)
-			classStatic['constructor'].call(func);
 	}
 
 	for(var prop in classDefine) {
@@ -156,6 +152,9 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	}
 	func.prototype.classType = classType;
 
+	if((classStatic != undefined) && ('constructor' in classStatic))
+		classStatic.constructor.call(func);
+
 	return func;
 };
 
@@ -163,7 +162,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 *	@return {Boolean} Whether or not an object is or derives from the class Type of the calling instance.
 */ 
 Function.prototype.hasInstance = function(obj) {
-	if((typeof(obj) != 'object') || (obj == null))
+	if((typeof(obj) != 'object') || (obj == null) || (obj.constructorHelper != Core.Object.prototype.constructorHelper))
 		return false;
 
 	var current = obj;
