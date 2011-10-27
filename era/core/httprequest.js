@@ -15,8 +15,6 @@ Core.Object.extend('Core.HttpRequest',
 	constructor: function(config) {
 		this.addEvents('error', 'done');
 
-		this.autoConfig(config, 'url', 'method', 'arguments', 'binary');
-
 		this.request = new XMLHttpRequest();
 
 		var wrapper = function() {

@@ -23,8 +23,10 @@ Core.Object.extend('Core.Uri',
 		else
 			baseURI = document.location.href;
 		var uri;
-		if('uri' in config)
+		if('uri' in config) {
 			uri = config.uri;
+			delete(config.uri);
+		}
 		else
 			uri = baseURI;
 		var res = uri.match(/^([^:\/]+):\/\/([^\/]+)(\/.*)$/);

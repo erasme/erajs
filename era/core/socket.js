@@ -24,20 +24,28 @@ Core.Object.extend('Core.Socket',
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
-		if(config.host != undefined)
+		if(config.host != undefined) {
 			this.host = config.host;
+			delete(config.host);
+		}
 		else
 			this.host = document.location.hostname;
-		if(config.port != undefined)
+		if(config.port != undefined) {
 			this.port = config.port;
+			delete(config.port);
+		}
 		else if((document.location.port != undefined) && (document.location.port != ''))
 			this.port = document.location.port;
 		else
 			this.port = 80;
-		if(config.service != undefined)
+		if(config.service != undefined) {
 			this.service = config.service;
-		if(config.mode != undefined)
+			delete(config.service);
+		}
+		if(config.mode != undefined) {
 			this.mode = config.mode;
+			delete(config.mode);
+		}
 		else {
 			if(Core.Socket.supportWebSocket)
 				this.mode = 'websocket';
