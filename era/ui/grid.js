@@ -59,11 +59,13 @@ Ui.Container.extend('Ui.Grid',
 	setContent: function(content) {
 		while(this.getFirstChild() != undefined)
 			this.removeChild(this.getFirstChild());
-		for(var i = 0; i < content.length; i++) {
-			var child = content[i];
-			if(!Ui.Element.hasInstance(child))
-				child = new child.type(child);
-			this.appendChild(child);
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.appendChild(Ui.Element.create(content[i], this));
+			}
+			else
+				this.appendChild(Ui.Element.create(content, this));
 		}
 	},
 
