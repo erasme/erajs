@@ -6,6 +6,8 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	selectedDate: undefined,
 	lastValid: '',
 	isValid: false,
+	dayFilter: undefined,
+	dateFilter: undefined,
 
 	/**
 	 * @constructs
@@ -19,10 +21,14 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 
 		this.connect(this, 'buttonpress', this.onDatePickerButtonPress);
 		this.connect(this, 'change', this.onDatePickerChange);
+	},
 
-//		if('selectedDate' in config){
-//			this.setSelectedDate(config.selectedDate);
-//		}
+	setDayFilter: function(dayFilter) {
+		this.dayFilter = dayFilter;
+	},
+
+	setDateFilter: function(dateFilter) {
+		this.dateFilter = dateFilter;
 	},
 
 	getIsValid: function() {
@@ -50,6 +56,10 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 			this.calendar = new Ui.MonthCalendar({ selectedDate: this.selectedDate, date: this.selectedDate });
 		else
 			this.calendar = new Ui.MonthCalendar();
+		if(this.dayFilter != undefined)
+			this.calendar.setDayFilter(this.dayFilter);
+		if(this.dateFilter != undefined)
+			this.calendar.setDateFilter(this.dateFilter);
 		this.popup.setContent(this.calendar);
 		this.connect(this.calendar, 'dayselect', this.onDaySelect);
 

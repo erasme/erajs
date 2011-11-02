@@ -36,7 +36,7 @@ vbox.append(toolbar);
 var button = new Ui.Button({ text: 'get date' });
 toolbar.append(button);
 app.connect(button, 'press', function() {
-	var date = datepicker.getSelectedDate();
+	var date = calendar.getSelectedDate();
 	if(date == undefined)
 		logs.log('date is undefined');
 	else
@@ -46,8 +46,14 @@ app.connect(button, 'press', function() {
 var hbox = new Ui.HBox();
 vbox.append(hbox, true);
 
-var datepicker = new Ui.DatePicker({ verticalAlign: 'center', horizontalAlign: 'center', dayFilter: [0, 6] });
-hbox.append(datepicker, true);
+var calendar = new Ui.MonthCalendar({ verticalAlign: 'center', horizontalAlign: 'center' });
+calendar.setDayFilter([6, 0]);
+calendar.setDateFilter([ '2011/11/2[1-5]', '2011/12/*', '2012/0[2-3]/.[4]' ]);
+hbox.append(calendar, true);
+
+app.connect(calendar, 'dayselect', function(calendar, date) {
+	console.log('Day select: '+date);
+});
 
 var logs = new Test.Logs();
 hbox.append(logs, true);

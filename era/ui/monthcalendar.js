@@ -7,6 +7,8 @@ Ui.VBox.extend('Ui.MonthCalendar',
 	leftarrow: undefined,
 	rightarrow: undefined,
 	grid: undefined,
+	dayFilter: undefined,
+	dateFilter: undefined,
 
 	/**
 	* @constructs
@@ -49,6 +51,16 @@ Ui.VBox.extend('Ui.MonthCalendar',
 		this.grid = new Ui.Grid({ cols: 'auto,auto,auto,auto,auto,auto,auto', rows: 'auto,auto,auto,auto,auto,auto,auto', horizontalAlign: 'center' });
 		this.append(this.grid);
 
+		this.updateDate();
+	},
+
+	setDayFilter: function(dayFilter) {
+		this.dayFilter = dayFilter;
+		this.updateDate();
+	},
+
+	setDateFilter: function(dateFilter) {
+		this.dateFilter = dateFilter;
 		this.updateDate();
 	},
 
@@ -106,6 +118,34 @@ Ui.VBox.extend('Ui.MonthCalendar',
 
 			if((this.selectedDate != undefined) && (current.getFullYear() == this.selectedDate.getFullYear()) && (current.getMonth() == this.selectedDate.getMonth()) && (current.getDate() == this.selectedDate.getDate()))
 				day.append(new Ui.Frame({ frameWidth: 3, fill: 'red', radius: 2 }));
+
+			var disable = false;
+			if(this.dayFilter != undefined) {
+				var weekday = current.getDay();
+				for(var i = 0; (i < this.dayFilter.length) && !disable; i++)
+					if(weekday == this.dayFilter[i])
+						disable = true;
+			}
+			if(this.dateFilter != undefined) {
+				var daystr = current.getFullYear()+'/';
+				if(current.getMonth() + 1 < 10)
+					daystr += '0';
+				daystr += (current.getMonth()+1)+'/';
+				if(current.getDate() < 10)
+					daystr += '0';
+				daystr += current.getDate();
+				for(var i = 0; (i < this.dateFilter.length) && !disable; i++) {
+					var re = new RegExp(this.dateFilter[i]);
+					if(re.test(daystr)) {
+						disable = true;
+					}
+				}
+			}
+
+			if(disable) {
+				day.disable();
+				day.setOpacity(0.2);
+			}
 
 			day.append(new Ui.Label({ text: current.getDate(), margin: 5 }))
 
