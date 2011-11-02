@@ -173,4 +173,14 @@ Ui.LBox.extend('Ui.Pressable',
 		this.fireEvent('up', this);
 	}
 	/**#@-*/
+}, {
+	onDisable: function() {
+		Ui.Pressable.base.onDisable.call(this);
+		this.getDrawing().style.cursor = '';
+	},
+
+	onEnable: function() {
+		Ui.Pressable.base.onEnable.call(this);
+		this.getDrawing().style.cursor = 'pointer';
+	}
 });
