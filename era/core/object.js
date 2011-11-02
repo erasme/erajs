@@ -315,7 +315,7 @@ Core.Object.scopeHelper = function(config, scope) {
 		config.scope = scope;
 	for(var prop in config) {
 		var val = config[prop];
-		if(typeof(val) == 'object') {
+		if((typeof(val) == 'object') && (val !== null)) {
 			if(val.constructor == Array)
 				Core.Object.scopeHelper(val, scope);
 			else if(val.constructor == Object)

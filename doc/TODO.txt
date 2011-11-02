@@ -302,3 +302,6 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 - BUG dans ClockGroup, autoReverse, repeat et beginTime ne fonctionne pas
   au niveau d'un ClockGroup
 
+- Dans Ui.MonthCalendar permetre de "bloquer" des dates. Le faire avec expression
+  régulière et interdire/autoriser des jours de la semaine.
+
