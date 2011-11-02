@@ -297,7 +297,7 @@ Ui.LBox.extend('Ui.Draggable',
 }, 
 /**@lends Ui.Draggable#*/
 {
-	onDisable: function() {
+	onDisable: function() {
 		this.drawing.setAttribute('draggable', !this.lock && !this.getIsDisabled());
 	},
 
