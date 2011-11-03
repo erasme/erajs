@@ -45,8 +45,11 @@ Core.Object.extend('Core.Finger',
 		this.addEvents('fingermove', 'fingerup');
 
 		this.id = config.id;
+		delete(config.id);
 		this.x = config.x;
 		this.y = config.y;
+		delete(config.x);
+		delete(config.y);
 
 		var target = document.elementFromPoint(this.x, this.y);
 		if(target != undefined) {

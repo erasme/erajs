@@ -51,11 +51,15 @@ Core.Object.extend('Core.DragDataTransfer',
 	*/
 	constructor: function(config) {
 		this.draggable = config.draggable;
+		delete(config.draggable);
 		this.startX = config.x;
 		this.startY = config.y;
+		delete(config.x);
+		delete(config.y);
 		this.data = {};
 		if(config.mouse != undefined) {
 			this.mouse = config.mouse;
+			delete(config.mouse);
 			config.event.preventDefault();
 			config.event.stopPropagation();
 			this.connect(window, 'mouseup', this.onMouseUp, true);
@@ -63,6 +67,7 @@ Core.Object.extend('Core.DragDataTransfer',
 		}
 		if(config.finger != undefined) {
 			this.finger = config.finger;
+			delete(config.finger);
 
 			var dragEvent = document.createEvent('DragEvent');
 			dragEvent.initDragEvent('dragstart', false, true, event.window, this, this.startX, this.startY, this.startX, this.startY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
@@ -83,6 +88,7 @@ Core.Object.extend('Core.DragDataTransfer',
 
 				this.connect(config.event.finger, 'fingermove', this.onFingerMove);
 				this.connect(config.event.finger, 'fingerup', this.onFingerUp);
+				delete(config.event);
 			}
 		}
 	},
