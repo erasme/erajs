@@ -54,11 +54,21 @@ Ui.VBox.extend('Ui.MonthCalendar',
 		this.updateDate();
 	},
 
+	/**
+	 * @param {Number[]} Array of day to disable (from 0 to 6), 0 is sunday
+	 */
 	setDayFilter: function(dayFilter) {
 		this.dayFilter = dayFilter;
 		this.updateDate();
 	},
 
+	/**
+	 * @param {String[]} Array of dates to disable. This dates must always be in yyyy/mm/dd format and will be converted to regex
+	 * so you can do a lot of things
+	 * @ example
+	 * var calendar = new Ui.MonthCalendar();
+	 * calendar.setDateFilter([ '2011/11/2[1-5]', '2011/12/*', '2012/0[2-3]/.[4]' ]);
+	 */
 	setDateFilter: function(dateFilter) {
 		this.dateFilter = dateFilter;
 		this.updateDate();
