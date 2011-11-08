@@ -61,10 +61,14 @@ Ui.Pressable.extend('Ui.Combo',
 
 	setField: function(field) {
 		this.field = field;
+		if(this.data != undefined)
+			this.setData(this.data);
 	},
 
 	setData: function(data) {
 		this.data = data;
+		if(this.field == undefined)
+			return;
 		for(var i = 0; i < data.length; i++) {
 			this.dialog.appendItem(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left' }));
 			this.transitionbox.append(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left' }));
