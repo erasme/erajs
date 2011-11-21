@@ -24,6 +24,19 @@ Ui.Container.extend('Ui.Notebook',
 		this.pages = [];
 	},
 
+	setContent: function(content) {
+		while(this.getPages().length > 0)
+			this.removePage(this.getPages()[0]);
+		if((content != undefined) && (typeof(content) == 'object')) {
+			if(content.constructor == Array) {
+				for(var i = 0; i < content.length; i++)
+					this.appendPage(Ui.NotebookPage.create(content[i], this));
+			}
+			else
+				this.appendPage(Ui.NotebookPage.create(content, this));
+		}
+	},
+
 	/**
 	* Set the given page as the current opened page
 	*/
@@ -345,7 +358,7 @@ Core.Object.extend('Ui.NotebookPage',
 		if(header != this.header) {
 			if(this.header != undefined)
 				this.headerBox.removeChild(this.header);
-			this.header = header;
+			this.header = Ui.Element.create(header, this);
 			if(this.header != undefined)
 				this.headerBox.appendChild(this.header);
 		}
@@ -365,7 +378,7 @@ Core.Object.extend('Ui.NotebookPage',
 		if(content != this.content) {
 			if(this.content != undefined)
 				this.contentBox.removeChild(this.content);
-			this.content = content;
+			this.content = Ui.Element.create(content, this);
 			if(this.content != undefined)
 				this.contentBox.appendChild(this.content);
 		}
