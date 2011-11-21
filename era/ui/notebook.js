@@ -30,10 +30,10 @@ Ui.Container.extend('Ui.Notebook',
 		if((content != undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.appendPage(Ui.NotebookPage.create(content[i], this));
+					this.appendPage(content[i]);
 			}
 			else
-				this.appendPage(Ui.NotebookPage.create(content, this));
+				this.appendPage(content);
 		}
 	},
 
@@ -88,6 +88,7 @@ Ui.Container.extend('Ui.Notebook',
 	* accordeon
 	*/
 	appendPage: function(page) {
+		page = Ui.NotebookPage.create(page, this);
 		this.pages.push(page);
 		this.prependChild(page.getBackground());
 		this.appendChild(page.getHeaderBox());

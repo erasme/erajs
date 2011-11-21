@@ -31,10 +31,10 @@ Ui.Container.extend('Ui.Box',
 		if((content != undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.append(Ui.Element.create(content[i], this));
+					this.append(content[i]);
 			}
 			else
-				this.append(Ui.Element.create(content, this));
+				this.append(content);
 		}
 	},
 
@@ -182,6 +182,7 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the end of the box
 	 */
 	append: function(child, resizable) {
+		child = Ui.Element.create(child, this);
 		if(resizable)
 			Ui.Box.setResizable(child, true);
 		this.appendChild(child);
@@ -191,6 +192,7 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the begining of the box
 	 */
 	prepend: function(child, resizable) {
+		child = Ui.Element.create(child, this);
 		if(resizable)
 			Ui.Box.setResizable(child, true);
 		this.prependChild(child);
@@ -202,23 +204,6 @@ Ui.Container.extend('Ui.Box',
 	remove: function(child) {
 		this.removeChild(child);
 	},
-
-	/**
-	 * Return if the given child is resizable or not 
-	 */
-/*	getResizable: function(child) {
-		return child.boxResizable;
-	},*/
-
-	/**
-	 * Setup if the given child is resizable or not
-	 */
-/*	setResizable: function(child, resizable) {
-		if(child.boxResizable != resizable) {
-			child.boxResizable = resizable;
-			this.invalidateMeasure();
-		}
-	},*/
 
 	/**#@+
 	* @private

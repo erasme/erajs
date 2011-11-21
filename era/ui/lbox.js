@@ -25,10 +25,10 @@ Ui.Container.extend('Ui.LBox',
 		if((content != undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.append(Ui.Element.create(content[i], this));
+					this.append(content[i]);
 			}
 			else
-				this.append(Ui.Element.create(content, this));
+				this.append(content);
 		}
 	},
 
@@ -114,14 +114,14 @@ Ui.Container.extend('Ui.LBox',
 	// Append a child on the top of all other layers
 	//
 	append: function(child) {
-		this.appendChild(child);
+		this.appendChild(Ui.Element.create(child, this));
 	},
 
 	//
 	// Append a child on the bottom of all other layers
 	//
 	prepend: function(child) {
-		this.prependChild(child);
+		this.prependChild(Ui.Element.create(child, this));
 	},
 
 	//
