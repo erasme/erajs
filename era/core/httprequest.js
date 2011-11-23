@@ -66,18 +66,7 @@ Core.Object.extend('Core.HttpRequest',
 		// encode arguments
 		var args = '';
 		if(this.arguments != undefined) {
-			for(var prop in this.arguments) {
-				if(args != '')
-					args += '&';
-				var propValue = this.arguments[prop];
-				if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object'))
-					continue;
-				args += encodeURIComponent(prop)+'=';
-				if(typeof(propValue) == 'object')
-					args += encodeURIComponent(JSON.stringify(propValue));
-				else
-					args += encodeURIComponent(propValue);
-			}
+			args = Core.Util.encodeURIQuery(this.arguments);
 		}
 		var url = this.url;
 		if((this.method == 'GET') && (args != '')) {

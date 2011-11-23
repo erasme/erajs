@@ -72,6 +72,26 @@ Core.Util.generateId = function() {
 	return ++Core.Util.idGenerator;
 };
 
+Core.Util.encodeURIQuery = function(obj) {
+	// encode arguments
+	var args = '';
+	if(obj != undefined) {
+		for(var prop in obj) {
+			if(args != '')
+				args += '&';
+			var propValue = obj[prop];
+			if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object'))
+				continue;
+			args += encodeURIComponent(prop)+'=';
+			if(typeof(propValue) == 'object')
+				args += encodeURIComponent(JSON.stringify(propValue));
+			else
+				args += encodeURIComponent(propValue);
+		}
+	}
+	return args;
+}
+
 String.prototype.utf8Encode = function() {
 	var res = '';
 	for(var i = 0; i < this.length; i++) { 
