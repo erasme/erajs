@@ -906,6 +906,15 @@ Core.Object.extend('Ui.Element',
 				this.onInternalEnable();
 		}
 	},
+	
+	setEnable: function(enable){
+		if(enable){
+			this.enable();
+		}
+		else{
+			this.disable();
+		}
+	},
 
 	getIsDisabled: function() {
 		if(this.disabled != undefined)
