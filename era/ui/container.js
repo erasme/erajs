@@ -2,7 +2,6 @@ Ui.Element.extend('Ui.Container',
 /** @lends Ui.Container#*/
 {
 	children: undefined,
-	useZ: false,
 
     /**
     * @constructs
@@ -20,8 +19,7 @@ Ui.Element.extend('Ui.Container',
 		child.parent = this;
 		this.children.push(child);
 		this.getDrawing().appendChild(child.getDrawing());
-		if(this.useZ)
-			child.getDrawing().style.zIndex = this.children.length;
+		child.getDrawing().style.zIndex = this.children.length;
 		this.invalidateMeasure();
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
@@ -38,10 +36,8 @@ Ui.Element.extend('Ui.Container',
 			this.getDrawing().insertBefore(child.getDrawing(), this.getDrawing().firstChild);
 		else
 			this.getDrawing().appendChild(child.getDrawing());
-		if(this.useZ) {
-			for(var i = 0; i < this.children.length; i++)
-				this.children[i].getDrawing().style.zIndex = i + 1;
-		}
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
 	},
@@ -56,10 +52,8 @@ Ui.Element.extend('Ui.Container',
 		while((i < this.children.length) && (this.children[i] != child)) { i++ };
 		if(i < this.children.length)
 			this.children.splice(i, 1);
-		if(this.useZ) {
-			for(var i = 0; i < this.children.length; i++)
-				this.children[i].getDrawing().style.zIndex = i + 1;
-		}
+		for(var i = 0; i < this.children.length; i++)
+			this.children[i].getDrawing().style.zIndex = i + 1;
 		this.invalidateMeasure();
 		child.setIsLoaded(false);
 		child.setParentVisible(false);
@@ -78,7 +72,6 @@ Ui.Element.extend('Ui.Container',
 		if(position >= this.children.length)
 			position = this.children.length;
 		var i = 0;
-		this.useZ = true;
 		while((i < this.children.length) && (this.children[i] != child)) { i++ };
 		if(i < this.children.length) {
 			this.children.splice(i, 1);
