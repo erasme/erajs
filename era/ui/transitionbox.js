@@ -133,6 +133,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 	},
 
 	append: function(child) {
+		child = Ui.Element.create(child, this);
 		var content = new Ui.TransitionBoxContent();
 		content.append(child);
 		content.hide();
@@ -140,6 +141,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 	},
 
 	prepend: function(child) {
+		child = Ui.Element.create(child, this);
 		if(this.position != -1)
 			this.position++;
 
