@@ -40,7 +40,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 		this.data = data;
 		for(var i = 0; i < data.length; i++) {
 			var segment = new Ui.SegmentButton({ data: data[i], text: data[i][this.field], mode: (i == 0)?'left':(i == data.length - 1)?'right':'middle' });
-			this.hbox.append(segment);
+			this.hbox.append(segment, true);
 			this.connect(segment, 'select', this.onSegmentSelect);
 		}
 	},
