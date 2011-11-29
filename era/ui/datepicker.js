@@ -1,5 +1,5 @@
 Ui.TextButtonField.extend('Ui.DatePicker', 
-/**@lends Ui.DatePicket#*/
+/**@lends Ui.DatePicker#*/
 {
 	popup: undefined,
 	calendar: undefined,
