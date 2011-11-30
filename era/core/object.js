@@ -394,6 +394,10 @@ Core.Object.create = function(element, scope) {
 		if(!('scope' in element))
 			element.scope = scope;
 		var type = element.type;
+//#if DEBUG
+		if('type' in element && type == undefined)
+			throw('Cannot create object of type undefined');
+//#end
 		if(type == undefined)
 			type = this;
 //#if DEBUG
