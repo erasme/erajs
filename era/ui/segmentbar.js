@@ -257,5 +257,16 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 		this.label.show();
 	}
 	/**#@-*/
+},
+{
+	onDisable: function() {
+		Ui.Selectable.base.onDisable.call(this);
+		this.bg.setOpacity(0.2);
+	},
+
+	onEnable: function() {
+		Ui.Selectable.base.onEnable.call(this);
+		this.bg.setOpacity(1);
+	}
 });
 

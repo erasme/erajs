@@ -43,6 +43,7 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		this.lastValid = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();
 		this.selectedDate = date;
 		this.setValue(this.lastValid);
+		this.isValid = true;
 	},
 
 	onDatePickerButtonPress: function() {
