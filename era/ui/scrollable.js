@@ -900,10 +900,22 @@ Ui.Container.extend('Ui.Scrollable',
 
 
 	arrangeCore: function(width, height) {
-//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
-
 		if(this.contentBox == undefined)
 			return;
+
+//		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
+
+		var contentWidth = width;
+		if(this.contentBox.getMeasureHeight() > height) {
+			this.scrollbarVerticalNeeded = true;
+			contentWidth = width - this.scrollbarVerticalBox.getMeasureWidth();
+		}
+		else
+			this.scrollbarVerticalNeeded = false;
+		if(this.contentBox.getMeasureWidth() > contentWidth)
+			this.scrollbarHorizontalNeeded = true;
+		else
+			this.scrollbarHorizontalNeeded = false;
 
 		if(this.scrollbarVerticalNeeded)
 			this.scrollbarVerticalBox.show();

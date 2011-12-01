@@ -248,8 +248,6 @@ Ui.Container.extend('Ui.Notebook',
 			var headerWidth = page.getHeaderBox().getMeasureWidth();
 			page.getHeaderBox().arrange(x + spacing, spacing, headerWidth, this.headerHeight - (spacing * 2));
 			if(this.current == i) {
-				tabOffset = x;
-				tabWidth = headerWidth;
 				page.getContentBox().show();
 				page.getContentBox().arrange(spacing, this.headerHeight + spacing, width - (spacing * 2), height - (this.headerHeight + spacing * 2));
 				if(this.currentColor != undefined)
