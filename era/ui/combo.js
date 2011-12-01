@@ -74,6 +74,11 @@ Ui.Pressable.extend('Ui.Combo',
 			this.transitionbox.append(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left' }));
 		}
 	},
+	
+	/**Read only*/
+	getData: function(){
+		return this.data;
+	},
 
 	open: function() {
 		this.dialog.show(this);
