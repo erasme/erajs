@@ -119,8 +119,6 @@ Ui.Element.extend('Ui.TextArea',
 			this.value = this.textareaDrawing.value;
 			this.fireEvent('change', this, this.value);
 		}
-
-
 //		if(this.textareaDrawing.scrollHeight != this.getLayoutHeight())
 			this.invalidateMeasure();
 	}
@@ -153,15 +151,10 @@ Ui.Element.extend('Ui.TextArea',
 	measureCore: function(width, height) {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = '0px';
-
-//		console.log(this+'.measureCore('+width+','+height+') = '+this.textareaDrawing.scrollWidth+' x '+this.textareaDrawing.scrollHeight);
 		return { width: this.textareaDrawing.scrollWidth, height: this.textareaDrawing.scrollHeight };
-//		return { width: 8, height: (this.fontSize * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
-//		console.log(this+'.arrangeCore('+width+','+height+')');
-
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = height+'px';
 	}

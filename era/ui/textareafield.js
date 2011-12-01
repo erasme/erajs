@@ -22,7 +22,6 @@ Ui.LBox.extend('Ui.TextAreaField',
 		this.append(this.scroll);
 
 		this.textarea = new Ui.TextArea({ margin: 4, fontSize: 16 });
-//		this.scroll.setContent(this.textarea);
 		this.scroll.setScrollingContent(this.textarea);
 	},
 
