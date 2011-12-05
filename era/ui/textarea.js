@@ -151,7 +151,10 @@ Ui.Element.extend('Ui.TextArea',
 	measureCore: function(width, height) {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = '0px';
-		return { width: this.textareaDrawing.scrollWidth, height: this.textareaDrawing.scrollHeight };
+		var size = { width: this.textareaDrawing.scrollWidth, height: this.textareaDrawing.scrollHeight };
+		this.textareaDrawing.style.width = this.getLayoutWidth()+'px';
+		this.textareaDrawing.style.height = this.getLayoutHeight()+'px';
+		return size;
 	},
 
 	arrangeCore: function(width, height) {
