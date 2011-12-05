@@ -454,6 +454,7 @@ Core.Object.extend('Ui.SvgParser', {
 
 	constructor: function(config) {
 		this.path = config.path;
+		delete config.path;
 	},
 
 	isEnd: function() {

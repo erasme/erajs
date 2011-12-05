@@ -355,8 +355,10 @@ Core.Object.prototype.autoConfig = function(config) {
 				current[func].call(current, this, config[prop]);
 				delete(config[prop]);
 			}
+//#if DEBUG
 			else
 				throw('Attached property \''+prop+'\' not found');
+//#end
 		}
 		else if(prop.indexOf('on') == 0) {
 			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
@@ -368,11 +370,15 @@ Core.Object.prototype.autoConfig = function(config) {
 				scope.connect(this, eventName, config[prop]);
 				delete(config[prop]);
 			}
+//#if DEBUG
 			else
 				throw('event \''+eventName+'\' not found on '+this.classType);
+//#end
 		}
+//#if DEBUG
 		else if(prop != 'scope')
 			throw('Property \''+prop+'\' not found on '+this.classType);
+//#end
 	}
 };
 
