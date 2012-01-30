@@ -112,6 +112,7 @@ Ui.Container.extend('Ui.Accordeonable',
 	* accordeon
 	*/
 	appendPage: function(page) {
+		page = Ui.AccordeonPage.create(page, this);
 		this.appendChild(page);
 		page.setOffset(1);
 		page.setOrientation(this.orientation);
@@ -330,6 +331,7 @@ Ui.Container.extend('Ui.AccordeonPage',
 	* set the content visible
 	*/
 	setHeader: function(header) {
+		header = Ui.Element.create(header, this);
 		if(header != this.header) {
 			if(this.header != undefined)
 				this.headerBox.removeChild(this.header);
@@ -350,6 +352,7 @@ Ui.Container.extend('Ui.AccordeonPage',
 	* Set the content element of the page
 	*/
 	setContent: function(content) {
+		content = Ui.Element.create(content, this) ;
 		if(this.content != content) {
 			if(this.content != undefined)
 				this.removeChild(this.content);
