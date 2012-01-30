@@ -51,8 +51,12 @@ Core.Object.extend('Core.Uri',
 		this.host = authority;
 		if(fullpath)
 			this.path = path;
-		else
-			this.path = Core.Uri.mergePath(path, uri);
+		else {
+			if(uri.indexOf('/') == 0)
+				this.path = Core.Uri.cleanPath(uri);
+			else
+				this.path = Core.Uri.mergePath(path, uri);
+		}
 		// TODO: handle query and fragment
 	},
 
