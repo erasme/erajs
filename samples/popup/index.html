@@ -28,7 +28,7 @@ var button = new Ui.Button({ text: 'open popup' });
 vbox.append(button);
 
 var popup;
-popup = new Ui.Popup({ verticalAlign: 'top', horizontalAlign: 'left' });
+popup = new Ui.Popup();
 var vbox2 = new Ui.VBox({ spacing: 5 });
 popup.setContent(vbox2);
 vbox2.append(new Ui.Label({ text: 'bonjour' }));
