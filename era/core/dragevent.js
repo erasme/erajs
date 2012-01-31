@@ -62,6 +62,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			delete(config.mouse);
 			config.event.preventDefault();
 			config.event.stopPropagation();
+			delete(config.event);
 			this.connect(window, 'mouseup', this.onMouseUp, true);
 			this.connect(window, 'mousemove', this.onMouseMove, true);
 		}
