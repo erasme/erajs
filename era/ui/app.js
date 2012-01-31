@@ -197,7 +197,7 @@ Ui.LBox.extend('Ui.App',
 			// stop the scaling of the page
 			meta = document.createElement('meta');
 			meta.name = 'viewport';
-			meta.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no';
+			meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
 			document.getElementsByTagName("head")[0].appendChild(meta);
 			// prevent Safari to handle touch event
 /*			this.connect(this.getDrawing(), 'touchstart', function(event) {
