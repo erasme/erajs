@@ -5,6 +5,8 @@ Ui.Container.extend('Ui.Fold',
 	header: undefined,
 	contentBox: undefined,
 	content: undefined,
+	backgroundBox: undefined,
+	background: undefined,
 	offset: 0,
 	orientation: 'horizontal',
 	isFolded: true,
@@ -20,6 +22,9 @@ Ui.Container.extend('Ui.Fold',
 	 */	
 	constructor: function(config) {
 		this.addEvents('fold', 'unfold', 'orientationchange');
+
+		this.backgroundBox = new Ui.LBox();
+		this.appendChild(this.backgroundBox);
 
 		this.headerBox = new Ui.Pressable();
 		this.appendChild(this.headerBox);
@@ -135,6 +140,26 @@ Ui.Container.extend('Ui.Fold',
 	},
 
 	/**
+	 * Return the background element of the page
+	 */
+	getBackground: function() {
+		return this.background;
+	},
+
+	/**
+	 * Set the background element of the page
+	 */
+	setBackground: function(background) {
+		if(this.background != background) {
+			if(this.background != undefined)
+				this.backgroundtBox.removeChild(this.background);
+			this.background = background;
+			if(this.background != undefined)
+				this.backgroundBox.appendChild(this.background);
+		}
+	},
+
+	/**
 	 * Return the orientation of the accordeon
 	 * possibles values: [horizontal|vertical]
 	 * default value: horizontal
@@ -174,11 +199,13 @@ Ui.Container.extend('Ui.Fold',
 				if(this.mode == 'slide')
 					this.setTransform(Ui.Matrix.createTranslate(-this.offset * this.contentSize, 0));
 				this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), this.getLayoutHeight());
+				this.backgroundBox.setClipRectangle(0, 0, Math.round(this.getLayoutWidth() + this.contentSize*this.offset), this.getLayoutHeight());
 			}
 			else {
 				if(this.mode == 'slide')
 					this.setTransform(Ui.Matrix.createTranslate(0, -this.offset * this.contentSize));
 				this.contentBox.setClipRectangle(0, 0, this.getLayoutWidth(), Math.round(this.contentSize*this.offset));
+				this.backgroundBox.setClipRectangle(0, 0, this.getLayoutWidth(), Math.round(this.getLayoutHeight() + this.contentSize*this.offset));
 			}
 		}
 	},
@@ -239,6 +266,7 @@ Ui.Container.extend('Ui.Fold',
 	 * Return the required size for the current element
 	 */
 	measureCore: function(width, height) {
+		this.backgroundBox.measure(width, height);
 		var size = this.headerBox.measure(width, height);
 		var contentSize = { width: 0, height: 0 };
 		if(this.orientation == 'horizontal') {
@@ -268,11 +296,15 @@ Ui.Container.extend('Ui.Fold',
 			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);
 			this.contentBox.arrange(this.headerBox.getMeasureWidth(), 0, this.contentBox.getMeasureWidth(), height);
 			this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), Math.round(height));
+			this.backgroundBox.arrange(0, 0, this.headerBox.getMeasureWidth()+this.contentBox.getMeasureWidth(), height);
+			this.backgroundBox.setClipRectangle(0, 0, Math.round(this.headerBox.getMeasureWidth() + this.contentSize*this.offset), Math.round(height));
 		}
 		else {
 			this.headerBox.arrange(0, 0, width, this.headerBox.getMeasureHeight());
 			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight());
 			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
+			this.backgroundBox.arrange(0, 0, width, this.headerBox.getMeasureHeight()+this.contentBox.getMeasureHeight());
+			this.backgroundBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.headerBox.getMeasureHeight() + this.contentSize*this.offset));
 		}
 		this.setOffset(this.offset);
 	}
