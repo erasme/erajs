@@ -13,8 +13,11 @@ Ui.IFrame.extend('Ui.Program',
 		if(!('location' in config))
 			throw("location config parameter is NEEDED");
 		var location = config.location;
-		if('arguments' in config)
+		delete(config.location);
+		if('arguments' in config) {
 			location += '?base64='+encodeURIComponent(JSON.stringify(config.arguments).toBase64());
+			delete(config.arguments);
+		}
 		this.setSrc(location);
 		this.addEvents('message');
 	},
