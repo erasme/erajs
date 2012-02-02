@@ -99,6 +99,10 @@ Ui.Container.extend('Ui.Scrollable',
 		this.setScrollingContent(scrollingContent);
 	},
 
+	getContent: function() {
+		return this.contentBox.getFirstChild();
+	},
+
 	setScrollingContent: function(scrollingContent) {
 		if(this.contentBox != undefined) {
 			this.disconnect(this.contentBox, 'scroll', this.onContentBoxScroll);
