@@ -102,6 +102,13 @@ Core.Object.extend('Core.FilePostUploader',
 		}
 		else {
 			this.file.form.action = this.service;
+
+			var destDrawing = document.createElement('input');
+			destDrawing.type = 'hidden';
+			destDrawing.setAttribute('name', 'destination');
+			destDrawing.setAttribute('value', this.destination);
+			this.file.form.insertBefore(destDrawing, this.file.form.firstChild);
+
 			this.connect(this.file.iframe, 'load', this.onIFrameLoad);
 			var errorCount = 0;
 			var done = false;
