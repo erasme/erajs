@@ -274,7 +274,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.catcher.style.right = '0px';
 		this.catcher.style.top = '0px';
 		this.catcher.style.bottom = '0px';
-		this.catcher.zIndex = 1000;
+		this.catcher.style.zIndex = 1000;
 		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
@@ -544,7 +544,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.catcher.style.right = '0px';
 		this.catcher.style.top = '0px';
 		this.catcher.style.bottom = '0px';
-		this.catcher.zIndex = 1000;
+		this.catcher.style.zIndex = 1000;
 		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
@@ -678,7 +678,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.catcher.style.right = '0px';
 		this.catcher.style.top = '0px';
 		this.catcher.style.bottom = '0px';
-		this.catcher.zIndex = 1000;
+		this.catcher.style.zIndex = 1000;
 		this.window.document.body.appendChild(this.catcher);
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
