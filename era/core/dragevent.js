@@ -37,6 +37,7 @@ Core.Object.extend('Core.DragDataTransfer',
 	startImagePoint: undefined,
 	overElement: undefined,
 	hasStarted: false,
+	rootWindow: undefined,
 
 	dropEffect: 'none',
 	type: undefined,
@@ -63,6 +64,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			config.event.preventDefault();
 			config.event.stopPropagation();
 			delete(config.event);
+			this.rootWindow = window;
 			this.connect(window, 'mouseup', this.onMouseUp, true);
 			this.connect(window, 'mousemove', this.onMouseMove, true);
 		}

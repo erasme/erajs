@@ -158,7 +158,7 @@ Ui.LBox.extend('Ui.Draggable',
 			return;
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 		event.stopPropagation();
-		if(!navigator.supportDrag)
+		if(!navigator.supportDrag && (event.button == 0))
 			new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
 	},
 

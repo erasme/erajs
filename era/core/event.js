@@ -52,7 +52,9 @@ Core.Object.extend('Core.Event',
 			for(var i = stack.length - 1; (i >= 0) && (!this.cancelBubble); i--) {
 				current = stack[i];
 				if((current.__extendCaptureEvents != undefined) && (current.__extendCaptureEvents[this.type] != undefined)) {
-					var list = current.__extendCaptureEvents[this.type];
+					var list = [];
+					for(var i2 = 0; i2 < current.__extendCaptureEvents[this.type].length; i2++)
+						list.push(current.__extendCaptureEvents[this.type][i2]);
 					for(var i2 = 0; i2 < list.length; i2++)
 						list[i2].call(current, this);
 				}
@@ -62,7 +64,9 @@ Core.Object.extend('Core.Event',
 			for(var i = 0; (i < stack.length) && (!this.cancelBubble); i++) {
 				current = stack[i];
 				if((current.__extendEvents != undefined) && (current.__extendEvents[this.type] != undefined)) {
-					var list = current.__extendEvents[this.type];
+					var list = [];
+					for(var i2 = 0; i2 < current.__extendEvents[this.type].length; i2++)
+						list.push(current.__extendEvents[this.type][i2]);
 					for(var i2 = 0; i2 < list.length; i2++)
 						list[i2].call(current, this);
 				}
@@ -70,12 +74,16 @@ Core.Object.extend('Core.Event',
 		}
 		else {
 			if((target.__extendCaptureEvents != undefined) && (target.__extendCaptureEvents[this.type] != undefined)) {
-				var list = target.__extendCaptureEvents[this.type];
+				var list = [];
+				for(var i2 = 0; i2 < target.__extendCaptureEvents[this.type].length; i2++)
+					list.push(target.__extendCaptureEvents[this.type][i2]);
 				for(var i = 0; i < list.length; i++)
 					list[i].call(target, this);
 			}
 			if((target.__extendEvents != undefined) && (target.__extendEvents[this.type] != undefined)) {
-				var list = target.__extendEvents[this.type];
+				var list = [];
+				for(var i2 = 0; i2 < target.__extendEvents[this.type].length; i2++)
+					list.push(target.__extendEvents[this.type][i2]);
 				for(var i = 0; i < list.length; i++)
 					list[i].call(target, this);
 			}
