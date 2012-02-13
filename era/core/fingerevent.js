@@ -51,10 +51,10 @@ Core.Object.extend('Core.Finger',
 		delete(config.x);
 		delete(config.y);
 
-		var target = document.elementFromPoint(this.x, this.y);
+		var target = Core.Event.cleanTarget(document.elementFromPoint(this.x, this.y));
 		if(target != undefined) {
 			var fingerEvent = document.createEvent('FingerEvent');
-			fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
+			fingerEvent.initFingerEvent('fingerdown', true, true, window, this);
 			target.dispatchEvent(fingerEvent);
 		}
 	},
@@ -174,7 +174,8 @@ Core.Object.extend('Core.FingerManager',
 		}
 		for(var i = 0; i < event.targetTouches.length; i++) {
 			if(this.touches[event.targetTouches[i].identifier] == undefined) {
-				this.touches[event.targetTouches[i].identifier] = new Core.Finger({ id: event.targetTouches[i].identifier, x: event.targetTouches[i].clientX, y: event.targetTouches[i].clientY });
+				var finger = new Core.Finger({ id: event.targetTouches[i].identifier, x: event.targetTouches[i].clientX, y: event.targetTouches[i].clientY });
+				this.touches[event.targetTouches[i].identifier] = finger;
 			}
 		}
 		event.preventDefault();

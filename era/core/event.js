@@ -245,9 +245,12 @@ Core.Object.extend('Core.Event',
 	cleanTarget: function(target) {
 		var current = target;
 		while(current != undefined) {
-			if('dispatchEvent' in current)
+			if(('dispatchEvent' in current) && ('innerHTML' in current))
 				return current;
-			current = current.offsetParent;
+			if('offsetParent' in current)
+				current = current.offsetParent;
+			else
+				current = current.parentNode;
 		}
 		return window;
 	}

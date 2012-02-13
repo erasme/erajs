@@ -173,11 +173,11 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 * - Dans les styles permettre l'héritage des styles pour le style static
     par défaut
 
-- autoConfig dans le constructeur. Vérifier si on n'utilise pas des attributs
-  inutilisé. Pouvoir définir les attributs indispensables
+* - autoConfig dans le constructeur. Vérifier si on n'utilise pas des attributs
+    inutilisé. Pouvoir définir les attributs indispensables
 
-- permettre de mettre du code de débuggage (des tests supplémentaires)
-  dans un preprocesseur et l'enlever dans la version compiler.
+* - permettre de mettre du code de débuggage (des tests supplémentaires)
+    dans un preprocesseur et l'enlever dans la version compiler.
 
 - corriger l'icone "edit"
 
@@ -308,4 +308,11 @@ X - pour TextArea, ne pas gérer de scroll bar mais agrandir la zone autant qu'i
 x - BUG dans le Ui.Notebook, il semble que dans un VBox en mode resizable, l'affichage
     des titres n'est pas bon mais le devient après un event de resize
 
+- Dans IE < 9, la selection de Ui.Text({ selectable: true }) ne fonctionne pas. L'implémenter.
+
+- BUG Dans Chrome la selection de Ui.Text({ selectable: true }) est "space"
+
+- Enrichir le Ui.SegmentBar pour autoriser le mode "bouton" (et pas le mode
+  selection 1 parmis plusieurs) et autoriser les icones.
+  
 
