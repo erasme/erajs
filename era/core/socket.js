@@ -268,6 +268,10 @@ Core.Object.extend('Core.Socket',
 	/**#@-*/
 });
 
+// provide support for Mozilla WebSocket
+if(("MozWebSocket" in window) && !("WebSocket" in window)) {
+	window.WebSocket = window.MozWebSocket;
+}
 
 Core.Socket.supportWebSocket = "WebSocket" in window;
 
