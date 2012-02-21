@@ -72,6 +72,24 @@ Core.Util.generateId = function() {
 	return ++Core.Util.idGenerator;
 };
 
+Core.Util.baseDirectory = function(file) {
+	var scripts;
+	if(document.scripts != undefined)
+		scripts = document.scripts;
+	else
+		scripts = document.getElementsByTagName('script');
+	for(var i = 0; i < scripts.length; i++) {
+		var pos = scripts[i].src.search(file);
+		if(pos != -1)
+			return scripts[i].src.substring(0, pos);
+	}
+	return undefined;
+};
+
+Core.Util.include = function(fileName) {
+   	document.write("<script type='text/javascript' src='"+fileName+"'></script>");
+}
+
 Core.Util.encodeURIQuery = function(obj) {
 	// encode arguments
 	var args = '';
