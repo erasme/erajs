@@ -138,6 +138,9 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	updateFlow: function(width, render) {
+		if(this.text == undefined)
+			return 0;
+
 		var dotWidth = (Ui.Label.measureText('...', this.fontSize, this.fontFamily, this.fontWeight)).width;
 		var y = 0;
 		var line = '';
