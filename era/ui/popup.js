@@ -184,7 +184,7 @@ Ui.Container.extend('Ui.Popup',
 		this.shadow.arrange(0, 0, width, height);
 
 		// handle open center screen
-		if((this.posX == undefined) && (this.attachedElement == undefined)) {
+		if((this.posX === undefined) && (this.attachedElement === undefined)) {
 			this.setCenter(width, height);
 		}
 		// handle open at an element

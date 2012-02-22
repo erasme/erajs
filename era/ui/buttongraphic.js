@@ -78,7 +78,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	setText: function(text) {
 		if(this.text != text) {
 			this.text = text;
-			if(this.text == undefined) {
+			if(this.text === undefined) {
 				if(this.textBox != undefined) {
 					this.contentBox.remove(this.textBox);
 					this.textBox = undefined;
@@ -87,7 +87,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 				}
 			}
 			else {
-				if(this.textBox == undefined) {
+				if(this.textBox === undefined) {
 					this.textBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', height: 24 });
 					this.contentBox.append(this.textBox);
 					this.text1 = new Ui.Label({ text: this.text, color: this.getContentLightColor(), verticalAlign: 'center' });
@@ -109,7 +109,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	},
 
 	setIcon: function(icon) {
-		if(icon == undefined) {
+		if(icon === undefined) {
 			if(this.icon != undefined) {
 				this.iconBox.remove(this.icon1);
 				this.iconBox.remove(this.icon2);

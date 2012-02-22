@@ -236,7 +236,7 @@ Ui.Container.extend('Ui.Fold',
 	},
 
 	onClockTick: function(clock, progress) {
-		if(this.content == undefined) {
+		if(this.content === undefined) {
 			if(this.clock != undefined) {
 				this.clock.stop();
 				this.clock = undefined;

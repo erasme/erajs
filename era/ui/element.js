@@ -224,7 +224,7 @@ Core.Object.extend('Ui.Element',
 	 */
 	setRole: function(role) {
 		if('setAttributeNS' in this.drawing) {
-			if(role == undefined) {
+			if(role === undefined) {
 				if(this.drawing.hasAttributeNS('http://www.w3.org/2005/07/aaa', 'role'))
 					this.drawing.removeAttributeNS('http://www.w3.org/2005/07/aaa', 'role');
 			}
@@ -720,7 +720,7 @@ Core.Object.extend('Ui.Element',
 		if((this.transformOriginX != x) || (this.transformOriginY != y) || (this.transformOriginAbsolute != absolute)) {
 			this.transformOriginX = x;
 			this.transformOriginY = y;
-			if(absolute == undefined)
+			if(absolute === undefined)
 				this.transformOriginAbsolute = false;
 			else
 				this.transformOriginAbsolute = absolute;
@@ -804,7 +804,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	hide: function() {
-		if((this.visible == undefined) || this.visible) {
+		if((this.visible === undefined) || this.visible) {
 			var old = this.getIsVisible();
 			this.visible = false;
 			this.drawing.style.display = 'none';
@@ -817,7 +817,7 @@ Core.Object.extend('Ui.Element',
 	},
 	
 	show: function() {
-		if((this.visible == undefined) || !this.visible) {
+		if((this.visible === undefined) || !this.visible) {
 			var old = this.getIsVisible();
 			this.visible = true;
 			this.drawing.style.display = 'block';
@@ -865,7 +865,7 @@ Core.Object.extend('Ui.Element',
 
 //////////
 	checkVisible: function() {
-		if(this.getDrawing() == undefined)
+		if(this.getDrawing() === undefined)
 			return;
 		var visible = false;
 		var current = this.getDrawing();
@@ -890,7 +890,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	disable: function() {
-		if((this.disabled == undefined) || !this.disabled) {
+		if((this.disabled === undefined) || !this.disabled) {
 			var old = this.getIsDisabled();
 			this.disabled = true;
 			if(!old)
@@ -899,7 +899,7 @@ Core.Object.extend('Ui.Element',
 	},
 	
 	enable: function() {
-		if((this.disabled == undefined) || this.disabled) {
+		if((this.disabled === undefined) || this.disabled) {
 			var old = this.getIsDisabled();
 			this.disabled = false;
 			if(old)
@@ -1267,7 +1267,7 @@ Core.Object.extend('Ui.Element',
 	* coordinate system
 	*/
 	transformToWindow: function(element, win) {
-		if(win == undefined)
+		if(win === undefined)
 			win = window;
 		if(navigator.isWebkit) {
 			var matrix = new Ui.Matrix();
@@ -1398,7 +1398,7 @@ Core.Object.extend('Ui.Element',
 		}
 		else {
 			var svg = document.createElementNS(svgNS, 'svg');
-			if(element.firstChild == undefined)
+			if(element.firstChild === undefined)
 				element.appendChild(svg);
 			else
 				element.insertBefore(svg, element.firstChild);
@@ -1420,7 +1420,7 @@ Core.Object.extend('Ui.Element',
 	*/
 	pointToWindow: function(element, point, win) {
 		if(navigator.isWebkit) {
-			if(win == undefined)
+			if(win === undefined)
 				win = window;
 			return win.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
 		}
@@ -1433,7 +1433,7 @@ Core.Object.extend('Ui.Element',
 
 	pointFromWindow: function(element, point, win) {
 		if(navigator.isWebkit) {
-			if(win == undefined)
+			if(win === undefined)
 				win = window;
 			return win.webkitConvertPointFromPageToNode(element, new WebKitPoint(point.x, point.y));
 		}

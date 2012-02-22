@@ -66,7 +66,7 @@ Ui.LBox.extend('Ui.TextButtonField',
 	},
 
 	setButtonIcon: function(icon) {
-		if(icon == undefined) {
+		if(icon === undefined) {
 			if(this.buttonIcon != undefined) {
 				this.iconBox.remove(this.icon1);
 				this.iconBox.remove(this.icon2);
@@ -119,7 +119,7 @@ Ui.LBox.extend('Ui.TextButtonField',
 	setButtonText: function(text) {
 		if(this.buttonText != text) {
 			this.buttonText = text;
-			if(this.buttonText == undefined) {
+			if(this.buttonText === undefined) {
 				if(this.textBox != undefined) {
 					this.buttonContentBox.remove(this.textBox);
 					this.textBox = undefined;
@@ -128,7 +128,7 @@ Ui.LBox.extend('Ui.TextButtonField',
 				}
 			}
 			else {
-				if(this.textBox == undefined) {
+				if(this.textBox === undefined) {
 					this.textBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 					this.buttonContentBox.append(this.textBox);
 					this.text1 = new Ui.Label({ text: this.buttonText, color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }) });

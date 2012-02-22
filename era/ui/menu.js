@@ -43,8 +43,8 @@ Ui.Pressable.extend('Ui.Menu',
 		var menu = this;
 		var pressable = this.dialog.appendItem(item);
 		if(callback != undefined) {
-			if(scope == undefined) {
-				if(this.scope == undefined)
+			if(scope === undefined) {
+				if(this.scope === undefined)
 					scope = this;
 				else
 					scope = this.scope;
@@ -170,7 +170,7 @@ Ui.Container.extend('Ui.MenuDialog',
 		var current = event.target;
 		while((current != undefined) && (current != contentDrawing))
 			current = current.offsetParent;
-		if(current == undefined) {
+		if(current === undefined) {
 			this.hide();
 			event.preventDefault();
 			event.stopPropagation();
@@ -182,7 +182,7 @@ Ui.Container.extend('Ui.MenuDialog',
 		var current = event.target;
 		while((current != undefined) && (current != contentDrawing))
 			current = current.offsetParent;
-		if(current == undefined) {
+		if(current === undefined) {
 			this.hide();
 			event.preventDefault();
 			event.stopPropagation();

@@ -67,7 +67,7 @@ Ui.Pressable.extend('Ui.Combo',
 
 	setData: function(data) {
 		this.data = data;
-		if(this.field == undefined)
+		if(this.field === undefined)
 			return;
 		for(var i = 0; i < data.length; i++) {
 			this.dialog.appendItem(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left' }));
@@ -112,7 +112,7 @@ Ui.Pressable.extend('Ui.Combo',
 	},
 
 	setCurrent: function(current) {
-		if(current == undefined)
+		if(current === undefined)
 			this.setCurrentAt(-1);
 		var position = -1;
 		for(var i = 0; i < this.data.length; i++) {

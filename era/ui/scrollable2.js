@@ -118,13 +118,13 @@ Ui.Container.extend('Ui.Scrollable2', {
 	},
 
 	setOffset: function(offsetX, offsetY, absolute) {
-		if(absolute == undefined)
+		if(absolute === undefined)
 			absolute = false;
-		if(offsetX == undefined)
+		if(offsetX === undefined)
 			offsetX = this.offsetX;
 		else if(!absolute)
 			offsetX *= this.contentWidth - this.viewWidth;
-		if(offsetY == undefined)
+		if(offsetY === undefined)
 			offsetY = this.offsetY;
 		else if(!absolute)
 				offsetY *= this.contentHeight - this.viewHeight;
@@ -380,7 +380,7 @@ Ui.Container.extend('Ui.Scrollable2', {
 	},
 
 	startInertia: function() {
-		if(this.inertiaClock == undefined) {
+		if(this.inertiaClock === undefined) {
 			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this,
 				callback: function(clock, progress, delta) {
 					if(delta == 0)

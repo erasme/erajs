@@ -29,7 +29,7 @@ Core.Object.extend('Ui.Matrix',
 	},
 
 	scale: function(scaleX, scaleY) {
-		if(scaleY == undefined)
+		if(scaleY === undefined)
 			scaleY = scaleX;
 		this.multiply(Ui.Matrix.createScale(scaleX, scaleY));
 	},

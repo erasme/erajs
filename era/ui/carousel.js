@@ -119,7 +119,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 			this.showNext = false;
 		}
 
-		if(this.showClock == undefined) {
+		if(this.showClock === undefined) {
 			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onShowTick });
 			this.showClock.begin();
 		}
@@ -132,7 +132,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		}
 		this.showPrevious = false;
 		this.showNext = false;
-		if(this.showClock == undefined) {
+		if(this.showClock === undefined) {
 			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onShowTick });
 			this.showClock.begin();
 		}

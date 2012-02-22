@@ -190,7 +190,7 @@ Ui.Container.extend('Ui.ListView',
 				break;
 			}
 		}
-		if(headerCol == undefined)
+		if(headerCol === undefined)
 			return -1;
 		var foundRow = undefined;
 		for(var row = 0; row < headerCol.rows.length; row++) {
@@ -199,7 +199,7 @@ Ui.Container.extend('Ui.ListView',
 				break;
 			}
 		}
-		if(foundRow == undefined)
+		if(foundRow === undefined)
 			return -1;
 		return foundRow;
 	},

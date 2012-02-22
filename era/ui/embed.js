@@ -12,7 +12,7 @@ Ui.LBox.extend('Ui.Embed',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		if(Ui.App.current == undefined)
+		if(Ui.App.current === undefined)
 			new Ui.App();
 		this.getDrawing().style.cursor = 'default';
 		this.setIsLoaded(true);
@@ -55,7 +55,7 @@ Ui.LBox.extend('Ui.Embed',
 		aHeight = Math.max(aHeight, size.height);
 		this.arrange(0, 0, aWidth, aHeight);
 		this.updateTask = undefined;
-		if(this.div != undefined) {
+		if(this.div !== undefined) {
 			this.div.style.width = Math.round(aWidth)+'px';
 			this.div.style.height = Math.round(aHeight)+'px';
 		}
@@ -63,7 +63,7 @@ Ui.LBox.extend('Ui.Embed',
 
 	onReady: function() {
 		console.log(this+'.onReady');
-		if((this.div == undefined) && (this.divId != undefined)) {
+		if((this.div === undefined) && (this.divId !== undefined)) {
 			this.setDiv(document.getElementById(this.divId));
 		}
 	}
@@ -73,13 +73,13 @@ Ui.LBox.extend('Ui.Embed',
 	invalidateMeasure: function() {
 		this.invalidateArrange();
 		this.measureValid = false;
-		if(this.updateTask == undefined)
+		if(this.updateTask === undefined)
 			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 	},
 
 	invalidateArrange: function() {
 		this.arrangeValid = false;
-		if(this.updateTask == undefined)
+		if(this.updateTask === undefined)
 			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 	},
 

@@ -174,13 +174,13 @@ Ui.Container.extend('Ui.Scrollable',
 //		this.arrange(0, 0, size.width, size.height);
 //		}
 
-		if(absolute == undefined)
+		if(absolute === undefined)
 			absolute = false;
-		if(offsetX == undefined)
+		if(offsetX === undefined)
 			offsetX = this.offsetX;
 		else if(!absolute)
 			offsetX *= this.contentWidth - this.viewWidth;
-		if(offsetY == undefined)
+		if(offsetY === undefined)
 			offsetY = this.offsetY;
 		else if(!absolute)
 				offsetY *= this.contentHeight - this.viewHeight;
@@ -479,7 +479,7 @@ Ui.Container.extend('Ui.Scrollable',
 	},
 
 	startInertia: function() {
-		if(this.inertiaClock == undefined) {
+		if(this.inertiaClock === undefined) {
 			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
 				onTimeupdate: function(clock, progress, delta) {
 					if(delta == 0)
@@ -767,7 +767,7 @@ Ui.Container.extend('Ui.Scrollable',
 
 	updateOffset: function() {
 
-		if(this.contentBox == undefined)
+		if(this.contentBox === undefined)
 			return;
 
 		if(this.scrollbarHorizontalNeeded) {
@@ -793,7 +793,7 @@ Ui.Container.extend('Ui.Scrollable',
 /**@lends Ui.Scrollable#*/
 {
 	measureCore: function(width, height) {
-		if(this.contentBox == undefined)
+		if(this.contentBox === undefined)
 			return { width: 0, height: 0 };
 
 //		for(var i = 0; i < this.getChildren().length; i++) {
@@ -904,7 +904,7 @@ Ui.Container.extend('Ui.Scrollable',
 
 
 	arrangeCore: function(width, height) {
-		if(this.contentBox == undefined)
+		if(this.contentBox === undefined)
 			return;
 
 //		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);

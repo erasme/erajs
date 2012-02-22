@@ -342,7 +342,7 @@ Ui.LBox.extend('Ui.Movable',
 	},
 
 	startInertia: function() {
-		if(this.inertiaClock == undefined) {
+		if(this.inertiaClock === undefined) {
 			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
 				onTimeupdate: function(clock, progress, delta) {
 					if(delta == 0)

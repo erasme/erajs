@@ -434,7 +434,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	appendDialog: function(dialog) {
-		if(this.dialogs == undefined) {
+		if(this.dialogs === undefined) {
 			this.focusStack = [];
 			this.dialogs = new Ui.LBox();
 			this.append(this.dialogs);
@@ -499,12 +499,12 @@ Ui.LBox.extend('Ui.App',
 		if(this.loaded) {
 			this.ready = true;
 
-			if(document.body == undefined) {
+			if(document.body === undefined) {
 				this.htmlRoot = document.createElement('body');
 				document.body = this.htmlRoot;
 			}
 
-			if(this.content != undefined) {
+			if(this.content !== undefined) {
 				document.body.style.padding = '0px';
 				document.body.style.margin = '0px';
 				document.body.style.border = '0px solid black';
@@ -679,7 +679,7 @@ Ui.LBox.extend('Ui.App',
 //	enqueueLayout: function(element) {
 //		element.layoutNext = this.layoutList;
 //		this.layoutList = element;
-//		if((this.updateTask == undefined) && this.ready)
+//		if((this.updateTask === undefined) && this.ready)
 //			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 //	}
 }, {
@@ -687,7 +687,7 @@ Ui.LBox.extend('Ui.App',
 //		if(this.measureValid) {
 			this.invalidateArrange();
 			this.measureValid = false;
-			if((this.updateTask == undefined) && this.ready)
+			if((this.updateTask === undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 //		}
 	},
@@ -699,7 +699,7 @@ Ui.LBox.extend('Ui.App',
 
 //			this.enqueueArrange(this);
 
-			if((this.updateTask == undefined) && this.ready)
+			if((this.updateTask === undefined) && this.ready)
 				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 //		}
 	},
@@ -735,7 +735,7 @@ Ui.LBox.extend('Ui.App',
 	current: undefined,
 
 	getWindowIFrame: function(currentWindow) {
-		if(currentWindow == undefined)
+		if(currentWindow === undefined)
 			currentWindow = window;
 		var iframe = undefined;
 		if(currentWindow.parent != currentWindow) {

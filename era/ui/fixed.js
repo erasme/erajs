@@ -49,7 +49,7 @@ Ui.Container.extend('Ui.Fixed',
 		this.fireEvent('resize', this, width, height);
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
+			child.arrange((child.fixedX === undefined)?0:child.fixedX, (child.fixedY === undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
 		}
 	},
 
@@ -58,7 +58,7 @@ Ui.Container.extend('Ui.Fixed',
 	},
 
 	onChildInvalidateArrange: function(child) {
-		child.arrange((child.fixedX == undefined)?0:child.fixedX, (child.fixedY == undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
+		child.arrange((child.fixedX === undefined)?0:child.fixedX, (child.fixedY === undefined)?0:child.fixedY, child.getMeasureWidth(), child.getMeasureHeight());
 	}
 });
 

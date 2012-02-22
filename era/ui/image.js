@@ -95,7 +95,7 @@ Ui.Element.extend('Ui.Image',
 			this.connect(Ui.App.current, 'ready', this.onAppReady);
 		else {
 			this.loaddone = true;
-			if(document.body == undefined) {
+			if(document.body === undefined) {
 				var body = document.createElement('body');
 				document.body = body;
 			}
@@ -149,8 +149,8 @@ Ui.Element.extend('Ui.Image',
 		if(!this.loaddone)
 			return { width: 0, height: 0 };
 		var size;
-		if(this.getWidth() == undefined) {
-			if(this.getHeight() == undefined)
+		if(this.getWidth() === undefined) {
+			if(this.getHeight() === undefined)
 				size = { width: this.naturalWidth, height: this.naturalHeight };
 			else {
 				var fixedHeight = this.getHeight() - (this.getMarginTop() + this.getMarginBottom());
@@ -158,7 +158,7 @@ Ui.Element.extend('Ui.Image',
 			}
 		}
 		else {
-			if(this.getHeight() == undefined) {
+			if(this.getHeight() === undefined) {
 				var fixedWidth = this.getWidth() - (this.getMarginLeft() + this.getMarginRight());
 				size = { width: fixedWidth, height: (this.naturalHeight*fixedWidth)/this.naturalWidth };
 			}

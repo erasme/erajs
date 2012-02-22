@@ -167,7 +167,7 @@ Ui.Element.extend('Ui.TextArea',
 /*	measureBox: undefined,
 
 	constructor: function() {
-		if(document.body == undefined) {
+		if(document.body === undefined) {
 			var body = document.createElement('body');
 			document.body = body;
 		}

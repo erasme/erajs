@@ -65,7 +65,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 	},
 
 	setText: function(text) {
-		if(text == undefined) {
+		if(text === undefined) {
 			if(this.contentBox != undefined) {
 				this.hbox.remove(this.contentBox);
 				this.contentBox = undefined;
@@ -192,7 +192,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 	setContent: function(content) {
 		content = Ui.Element.create(content, this);
 
-		if(content == undefined) {
+		if(content === undefined) {
 			if(this.contentBox != undefined) {
 				this.hbox.remove(this.contentBox);
 				this.contentBox = undefined;

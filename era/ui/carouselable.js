@@ -74,7 +74,7 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	next: function() {
-		if(this.alignClock == undefined)
+		if(this.alignClock === undefined)
 			this.startAnimation(-1, this.getCurrentPosition() + 1);
 		else {
 			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
@@ -86,7 +86,7 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	previous: function() {
-		if(this.alignClock == undefined)
+		if(this.alignClock === undefined)
 			this.startAnimation(1, this.getCurrentPosition() - 1);
 		else {
 			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
@@ -211,7 +211,7 @@ Ui.Container.extend('Ui.Carouselable',
 		this.stopAnimation();
 		this.speed = speed;
 		this.animStart = -this.movable.getPositionX() / this.getLayoutWidth();
-		if(next == undefined) {
+		if(next === undefined) {
 			if(this.speed < 0)
 				this.animNext = Math.ceil(this.animStart);
 			else

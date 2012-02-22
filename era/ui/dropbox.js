@@ -78,7 +78,7 @@ Ui.LBox.extend('Ui.DropBox',
 	onDragOver: function(event) {
 //		console.log('onDragOver effectAllowed: '+event.dataTransfer.effectAllowed);
 
-		if(event.dataTransfer == undefined)
+		if(event.dataTransfer === undefined)
 			return;
 
 		if(event.dataTransfer.types != undefined) {
@@ -131,7 +131,7 @@ Ui.LBox.extend('Ui.DropBox',
 		
 		var dropPoint = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
-//		console.log('drop Files: '+((event.dataTransfer.files == undefined)?0:event.dataTransfer.files.length));
+//		console.log('drop Files: '+((event.dataTransfer.files === undefined)?0:event.dataTransfer.files.length));
 
 		if((event.dataTransfer.files != undefined) && (event.dataTransfer.files.length > 0)) {
 			// accept the drop

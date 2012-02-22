@@ -81,13 +81,13 @@ Ui.LBox.extend('Ui.Transformable',
 	},
 
 	setContentTransform: function(translateX, translateY, scale, angle) {
-		if(translateX == undefined)
+		if(translateX === undefined)
 			translateX = this.translateX;
-		if(translateY == undefined)
+		if(translateY === undefined)
 			translateY = this.translateY;
-		if(scale == undefined)
+		if(scale === undefined)
 			scale = this.scale;
-		if(angle == undefined)
+		if(angle === undefined)
 			angle = this.angle;
 		this.translateX = translateX;
 		this.translateY = translateY;
@@ -123,7 +123,7 @@ Ui.LBox.extend('Ui.Transformable',
 	},
 
 	onFingerDown: function(event) {
-		if(this.finger1 == undefined) {
+		if(this.finger1 === undefined) {
 			var start = new Ui.Point({ x: event.finger.getX(), y: event.finger.getY() });
 			this.finger1 = { finger: event.finger, start: start };
 
@@ -142,7 +142,7 @@ Ui.LBox.extend('Ui.Transformable',
 
 			event.finger.capture(this.getDrawing());
 		}
-		else if(this.finger2 == undefined) {
+		else if(this.finger2 === undefined) {
 			this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
 
 			var start = new Ui.Point({ x: event.finger.getX(), y: event.finger.getY() });
@@ -318,7 +318,7 @@ Ui.LBox.extend('Ui.Transformable',
 	},
 
 	startInertia: function() {
-		if(this.inertiaClock == undefined) {
+		if(this.inertiaClock === undefined) {
 			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
 				onTimeupdate: function(clock, progress, delta) {
 					if(delta == 0)

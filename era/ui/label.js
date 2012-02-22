@@ -217,7 +217,7 @@ Ui.Element.extend('Ui.Label',
 	measureBox: undefined,
 
 	measureText: function(text, fontSize, fontFamily, fontWeight) {
-		if(Ui.Label.measureBox == undefined)
+		if(Ui.Label.measureBox === undefined)
 			this.createMeasure();
 		Ui.Label.measureBox.style.fontSize = fontSize+'px';
 		Ui.Label.measureBox.style.fontFamily = fontFamily;
@@ -235,7 +235,7 @@ Ui.Element.extend('Ui.Label',
 		if(navigator.isIE || navigator.isGecko)
 			measureWindow = Ui.App.getRootWindow();
 
-		if(measureWindow.document.body == undefined) {
+		if(measureWindow.document.body === undefined) {
 			var body = measureWindow.document.createElement('body');
 			measureWindow.document.body = body;
 		}

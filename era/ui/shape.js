@@ -307,7 +307,7 @@ Ui.Element.extend('Ui.Shape',
 
 		ctx.clearRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight());
 
-		if(this.path == undefined)
+		if(this.path === undefined)
 			return;
 
 		if(this.scale != 1)
@@ -471,7 +471,7 @@ Core.Object.extend('Ui.SvgParser', {
 			while((this.pos < this.path.length) && (this.path.charAt(this.pos) != ' ') && (this.path.charAt(this.pos) != ',') && (this.path.charAt(this.pos) != ';')) {
 				var c = this.path.charAt(this.pos);
 				var isText = (c != 'e') && ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
-				if((lastIsText == undefined) || (lastIsText == isText)) {
+				if((lastIsText === undefined) || (lastIsText == isText)) {
 					lastIsText = isText;
 					this.current += c;
 					this.pos++;

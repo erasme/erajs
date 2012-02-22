@@ -315,4 +315,9 @@ x - BUG dans le Ui.Notebook, il semble que dans un VBox en mode resizable, l'aff
 - Enrichir le Ui.SegmentBar pour autoriser le mode "bouton" (et pas le mode
   selection 1 parmis plusieurs) et autoriser les icones.
   
+- dans Core.Socket, si le mode "websocket" échoue, essayer automatiquement
+  le mode "poll" avant de déclarer que cela ne fonctionne pas.
+
+- Utiliser les === et !=== en lieu et place des == et != quand on peut
+
 

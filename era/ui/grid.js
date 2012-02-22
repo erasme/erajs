@@ -73,9 +73,9 @@ Ui.Container.extend('Ui.Grid',
 	 * Attach a given child on the grid
 	 */
 	attach: function(child, col, row, colSpan, rowSpan) {
-		if(colSpan == undefined)
+		if(colSpan === undefined)
 			colSpan = 1;
-		if(rowSpan == undefined)
+		if(rowSpan === undefined)
 			rowSpan = 1;
 
 		Ui.Grid.setCol(child, col);

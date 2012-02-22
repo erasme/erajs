@@ -171,7 +171,7 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	onInternalSetOpacity: function(cumulOpacity) {
-		if(this.children == undefined)
+		if(this.children === undefined)
 			return;
 		Ui.Container.base.onInternalSetOpacity.call(this);
 		for(var i = 0; i < this.children.length; i++)
