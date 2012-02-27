@@ -257,7 +257,7 @@ Ui.LBox.extend('Ui.Draggable',
 			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
 				this.fireEvent('activate', this);
 			this.lastTime = currentTime;
-//			this.onSelect();
+			this.onSelect();
 		}
 	},
 
