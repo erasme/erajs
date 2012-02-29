@@ -28,13 +28,10 @@ var panelDesc = {
       validation: /\w*(\d[A-Za-z]|[A-Za-z]\d)\w*/
     }
   ]
-}
+};
 
 var panel = new Form.Panel(panelDesc);
-//Do not create popup for now cause panelDesc is consume by the constructor
-//var popup = new Form.Popup({panel:panelDesc});
-
-
+var popup = new Form.Popup({panel:panelDesc});
 //By default, all fields are "stack" in a VBox, but it's easy to change the layout
 var f = panel.fields;
 panel.setLayout([
@@ -56,7 +53,7 @@ var app = new Ui.App({
       {type: Ui.Button, text: "Send", onPress: function(){panel.submit()} },
       {
         type: Ui.Button, text: "Show it in a popup", 
-        onPress: function(){/*popup.show();*/}
+        onPress: function(){popup.show();}
       }
     ]
   }

@@ -125,10 +125,13 @@ Ui.LBox.extend('Form.Field',
 	},
 	
 	setUiElement: function(elt){
+	  if(this.fieldBox === undefined){
+	    return;
+	  }
 		if(this.uiElt !== undefined){
 			this.fieldBox.remove(this.uiElt);
 		}
-		this.uiElt = this.uiEltType.create(elt, this);
+		this.uiElt = this.uiEltType.create(elt);
 		this.fieldBox.prepend(this.uiElt);
 	},
 	
@@ -174,7 +177,7 @@ Form.Field.extend('Form.ComboField',
 	
 	/**Override it cause Ui.Combo need to be left align*/
 	setUiElement: function(elt){
-		elt = Ui.Combo.create(elt, this);
+		elt = Ui.Combo.create(elt);
 		/**@temp For now Ui.Combo do not display properly if they're not left aligned*/
 		elt.setHorizontalAlign('left');
 		//Call the parent method to do the rest
