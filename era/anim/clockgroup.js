@@ -22,10 +22,10 @@ Anim.Clock.extend('Anim.ClockGroup',
 		if((content != undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.appendChild(Anim.Clock.create(content[i], this));
+					this.appendChild(Anim.Clock.create(content[i]));
 			}
 			else
-				this.appendChild(Anim.Clock.create(content, this));
+				this.appendChild(Anim.Clock.create(content));
 		}
 	}
 }, 

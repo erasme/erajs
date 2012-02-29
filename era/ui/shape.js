@@ -38,7 +38,7 @@ Ui.Element.extend('Ui.Shape',
 		if(this.fill != fill) {
 			if(typeof(fill) == 'string')
 				fill = Ui.Color.create(fill);
-			fill = Ui.Element.create(fill, this);
+			fill = Ui.Element.create(fill);
 			this.fill = fill;
 			if(Ui.Shape.forceCanvas) {
 				this.updateCanvas();

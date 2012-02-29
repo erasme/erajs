@@ -247,7 +247,7 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 	}
 }, {
 	setContent: function(content) {
-		this.pressable.setContent(Ui.Element.create(content, this));
+		this.pressable.setContent(Ui.Element.create(content));
 	}
 });
 

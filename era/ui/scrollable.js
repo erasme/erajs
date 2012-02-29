@@ -95,7 +95,7 @@ Ui.Container.extend('Ui.Scrollable',
 
 	setContent: function(content) {
 		var scrollingContent = new Ui.ScrollableContent();
-		scrollingContent.setContent(Ui.Element.create(content, this));
+		scrollingContent.setContent(Ui.Element.create(content));
 		this.setScrollingContent(scrollingContent);
 	},
 

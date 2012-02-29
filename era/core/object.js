@@ -101,7 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config, noscope) { if(noscope !== true) Core.Object.currentScopes.push(this); var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); this.autoConfig(nconfig); if(noscope !== true) Core.Object.currentScopes.pop(); } )");
+	var func = eval("( "+classType+" = function(config) { Core.Object.currentScopes.push(this); var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); Core.Object.currentScopes.pop(); this.autoConfig(nconfig); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -386,8 +386,6 @@ Core.Object.prototype.autoConfig = function(config) {
 
 
 Core.Object.create = function(element, scope) {
-	if(scope === undefined)
-		scope = this;
 	if(element === undefined)
 		return undefined;
 	else if(typeof(element) == 'string') {
@@ -399,12 +397,9 @@ Core.Object.create = function(element, scope) {
 	else if(Core.Object.hasInstance(element))
 		return element;
 	else {
-		var pushScope = false;
-
-		if(Core.Object.currentScopes.length === 0) {
+		if(scope !== undefined)
 			Core.Object.currentScopes.push(scope);
-			pushScope = true;
-		}
+
 		var type = element.type;
 //#if DEBUG
 		if('type' in element && type === undefined)
@@ -423,9 +418,9 @@ Core.Object.create = function(element, scope) {
 		}
 //#end
 		delete(element.type);
-		var res = new type(element, true);
+		var res = new type(element);
 
-		if(pushScope)
+		if(scope !== undefined)
 			Core.Object.currentScopes.pop();
 		return res;
 	}

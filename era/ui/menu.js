@@ -458,7 +458,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	}
 }, {
 	setContent: function(content) {
-		this.pressable.append(Ui.Element.create(content, this));
+		this.pressable.append(Ui.Element.create(content));
 	}
 });
 

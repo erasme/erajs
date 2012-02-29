@@ -21,10 +21,10 @@ Ui.Container.extend('Ui.Flow',
 		if((content != undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.appendChild(Ui.Element.create(content[i], this));
+					this.appendChild(Ui.Element.create(content[i]));
 			}
 			else
-				this.appendChild(Ui.Element.create(content, this));
+				this.appendChild(Ui.Element.create(content));
 		}
 	},
 

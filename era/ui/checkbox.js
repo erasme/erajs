@@ -190,7 +190,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 	},
 
 	setContent: function(content) {
-		content = Ui.Element.create(content, this);
+		content = Ui.Element.create(content);
 
 		if(content === undefined) {
 			if(this.contentBox != undefined) {

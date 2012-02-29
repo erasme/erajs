@@ -437,7 +437,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	/**#@-*/
 }, {
 	setContent: function(content) {
-		this.content = Ui.Element.create(content, this);
+		this.content = Ui.Element.create(content);
 		this.contentBox.setContent(this.content);
 	}
 });

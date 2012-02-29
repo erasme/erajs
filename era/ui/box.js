@@ -182,7 +182,7 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the end of the box
 	 */
 	append: function(child, resizable) {
-		child = Ui.Element.create(child, this);
+		child = Ui.Element.create(child);
 		if(resizable)
 			Ui.Box.setResizable(child, true);
 		this.appendChild(child);
@@ -192,7 +192,7 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the begining of the box
 	 */
 	prepend: function(child, resizable) {
-		child = Ui.Element.create(child, this);
+		child = Ui.Element.create(child);
 		if(resizable)
 			Ui.Box.setResizable(child, true);
 		this.prependChild(child);

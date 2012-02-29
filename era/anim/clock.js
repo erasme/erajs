@@ -64,7 +64,7 @@ Core.Object.extend('Anim.Clock',
 	},
 
 	setEase: function(ease) {
-		this.ease = Anim.EasingFunction.create(ease, this);
+		this.ease = Anim.EasingFunction.create(ease);
 	},
 
 	setTarget: function(target) {

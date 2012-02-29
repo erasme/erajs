@@ -67,7 +67,7 @@ Ui.LBox.extend('Ui.Switch',
 		if('ease' in config)
 			this.setEase(config.ease);
 		else
-			this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' }, this);
+			this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' });
 		if('value' in config) {
 			this.value = config.value;
 			if(this.value)
@@ -78,7 +78,7 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	setEase: function(ease) {
-		this.ease = Anim.EasingFunction.create(ease, this);
+		this.ease = Anim.EasingFunction.create(ease);
 	},
 
 	setTrueContent: function(trueContent) {

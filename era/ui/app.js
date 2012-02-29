@@ -705,7 +705,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	setContent: function(content) {
-		content = Ui.Element.create(content, this);
+		content = Ui.Element.create(content);
 		if(this.content != content) {
 			document.documentElement.style.padding = '0px';
 			document.documentElement.style.margin = '0px';
