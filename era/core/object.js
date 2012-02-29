@@ -376,7 +376,7 @@ Core.Object.prototype.autoConfig = function(config) {
 //#end
 		}
 //#if DEBUG
-		else if(prop !== 'scope')
+		else if((prop !== 'scope') && (prop !== 'type'))
 			throw('Property \''+prop+'\' not found on '+this.classType);
 //#end
 	}
@@ -417,10 +417,8 @@ Core.Object.create = function(element, scope) {
 			}
 		}
 //#end
-		var elementType = element.type;
-		delete(element.type);
+//		delete(element.type);
 		var res = new type(element);
-		element.type = elementType;
 
 		if(scope !== undefined)
 			Core.Object.currentScopes.pop();
