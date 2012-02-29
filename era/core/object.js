@@ -375,7 +375,7 @@ Core.Object.prototype.autoConfig = function(config) {
 //#end
 		}
 //#if DEBUG
-		else
+		else if(prop !== 'scope')
 			throw('Property \''+prop+'\' not found on '+this.classType);
 //#end
 	}
