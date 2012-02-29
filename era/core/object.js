@@ -101,7 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config) { var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); this.autoConfig(nconfig); } )");
+	var func = eval("( "+classType+" = function(config, noscope) { if(noscope !== true) Core.Object.currentScopes.push(this); var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); this.autoConfig(nconfig); if(noscope !== true) Core.Object.currentScopes.pop(); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -331,6 +331,7 @@ Core.Object.prototype.autoConfig = function(config) {
 	for(var prop in config) {
 		// look for name
 		if(prop === 'name') {
+//			console.log(this+'.autoConfig NAME: '+config.name+', SCOPE: '+scope);
 			scope[config.name] = this;
 			delete(config.name);
 			continue;
@@ -399,7 +400,8 @@ Core.Object.create = function(element, scope) {
 		return element;
 	else {
 		var pushScope = false;
-		if(Core.Object.currentScopes.length == 0) {
+
+		if(Core.Object.currentScopes.length === 0) {
 			Core.Object.currentScopes.push(scope);
 			pushScope = true;
 		}
@@ -421,7 +423,7 @@ Core.Object.create = function(element, scope) {
 		}
 //#end
 		delete(element.type);
-		var res = new type(element);
+		var res = new type(element, true);
 
 		if(pushScope)
 			Core.Object.currentScopes.pop();
