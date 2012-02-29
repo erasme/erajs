@@ -88,7 +88,7 @@ Ui.Container.extend('Ui.Notebook',
 	* accordeon
 	*/
 	appendPage: function(page) {
-		page = Ui.NotebookPage.create(page, this);
+		page = Ui.NotebookPage.create(page);
 		this.pages.push(page);
 		this.prependChild(page.getBackground());
 		this.appendChild(page.getHeaderBox());
@@ -357,7 +357,7 @@ Core.Object.extend('Ui.NotebookPage',
 		if(header != this.header) {
 			if(this.header != undefined)
 				this.headerBox.removeChild(this.header);
-			this.header = Ui.Element.create(header, this);
+			this.header = Ui.Element.create(header);
 			if(this.header != undefined)
 				this.headerBox.appendChild(this.header);
 		}
@@ -377,7 +377,7 @@ Core.Object.extend('Ui.NotebookPage',
 		if(content != this.content) {
 			if(this.content != undefined)
 				this.contentBox.removeChild(this.content);
-			this.content = Ui.Element.create(content, this);
+			this.content = Ui.Element.create(content);
 			if(this.content != undefined)
 				this.contentBox.appendChild(this.content);
 		}

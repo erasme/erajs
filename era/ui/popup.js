@@ -55,7 +55,7 @@ Ui.Container.extend('Ui.Popup',
 	},
 
 	setContent: function(content) {
-		content = Ui.Element.create(content, this);
+		content = Ui.Element.create(content);
 		if(this.content != content) {
 			if(this.content != undefined)
 				this.contentBox.remove(this.content);

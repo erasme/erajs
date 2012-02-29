@@ -114,14 +114,14 @@ Ui.Container.extend('Ui.LBox',
 	// Append a child on the top of all other layers
 	//
 	append: function(child) {
-		this.appendChild(Ui.Element.create(child, this));
+		this.appendChild(Ui.Element.create(child));
 	},
 
 	//
 	// Append a child on the bottom of all other layers
 	//
 	prepend: function(child) {
-		this.prependChild(Ui.Element.create(child, this));
+		this.prependChild(Ui.Element.create(child));
 	},
 
 	//
