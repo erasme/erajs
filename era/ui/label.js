@@ -215,10 +215,33 @@ Ui.Element.extend('Ui.Label',
 /**@lends Ui.Label*/
 {
 	measureBox: undefined,
+	measureContext: undefined,
 
-	measureText: function(text, fontSize, fontFamily, fontWeight) {
+	measureTextCanvas: function(text, fontSize, fontFamily, fontWeight) {
 		if(Ui.Label.measureBox === undefined)
-			this.createMeasure();
+			this.createMeasureCanvas();
+		Ui.Label.measureContext.font = fontWeight+' '+fontSize+'px '+fontFamily;
+		return { width: Ui.Label.measureContext.measureText(text).width, height: fontSize };
+	},
+
+	createMeasureCanvas: function() {
+		var measureWindow = window;
+		if(navigator.isIE || navigator.isGecko)
+			measureWindow = Ui.App.getRootWindow();
+
+		if(measureWindow.document.body === undefined) {
+			var body = measureWindow.document.createElement('body');
+			measureWindow.document.body = body;
+		}
+		Ui.Label.measureBox = measureWindow.document.createElement('canvas');
+		Ui.Label.measureBox.style.visibility = 'hidden';
+		measureWindow.document.body.appendChild(Ui.Label.measureBox);
+		Ui.Label.measureContext = Ui.Label.measureBox.getContext('2d');
+	},
+
+	measureTextHtml: function(text, fontSize, fontFamily, fontWeight) {
+		if(Ui.Label.measureBox === undefined)
+			this.createMeasureHtml();
 		Ui.Label.measureBox.style.fontSize = fontSize+'px';
 		Ui.Label.measureBox.style.fontFamily = fontFamily;
 		Ui.Label.measureBox.style.fontWeight = fontWeight;
@@ -230,7 +253,7 @@ Ui.Element.extend('Ui.Label',
 		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
 	},
 
-	createMeasure: function() {
+	createMeasureHtml: function() {
 		var measureWindow = window;
 		if(navigator.isIE || navigator.isGecko)
 			measureWindow = Ui.App.getRootWindow();
@@ -244,6 +267,13 @@ Ui.Element.extend('Ui.Label',
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
 		measureWindow.document.body.appendChild(Ui.Label.measureBox);
+	},
+
+	measureText: function(text, fontSize, fontFamily, fontWeight) {
+		if(navigator.supportCanvas)
+			return Ui.Label.measureTextCanvas(text, fontSize, fontFamily, fontWeight);
+		else
+			return Ui.Label.measureTextHtml(text, fontSize, fontFamily, fontWeight);
 	},
 
 	style: {
