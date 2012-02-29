@@ -90,6 +90,15 @@ Core.Util.include = function(fileName) {
    	document.write("<script type='text/javascript' src='"+fileName+"'></script>");
 }
 
+Core.Util.clone = function(obj) {
+	if(obj === null || typeof(obj) !== 'object')
+		return null;
+	var clone = {};
+	for(var prop in obj)
+		clone[prop] = obj[prop];
+    return clone;
+};
+
 Core.Util.encodeURIQuery = function(obj) {
 	// encode arguments
 	var args = '';
