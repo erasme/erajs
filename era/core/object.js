@@ -331,7 +331,7 @@ Core.Object.prototype.autoConfig = function(config) {
 	for(var prop in config) {
 		// look for name
 		if(prop === 'name') {
-			console.log(this+'.autoConfig NAME: '+config.name+', SCOPE: '+scope);
+//			console.log(this+'.autoConfig NAME: '+config.name+', SCOPE: '+scope);
 			scope[config.name] = this;
 			delete(config.name);
 			continue;
