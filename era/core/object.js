@@ -101,7 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); this.autoConfig(config); } )");
+	var func = eval("( "+classType+" = function(config) { var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); this.autoConfig(nconfig); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -375,7 +375,7 @@ Core.Object.prototype.autoConfig = function(config) {
 //#end
 		}
 //#if DEBUG
-		else if(prop != 'scope')
+		else
 			throw('Property \''+prop+'\' not found on '+this.classType);
 //#end
 	}
