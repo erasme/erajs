@@ -2,8 +2,8 @@ Ui.Container.extend('Ui.Locator',
 /**@lends Ui.Locator#*/
 {
 	path: undefined,
-	backgrounds: undefined,
 	foregrounds: undefined,
+	backgrounds: undefined,
 	spacing: 2,
 	border: undefined,
 
@@ -22,15 +22,15 @@ Ui.Container.extend('Ui.Locator',
 		while(this.getChildren().length > 0)
 			this.removeChild(this.getChildren()[0]);
 
+		this.border = new Ui.Frame({ frameWidth: 1, fill: '#888888', radius: 8 });
+		this.appendChild(this.border);
+
 		this.backgrounds = [];
 		this.foregrounds = [];
 
 		var button;
 
-		var gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: '#fbfbfb' },
-			{ offset: 1, color: '#c8c8c8' }
-		] });
+		var gradient = this.getGradient();
 
 		if(path == '/') {
 			var bg = new Ui.Pressable();
@@ -39,7 +39,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(bg, 'press', this.onPathPress);
 			this.connect(bg, 'down', this.onPathDown);
 			this.connect(bg, 'up', this.onPathUp);
-			bg.appendChild(new Ui.Rectangle({ fill: 'lightblue', radius: 8 }));
+			bg.appendChild(new Ui.Rectangle({ fill: gradient, radius: 7 }));
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
@@ -76,7 +76,7 @@ Ui.Container.extend('Ui.Locator',
 			this.connect(bg, 'press', this.onPathPress);
 			this.connect(bg, 'down', this.onPathDown);
 			this.connect(bg, 'up', this.onPathUp);
-			bg.appendChild(new Ui.LocatorRightArrow({ fill: gradient, radius: 8 }));
+			bg.appendChild(new Ui.LocatorRightArrow({ fill: gradient, radius: 7 }));
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
@@ -106,9 +106,9 @@ Ui.Container.extend('Ui.Locator',
 				this.connect(bg, 'down', this.onPathDown);
 				this.connect(bg, 'up', this.onPathUp);
 				if(i == paths.length -1)
-					bg.appendChild(new Ui.LocatorLeftArrow({ fill: 'lightblue', radius: 8 }));
+					bg.appendChild(new Ui.LocatorLeftArrow({ fill: gradient, radius: 7 }));
 				else
-					bg.appendChild(new Ui.LocatorLeftRightArrow({ fill: 'lightblue', radius: 8 }));
+					bg.appendChild(new Ui.LocatorLeftRightArrow({ fill: gradient, radius: 7 }));
 				this.backgrounds.push(bg);
 				this.appendChild(bg);
 	
@@ -118,7 +118,7 @@ Ui.Container.extend('Ui.Locator',
 				this.connect(fg, 'down', this.onPathDown);
 				this.connect(fg, 'up', this.onPathUp);
 				fg.locatorPath = currentPath;
-				fg.appendChild(new Ui.Label({ text: paths[i], margin: 8 }));
+				fg.appendChild(new Ui.Label({ text: paths[i], margin: 7 }));
 				this.foregrounds.push(fg);
 				this.appendChild(fg);
 
@@ -131,16 +131,30 @@ Ui.Container.extend('Ui.Locator',
 		return this.path;
 	},
 
+	getGradient: function() {
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: '#fbfbfb' },
+			{ offset: 1, color: '#c8c8c8' }
+		] });
+	},
+
+	getDownGradient: function() {
+		return new Ui.LinearGradient({ stops: [
+			{ offset: 0, color: '#bbbbbb' },
+			{ offset: 1, color: '#989898' }
+		] });
+	},
+
 	onPathPress: function(pathItem) {
 		this.fireEvent('change', this, pathItem.locatorPath);
 	},
 
 	onPathDown: function(pathItem) {
-		this.backgrounds[pathItem.locatorPos].getChildren()[0].setFill('#38acec');
+		this.backgrounds[pathItem.locatorPos].getChildren()[0].setFill(this.getDownGradient());
 	},
 
 	onPathUp: function(pathItem) {
-		this.backgrounds[pathItem.locatorPos].getChildren()[0].setFill('lightblue');
+		this.backgrounds[pathItem.locatorPos].getChildren()[0].setFill(this.getGradient());
 	}
 }, 
 /**@lends Ui.Locator#*/
@@ -149,12 +163,15 @@ Ui.Container.extend('Ui.Locator',
 		if(this.foregrounds.length == 0)
 			return { width: 0, height: 0 };
 
-		for(var i = 0; i < this.getChildren().length; i++)
-			this.getChildren()[i].measure(width, height);
+		for(var i = 0; i < this.foregrounds.length; i++)
+			this.foregrounds[i].measure(0, 0);
+		for(var i = 0; i < this.backgrounds.length; i++)
+			this.backgrounds[i].measure(0, 0);
+		
+		this.border.measure(0, 0);
 
-		if(this.foregrounds.length == 1) {
-			return { width: this.foregrounds[0].getMeasureWidth(), height: this.foregrounds[0].getMeasureHeight() };
-		}
+		if(this.foregrounds.length == 1)
+			return { width: this.foregrounds[0].getMeasureWidth()+2, height: this.foregrounds[0].getMeasureHeight()+2 };
 		else {
 			var minWidth = 0;
 			var minHeight = 0;
@@ -165,14 +182,15 @@ Ui.Container.extend('Ui.Locator',
 				minWidth += child.getMeasureWidth();
 			}
 			minWidth += (this.foregrounds.length-1) * (minHeight/2 + this.spacing);
-			return { width: minWidth, height: minHeight };
+			return { width: minWidth+2, height: minHeight+2 };
 		}
 	},
 
 	arrangeCore: function(width, height) {
 		if(this.foregrounds.length == 1) {
-			this.foregrounds[0].arrange(0, 0, width, height);
-			this.backgrounds[0].arrange(0, 0, width, height);
+			this.foregrounds[0].arrange(1, 1, width-2, height-2);
+			this.backgrounds[0].arrange(1, 1, width-2, height-2);
+			this.border.arrange(0, 0, width, height);
 			return;
 		}
 
@@ -181,15 +199,16 @@ Ui.Container.extend('Ui.Locator',
 			var bg = this.backgrounds[i];
 			var fg = this.foregrounds[i];
 			var fgWidth = fg.getMeasureWidth();
-			fg.arrange(x, 0, fgWidth, height);
+			fg.arrange(x+1, 0+1, fgWidth, height-2);
 			if(i == 0)
-				bg.arrange(x, 0, fgWidth + height/2, height);
+				bg.arrange(x+1, 0+1, fgWidth + (height-2)/2, height-2);
 			else if(i == this.foregrounds.length -1)
-				bg.arrange(x - height/2, 0, fgWidth + height/2, height);
+				bg.arrange(x - height/2+1, 0+1, fgWidth + (height-2)/2, height-2);
 			else
-				bg.arrange(x - height/2, 0, fgWidth + height, height);
-			x += fgWidth + height/2 + this.spacing;
+				bg.arrange(x - height/2+1, 0+1, fgWidth + (height-2), height-2);
+			x += fgWidth + (height-2)/2 + this.spacing;
 		}
+		this.border.arrange(0, 0, width, height);
 	}
 });
 
@@ -217,7 +236,6 @@ Ui.Shape.extend('Ui.LocatorRightArrow',
 		var v1 = width - height/2;
 		var v2 = height/2;
 		var v3 = height-this.radius;
-//		this.setPath('M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' A'+this.radius+','+this.radius+' 0 0,1 0,'+v3+' L0,'+this.radius+' A'+this.radius+','+this.radius+' 0 0,1 '+this.radius+',0 z');
 		this.setPath('M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' Q0,'+height+' 0,'+v3+' L0,'+this.radius+' Q0,0 '+this.radius+',0 z');
 	}
 });

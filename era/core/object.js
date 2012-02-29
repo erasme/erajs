@@ -101,7 +101,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); this.autoConfig(config); } )");
+	var func = eval("( "+classType+" = function(config) { var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); this.autoConfig(nconfig); } )");
 	if(navigator.isIE) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
@@ -308,30 +308,29 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	}
 };
 
-Core.Object.scopeHelper = function(config, scope) {
-	if('scope' in config)
-		scope = config.scope;
-	else if('type' in config)
-		config.scope = scope;
-	for(var prop in config) {
-		var val = config[prop];
-		if((typeof(val) == 'object') && (val !== null)) {
-			if(val.constructor == Array)
-				Core.Object.scopeHelper(val, scope);
-			else if(val.constructor == Object)
-				Core.Object.scopeHelper(val, scope);
-		}
-	}
-};
+Core.Object.currentScopes = [];
 
 Core.Object.prototype.autoConfig = function(config) {
 	if(config == undefined)
 		return;
-	Core.Object.scopeHelper(config, this);
-	var scope = ('scope' in config)?config.scope:this;
+	var scope;
+	var pushScope = false;
+
+	if('scope' in config) {
+		scope = config.scope;
+		Core.Object.currentScopes.push(scope);
+		pushScope = true;
+	}
+	else if(Core.Object.currentScopes.length > 0)
+		scope = Core.Object.currentScopes[Core.Object.currentScopes.length-1];
+	else {
+		scope = this;
+		Core.Object.currentScopes.push(scope);
+		pushScope = true;
+	}
 	for(var prop in config) {
 		// look for name
-		if(prop == 'name') {
+		if(prop === 'name') {
 			scope[config.name] = this;
 			delete(config.name);
 			continue;
@@ -376,17 +375,19 @@ Core.Object.prototype.autoConfig = function(config) {
 //#end
 		}
 //#if DEBUG
-		else if(prop != 'scope')
+		else
 			throw('Property \''+prop+'\' not found on '+this.classType);
 //#end
 	}
+	if(pushScope)
+		Core.Object.currentScopes.pop();
 };
 
 
 Core.Object.create = function(element, scope) {
 	if(scope === undefined)
 		scope = this;
-	if(element == undefined)
+	if(element === undefined)
 		return undefined;
 	else if(typeof(element) == 'string') {
 		if('parse' in this)
@@ -397,14 +398,17 @@ Core.Object.create = function(element, scope) {
 	else if(Core.Object.hasInstance(element))
 		return element;
 	else {
-		if(!('scope' in element))
-			element.scope = scope;
+		var pushScope = false;
+		if(Core.Object.currentScopes.length == 0) {
+			Core.Object.currentScopes.push(scope);
+			pushScope = true;
+		}
 		var type = element.type;
 //#if DEBUG
-		if('type' in element && type == undefined)
+		if('type' in element && type === undefined)
 			throw('Cannot create object of type undefined');
 //#end
-		if(type == undefined)
+		if(type === undefined)
 			type = this;
 //#if DEBUG
 		else {
@@ -417,7 +421,11 @@ Core.Object.create = function(element, scope) {
 		}
 //#end
 		delete(element.type);
-		return new type(element);
+		var res = new type(element);
+
+		if(pushScope)
+			Core.Object.currentScopes.pop();
+		return res;
 	}
 };
 
