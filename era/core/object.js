@@ -417,8 +417,10 @@ Core.Object.create = function(element, scope) {
 			}
 		}
 //#end
+		var elementType = element.type;
 		delete(element.type);
 		var res = new type(element);
+		element.type = elementType;
 
 		if(scope !== undefined)
 			Core.Object.currentScopes.pop();
