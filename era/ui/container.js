@@ -109,6 +109,26 @@ Ui.Element.extend('Ui.Container',
 			return this.children[this.children.length - 1];
 		else
 			return undefined;
+	},
+
+	/**
+	* @return the child position in the container or
+	* -1 if the container does not have this child
+	*/
+	getChildPosition: function(child) {
+		for(var i = 0; i < this.children.length; i++){
+			if(this.children[i] === child){
+				return i;
+			}
+		}
+		return -1;
+	},
+
+	/**
+	* @return true if the element passed is one of the container's children
+	*/
+	hasChild: function(child) {
+		return this.getChildPosition() !== -1;
 	}
 }, 
 /** @lends Ui.Container#*/

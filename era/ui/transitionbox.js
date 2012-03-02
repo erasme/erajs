@@ -92,14 +92,6 @@ Ui.LBox.extend('Ui.TransitionBox',
 	/**#@+
 	 * @private
 	 */
-	getChildPosition: function(child) {
-		for(var i = 0; i < this.getChildren().length; i++) {
-			if(this.getChildren()[i].getChildren()[0] == child)
-				return i;
-		}
-		return -1;
-	},
-
 	onTransitionBoxLoad: function() {
 	},
 
@@ -163,7 +155,15 @@ Ui.LBox.extend('Ui.TransitionBox',
 				break;
 			}
 		}
-	}
+	},
+
+	getChildPosition: function(child) {
+		for(var i = 0; i < this.getChildren().length; i++) {
+			if(this.getChildren()[i].getChildren()[0] == child)
+				return i;
+		}
+		return -1;
+	},
 });
 
 Ui.LBox.extend('Ui.TransitionBoxContent', {});

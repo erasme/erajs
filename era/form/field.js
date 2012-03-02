@@ -31,19 +31,16 @@ Ui.LBox.extend('Form.Field',
 						{
 							//Handle label with multiple colors...
 							type: Ui.HBox, name: 'labelBox', width: 200, verticalAlign: 'top', spacing: 2,
-								content: [{type: Ui.Label, name: 'label'}]
+							content: [{type: Ui.Label, name: 'label'}]
 						},
-						{
-							type: Ui.VBox,
-							name: 'fieldBox',
-							content: [
-								{type: Ui.Label, name: 'description', horizontalAlign: 'left', color: '#444444'},
-								{type: Ui.Label, name: 'error', color: 'red', horizontalAlign: 'left', fontWeight: 'bold'}
-							]
-						}
+						{type: Ui.VBox, name: 'fieldBox'}
 					]
 				}
 			]);
+
+		//They will be add to fieldBox
+		this.description = new Ui.Label({horizontalAlign: 'left', color: '#444444'});
+		this.error = new Ui.Label({color: 'red', horizontalAlign: 'left', fontWeight: 'bold'});
 	},
 
 	/**
@@ -64,6 +61,9 @@ Ui.LBox.extend('Form.Field',
 		if(this.require){
 			this.labelBox.append(new Ui.Label({text: '*', color: 'red', fontWeight: 'bold'}));
 		}
+		else if(this.labelBox.getChildren().length > 1){
+			this.labelBox.remove(this.labelBox.getLastChild());
+		}
 	},
 	
 	isRequire: function(){
@@ -71,6 +71,17 @@ Ui.LBox.extend('Form.Field',
 	},
 	
 	setDescription: function(description){
+		if(description !== ""){
+			this.fieldBox.append(this.description);
+
+			if(this.fieldBox.hasChild(this.error)){
+				//Error label is always below the description
+				this.fieldBox.moveChildAt(this.error, -1);
+			}
+		}
+		else if(this.fieldBox.hasChild(this.description)){
+			this.fieldBox.remove(this.description);
+		}
 		this.description.setText(description);
 	},
 	
@@ -98,9 +109,13 @@ Ui.LBox.extend('Form.Field',
 	setError: function(error){
 		if(error !== ''){
 			this.background.setFill('pink');
+			this.fieldBox.append(this.error);
 		}
 		else{
 			this.background.setFill('white');
+			if(this.fieldBox.hasChild(this.error)){
+				this.fieldBox.remove(this.error);
+			}
 		}
 
 		this.error.setText(error);
@@ -125,9 +140,6 @@ Ui.LBox.extend('Form.Field',
 	},
 	
 	setUiElement: function(elt){
-	  if(this.fieldBox === undefined){
-	    return;
-	  }
 		if(this.uiElt !== undefined){
 			this.fieldBox.remove(this.uiElt);
 		}
