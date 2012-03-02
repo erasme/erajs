@@ -3,10 +3,12 @@ Ui.Container.extend('Ui.ListView',
 {
 	data: undefined,
 	headers: undefined,
+	cols: undefined,
 	rowsHeight: 0,
 	headersHeight: 0,
 	selectedRow: undefined,
 	headersVisible: true,
+	mode: 'manual',
 
 	/**
 	 * @constructs
@@ -24,8 +26,9 @@ Ui.Container.extend('Ui.ListView',
 			delete(config.headers);
 		}
 		else
-			this.headers = [ { width: 100, type: 'string', title: 'Title', key: 'default' }];
+			this.headers = [{ width: 100, type: 'string', title: 'Title', key: 'default' }];
 		this.data = [];
+		this.cols = [];
 
 		for(var i = 0; i < this.headers.length; i++) {
 			var header = this.headers[i];
@@ -33,6 +36,29 @@ Ui.Container.extend('Ui.ListView',
 			header.rows = [];
 			header.colWidth = header.width;
 			this.appendChild(header.ui);
+		}
+		for(var i = 0; i < this.headers.length; i++) {
+			var col = new Ui.ListViewColBar({ header: this.headers[i].ui });
+			this.cols.push(col);
+			this.appendChild(col);
+		}
+	},
+
+	setMode: function(mode) {
+		if(this.mode !== mode) {
+//#if DEBUG
+			if((mode !== 'manual') && (mode !== 'auto'))
+				throw('Ui.ListView only support mode [auto|manual]');
+//#END
+			this.mode = mode;
+
+			for(var i = 0; i < this.cols.length; i++) {
+				if(this.mode === 'manual')
+					this.cols[i].enable();
+				else
+					this.cols[i].disable();
+			}
+			this.invalidateMeasure();
 		}
 	},
 
@@ -236,7 +262,7 @@ Ui.Container.extend('Ui.ListView',
 }, 
  /** @lends Ui.ListView#*/
 {
-	measureCore: function(width, height) {
+	measureCoreAuto: function(width, height) {
 		for(var col = 0; col < this.headers.length; col++)
 			this.headers[col].minWidth = 0;
 		var widthDone;
@@ -312,16 +338,62 @@ Ui.Container.extend('Ui.ListView',
 		return { width: minWidth, height: this.headersHeight + this.rowsHeight };
 	},
 
-	arrangeCore: function(width, height) {
+	measureCoreManual: function(width, height) {
+		this.rowsHeight = 0;
+		this.headersHeight = 0;
+		var minHeight = 0;
+		// measure headers
+		for(var col = 0; col < this.headers.length; col++) {
+			var header = this.headers[col];
+			var size = header.ui.measure(0, 0);
+			if(size.height > minHeight)
+				minHeight = size.height;
+		}
+		if(this.headersVisible)
+			this.headersHeight = minHeight;
+		// measure content
+		for(var dataRow = 0; dataRow < this.data.length; dataRow++) {
+			var data = this.data[dataRow];
+			var minHeight = 0;
+			for(var col = 0; col < this.headers.length; col++) {
+				var header = this.headers[col];
+				var cell = this.headers[col].rows[dataRow];
+				var colWidth = header.ui.getMeasureWidth();
+				var size = cell.measure(colWidth, 0);
+				if(size.height > minHeight)
+					minHeight = size.height;
+			}
+			data.rowHeight = minHeight;
+			this.rowsHeight += data.rowHeight;
+		}
+		var minWidth = 0;
+		for(var col = 0; col < this.headers.length; col++)
+			minWidth += this.headers[col].ui.getMeasureWidth();
+
+		// measure col bars
+		for(var i = 0; i < this.cols.length; i++) {
+			var col = this.cols[i];
+			col.measure(0, this.headersHeight + this.rowsHeight);
+		}
+
+		return { width: minWidth, height: this.headersHeight + this.rowsHeight };
+	},
+
+	arrangeCoreAuto: function(width, height) {
 		// update headers
 		var x = 0;
 		var availableWidth = width;
 		for(var col = 0; col < this.headers.length; col++) {
 			var header = this.headers[col];
+			var colbar = this.cols[col];
 			var colWidth = header.minWidth;
 			if(col == this.headers.length - 1)
 				colWidth = Math.max(colWidth, availableWidth);
 			header.ui.arrange(x, 0, colWidth, this.headersHeight);
+
+			colbar.setHeaderHeight(this.headersHeight);
+			colbar.arrange(x+colWidth-colbar.getMeasureWidth(), 0, colbar.getMeasureWidth(), this.headersHeight + this.rowsHeight);
+
 			x += colWidth;
 			availableWidth -= colWidth;
 		}
@@ -348,6 +420,62 @@ Ui.Container.extend('Ui.ListView',
 			y += data.rowHeight;
 		}
 		this.rowContainer.arrange(0, this.headersHeight, width, height - this.headersHeight);
+	},
+
+	arrangeCoreManual: function(width, height) {
+		// update headers
+		var x = 0;
+		var availableWidth = width;
+		for(var col = 0; col < this.headers.length; col++) {
+			var header = this.headers[col];
+			var colbar = this.cols[col];
+			var colWidth = header.ui.getMeasureWidth();
+			if(col == this.headers.length - 1)
+				colWidth = Math.max(colWidth, availableWidth);
+			header.ui.arrange(x, 0, colWidth, this.headersHeight);
+
+			colbar.setHeaderHeight(this.headersHeight);
+			colbar.arrange(x+colWidth-colbar.getMeasureWidth(), 0, colbar.getMeasureWidth(), this.headersHeight + this.rowsHeight);
+
+			x += colWidth;
+			availableWidth -= colWidth;
+		}
+		// handle no data case
+		if(this.data.length == 0)
+			return;
+
+		var y = 0;
+		for(var row = 0; row < this.data.length; row++) {
+			var data = this.data[row];
+			var x = 0;
+			var availableWidth = width;
+			for(var col = 0; col < this.headers.length; col++) {
+				var header = this.headers[col];
+				var colWidth = header.ui.getMeasureWidth();
+				if(col == this.headers.length - 1)
+					colWidth = Math.max(colWidth, availableWidth);
+				var cell = header.rows[row];
+				cell.arrange(x, y, colWidth, data.rowHeight);
+				x += colWidth;
+				availableWidth -= colWidth;
+			}
+			y += data.rowHeight;
+		}
+		this.rowContainer.arrange(0, this.headersHeight, width, height - this.headersHeight);
+	},
+
+	measureCore: function(width, height) {
+		if(this.mode === 'auto')
+			return this.measureCoreAuto(width, height);
+		else
+			return this.measureCoreManual(width, height);
+	},
+
+	arrangeCore: function(width, height) {
+		if(this.mode === 'auto')
+			this.arrangeCoreAuto(width, height);
+		else
+			this.arrangeCoreManual(width, height);
 	}
 });
 
@@ -464,6 +592,7 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 	 * @extends Ui.Selectable
 	 */
 	constructor: function(config) {
+		this.setClipToBounds(true);
 		this.border = new Ui.Rectangle({ height: 1, verticalAlign: 'bottom' });
 		this.append(this.border);
 
@@ -560,6 +689,73 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99, a: 0.1 }),
 		selectColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		spacing: 5
+	}
+});
+
+
+Ui.Container.extend('Ui.ListViewColBar', {
+	headerHeight: 0,
+	header: undefined,
+	grip: undefined,
+	separator: undefined,
+
+	constructor: function(config) {
+		this.grip = new Ui.Movable({ moveVertical: false });
+		this.appendChild(this.grip);
+		this.connect(this.grip, 'move', this.onMove);
+		this.connect(this.grip, 'up', this.onUp);
+
+		var lbox = new Ui.LBox();
+		this.grip.setContent(lbox);
+		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'white', marginLeft: 3, marginRight: 9+2, marginTop: 6, marginBottom: 6 }));
+		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 4, marginRight: 8+2, marginTop: 6, marginBottom: 6 }));
+		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'white', marginLeft: 8, marginRight: 4+2, marginTop: 6, marginBottom: 6 }));
+		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 9, marginRight: 3+2, marginTop: 6, marginBottom: 6 }));
+
+		this.separator = new Ui.Rectangle({ width: 1, fill: 'black', opacity: 0.3 });
+		this.appendChild(this.separator);
+	},
+
+	setHeader: function(header) {
+		this.header = header;
+	},
+
+	setHeaderHeight: function(height) {
+		this.headerHeight = height;
+	},
+
+	onMove: function() {
+		this.separator.setTransform(Ui.Matrix.createTranslate(this.grip.getPositionX(), 0));
+	},
+
+	onUp: function() {
+		var delta = this.grip.getPositionX();
+		this.header.setWidth(Math.max(this.getMeasureWidth(), this.header.getMeasureWidth()+delta));
+		this.invalidateArrange();
+	}
+
+}, {
+	measureCore: function(width, height) {
+		var size = this.grip.measure(width, height);
+		this.separator.measure(width, height);
+		return { width: size.width, height: 0 };
+	},
+
+	arrangeCore: function(width, height) {
+		this.grip.setPosition(0, 0);
+		this.separator.setTransform(Ui.Matrix.createTranslate(0, 0));
+		this.grip.arrange(0, 0, width, this.headerHeight);
+		this.separator.arrange(width-1, 0, 1, height);
+	},
+
+	onDisable: function() {
+		Ui.ListViewColBar.base.onDisable.call(this);
+		this.grip.hide();
+	},
+
+	onEnable: function() {
+		Ui.ListViewColBar.base.onEnable.call(this);
+		this.grip.show();
 	}
 });
 
