@@ -20,7 +20,6 @@ Ui.Element.extend('Ui.Text',
 	spaceWidth: undefined,
 	maxWidth: undefined,
 	lineHeight: undefined,
-	selectable: false,
 	textMeasureValid: false,
 
     /**
@@ -32,10 +31,10 @@ Ui.Element.extend('Ui.Text',
      * @param {String} [config.fontFamily]
      * @param {String} [config.fontWeight]
      * @param {String} [config.color]
-     * @param {Boolean} [config.selectable] Whether or not the text can be selected
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
+		this.setSelectable(false);
 		this.words = [];
 	},
 
@@ -131,47 +130,9 @@ Ui.Element.extend('Ui.Text',
 			return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
-	getSelectable: function() {
-		return this.selectable;
-	},
-
-	setSelectable: function(selectable) {
-		/**#nocode+ Avoid Jsdoc warnings...*/
-		this.selectable = selectable;
-		this.getDrawing().selectable = selectable;
-
-		if(selectable) {
-			this.textDrawing.style.cursor = 'text';
-			if(navigator.isWebkit)
-				this.textDrawing.style.removeProperty('-webkit-user-select');
-			else if(navigator.isGecko)
-				this.textDrawing.style.removeProperty('-moz-user-select');
-			else if(navigator.isIE)
-				this.disconnect(this.textDrawing, 'selectstart', this.onSelectStart);
-			else if(navigator.isOpera)
-				this.textDrawing.onmousedown = undefined;
-		}
-		else {
-			this.textDrawing.style.cursor = 'inherit';
-			if(navigator.isWebkit)
-				this.textDrawing.style.webkitUserSelect = 'none';
-			else if(navigator.isGecko)
-				this.textDrawing.style.MozUserSelect = 'none';
-			else if(navigator.isIE)
-				this.connect(this.textDrawing, 'selectstart', this.onSelectStart);
-			else if(navigator.isOpera)
-				this.textDrawing.onmousedown = function(event) { event.preventDefault(); };
-		}
-		/**#nocode-*/
-	},
-
 	/**#@+ 
 	 * @private 
 	 */
-
-	onSelectStart: function(event) {
-		event.preventDefault();
-	},
 
 	addWord: function(word) {
 		if(word.size > this.maxWidth)
@@ -295,7 +256,6 @@ Ui.Element.extend('Ui.Text',
 		this.textDrawing.style.position = 'absolute';
 		this.textDrawing.style.left = '0px';
 		this.textDrawing.style.top = '0px';
-		this.textDrawing.selectable = this.selectable;
 		return this.textDrawing;
 	},
 

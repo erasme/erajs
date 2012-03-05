@@ -6,8 +6,6 @@
 Core.Object.extend('Ui.Element', 
 /**@lends Ui.Element#*/
 {
-//	name: undefined,
-
 	marginTop: 0,
 	marginBottom: 0,
 	marginLeft: 0,
@@ -76,6 +74,8 @@ Core.Object.extend('Ui.Element',
 	 */
 	keyboardRequired: false,
 
+	selectable: false,
+
 	transform: undefined,
 	transformOriginX: 0.5,
 	transformOriginY: 0.5,
@@ -116,6 +116,7 @@ Core.Object.extend('Ui.Element',
      * @param {String} [config.keyboardRequired]
      * @param {String} [config.clipToBounds]
      * @param {String} [config.id]
+     * @param {Boolean} [config.selectable] Whether or not the element can be selected
 	 */
 	constructor: function(config) {
 		// create the drawing container
@@ -147,19 +148,38 @@ Core.Object.extend('Ui.Element',
 		return this.drawing;
 	},
 
-/*	getName: function() {
-		return this.name;
+	getSelectable: function() {
+		return this.selectable;
 	},
 
-	setName: function(name) {
-		this.name = name;
-	},*/
+	setSelectable: function(selectable) {
+		/**#nocode+ Avoid Jsdoc warnings...*/
+		this.selectable = selectable;
+		this.getDrawing().selectable = selectable;
 
-	get: function(name) {
-		if(this.name == name)
-			return this;
-		else
-			return undefined;
+		if(selectable) {
+			this.getDrawing().style.cursor = 'text';
+			if(navigator.isWebkit)
+				this.getDrawing().style.removeProperty('-webkit-user-select');
+			else if(navigator.isGecko)
+				this.getDrawing().style.removeProperty('-moz-user-select');
+			else if(navigator.isIE)
+				this.disconnect(this.getDrawing(), 'selectstart', this.onSelectStart);
+			else if(navigator.isOpera)
+				this.getDrawing().onmousedown = undefined;
+		}
+		else {
+			this.getDrawing().style.cursor = 'inherit';
+			if(navigator.isWebkit)
+				this.getDrawing().style.webkitUserSelect = 'none';
+			else if(navigator.isGecko)
+				this.getDrawing().style.MozUserSelect = 'none';
+			else if(navigator.isIE)
+				this.connect(this.getDrawing(), 'selectstart', this.onSelectStart);
+			else if(navigator.isOpera)
+				this.getDrawing().onmousedown = function(event) { event.preventDefault(); };
+		}
+		/**#nocode-*/
 	},
 
 	getLayoutX: function() {
@@ -297,6 +317,9 @@ Core.Object.extend('Ui.Element',
 	 * updated
 	 */
 	invalidateMeasure: function() {
+//		if(Ui.Paned.hasInstance(this))
+//			console.log('Paned.invalidateMeasure '+this.measureValid);
+
 //		console.log(this+'.invalidateMeasure start');
 
 		if(this.measureValid) {
@@ -1109,6 +1132,11 @@ Core.Object.extend('Ui.Element',
 	/**#@+
 	* @private
 	*/
+
+	onSelectStart: function(event) {
+		event.preventDefault();
+	},
+
 	onFocus: function(event) {
 		if(this.focusable && !this.getIsDisabled()) {
 			event.preventDefault();
