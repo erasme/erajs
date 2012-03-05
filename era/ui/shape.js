@@ -34,6 +34,10 @@ Ui.Element.extend('Ui.Shape',
 		}
 	},
 
+	getFill: function() {
+		return this.fill;
+	},
+
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			if(typeof(fill) == 'string')

@@ -34,6 +34,8 @@ Core.Object.extend('Core.Finger',
 	id: undefined,
 	x: undefined,
 	y: undefined,
+	initialX: undefined,
+	initialY: undefined,
 	captureElement: undefined,
 
 	/**
@@ -48,6 +50,8 @@ Core.Object.extend('Core.Finger',
 		delete(config.id);
 		this.x = config.x;
 		this.y = config.y;
+		this.initialX = config.x;
+		this.initialY = config.y;
 		delete(config.x);
 		delete(config.y);
 
@@ -99,20 +103,23 @@ Core.Object.extend('Core.Finger',
 	release: function() {
 		if(this.captureElement != undefined) {
 
-			var target = document.elementFromPoint(this.x, this.y);
+/*			var target = document.elementFromPoint(this.x, this.y);
 			if(target != undefined) {
 				// resend the up event
 				var fingerEvent = document.createEvent('FingerEvent');
 				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
 				target.dispatchEvent(fingerEvent);
-			}
+			}*/
 
-/*			if(this.captureElement.offsetParent != undefined) {
+			this.x = this.initialX;
+			this.y = this.initialY;
+
+			if(this.captureElement.offsetParent != undefined) {
 				// resend the up event
 				var fingerEvent = document.createEvent('FingerEvent');
 				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
 				this.captureElement.offsetParent.dispatchEvent(fingerEvent);
-			}*/
+			}
 			this.captureElement = undefined;
 		}
 	},
@@ -180,6 +187,13 @@ Core.Object.extend('Core.FingerManager',
 		}
 		event.preventDefault();
 		event.stopPropagation();
+
+		// like the iOS event thread create a famine in the main thread
+		// call the update here if needed
+		if((navigator.iPad || navigator.iPhone) && (Ui.App.current.updateTask != undefined)) {
+			Ui.App.current.updateTask.abort();
+			Ui.App.current.update();
+		}
 	}
 });
 

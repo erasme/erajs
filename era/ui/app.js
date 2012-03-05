@@ -331,14 +331,13 @@ Ui.LBox.extend('Ui.App',
 */
 
 	update: function() {
-//		console.log(this+'.update start ('+(new Date()).getTime()+')');
-
-//		console.log('window.update inner: '+window.innerWidth+' x '+window.innerHeight+', client: '+document.body.clientWidth+' x '+document.body.clientHeight);
+		// clean the updateTask to allow a new one
+		// important to do it first because iOS with its
+		// bad thread system can trigger code that will ask for an
+		// update without having finish this code
+		this.updateTask = undefined;
 
 //		window.scrollTo(0, 0);
-
-//		console.log(window);
-//		Core.Object.dump(window, 'scroll');
 
 		// update measure
 //		var innerWidth = window.innerWidth;
@@ -423,10 +422,6 @@ Ui.LBox.extend('Ui.App',
 			document.body.scrollLeft = 0;
 			document.body.scrollTop = top;
 		}
-
-//		console.log(document.body.scrollLeft);
-
-		this.updateTask = undefined;
 	},
 
 	getContent: function() {
@@ -684,6 +679,7 @@ Ui.LBox.extend('Ui.App',
 //	}
 }, {
 	invalidateMeasure: function() {
+//		console.log('App.invalidateMeasure new task ? '+(((this.updateTask === undefined) && this.ready)));
 //		if(this.measureValid) {
 			this.invalidateArrange();
 			this.measureValid = false;

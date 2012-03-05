@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test TextField</title>
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var button = new Ui.Button({ text: 'horizontal' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	paned.setOrientation('horizontal');
+});
+
+button = new Ui.Button({ text: 'vertical' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	paned.setOrientation('vertical');
+});
+
+
+var paned = new Ui.Paned();
+vbox.append(paned, true);
+
+var scroll = new Ui.ScrollingArea();
+paned.setContent1(scroll);
+
+//paned.setContent1(new Ui.Rectangle({ fill: 'lightblue', width: 200, height: 200 }));
+//paned.setContent1(new Ui.Text({
+//	margin: 5,
+//	text: 'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters\n\n'+
+//		'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters'
+//}));
+scroll.setContent(new Ui.Text({
+	margin: 5,
+	text: 'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters\n\n'+
+		'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters\n\n'+
+		'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters\n\n'
+}));
+
+
+paned.setContent2(new Ui.Rectangle({ fill: 'orange', width: 100, height: 100 }));
+
+</script>
+  </head>
+</html>

@@ -163,6 +163,7 @@ include(eraBaseDirectory+'ui/datepicker.js');
 include(eraBaseDirectory+'ui/notebook.js');
 include(eraBaseDirectory+'ui/menu.js');
 include(eraBaseDirectory+'ui/segmentbar.js');
+include(eraBaseDirectory+'ui/paned.js');
 
 //
 // Ui styles
