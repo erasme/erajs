@@ -16,7 +16,7 @@ Ui.Container.extend('Ui.ListView',
 	 * @extends Ui.Container
 	 */
 	constructor: function(config) {
-		this.addEvents('select', 'unselect', 'activate');
+		this.addEvents('select', 'unselect', 'activate', 'header');
 
 		this.rowContainer = new Ui.Container();
 		this.appendChild(this.rowContainer);
@@ -33,6 +33,7 @@ Ui.Container.extend('Ui.ListView',
 		for(var i = 0; i < this.headers.length; i++) {
 			var header = this.headers[i];
 			header.ui = new Ui.ListViewHeader({ title: header.title, width: header.width });
+			this.connect(header.ui, 'up', this.onHeaderUp);
 			header.rows = [];
 			header.colWidth = header.width;
 			this.appendChild(header.ui);
@@ -256,6 +257,20 @@ Ui.Container.extend('Ui.ListView',
 		var row = this.findCellRow(cell);
 		if(row != -1)
 			this.fireEvent('activate', this, row, cell.getKey());
+	},
+
+	onHeaderUp: function(header) {
+		var key;
+		for(var col = 0; col < this.headers.length; col++){
+			var h = this.headers[col];
+			if(h.ui === header){
+				key = h.key;
+			}
+		}
+
+		if(key != null){
+			this.fireEvent('header', this, key);
+		}
 	}
 
 	/**#@-*/
