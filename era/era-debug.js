@@ -3,7 +3,7 @@
 var eraBaseDirectory;
 
 var scripts;
-if(document.scripts != undefined)
+if(document.scripts !== undefined)
 	scripts = document.scripts;
 else
 	scripts = document.getElementsByTagName('script');
@@ -169,4 +169,9 @@ include(eraBaseDirectory+'ui/virtualkeyboard.js');
 //
 include(eraBaseDirectory+'ui/styles.js');
 
-
+//
+// Form
+//
+include(eraBaseDirectory+'form/field.js');
+include(eraBaseDirectory+'form/panel.js');
+include(eraBaseDirectory+'form/popup.js');
