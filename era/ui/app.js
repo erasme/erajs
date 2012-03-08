@@ -22,6 +22,7 @@ Ui.LBox.extend('Ui.App',
 	content: undefined,
 
 	dialogs: undefined,
+	virtualkeyboard: undefined,
 
 	/**
 	 * @constructs
@@ -35,7 +36,7 @@ Ui.LBox.extend('Ui.App',
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
 
-		this.contentBox = new Ui.LBox();
+		this.contentBox = new Ui.VBox();
 		this.append(this.contentBox);
 
 		if(config.autoscale != undefined)
@@ -78,11 +79,23 @@ Ui.LBox.extend('Ui.App',
 		this.connect(window, 'focus', function(event) {
 //			console.log('window focus '+event.target);
 			this.focusElement = event.target;
+
+			if((this.focusElement.tagName === 'INPUT') || (this.focusElement.tagName === 'TEXTAREA')) {
+				if(this.virtualkeyboard !== undefined)
+					this.virtualkeyboard.open();
+			}
+			else if(this.virtualkeyboard !== undefined)
+				this.virtualkeyboard.close();
+
+
+//			if(((this.focusElement.tagName === 'INPUT') || (this.focusElement.tagName === 'TEXTAREA')) && (this.virtualkeyboard !== undefined))
+//				this.virtualkeyboard.open();
 		}, true);
 
-//		this.connect(window, 'blur', function(event) {
+		this.connect(window, 'blur', function(event) {
 //			console.log('window blur');
-//		}, true);
+			this.focusElement = undefined;
+		}, true);
 
 		// prevent bad event handling
 //		this.connect(window, 'mousedown', function(event) {
@@ -121,7 +134,7 @@ Ui.LBox.extend('Ui.App',
 			document.attachEvent('oncontextmenu', function(event) { return false; });
 
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
-//		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); });
+//		this.connect(window, 'scroll', function(event) { console.log('scroll: '+window.scrollY);/*window.scrollTo(0, 0);*/ event.stopPropagation(); event.preventDefault(); });
 
 		if('onorientationchange' in window)
 			this.connect(window, 'orientationchange', this.onOrientationChange);
@@ -155,6 +168,31 @@ Ui.LBox.extend('Ui.App',
 		}
 		else
 			this.arguments = {};
+	},
+
+	setVirtualKeyboard: function(wanted) {
+		if(wanted) {
+			if(this.virtualkeyboard === undefined) {
+				this.virtualkeyboard = new Ui.VirtualKeyboard();
+				this.contentBox.append(this.virtualkeyboard);
+			}
+		}
+		else {
+			if(this.virtualkeyboard !== undefined) {
+				this.contentBox.remove(this.virtualkeyboard);
+				this.virtualkeyboard = undefined;
+			}
+		}
+	},
+
+	openVirtualKeyboard: function() {
+		if(this.virtualkeyboard !== undefined)
+			this.virtualkeyboard.open();
+	},
+
+	closeVirtualKeyboard: function() {
+		if(this.virtualkeyboard !== undefined)
+			this.virtualkeyboard.close();
 	},
 
 	/**#@+
@@ -199,32 +237,6 @@ Ui.LBox.extend('Ui.App',
 			meta.name = 'viewport';
 			meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
 			document.getElementsByTagName("head")[0].appendChild(meta);
-			// prevent Safari to handle touch event
-/*			this.connect(this.getDrawing(), 'touchstart', function(event) {
-				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			}, false);
-			this.connect(this.getDrawing(), 'touchstart', function(event) {
-				if((navigator.Android) && (event.touches.length >= 4)) {
-					if((this.focusElement != undefined) && (this.focusElement != window) && (event.target != this.focusElement))
-						this.focusElement.blur();
-					this.focusElement = undefined;
-				}
-			}, true);
-			this.connect(this.getDrawing(), 'touchmove', function(event) {
-				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			}, false);
-			this.connect(this.getDrawing(), 'touchend', function(event) {
-				if((event.target != undefined) && !((event.target.tagName == 'INPUT') || (event.target.tagName == 'TEXTAREA'))) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			}, false);*/
 		}
 		this.loaded = true;
 		this.onReady();
@@ -232,8 +244,13 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	onWindowResize: function() {
+//		console.log('onWindowResize');
+
 //		console.log('onWindowResize iframe ? '+(window != Ui.App.getRootWindow())+' ('+document.body.clientWidth+' x '+document.body.clientHeight+')');
 //		console.log(this+'.onWindowResize start updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
+
+//		if(this.focusElement != undefined)
+//			this.focusElement.blur();
 
 		this.fireEvent('resize', this);
 		this.invalidateMeasure();
@@ -428,6 +445,10 @@ Ui.LBox.extend('Ui.App',
 		return this.content;
 	},
 
+	getFocusElement: function() {
+		return this.focusElement;
+	},
+
 	appendDialog: function(dialog) {
 		if(this.dialogs === undefined) {
 			this.focusStack = [];
@@ -499,7 +520,14 @@ Ui.LBox.extend('Ui.App',
 				document.body = this.htmlRoot;
 			}
 
-			if(this.content !== undefined) {
+			document.documentElement.style.padding = '0px';
+			document.documentElement.style.margin = '0px';
+			document.documentElement.style.border = '0px solid black';
+			document.documentElement.style.overflow = 'hidden';
+			document.documentElement.style.width = '100%';
+			document.documentElement.style.height = '100%';
+
+//			if(this.content !== undefined) {
 				document.body.style.padding = '0px';
 				document.body.style.margin = '0px';
 				document.body.style.border = '0px solid black';
@@ -507,7 +535,7 @@ Ui.LBox.extend('Ui.App',
 				document.body.style.width = '100%';
 				document.body.style.height = '100%';
 				document.body.appendChild(this.getDrawing());
-			}
+//			}
 /*
 			this.forceKeyboard = document.createElement('input');
 			this.forceKeyboard.setAttribute('type', 'text');
@@ -703,28 +731,28 @@ Ui.LBox.extend('Ui.App',
 	setContent: function(content) {
 		content = Ui.Element.create(content);
 		if(this.content != content) {
-			document.documentElement.style.padding = '0px';
-			document.documentElement.style.margin = '0px';
-			document.documentElement.style.border = '0px solid black';
-			document.documentElement.style.overflow = 'hidden';
-			document.documentElement.style.width = '100%';
-			document.documentElement.style.height = '100%';
+//			document.documentElement.style.padding = '0px';
+//			document.documentElement.style.margin = '0px';
+//			document.documentElement.style.border = '0px solid black';
+//			document.documentElement.style.overflow = 'hidden';
+//			document.documentElement.style.width = '100%';
+//			document.documentElement.style.height = '100%';
 
 			if(this.content != undefined)
 				this.contentBox.remove(this.content);
 			if(content != undefined)
-				this.contentBox.append(content);
+				this.contentBox.prepend(content, true);
 			this.content = content;
 
-			if((this.content != undefined) && this.ready) {
-				document.body.style.padding = '0px';
-				document.body.style.margin = '0px';
-				document.body.style.border = '0px solid black';
-				document.body.style.overflow = 'hidden';
-				document.body.style.width = '100%';
-				document.body.style.height = '100%';
-				document.body.appendChild(this.getDrawing());
-			}
+//			if((this.content != undefined) && this.ready) {
+//				document.body.style.padding = '0px';
+//				document.body.style.margin = '0px';
+//				document.body.style.border = '0px solid black';
+//				document.body.style.overflow = 'hidden';
+//				document.body.style.width = '100%';
+//				document.body.style.height = '100%';
+//				document.body.appendChild(this.getDrawing());
+//			}
 		}
 	}
 }, {
