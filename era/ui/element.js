@@ -121,10 +121,9 @@ Core.Object.extend('Ui.Element',
 	constructor: function(config) {
 		// create the drawing container
 		this.drawing = this.renderDrawing();
-
-		if(debug)
-			this.drawing.setAttribute('class', this.classType);
-
+//#if DEBUG
+		this.drawing.setAttribute('class', this.classType);
+//#end
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';
@@ -1186,7 +1185,7 @@ Core.Object.extend('Ui.Element',
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
-			if(matrix.isTranslateOnly() && (navigator.isIE7 || navigator.isIE8 || navigator.supportDrag)) {
+			if(matrix.isTranslateOnly()/* && (navigator.isIE7 || navigator.isIE8 || navigator.supportDrag)*/) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
 				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
