@@ -28,6 +28,10 @@ Ui.LBox.extend('Ui.Pressable',
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
+	getIsDown: function() {
+		return this.isDown;
+	},
+
 	/**#@+
 	 * @private
 	 */
@@ -72,10 +76,6 @@ Ui.LBox.extend('Ui.Pressable',
 				this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 			}
 		}
-	},
-
-	getIsDown: function() {
-		return this.isDown;
 	},
 
 	onMouseUp: function(event) {
