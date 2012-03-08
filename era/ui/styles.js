@@ -55,6 +55,10 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			"Ui.Separator": {
 				color: '#666666'
 			}
+		},
+		"Ui.VirtualKeyboardKey": {
+			color: new Ui.Color({ r: 0.9, g: 0.9, b: 0.9 }),
+			focusColor: new Ui.Color({ r: 0.9, g: 0.9, b: 0.9 })
 		}
 	}
 });
