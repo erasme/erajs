@@ -15,15 +15,20 @@ Ui.Element.extend('Ui.TextArea',
 	 */
 	constructor: function(config) {
 		this.addEvents('change', 'scroll');
+		this.setSelectable(true);
 
-		this.getDrawing().selectable = true;
-
-		this.connect(this.textareaDrawing, 'mousedown', function(event) {
-			this.textareaDrawing.focus();
-		});
+//		this.connect(this.textareaDrawing, 'mousedown', function(event) {
+//			this.textareaDrawing.focus();
+//		});
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
 
+		this.connect(this.textareaDrawing, 'fingerup', function(event) {
+			this.textareaDrawing.focus();
+		});
+
+
 		this.connect(this.textareaDrawing, 'scroll', function() {
+//			console.log('textarea scroll');
 //			console.log(this+' scroll event ('+this.textareaDrawing.scrollLeft+','+this.textareaDrawing.scrollTop+')');
 			if((this.getMeasureWidth() != this.textareaDrawing.scrollWidth) || (this.getMeasureHeight() != this.textareaDrawing.scrollHeight)) {
 //				console.log('invalidateMeasure');

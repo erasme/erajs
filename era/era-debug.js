@@ -1,6 +1,4 @@
 
-var debug = true;
-
 // find era-debug.js base directory
 var eraBaseDirectory;
 
@@ -164,6 +162,7 @@ include(eraBaseDirectory+'ui/notebook.js');
 include(eraBaseDirectory+'ui/menu.js');
 include(eraBaseDirectory+'ui/segmentbar.js');
 include(eraBaseDirectory+'ui/paned.js');
+include(eraBaseDirectory+'ui/virtualkeyboard.js');
 
 //
 // Ui styles

@@ -334,7 +334,4 @@ if(window.console == undefined) {
 		warn: function() {}
 	};
 }
-
-if(window.debug == undefined)
-	window.debug = false;
 /**#nocode-*/

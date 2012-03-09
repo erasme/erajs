@@ -37,6 +37,15 @@ app.connect(stopButton, 'press', function() {
 	video.stop();
 });
 
+var delayplayButton = new Ui.Button({ text: 'delay play 1s' });
+toolbar.append(delayplayButton);
+app.connect(delayplayButton, 'press', function() {
+	new Core.DelayedTask({ delay: 1, scope: this, callback: function() {
+		video.play();
+	}});
+});
+
+
 var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', height: 20 });
 toolbar.append(progressbar, true);
 

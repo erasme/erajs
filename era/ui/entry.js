@@ -2,13 +2,14 @@
 Ui.Element.extend('Ui.Entry', 
 /**@lends Ui.Entry#*/
 {
-	entryDrawing: undefined,
+//	entryDrawing: undefined,
 	fontSize: 14,
 	fontFamily: 'Sans-serif',
 	fontWeight: 'normal',
 	color: 'black',
 	value: '',
 	passwordMode: false,
+	isDown: false,
 
 	/**
 	 * @constructs
@@ -16,19 +17,24 @@ Ui.Element.extend('Ui.Entry',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.addEvents('change', 'validate');
-		this.getDrawing().selectable = true;
+		this.addEvents('press', 'down', 'up', 'change', 'validate');
+		this.setSelectable(true);
+		this.setFocusable(true);
 
-		this.connect(this.entryDrawing, 'mousedown', this.onMouseDown);
-		this.connect(this.entryDrawing, 'touchstart', this.onTouchStart);
-		this.connect(this.entryDrawing, 'change', this.onChange);
-		this.connect(this.entryDrawing, 'keyup', this.onKeyUp);
+		// handle mouse
+//		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
-//		this.setFocusable(true);
-//		this.connect(this.entryDrawing, 'focus', this.onFocus);
-//		this.connect(this.entryDrawing, 'blur', function(event) {
-//			console.log('entry blur');
-//		});
+		// handle touches
+		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+
+		// handle change
+		this.connect(this.getDrawing(), 'change', this.onChange);
+
+		// handle paste
+		this.connect(this.getDrawing(), 'paste', this.onPaste);
+
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
 	setPasswordMode: function(passwordMode) {
@@ -107,27 +113,152 @@ Ui.Element.extend('Ui.Entry',
 		this.entryDrawing.value = this.value;
 	},
 
+	getIsDown: function() {
+		return this.isDown;
+	},
+
 	/**#@+
 	 * @private
 	 */
 
 	onMouseDown: function(event) {
-		if(!this.getIsDisabled()) {
-			this.entryDrawing.focus();
-		}
-		else {
-			event.preventDefault();
-			event.stopPropagation();
+		if(this.getHasFocus())
+			return;
+
+		if((event.button != 0) || this.getIsDisabled())
+			return;
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.mouseStartX = event.screenX;
+		this.mouseStartY = event.screenY;
+
+		this.connect(window, 'mousemove', this.onMouseMove, true);
+		this.connect(window, 'mouseup', this.onMouseUp, true);
+
+		this.onDown();
+	},
+
+	onMouseMove: function(event) {
+		var deltaX = event.screenX - this.mouseStartX;
+		var deltaY = event.screenY - this.mouseStartY;
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		// if the user move to much, release the touch event
+		if(delta > 10) {
+			this.onUp();
+
+			if('createEvent' in document) {
+				this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
+
+				var mouseDownEvent = document.createEvent('MouseEvents');
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
+					event.clientX, event.clientY,
+					event.ctrlKey, event.altKey, event.shiftKey,
+					event.metaKey, 0, event.target);
+				event.target.dispatchEvent(mouseDownEvent);
+
+				this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+			}
 		}
 	},
 
-	onTouchStart: function(event) {
-		if(!this.getIsDisabled()) {
+	onMouseUp: function(event) {
+		if(!this.isDown)
+			return;
+
+		event.preventDefault();
+		event.stopPropagation();
+		if(event.button == 0) {
+			this.onUp();
+			this.fireEvent('press', this);
 			this.entryDrawing.focus();
 		}
-		else {
-			event.preventDefault();
-			event.stopPropagation();
+	},
+
+	onFingerDown: function(event) {
+//		console.log('onFingerDown hasFocus: '+this.getHasFocus());
+
+		if(this.getHasFocus()) {
+//			this.getDrawing().setSelectionRange(0, 9999);
+//			this.getDrawing().select();
+			return;
+		}
+
+		if(this.getIsDisabled() || this.isDown)
+			return;
+
+		this.connect(event.finger, 'fingermove', this.onFingerMove);
+		this.connect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.finger.capture(this.getDrawing());
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.touchStartX = event.finger.getX();
+		this.touchStartY = event.finger.getY();
+		this.onDown();
+	},
+
+	onFingerMove: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var deltaX = event.finger.getX() - this.touchStartX;
+		var deltaY = event.finger.getY() - this.touchStartY;
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		// if the user move to much, release the touch event
+		if(delta > 10) {
+			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+			this.onUp();
+
+			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+			event.finger.release();
+			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+		}
+	},
+	
+	onFingerUp: function(event) {
+		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.onUp();
+		this.fireEvent('press', this);
+		this.entryDrawing.focus();
+	},
+
+	onDown: function() {
+		this.isDown = true;
+		this.fireEvent('down', this);
+	},
+
+	onUp: function() {
+		this.disconnect(window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(window, 'mouseup', this.onMouseUp, true);
+
+ 		this.isDown = false;
+		this.fireEvent('up', this);
+	},
+
+	onPaste: function(event) {
+		event.stopPropagation();
+		new Core.DelayedTask({ delay: 0, scope: this, callback: this.onAfterPaste });
+	},
+
+	onAfterPaste: function() {
+		if(this.entryDrawing.value != this.value) {
+			this.value = this.entryDrawing.value;
+			this.fireEvent('change', this, this.value);
 		}
 	},
 
@@ -153,7 +284,7 @@ Ui.Element.extend('Ui.Entry',
 	}
 	/**#@-*/
 }, {
-	render: function() {
+	renderDrawing: function() {
 		this.entryDrawing = document.createElement('input');
 		this.entryDrawing.setAttribute('type', 'text');
 		this.entryDrawing.style.border = '0px';
