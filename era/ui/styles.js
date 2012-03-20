@@ -42,6 +42,9 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			"Ui.Label": {
 				color: '#ffffff'
 			},
+			"Ui.Text": {
+				color: '#ffffff'
+			},
 			"Ui.Separator": {
 				color: '#ffffff'
 			},
@@ -57,6 +60,7 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			}
 		},
 		"Ui.VirtualKeyboardKey": {
+			radius: 8,
 			color: new Ui.Color({ r: 0.9, g: 0.9, b: 0.9 }),
 			focusColor: new Ui.Color({ r: 0.9, g: 0.9, b: 0.9 })
 		}
