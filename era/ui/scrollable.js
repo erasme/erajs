@@ -39,6 +39,10 @@ Ui.Container.extend('Ui.Scrollable',
 	lock: false,
 	overScroll: true,
 
+	showScrollbar: true,
+	directionLock: false,
+	directionRelease: false,
+
 	/**
      * @constructs
 	 * @class
@@ -70,6 +74,25 @@ Ui.Container.extend('Ui.Scrollable',
 		this.connect(this.scrollbarVerticalBox.getDrawing(), 'fingerdown', this.onVerticalFingerDown);
 
 //		this.connect(this, 'keydown', this.onKeyDown);
+	},
+
+	setDirectionRelease: function(release) {
+		this.directionRelease = release;
+	},
+
+	getDirectionRelease: function() {
+		return this.directionRelease;
+	},
+
+	setShowScrollbar: function(show) {
+		if(this.showScrollbar != show) {
+			this.showScrollbar = show;
+			this.invalidateMeasure();
+		}
+	},
+
+	getShowScrollbar: function() {
+		return this.showScrollbar;
 	},
 
 	setOverScroll: function(overScroll) {
@@ -109,7 +132,7 @@ Ui.Container.extend('Ui.Scrollable',
 			this.removeChild(this.contentBox);
 		}
 		this.contentBox = scrollingContent;
-		this.appendChild(this.contentBox);
+		this.prependChild(this.contentBox);
 		this.connect(this.contentBox, 'scroll', this.onContentBoxScroll);
 	},
 
@@ -243,11 +266,12 @@ Ui.Container.extend('Ui.Scrollable',
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
 			return;
 
-		if(!((event.button == 1) || ((event.button == 0) && (event.ctrlKey))))
+		if(!((event.button == 1) || ((event.button == 0) && (event.ctrlKey || !this.showScrollbar))))
 			return;
 
 		this.focus();
 
+		this.directionLock = false;
 		this.mouseButton = event.button;
 
 		event.preventDefault();
@@ -294,6 +318,34 @@ Ui.Container.extend('Ui.Scrollable',
 		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
+
+		if(!this.directionLock) {
+			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			if(delta > 10) {
+				var horizontal = Math.abs(deltaX)>Math.abs(deltaY);
+				// check if we need to abort the scroll and release the mouse
+				if((this.directionRelease) &&((horizontal && !this.scrollHorizontal) || (!horizontal && !this.scrollVertical))) {
+					if('createEvent' in document) {
+						this.window.document.body.removeChild(this.catcher);
+
+						this.disconnect(this.window, 'mousemove', this.onMouseMove, true);
+						this.disconnect(this.window, 'mouseup', this.onMouseUp, true);
+
+						this.stopComputeInertia();
+
+						var mouseDownEvent = document.createEvent('MouseEvents');
+						mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
+							event.clientX, event.clientY,
+							event.ctrlKey, event.altKey, event.shiftKey,
+							event.metaKey, 0, event.target);
+						this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+						return;
+					}
+				}
+				this.directionLock = true;
+			}
+		}
+
 		offsetX = this.startOffsetX - deltaX;
 		offsetY = this.startOffsetY - deltaY;
 		this.setOffset(offsetX, offsetY, true);
@@ -352,12 +404,13 @@ Ui.Container.extend('Ui.Scrollable',
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
 			return;
 
+		this.directionLock = false;
+
+		event.finger.capture(this.getDrawing());
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
 		this.connect(event.finger, 'fingerup', this.onFingerUp);
 
 		this.isMoving = true;
-
-		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -374,13 +427,32 @@ Ui.Container.extend('Ui.Scrollable',
 		event.preventDefault();
 		event.stopPropagation();
 
+		this.hasMoved = true;
 		var touchPos = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		var deltaX = touchPos.x - this.touchStart.x;
 		var deltaY = touchPos.y - this.touchStart.y;
+
+		if(!this.directionLock) {
+			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			if(delta > 10) {
+				var horizontal = Math.abs(deltaX)>Math.abs(deltaY);
+				// check if we need to abort the scroll and release the mouse
+				if((this.directionRelease) &&((horizontal && !this.scrollHorizontal) || (!horizontal && !this.scrollVertical))) {
+					this.isMoving = false;
+					this.stopComputeInertia();
+					this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+					this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+					event.finger.release();
+					return;
+				}
+				this.directionLock = true;
+			}
+		}
+
 		offsetX = this.startOffsetX - deltaX;
 		offsetY = this.startOffsetY - deltaY;
 		this.setOffset(offsetX, offsetY, true);
-		this.hasMoved = true;
 	},
 
 	onFingerUp: function(event) {
@@ -792,15 +864,7 @@ Ui.Container.extend('Ui.Scrollable',
 }, 
 /**@lends Ui.Scrollable#*/
 {
-	measureCore: function(width, height) {
-		if(this.contentBox === undefined)
-			return { width: 0, height: 0 };
-
-//		for(var i = 0; i < this.getChildren().length; i++) {
-//			var child = this.getChildren()[i];
-//			var size = child.measure(width, height);
-//		}
-
+	measureCoreWithScrollbar: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
 
 		this.scrollbarVerticalBox.measure(width, height);
@@ -902,11 +966,38 @@ Ui.Container.extend('Ui.Scrollable',
 		}
 	},
 
+	measureCoreWithoutScrollbar: function(width, height) {
+		this.scrollbarVerticalBox.measure(width, height);
+		this.scrollbarHorizontalBox.measure(width, height);
+		this.contentBox.measure(width, height);
 
-	arrangeCore: function(width, height) {
-		if(this.contentBox === undefined)
-			return;
+		var contentWidth = width;
+		var contentHeight = height;
+		this.scrollbarVerticalNeeded = false;
+		this.scrollbarHorizontalNeeded = false;
 
+		var minWidth = this.scrollbarVerticalBox.getMeasureWidth()*2+this.scrollbarHorizontalBox.getMeasureWidth();
+		var minHeight = this.scrollbarHorizontalBox.getMeasureHeight()*2+this.scrollbarVerticalBox.getMeasureHeight();
+		var resWidth;
+		var resHeight;
+
+		if((this.contentBox.getMeasureHeight() > height) && this.scrollVertical) {
+			this.scrollbarVerticalNeeded = true;
+			resHeight = height;
+		}
+		else
+			resHeight = this.contentBox.getMeasureHeight();
+
+		if((this.contentBox.getMeasureWidth() > contentWidth) && this.scrollHorizontal) {
+			this.scrollbarHorizontalNeeded = true;
+			resWidth = width;
+		}
+		else
+			resWidth = this.contentBox.getMeasureWidth();
+		return { width: Math.max(resWidth, minWidth), height: Math.max(resHeight, minHeight) };
+	},
+
+	arrangeCoreWithScrollbar: function(width, height) {
 //		console.log(this+'.arrangeCore('+width+','+height+') verticalNeeded: '+this.scrollbarVerticalNeeded+', horizontalNeeded: '+this.scrollbarHorizontalNeeded);
 
 		var contentWidth = width;
@@ -972,21 +1063,76 @@ Ui.Container.extend('Ui.Scrollable',
 					this.scrollbarHorizontalWidth, this.scrollbarHorizontalBox.getMeasureHeight());
 			}
 		}
-//		if(this.content != undefined)
-//			this.content.arrange(0, 0, this.contentWidth, this.contentHeight);
-//		this.contentBox.getDrawing().style.left = '0px';
-//		this.contentBox.getDrawing().style.top = '0px';
-//		this.contentBox.getDrawing().style.width = this.viewWidth+'px';
-//		this.contentBox.getDrawing().style.height = this.viewHeight+'px';
-
 //		console.log(this+'.arrangeCore view: ('+this.viewWidth+' x '+this.viewHeight+')');
 
 		this.contentBox.arrange(0, 0, this.viewWidth, this.viewHeight);
 
-//		this.contentBox.arrange(0, 0, this.contentWidth, this.contentHeight);
-//		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
-
 		this.updateOffset();
+	},
+
+	arrangeCoreWithoutScrollbar: function(width, height) {
+		var contentWidth = width;
+		if(this.contentBox.getMeasureHeight() > height)
+			this.scrollbarVerticalNeeded = true;
+		else
+			this.scrollbarVerticalNeeded = false;
+		if(this.contentBox.getMeasureWidth() > contentWidth)
+			this.scrollbarHorizontalNeeded = true;
+		else
+			this.scrollbarHorizontalNeeded = false;
+
+		if(this.scrollbarVerticalNeeded)
+			this.scrollbarVerticalBox.show();
+		else {
+			this.scrollbarVerticalBox.hide();
+			this.offsetY = 0;
+		}
+		if(this.scrollbarHorizontalNeeded)
+			this.scrollbarHorizontalBox.show();
+		else {
+			this.scrollbarHorizontalBox.hide();
+			this.offsetX = 0;
+		}
+
+		this.viewWidth = width;
+		this.viewHeight = height;
+		this.contentWidth = width;
+		this.contentHeight = height;
+
+		if(this.scrollbarVerticalNeeded) {
+			this.contentHeight = this.contentBox.getMeasureHeight();
+			this.scrollbarVerticalHeight = Math.max((this.viewHeight / this.contentHeight) * this.viewHeight, this.scrollbarVerticalBox.getMeasureHeight());
+			this.scrollbarVerticalBox.arrange(width - this.scrollbarVerticalBox.getMeasureWidth(), 0,
+				this.scrollbarVerticalBox.getMeasureWidth(), this.scrollbarVerticalHeight);
+		}
+		if(this.scrollbarHorizontalNeeded) {
+			this.contentWidth = this.contentBox.getMeasureWidth();
+			this.scrollbarHorizontalWidth = Math.max((this.viewWidth / this.contentWidth) * this.viewWidth, this.scrollbarHorizontalBox.getMeasureWidth());
+			this.scrollbarHorizontalBox.arrange(0, height - this.scrollbarHorizontalBox.getMeasureHeight(),
+				this.scrollbarHorizontalWidth, this.scrollbarHorizontalBox.getMeasureHeight());
+		}
+		this.contentBox.arrange(0, 0, this.viewWidth, this.viewHeight);
+		this.updateOffset();
+	},
+
+	measureCore: function(width, height) {
+		if(this.contentBox === undefined)
+			return { width: 0, height: 0 };
+
+		if(this.showScrollbar)
+			return this.measureCoreWithScrollbar(width, height);
+		else
+			return this.measureCoreWithoutScrollbar(width, height);
+	},
+
+	arrangeCore: function(width, height) {
+		if(this.contentBox === undefined)
+			return;
+
+		if(this.showScrollbar)
+			this.arrangeCoreWithScrollbar(width, height);
+		else
+			this.arrangeCoreWithoutScrollbar(width, height);
 	}
 });
 
