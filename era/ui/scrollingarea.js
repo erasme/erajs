@@ -18,6 +18,37 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 }, 
 /**@lends Ui.ScrollingArea#*/
 {
+	setShowScrollbar: function(show) {
+		Ui.ScrollingArea.base.setShowScrollbar.call(this, show);
+		if(show) {
+			this.horizontalScrollbar.setOpacity(1);
+			this.horizontalScrollbar.setMargin(10);
+			this.horizontalScrollbar.setWidth(8);
+			this.horizontalScrollbar.setHeight(8);
+			this.horizontalScrollbar.setRadius(4);
+
+			this.verticalScrollbar.setOpacity(1);
+			this.verticalScrollbar.setMargin(10);
+			this.verticalScrollbar.setWidth(8);
+			this.verticalScrollbar.setHeight(8);
+			this.verticalScrollbar.setRadius(4);
+		}
+		else {
+			this.horizontalScrollbar.setOpacity(0.6);
+			this.horizontalScrollbar.setMargin(2);
+			this.horizontalScrollbar.setWidth(4);
+			this.horizontalScrollbar.setHeight(4);
+			this.horizontalScrollbar.setRadius(2);
+
+			this.verticalScrollbar.setOpacity(0.6);
+			this.verticalScrollbar.setMargin(2);
+			this.verticalScrollbar.setWidth(4);
+			this.verticalScrollbar.setHeight(4);
+			this.verticalScrollbar.setRadius(2);
+		}
+	},
+
+
 	onStyleChange: function() {
 		var color = this.getStyleProperty('color');
 		this.horizontalScrollbar.setFill(color);
