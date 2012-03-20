@@ -32,7 +32,7 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 			this.connect(button, 'press', this.onKeyPress);
 			hbox.append(button);
 		}
-		var button = new Ui.VirtualKeyboardKey({ text: 'backspace', width: 100 });
+		var button = new Ui.VirtualKeyboardKey({ text: 'backspace', key: '\b', focusable: false, width: 100 });
 		hbox.append(button, true);
 
 		hbox = new Ui.HBox({ marginLeft: 20 });
@@ -44,12 +44,12 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 			this.connect(button, 'press', this.onKeyPress);
 			hbox.append(button);
 		}
-		var button = new Ui.VirtualKeyboardKey({ text: 'retour', width: 100 });
+		var button = new Ui.VirtualKeyboardKey({ text: 'retour', key: '\n', focusable: false, width: 100 });
 		hbox.append(button, true);
 
 		hbox = new Ui.HBox();
 		vbox.append(hbox, true);
-		var button = new Ui.VirtualKeyboardKey({ text: 'shift', width: 60 });
+		var button = new Ui.VirtualKeyboardKey({ text: 'shift', focusable: false, width: 60 });
 		hbox.append(button, true);
 		line = 'WXCVBN?!\'';
 		for(var i = 0; i < line.length; i++) {
@@ -58,16 +58,16 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 			this.connect(button, 'press', this.onKeyPress);
 			hbox.append(button);
 		}
-		var button = new Ui.VirtualKeyboardKey({ text: 'shift', width: 60 });
+		var button = new Ui.VirtualKeyboardKey({ text: 'shift', focusable: false, width: 60 });
 		hbox.append(button, true);
 
 		hbox = new Ui.HBox();
 		vbox.append(hbox, true);
-		var button = new Ui.VirtualKeyboardKey({ text: '.?123', width: 100 });
+		var button = new Ui.VirtualKeyboardKey({ text: '.?123', focusable: false, width: 100 });
 		hbox.append(button, false);
-		var button = new Ui.VirtualKeyboardKey({ text: '' });
+		var button = new Ui.VirtualKeyboardKey({ text: '', focusable: false });
 		hbox.append(button, true);
-		var button = new Ui.VirtualKeyboardKey({ text: '.?123', width: 100 });
+		var button = new Ui.VirtualKeyboardKey({ text: '.?123', focusable: false, width: 100 });
 		hbox.append(button, false);
 		var button = new Ui.VirtualKeyboardKey({ icon: 'arrowbottom', width: 60 });
 		hbox.append(button, false);
