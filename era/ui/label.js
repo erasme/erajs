@@ -25,6 +25,7 @@ Ui.Element.extend('Ui.Label',
 	 * @param {mixed} [config] see {@link Ui.Element} constructor for more options.  
      */ 
 	constructor: function(config) {
+		this.setSelectable(false);
 	},
 
 	getText: function() {
@@ -144,14 +145,6 @@ Ui.Element.extend('Ui.Label',
 		this.labelDrawing.style.position = 'absolute';
 		this.labelDrawing.style.left = '0px';
 		this.labelDrawing.style.top = '0px';
-		if(navigator.isWebkit)
-			this.labelDrawing.style.webkitUserSelect = 'none';
-		else if(navigator.isGecko)
-			this.labelDrawing.style.MozUserSelect = 'none';
-		else if(navigator.isIE)
-			this.connect(this.labelDrawing, 'selectstart', function(event) { event.preventDefault(); });
-		else if(navigator.isOpera)
-			this.labelDrawing.onmousedown = function(event) { event.preventDefault(); };
 		return this.labelDrawing;
 		/**#nocode- Avoid Jsdoc warnings...*/
 	},
