@@ -102,30 +102,21 @@ Core.Object.extend('Core.Finger',
 
 	release: function() {
 		if(this.captureElement != undefined) {
-
-/*			var target = document.elementFromPoint(this.x, this.y);
-			if(target != undefined) {
-				// resend the up event
-				var fingerEvent = document.createEvent('FingerEvent');
-				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
-				target.dispatchEvent(fingerEvent);
-			}*/
-
 			this.x = this.initialX;
 			this.y = this.initialY;
 
-			if(this.captureElement.offsetParent != undefined) {
+			var parent = this.captureElement.offsetParent;
+			this.captureElement = undefined;
+			if(parent != undefined) {
 				// resend the up event
 				var fingerEvent = document.createEvent('FingerEvent');
 				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
-				this.captureElement.offsetParent.dispatchEvent(fingerEvent);
+				parent.dispatchEvent(fingerEvent);
 			}
-			this.captureElement = undefined;
 		}
 	},
 
 	end: function() {
-
 		var target;
 		if(this.captureElement != undefined)
 			target = this.captureElement;
