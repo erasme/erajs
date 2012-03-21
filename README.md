@@ -22,7 +22,7 @@ The main features of the framework are :
 
 # Project's sources
 
-> git clone git@forge.erasme.org:era
+> git clone git@github.com:erasme/erajs.git
 
 You can generate the documention using JSDoc :
 
