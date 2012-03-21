@@ -30,6 +30,8 @@ Ui.LBox.extend('Ui.Movable',
 	catcher: undefined,
 	window: undefined,
 	iframe: undefined,
+	directionLock: false,
+	directionRelease: false,
 
 	/**
 	 * @constructs
@@ -48,6 +50,14 @@ Ui.LBox.extend('Ui.Movable',
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+	},
+
+	setDirectionRelease: function(release) {
+		this.directionRelease = release;
+	},
+
+	getDirectionRelease: function() {
+		return this.directionRelease;
 	},
 
 	setLock: function(lock) {
@@ -121,9 +131,9 @@ Ui.LBox.extend('Ui.Movable',
 		this.fireEvent('down', this);
 	},
 
-	onUp: function() {
+	onUp: function(abort) {
  		this.isDown = false;
-		this.fireEvent('up', this, this.speedX, this.speedY, (this.posX - this.startPosX), (this.posY - this.startPosY), this.cumulMove);
+		this.fireEvent('up', this, this.speedX, this.speedY, (this.posX - this.startPosX), (this.posY - this.startPosY), this.cumulMove, abort);
 	},
 
 	onKeyDown: function(event) {
@@ -156,6 +166,8 @@ Ui.LBox.extend('Ui.Movable',
 
 		if(event.button != 0)
 			return;
+
+		this.directionLock = false;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -202,6 +214,35 @@ Ui.LBox.extend('Ui.Movable',
 		var deltaX = mousePos.x - this.mouseStart.x;
 		var deltaY = mousePos.y - this.mouseStart.y;
 
+		if(!this.directionLock) {
+			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			if(delta > 10) {
+				var horizontal = Math.abs(deltaX)>Math.abs(deltaY);
+				// check if we need to abort the scroll and release the mouse
+				if((this.directionRelease) &&((horizontal && !this.moveHorizontal) || (!horizontal && !this.moveVertical))) {
+					if('createEvent' in document) {
+						this.window.document.body.removeChild(this.catcher);
+
+						this.disconnect(this.window, 'mousemove', this.onMouseMove, true);
+						this.disconnect(this.window, 'mouseup', this.onMouseUp, true);
+
+						this.stopComputeInertia();
+
+						var mouseDownEvent = document.createEvent('MouseEvents');
+						mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
+							event.clientX, event.clientY,
+							event.ctrlKey, event.altKey, event.shiftKey,
+							event.metaKey, 0, event.target);
+						this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+
+						this.onUp(true);
+						return;
+					}
+				}
+				this.directionLock = true;
+			}
+		}
+
 		var dX = mousePos.x - this.mouseLast.x;
 		var dY = mousePos.y - this.mouseLast.y;
 		this.mouseLast = mousePos;
@@ -226,13 +267,14 @@ Ui.LBox.extend('Ui.Movable',
 		this.stopComputeInertia();
 		if(this.inertia)
 			this.startInertia();
-		this.onUp();
+		this.onUp(false);
 	},
 
 	onFingerDown: function(event) {
 		if(this.isMoving || this.lock || this.getIsDisabled())
 			return;
 
+		this.directionLock = false;
 		this.isMoving = true;
 
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
@@ -262,6 +304,27 @@ Ui.LBox.extend('Ui.Movable',
 		var touchPos = this.pointFromWindow({ x: event.finger.getX(), y: event.finger.getY() });
 		var deltaX = touchPos.x - this.touchStart.x;
 		var deltaY = touchPos.y - this.touchStart.y;
+
+		if(!this.directionLock) {
+			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			if(delta > 10) {
+				var horizontal = Math.abs(deltaX)>Math.abs(deltaY);
+				// check if we need to abort the scroll and release the mouse
+				if((this.directionRelease) &&((horizontal && !this.moveHorizontal) || (!horizontal && !this.moveVertical))) {
+
+					this.isMoving = false;
+					this.stopComputeInertia();
+					this.disconnect(event.finger, 'fingermove', this.onFingerMove);
+					this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+					event.finger.release();
+					this.onUp(true);
+					return;
+				}
+				this.directionLock = true;
+			}
+		}
+
 		posX = this.startPosX + deltaX;
 		posY = this.startPosY + deltaY;
 
@@ -286,7 +349,7 @@ Ui.LBox.extend('Ui.Movable',
 		this.stopComputeInertia();
 		if(this.inertia)
 			this.startInertia();
-		this.onUp();
+		this.onUp(false);
 	},
 
 	measureSpeed: function() {
