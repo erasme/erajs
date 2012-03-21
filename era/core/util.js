@@ -213,6 +213,14 @@ String.prototype.fromBase64 = function() {
 	return res.utf8Decode();
 };
 
+//Implement trim if it's not natively available
+//Code from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String/Trim#Compatibility
+if(!String.prototype.trim) {
+  String.prototype.trim = function () {
+    return this.replace(/^\s+|\s+$/g,'');
+  };
+}
+
 navigator.supportVML = false;
 
 /**#nocode+ Avoid Jsdoc warnings...*/

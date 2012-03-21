@@ -10,13 +10,42 @@ ERAjs keyfeatures are :
 - Widget based system : ERAjs allows you to manipulate highlevel widgets and style them as you like. Widget can be combine together to form more highlevel components.
 - Same experience everywhere : ERAjs garanties that your application will look and behave the same regardless your browser or your device without any modification. Multitouch device (smart phones, tablets), keyboard only navigation (for accessibility), multitouch screens (with a built-in virtual keyborad !) and of course classical desktop browsing.
 
-# Project's sources
+ERAjs is not :
+- Extremly fast : as it doesn't relly on html layout system, ERAjs is not as fast as other library, but on a decent browser (ie Firefox 4+, Chrome) it works flowlessly :).
+- Tiny : minified, era.js size is less than 440Kb which is not the tiniest js library you've seen, but considered the fact that it can do everything you need for an application and that it doesn't depends on other libraries and that you don't have CSS, it's not so big. Compare that with a jQuery+jQueryUI+jQueryMobile+Whateverplugins+CSS solution and it'll feel very small !
+- For static web page : HTML + CSS will always be better to build beautifull and fast static web page, even if you add a bit of JS, it's not ERAjs work. ERAjs is only good for building javascript only rich web apps.
+- Similar to jQueryUi/SproutCore/TwitterBootstrap : it's philosophy is totally different and does not aim to "dynamise" static web page but build web app up to the ground. It can be compared to Sencha Touch/ExtJs but with a more straightforward -but less mature- API.
 
-    git clone git@forge.erasme.org:era
+# Use ERAjs
+
+Download lastest sources here : 
+
+    git clone git@github.com:erasme/erajs.git
+
+
+Then simply create an empty html file which like to era.js:
+
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script src='era.js'></script>
+        <script>
+          //Write your code here...
+        </script>
+      </head>
+      <body></body>
+    </html>
+
+And you're good ! Add script directly to the page or in another file.
+No need to add CSS, no need to write more HTML, everything is done by ERAjs.
 
 # Hello World application
 
-    
+    var app = new Ui.App({
+      content: {type: Ui.Label, text: "You know what ? I'm happy."}
+    });
+
 # Containers
 
 Containers are at the heart of ERAjs, they allow you to build quite easily very complex widgets by just stack functionnality into one widgets.
@@ -31,11 +60,80 @@ We can devide containers in 3 types : layout containers, behaviour containers an
 
 Layout containers allow you to arrange your application layout dynamically.
 
+### App
+
+It is the base container for your application.
+There can only be one instance of it and you can access this singleton via "Ui.App.current".
+
+It manages onReady event, the windowOrientationChange, url arguments and proper iframe integration.
+
+    var app = new Ui.App();
+    var lbl = new Ui.Label({text: 'Here are my arguments : ' + JSON.stringify(app.arguments)});
+    app.setContent(lbl);
 
 ### VBox & HBox
 
 Probably the most used containers, they allow you to stack elements, either vertically or horizontally. VBox and HBox inherite from Box, they just differ in their orientation.
 
+Let's play with boxes orientation :
+
+    var app = new Ui.App({
+      content: {
+        type: Ui.Box, orientation: 'vertical',
+        horizontalAlign: 'center', verticalAlign: 'center',
+        content: [
+          {type: Ui.Label, text: 'Up'},
+          {
+            type: Ui.Button, text: 'Change orientation',
+            onPress: function(){
+              var orientation = this.content.getOrientation() === 'vertical' ? 'horizontal' : 'vertical';
+              this.content.setOrientation(orientation);
+            }
+          },
+          {type: Ui.Label, text: 'Down'}
+        ]
+      }
+    });
+
+As you can see a Box can change it's orientation dynamically. Damned practical when you have a portable device with giroscope !
+
+Boxes have some very interesting properties such as "uniform" :
+
+    var app = new Ui.App({
+      content: {
+        type: Ui.HBox,
+        horizontalAlign: 'center', verticalAlign: 'center',
+        content: [
+          {type: Ui.Button, text: 'Tiny text'},
+          {type: Ui.Button, text: 'Very loooooooooooonnnnng text'},
+          {
+            type: Ui.Button, text: 'Make them uniform !',
+            onPress: function(){
+              this.content.setUniform(!this.content.getUniform());
+            }
+          }
+        ]
+      }
+    });
+
+Elements in the box can have "attached properties" like "resizable :
+
+    var app = new Ui.App({
+      content: {
+        type: Ui.HBox,
+        verticalAlign: 'center', //Note that there is no more horizontalAlign
+        content: [
+          {type: Ui.Button, text: 'Tiny text'},
+          {
+            type: Ui.Button, text: 'Hey, I can take all the place ! ',
+            onPress: function(me){
+              Ui.Box.setResizable(me, !Ui.Box.getResizable(me));
+            }
+          },
+          {type: Ui.Button, text: 'Also tiny...'}
+        ]
+      }
+    });
 
 ### LBox
 
@@ -92,6 +190,15 @@ Probably the most used containers, they allow you to stack elements, either vert
 ## Buttons
 
 ### Button
+
+    var app = new Ui.App({
+      content: {
+        type: Ui.Button, text: 'Hit me !',
+        horizontalAlign: 'center', verticalAlign: 'center',
+        onPress: function(){
+          alert('Hello World !');
+        }
+      }});
 
 ### Download Button
 
@@ -180,6 +287,10 @@ Probably the most used containers, they allow you to stack elements, either vert
 # Client/Server interaction
 
 # Websockets
+
+# Manual VS Automatic UI creation
+
+# Work with CoffeeScript
 
 # Generate API documentation
 

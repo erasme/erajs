@@ -128,7 +128,7 @@ Ui.Element.extend('Ui.Container',
 	* @return true if the element passed is one of the container's children
 	*/
 	hasChild: function(child) {
-		return this.getChildPosition() !== -1;
+		return this.getChildPosition(child) !== -1;
 	}
 }, 
 /** @lends Ui.Container#*/

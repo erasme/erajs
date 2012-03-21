@@ -43,10 +43,8 @@ Ui.Popup.extend('Form.Popup',
 	},
 	
 	onSubmit: function(){
-		var realUrl = this.panel.submit();
-		if(this.panel.getSubmitType() == 'link' && realUrl.length > 0){
-			window.open(realUrl);
-		}
+		this.panel.submit();
+		this.hide();
 	}
 });
 

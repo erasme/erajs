@@ -94,24 +94,19 @@ Ui.LBox.extend('Form.Panel',
 			}
 
 			if(this.submitType === 'ajax'){
-				//console.log('Envois de ', values, ' a ', this.submitUrl);
+				//A form is usually a POST request
+				req = new Core.HttpRequest({url: this.submitUrl, method: 'POST', arguments: values});
+				req.send();
 			}
 			//The form is a link so no HttpRequest
 			else if (this.submitType === 'link'){
 				var args = Core.Util.encodeURIQuery(values);
 				var url = this.submitUrl;
-				if(url.indexOf('?') === -1){
-					url += '?'+args;
-				}
-				else{
-					url += '&'+args;
-				}
-
-				return url;
+				var paramChar = url.indexOf('?') === -1 ? '?' : '&'
+				url += paramChar + args;
+				window.open(url);
 			}
 		}
-		
-		return "";
 	},
 	
 	setValue: function(value){

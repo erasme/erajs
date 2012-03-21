@@ -24,7 +24,7 @@ Ui.LBox.extend('Form.Field',
 
 		this.setMargin(2);
 		this.setContent([
-				{type: Ui.Rectangle, name: 'background', fill: 'white', radius: 8},
+				{type: Ui.Rectangle, name: 'background', opacity: 0.0, fill: 'pink', radius: 8},
 				{
 					type: boxType, margin: 5, 
 					content: [
@@ -39,8 +39,8 @@ Ui.LBox.extend('Form.Field',
 			]);
 
 		//They will be add to fieldBox
-		this.description = new Ui.Label({horizontalAlign: 'left', color: '#444444'});
-		this.error = new Ui.Label({color: 'red', horizontalAlign: 'left', fontWeight: 'bold'});
+		this.description = new Ui.Text({textAlign: 'left', color: '#444444'});
+		this.error = new Ui.Text({color: 'red', textAlign: 'left', fontWeight: 'bold'});
 	},
 
 	/**
@@ -108,11 +108,13 @@ Ui.LBox.extend('Form.Field',
 	
 	setError: function(error){
 		if(error !== ''){
-			this.background.setFill('pink');
-			this.fieldBox.append(this.error);
+			this.background.setOpacity(1.0);
+			if(!this.fieldBox.hasChild(this.error)){
+				this.fieldBox.append(this.error);
+			}
 		}
 		else{
-			this.background.setFill('white');
+			this.background.setOpacity(0.0);
 			if(this.fieldBox.hasChild(this.error)){
 				this.fieldBox.remove(this.error);
 			}
@@ -197,7 +199,7 @@ Form.Field.extend('Form.ComboField',
 	},
 	
 	isValid: function(){
-		if(this.isRequire() && this.getValue() ===undefined){
+		if(this.isRequire() && this.getValue() === undefined){
 			this.setRequireError();
 			return false;
 		}
@@ -219,9 +221,9 @@ Form.Field.extend('Form.TextField',
 {
 	isValid: function(){
 		var valid = true;
-		var realValue = this.getValue().trim();
+		var realValue = this.getValue() != null ? this.getValue().trim() : "";
 		var validation = this.getValidation();
-		var empty = realValue.length ===0 ? true : false;
+		var empty = realValue.length === 0 ? true : false;
 		if(this.isRequire() && empty){
 			valid = false;
 			this.setRequireError();
@@ -235,16 +237,21 @@ Form.Field.extend('Form.TextField',
 			else if(typeof validation === "function"){
 				valid = validation(realValue);
 			}
+
+			if(!valid){
+				this.setError('Non valide')
+			}
 		}
 		
 		if(valid){
 			this.validate();
 		}
+
 		return valid;
 	}
 });
 
-Form.Field.extend('Form.TextAreaField',
+Form.TextField.extend('Form.TextAreaField',
 /**@lends Form.TextAreaField#*/
 {
 	/**
@@ -254,21 +261,6 @@ Form.Field.extend('Form.TextAreaField',
 	 */
 	constructor: function(config){
 		this.setUiElementType(Ui.TextAreaField);
-	}
-},
-/**@lends From.TextAreaField#*/
-{
-	isValid: function(){
-		var realValue = this.getValue().trim();
-		var empty = realValue.length ===0 ? true : false;
-		if(this.isRequire() && empty){
-			this.setRequireError();
-			return false;
-		}
-		else{
-			this.validate();
-			return true;
-		}
 	}
 });
 
