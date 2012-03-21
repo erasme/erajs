@@ -674,7 +674,7 @@ Ui.Container.extend('Ui.Scrollable',
 	},
 
 	onVerticalFingerDown: function(event) {
-		if(this.lock || this.getIsDisabled() || this.isVerticalMoving)
+		if(this.lock || this.getIsDisabled() || this.isVerticalMoving || !this.showScrollbar)
 			return;
 
 		this.isVerticalMoving = true;
@@ -793,7 +793,7 @@ Ui.Container.extend('Ui.Scrollable',
 	},
 
 	onHorizontalFingerDown: function(event) {
-		if(this.lock || this.getIsDisabled() || this.isHorizontalMoving)
+		if(this.lock || this.getIsDisabled() || this.isHorizontalMoving || !this.showScrollbar)
 			return;
 
 		this.isHorizontalMoving = true;
