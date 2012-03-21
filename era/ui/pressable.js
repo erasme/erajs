@@ -64,16 +64,12 @@ Ui.LBox.extend('Ui.Pressable',
 			this.onUp();
 
 			if('createEvent' in document) {
-				this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
-
 				var mouseDownEvent = document.createEvent('MouseEvents');
 				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
 					event.clientX, event.clientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
-				event.target.dispatchEvent(mouseDownEvent);
-
-				this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
 			}
 		}
 	},
@@ -97,7 +93,6 @@ Ui.LBox.extend('Ui.Pressable',
 
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
 		this.connect(event.finger, 'fingerup', this.onFingerUp);
-
 		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
@@ -121,10 +116,7 @@ Ui.LBox.extend('Ui.Pressable',
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 			this.onUp();
-
-			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 			event.finger.release();
-			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 		}
 	},
 	

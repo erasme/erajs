@@ -43,7 +43,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 
 		this.color = new Ui.Color({ r: 0.31, g: 0.66, b: 1 });
 
-		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  });
+		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.2 }), radius: 4, marginTop: 1  });
 		this.append(this.lightShadow);
 
 		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  });

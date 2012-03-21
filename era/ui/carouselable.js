@@ -23,7 +23,7 @@ Ui.Container.extend('Ui.Carouselable',
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.addEvents('change');
 
-		this.movable = new Ui.Movable({ inertia: false });
+		this.movable = new Ui.Movable({ inertia: false, moveVertical: false, directionRelease: true });
 		this.movable.setFocusable(false);
 		this.connect(this.movable, 'move', this.onMove);
 		this.connect(this.movable, 'down', this.onDown);

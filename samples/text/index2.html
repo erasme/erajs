@@ -27,8 +27,13 @@ app.connect(button, 'untoggle', function() {
 	text.setSelectable(false);
 });
 
+
+var scroll = new Ui.ScrollingArea();
+vbox.append(scroll, true);
+
 var lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'stretch', margin: 100 });
-vbox.append(lbox, true);
+//vbox.append(lbox, true);
+scroll.setContent(lbox);
 
 lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
 
@@ -39,6 +44,14 @@ var text = new Ui.Text({
 	text: 'hello, this is a simple text, long enought to test the line break feature\n\nwith 2 chapters'
 });
 lbox.append(text);
+
+/*var text = new Ui.Label({
+	margin: 5,
+	color: { r: 1, g: 0, b: 0 },
+	text: 'hello, this is a simple text'
+});
+lbox.append(text);*/
+
 
 </script>
   </head>

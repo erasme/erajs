@@ -20,8 +20,7 @@ ERAjs is not :
 
 Download lastest sources here : 
 
-    git clone git@github.com:erasme/erajs.git
-
+> git clone git@github.com:erasme/erajs.git
 
 Then simply create an empty html file which like to era.js:
 

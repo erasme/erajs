@@ -43,7 +43,7 @@ Ui.LBox.extend('Ui.Switch',
 
 		this.setClipToBounds(true);
 
-		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, marginBottom: 2 });
+		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, marginBottom: 2, directionRelease: true });
 		this.movable.setFocusable(false);
 		this.append(this.movable);
 
@@ -138,9 +138,9 @@ Ui.LBox.extend('Ui.Switch',
 		this.stopAnimation();
 	},
 
-	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove) {
+	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
 		// if move is very low consider a click and invert the value
-		if(cumulMove < 10)
+		if(!abort && (cumulMove < 10))
 			this.setValue(!this.value);
 		// else consider a move
 		else {

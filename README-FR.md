@@ -23,7 +23,7 @@ Ses principales caractéristiques sont :
 
 # Sources du projet
 
-> git clone git@forge.erasme.org:erajs
+> git clone git@github.com:erasme/erajs.git
 
 Commande pour générer la doc :
 
