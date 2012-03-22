@@ -4,13 +4,14 @@ ERAjs is a JavaScript Application Library which main target is to act like nativ
 
 ERAjs keyfeatures are :
 
-- JavaScript exclusivity : ERAjs does not relly on a HTML tructure neither on CSS for styling. It's only pure JavaScript which induce a little performance overhead but decuplate possibilities !
+- JavaScript exclusivity : ERAjs does not relly on a HTML structure neither on CSS for styling. It's only pure JavaScript which induce a little performance overhead but decuplate possibilities !
 - Advanced layout : Since it does not relly on HTML ERAjs offers advanced layout functionnality similar to a native toolkit (GTK+, Qt...). Such features are VBox, HBox, Grid, Flow etc.
 - Responsive design : An ERAjs app automatically resize it self to fit the screen, an depending on the layout, elements can reorganize themself to avoid horizontal scrolling. And hence it's pure JS, you can easilly write specific behavior on resize.
 - Widget based system : ERAjs allows you to manipulate highlevel widgets and style them as you like. Widget can be combine together to form more highlevel components.
 - Same experience everywhere : ERAjs garanties that your application will look and behave the same regardless your browser or your device without any modification. Multitouch device (smart phones, tablets), keyboard only navigation (for accessibility), multitouch screens (with a built-in virtual keyborad !) and of course classical desktop browsing.
 
 ERAjs is not :
+
 - Extremly fast : as it doesn't relly on html layout system, ERAjs is not as fast as other library, but on a decent browser (ie Firefox 4+, Chrome) it works flowlessly :).
 - Tiny : minified, era.js size is less than 440Kb which is not the tiniest js library you've seen, but considered the fact that it can do everything you need for an application and that it doesn't depends on other libraries and that you don't have CSS, it's not so big. Compare that with a jQuery+jQueryUI+jQueryMobile+Whateverplugins+CSS solution and it'll feel very small !
 - For static web page : HTML + CSS will always be better to build beautifull and fast static web page, even if you add a bit of JS, it's not ERAjs work. ERAjs is only good for building javascript only rich web apps.
@@ -108,7 +109,7 @@ Boxes have some very interesting properties such as "uniform" :
           {
             type: Ui.Button, text: 'Make them uniform !',
             onPress: function(){
-              this.content.setUniform(!this.content.getUniform());
+              this.getContent().setUniform(!this.getContent().getUniform());
             }
           }
         ]
@@ -141,8 +142,6 @@ Elements in the box can have "attached properties" like "resizable :
 ### Fixed
 
 ### Flow
-
-### Embed
 
 ## Behaviour containers
 
@@ -183,6 +182,8 @@ Elements in the box can have "attached properties" like "resizable :
 ### Popup
 
 ### Toolbar
+
+## Understand alignement (center, etc.)
 
 # Visual Elements
 
@@ -270,8 +271,6 @@ Elements in the box can have "attached properties" like "resizable :
 ### Panel
 
 ### Popup
-
-# Understand alignement (center, etc.)
 
 # Animations
 
