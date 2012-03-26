@@ -37,6 +37,10 @@ Core.Object.extend('Anim.AnimationManager',
 			this.clocks.splice(i, 1);
 	},
 
+	forceTick: function() {
+		if(this.clocks.length > 0)
+			this.onTick();
+	},
 	
 	/**	@Private*/
 	onTick: function() {
