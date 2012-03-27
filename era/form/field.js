@@ -312,10 +312,10 @@ Form.Field.extend('Form.FieldContainer',
 /**@lends Form.FieldContainer#*/
 {
 	/**
-	 * @constructs 
-	 * @class Form.Field that can contain other Form.Field. 
+	 * @constructs
+	 * @class Form.Field that can contain other Form.Field.
 	 * It avoid user to create their own Field types.
-	 * The difference between manual Form layout (using Panel.setLayout) is that the 
+	 * The difference between manual Form layout (using Panel.setLayout) is that the
 	 * FieldContainer has a label, a description and an error message.
 	 * @note Inspired from ExtJs FieldContainer
 	 * @extends Form.Field
