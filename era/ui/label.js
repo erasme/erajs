@@ -263,6 +263,8 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	measureText: function(text, fontSize, fontFamily, fontWeight) {
+		if((text === '') || (text === undefined))
+			return { width: 0, height: 0 };
 		if(navigator.supportCanvas)
 			return Ui.Label.measureTextCanvas(text, fontSize, fontFamily, fontWeight);
 		else
