@@ -24,23 +24,25 @@ Ui.LBox.extend('Form.Field',
 
 		this.setMargin(2);
 		this.setContent([
-				{type: Ui.Rectangle, name: 'background', opacity: 0.0, fill: 'pink', radius: 8},
-				{
-					type: boxType, margin: 5, 
-					content: [
-						{
-							//Handle label with multiple colors...
-							type: Ui.HBox, name: 'labelBox', width: 200, verticalAlign: 'top', spacing: 2,
-							content: [{type: Ui.Label, name: 'label'}]
-						},
-						{type: Ui.VBox, name: 'fieldBox'}
-					]
-				}
-			]);
-
-		//They will be add to fieldBox
-		this.description = new Ui.Text({textAlign: 'left', color: '#444444'});
-		this.error = new Ui.Text({color: 'red', textAlign: 'left', fontWeight: 'bold'});
+			{type: Ui.Rectangle, name: 'background', opacity: 0.0, fill: 'pink', radius: 8},
+			{
+				type: boxType, margin: 5, 
+				content: [
+					{
+						//Handle label with multiple colors...
+						type: Ui.HBox, name: 'labelBox', width: 200, verticalAlign: 'top', spacing: 2,
+						content: [{type: Ui.Label, name: 'label'}]
+					},
+					{
+						type: Ui.VBox, name: 'fieldBox',
+						content: [
+							{type: Ui.Text, name: 'description', textAlign: 'left', color: '#444444'},
+							{type: Ui.Text, name: 'error', color: 'red', textAlign: 'left', fontWeight: 'bold'}
+						]
+					}
+				]
+			}
+		]);
 	},
 
 	/**
@@ -71,17 +73,6 @@ Ui.LBox.extend('Form.Field',
 	},
 	
 	setDescription: function(description){
-		if(description !== ""){
-			this.fieldBox.append(this.description);
-
-			if(this.fieldBox.hasChild(this.error)){
-				//Error label is always below the description
-				this.fieldBox.moveChildAt(this.error, -1);
-			}
-		}
-		else if(this.fieldBox.hasChild(this.description)){
-			this.fieldBox.remove(this.description);
-		}
 		this.description.setText(description);
 	},
 	
@@ -109,17 +100,10 @@ Ui.LBox.extend('Form.Field',
 	setError: function(error){
 		if(error !== ''){
 			this.background.setOpacity(1.0);
-			if(!this.fieldBox.hasChild(this.error)){
-				this.fieldBox.append(this.error);
-			}
 		}
 		else{
 			this.background.setOpacity(0.0);
-			if(this.fieldBox.hasChild(this.error)){
-				this.fieldBox.remove(this.error);
-			}
 		}
-
 		this.error.setText(error);
 	},
 	
@@ -320,6 +304,84 @@ Form.Field.extend('Form.DateField',
 		else{
 			this.validate();
 			return true;
+		}
+	}
+});
+
+Form.Field.extend('Form.FieldContainer',
+/**@lends Form.FieldContainer#*/
+{
+	/**
+	 * @constructs 
+	 * @class Form.Field that can contain other Form.Field. 
+	 * It avoid user to create their own Field types.
+	 * The difference between manual Form layout (using Panel.setLayout) is that the 
+	 * FieldContainer has a label, a description and an error message.
+	 * @note Inspired from ExtJs FieldContainer
+	 * @extends Form.Field
+	 */
+	constructor: function(config){
+		//Default layout is Ui.HBox but it can be change with anything that have a setContent
+		this.setUiElementType(Ui.HBox);
+	}
+},
+/**@lends Form.FieldContainer#*/
+{
+	setUiElement: function(elt){
+		Form.FieldContainer.base.setUiElement.call(this, elt);
+		//Just put the description above the fields
+		this.fieldBox.moveChildAt(this.description, 0);
+		//Recall the function in case of setRequire has been called
+		//before ui element creation.
+		if(this.require){
+			this.setRequire(this.require);
+		}
+	},
+
+	/**Needs to be done after setting elements*/
+	setValue: function(value){
+		//Only works with objects
+		if(typeof value === 'object' && this.uiElt != null){
+			var fields = this.uiElt.getChildren();
+			for(var name in value){
+				for(var i = 0 ; i < fields.length; i++){
+					var f = fields[i];
+					if(f.fieldName === name){
+						f.setValue(value[name]);
+					}
+				}
+			}
+		}
+	},
+
+	getValue: function(){
+		var value = {};
+		var fields = this.uiElt.getChildren();
+		for(var i = 0 ; i < fields.length; i++){
+			var f = fields[i];
+			if(f.fieldName != null){
+				value[f.fieldName] = f.getValue();
+			}
+		}
+
+		return value;
+	},
+
+	isValid: function(){
+		var fields = this.uiElt.getChildren();
+		for(var i = 0 ; i < fields.length; i++){
+			fields[i].isValid();
+		}
+	},
+
+	/** Set all fields to require if true. Otherwise do nothing */
+	setRequire: function(require){
+		this.require = require;
+		if(require){
+			var fields = this.uiElt.getChildren();
+			for(var i = 0 ; i < fields.length; i++){
+				fields[i].setRequire(require);
+			}
 		}
 	}
 });
