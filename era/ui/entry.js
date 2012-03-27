@@ -10,6 +10,10 @@ Ui.Element.extend('Ui.Entry',
 	value: '',
 	passwordMode: false,
 	isDown: false,
+	mouseStartX: undefined,
+	mouseStartY: undefined,
+	touchStartX: undefined,
+	touchStartY: undefined,
 
 	/**
 	 * @constructs
@@ -22,7 +26,7 @@ Ui.Element.extend('Ui.Entry',
 		this.setFocusable(true);
 
 		// handle mouse
-//		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
@@ -122,8 +126,10 @@ Ui.Element.extend('Ui.Entry',
 	 */
 
 	onMouseDown: function(event) {
-		if(this.getHasFocus())
+		if(this.getHasFocus()) {
+			event.stopPropagation();
 			return;
+		}
 
 		if((event.button != 0) || this.getIsDisabled())
 			return;
@@ -181,11 +187,8 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onFingerDown: function(event) {
-//		console.log('onFingerDown hasFocus: '+this.getHasFocus());
-
 		if(this.getHasFocus()) {
-//			this.getDrawing().setSelectionRange(0, 9999);
-//			this.getDrawing().select();
+			event.stopPropagation();
 			return;
 		}
 
@@ -245,7 +248,6 @@ Ui.Element.extend('Ui.Entry',
 	onUp: function() {
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-
  		this.isDown = false;
 		this.fireEvent('up', this);
 	},
@@ -281,6 +283,8 @@ Ui.Element.extend('Ui.Entry',
 			event.stopPropagation();
 			this.fireEvent('validate', this);
 		}
+		else if(this.getHasFocus())
+			event.stopPropagation();
 	}
 	/**#@-*/
 }, {

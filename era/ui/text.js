@@ -7,6 +7,7 @@ Ui.Element.extend('Ui.Text',
 	fontWeight: undefined,
 	color: undefined,
 	textAlign: undefined,
+	interLine: 1,
 
 	measureDrawing: undefined,
 	textDrawing: undefined,
@@ -113,6 +114,20 @@ Ui.Element.extend('Ui.Text',
 			return this.getStyleProperty('fontWeight');
 	},
 
+	setInterLine: function(interLine) {
+		if(this.interLine != interLine) {
+			this.interLine = interLine;
+			this.invalidateMeasure();
+		}
+	},
+
+	getInterLine: function() {
+		if(this.interLine !== undefined)
+			return this.interLine;
+		else
+			return this.getStyleProperty('interLine');
+	},
+
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = Ui.Color.create(color);
@@ -176,7 +191,7 @@ Ui.Element.extend('Ui.Text',
 			this.textDrawing.appendChild(tspan);
 		}
 		this.offsetX = 0;
-		this.offsetY += this.lineHeight;
+		this.offsetY += this.lineHeight * this.getInterLine();
 		this.line = '';
 	},
 
@@ -281,6 +296,7 @@ Ui.Element.extend('Ui.Text',
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
 		fontWeight: 'normal',
-		textAlign: 'left'
+		textAlign: 'left',
+		interLine: 1
 	}
 });

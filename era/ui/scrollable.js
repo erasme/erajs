@@ -40,6 +40,9 @@ Ui.Container.extend('Ui.Scrollable',
 	overScroll: true,
 
 	showScrollbar: true,
+	showClock: undefined,
+	nextShow: true,
+	hideTimeout: undefined,
 	directionLock: false,
 	directionRelease: false,
 
@@ -87,7 +90,24 @@ Ui.Container.extend('Ui.Scrollable',
 	setShowScrollbar: function(show) {
 		if(this.showScrollbar != show) {
 			this.showScrollbar = show;
+			if(this.showClock != undefined) {
+				this.showClock.abort();
+				this.showClock = undefined;
+			}
+			if(this.hideTimeout != undefined) {
+				this.hideTimeout.abort();
+				this.hideTimeout = undefined;
+			}
 			this.invalidateMeasure();
+			if(show) {
+				this.scrollbarHorizontalBox.setOpacity(1);
+				this.scrollbarVerticalBox.setOpacity(1);
+
+			}
+			else {
+				this.scrollbarHorizontalBox.setOpacity(0);
+				this.scrollbarVerticalBox.setOpacity(0);
+			}
 		}
 	},
 
@@ -269,8 +289,6 @@ Ui.Container.extend('Ui.Scrollable',
 		if(!((event.button == 1) || ((event.button == 0) && (event.ctrlKey || !this.showScrollbar))))
 			return;
 
-		this.focus();
-
 		this.directionLock = false;
 		this.mouseButton = event.button;
 
@@ -305,6 +323,8 @@ Ui.Container.extend('Ui.Scrollable',
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.startComputeInertia();
+
+		this.showScrollbars();
 	},
 
 	onMouseMove: function(event) {
@@ -339,6 +359,8 @@ Ui.Container.extend('Ui.Scrollable',
 							event.ctrlKey, event.altKey, event.shiftKey,
 							event.metaKey, 0, event.target);
 						this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+
+						this.hideScrollbars();
 						return;
 					}
 				}
@@ -365,6 +387,8 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.stopComputeInertia();
 		this.startInertia();
+
+		this.hideScrollbars();
 	},
 
 	onMouseWheel: function(event) {
@@ -372,6 +396,9 @@ Ui.Container.extend('Ui.Scrollable',
 		event.stopPropagation();
 
 		this.stopInertia();
+
+		this.showScrollbars();
+		this.hideTimeoutScrollbars();
 
 		var deltaX = 0;
 		var deltaY = 0;
@@ -421,6 +448,8 @@ Ui.Container.extend('Ui.Scrollable',
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
 		this.startComputeInertia();
+
+		this.showScrollbars();
 	},
 
 	onFingerMove: function(event) {
@@ -444,6 +473,7 @@ Ui.Container.extend('Ui.Scrollable',
 					this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 
 					event.finger.release();
+					this.hideScrollbars();
 					return;
 				}
 				this.directionLock = true;
@@ -466,6 +496,8 @@ Ui.Container.extend('Ui.Scrollable',
 
 		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+		this.hideScrollbars();
 	},
 
 	onKeyDown: function(keyboard, key) {
@@ -858,6 +890,65 @@ Ui.Container.extend('Ui.Scrollable',
 //		this.disconnect(this.contentBox, 'scroll', this.onContentBoxScroll);
 //		this.contentBox.setOffset(this.offsetX, this.offsetY);
 //		this.connect(this.contentBox, 'scroll', this.onContentBoxScroll);
+	},
+
+	showScrollbars: function() {
+		if(this.showScrollbar)
+			return;
+		this.nextShow = true;
+		if(this.hideTimeout != undefined)
+			this.hideTimeout.abort();
+		if(this.showClock === undefined) {
+			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, onTimeupdate: this.onShowTick });
+			this.showClock.begin();
+		}
+	},
+
+	hideTimeoutScrollbars: function() {
+		if(this.showScrollbar)
+			return;
+		if(this.hideTimeout != undefined) {
+			this.hideTimeout.abort();
+			this.hideTimeout = new Core.DelayedTask({ delay: 1, scope: this, callback: this.hideScrollbars });
+		}
+		else
+			this.hideTimeout = new Core.DelayedTask({ delay: 1, scope: this, callback: this.hideScrollbars });
+	},
+
+	hideScrollbars: function() {
+		if(this.showScrollbar)
+			return;
+		this.nextShow = false;
+		if(this.hideTimeout != undefined) {
+			this.hideTimeout.abort();
+			this.hideTimeout = undefined;
+		}
+		if(this.showClock === undefined) {
+			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, onTimeupdate: this.onShowTick });
+			this.showClock.begin();
+		}
+	},
+
+	onShowTick: function(clock, progress, delta) {
+		if(delta == 0)
+			return;
+		if(!this.nextShow)
+			delta = -delta;
+		delta *= 5;
+
+		var opacityVertical = this.scrollbarVerticalBox.getOpacity();
+		opacityVertical = Math.max(0, Math.min(opacityVertical + delta, 1));
+		this.scrollbarVerticalBox.setOpacity(opacityVertical);
+
+		var opacityHorizontal = this.scrollbarHorizontalBox.getOpacity();
+		opacityHorizontal = Math.max(0, Math.min(opacityHorizontal + delta, 1));
+		this.scrollbarHorizontalBox.setOpacity(opacityHorizontal);
+
+		if((this.nextShow && (opacityHorizontal == 1) && (opacityVertical == 1)) ||
+		   (!this.nextShow && (opacityHorizontal == 0) && (opacityVertical == 0))) {
+			this.showClock.stop();
+			this.showClock = undefined;
+		}
 	}
 
 	/**#@-*/
