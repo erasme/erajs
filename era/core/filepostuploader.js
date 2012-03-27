@@ -129,6 +129,17 @@ Core.Object.extend('Core.FilePostUploader',
 		return this.responseText;
 	},
 
+	getResponseJSON: function() {
+		var res;
+		try {
+			res = JSON.parse(this.getResponseText());
+		}
+		catch(err) {
+			res = undefined;
+		}
+		return res;
+	},
+
 	/**#@+
 	* @private
 	*/
