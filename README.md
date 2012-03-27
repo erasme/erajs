@@ -1,6 +1,6 @@
 # ERAjs : The JavaScript application library for applications developpers
 
-ERAjs is a JavaScript Application Library which main target is to act like native application toolkit and is build the ground up with multi devices ergonomy in mind.
+ERAjs is a JavaScript Application Library which main target is to act like native application toolkit and is build the ground up with multi-touch devices ergonomy in mind.
 
 ERAjs keyfeatures are :
 
@@ -23,7 +23,7 @@ Download lastest sources here :
 
 > git clone git@github.com:erasme/erajs.git
 
-Then simply create an empty html file which like to era.js:
+Then simply create an empty html file which link to era.js:
 
     <!DOCTYPE html>
     <html>
@@ -34,13 +34,17 @@ Then simply create an empty html file which like to era.js:
           //Write your code here...
         </script>
       </head>
-      <body></body>
     </html>
 
 And you're good ! Add script directly to the page or in another file.
 No need to add CSS, no need to write more HTML, everything is done by ERAjs.
 
 # Hello World application
+
+    var app = new Ui.App();
+    app.setContent(new Ui.Label({text: "You know what ? I'm happy."}));
+
+> Note that all our example are written using explicitely ERAjs API, you can also create ERAjs objects using a JSON style object creation. While it may seems shorter and clearer, we found it less straightforward when it comes to learn an API. Here is what the hello world sample looks like in JSON style object creation :
 
     var app = new Ui.App({
       content: {type: Ui.Label, text: "You know what ? I'm happy."}
