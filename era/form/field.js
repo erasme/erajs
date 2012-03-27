@@ -175,6 +175,21 @@ Form.Field.extend('Form.ComboField',
 		if(!('uiElement' in config)){
 			this.setUiElement({horizontalAlign: 'left'});
 		}
+	},
+
+	/**
+	 * ComboBox often needs remote data so you can specify a value url 
+	 * and an AjaxRequest will automaticaly be made and data fetch and filled
+	 * into the combo
+	*/
+	setValueUrl: function(url){
+		var req = new Core.HttpRequest({
+			url: url
+		});
+		this.connect(req, "done", function(req){
+				this.setValue(req.getResponseJSON())
+			});
+		req.send();
 	}
 },
 /**@lends Form.ComboField#*/
