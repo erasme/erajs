@@ -370,8 +370,11 @@ Form.Field.extend('Form.FieldContainer',
 	isValid: function(){
 		var fields = this.uiElt.getChildren();
 		for(var i = 0 ; i < fields.length; i++){
-			fields[i].isValid();
+			if(!fields[i].isValid()){
+				return false;
+			}
 		}
+		return true;
 	},
 
 	/** Set all fields to require if true. Otherwise do nothing */
