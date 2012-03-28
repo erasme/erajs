@@ -18,6 +18,8 @@ Ui.LBox.extend('Form.Field',
 	uiEltType: Ui.Element,
 	
 	constructor: function(config){
+		//Default field width
+		this.setWidth(200);
 		//If label are align on top of the field, then use a VBox, otherwise HBox an
 		var boxType = this.getStyleProperty('labelAlign') ==='top' ? Ui.VBox : Ui.HBox;
 		var lblHorizontalAlign = this.getStyleProperty('labelAlign') ==='right' ? 'right' : 'left';
@@ -30,7 +32,7 @@ Ui.LBox.extend('Form.Field',
 				content: [
 					{
 						//Handle label with multiple colors...
-						type: Ui.HBox, name: 'labelBox', width: 200, verticalAlign: 'top', spacing: 2,
+						type: Ui.HBox, name: 'labelBox', verticalAlign: 'top', spacing: 2,
 						content: [{type: Ui.Label, name: 'label'}]
 					},
 					{
@@ -159,21 +161,6 @@ Form.Field.extend('Form.ComboField',
 		if(!('uiElement' in config)){
 			this.setUiElement({horizontalAlign: 'left'});
 		}
-	},
-
-	/**
-	 * ComboBox often needs remote data so you can specify a value url 
-	 * and an AjaxRequest will automaticaly be made and data fetch and filled
-	 * into the combo
-	*/
-	setValueUrl: function(url){
-		var req = new Core.HttpRequest({
-			url: url
-		});
-		this.connect(req, "done", function(req){
-				this.setValue(req.getResponseJSON())
-			});
-		req.send();
 	}
 },
 /**@lends Form.ComboField#*/

@@ -99,7 +99,7 @@ Let's play with boxes orientation :
       }
     });
 
-As you can see a Box can change it's orientation dynamically. Damned practical when you have a portable device with giroscope !
+As you can see a Box can change it's orientation dynamically. Damned practical when you have a mobile device with giroscope !
 
 Boxes have some very interesting properties such as "uniform" :
 
