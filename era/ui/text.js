@@ -20,8 +20,10 @@ Ui.Element.extend('Ui.Text',
 	offsetY: 0,
 	spaceWidth: undefined,
 	maxWidth: undefined,
+	maxLineWidth: 0,
 	lineHeight: undefined,
 	textMeasureValid: false,
+	lineCount: 0,
 
     /**
      * @constructs
@@ -190,15 +192,20 @@ Ui.Element.extend('Ui.Text',
 				tspan.innerText = this.line;
 			this.textDrawing.appendChild(tspan);
 		}
+		if(this.offsetX > this.maxLineWidth)
+			this.maxLineWidth = this.offsetX;
 		this.offsetX = 0;
 		this.offsetY += this.lineHeight * this.getInterLine();
 		this.line = '';
+		this.lineCount++;
 	},
 
 	updateFlow: function(width, render) {
 		// init flow context
 		this.flowRender = render;
 		this.maxWidth = width;
+		this.maxLineWidth = 0;
+		this.lineCount = 0;
 		this.lineHeight = this.getFontSize();
 		this.offsetX = 0;
 		this.offsetY = 0;
@@ -279,7 +286,10 @@ Ui.Element.extend('Ui.Text',
 			width = this.getWidth();
 		this.updateMeasure();
 		this.updateFlow(width, false);
-		return { width: this.maxWidth, height: this.offsetY };
+		if(this.getWidth() == undefined)
+			return { width: this.maxLineWidth, height: this.offsetY };
+		else
+			return { width: this.maxWidth, height: this.offsetY };
 	},
 
 	arrangeCore: function(width, height) {
