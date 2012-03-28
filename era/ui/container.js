@@ -79,6 +79,7 @@ Ui.Element.extend('Ui.Container',
 			for(var i = 0; i < this.children.length; i++)
 				this.children[i].getDrawing().style.zIndex = i + 1;
 		}
+		this.invalidateMeasure();
 	},
 
 	/**
