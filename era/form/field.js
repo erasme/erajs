@@ -222,6 +222,11 @@ Form.Field.extend('Form.TextField',
 {
 	constructor: function(config){
 		this.setUiElementType(Ui.TextField);
+	},
+
+	onChange: function(){
+		//check field validity on each change
+		this.isValid();
 	}
 },
 /**@lends From.TextField#*/
@@ -232,6 +237,8 @@ Form.Field.extend('Form.TextField',
 		if(this.uiElt.entry != null){
 			this.uiElt.entry.setFontSize(this.getStyleProperty('fontSize'));
 		}
+
+		this.connect(this.uiElt, 'change', this.onChange);
 	},
 
 	isValid: function(){
