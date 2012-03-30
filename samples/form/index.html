@@ -16,18 +16,18 @@ var panelDesc = {
     alert('Those values will be send : ' + JSON.stringify(values));
     return values;
   },
-  fields: [
-    {type: Form.TextField, label: 'First Name', require: true, fieldName: 'firstName'},
-    {type: Form.TextField, label: 'Last Name', require: true, fieldName: 'lastName'},
-    {type: Form.TextField, label: 'Login', require: true, fieldName: 'login'},
-    {
+  fields: {
+    'firstName' : {type: Form.TextField, label: 'First Name', require: true},
+    'lastName' : {type: Form.TextField, label: 'Last Name', require: true},
+    'login' : {type: Form.TextField, label: 'Login', require: true},
+    'password' : {
       type: Form.PasswordField, label: 'Password',
       description: 'Must contain at least 1 character and 1 number.',
-      require: true, fieldName: 'password',
+      require: true,
       //Validation can be either a regex or a function that return a boolean
       validation: /\w*(\d[A-Za-z]|[A-Za-z]\d)\w*/
     }
-  ]
+  }
 };
 
 var panel = new Form.Panel(panelDesc);

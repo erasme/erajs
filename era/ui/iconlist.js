@@ -19,8 +19,9 @@ Ui.ScrollingArea.extend('Ui.IconList',
 
 	remove: function(icon) {
 		this.flow.remove(icon);
-	},
-
+	}
+},
+{
 	clear: function() {
 		while(this.flow.getChildren().length > 0) {
 			this.flow.remove(this.flow.getChildren()[0]);

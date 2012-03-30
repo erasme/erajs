@@ -59,7 +59,12 @@ Ui.LBox.extend('Form.Panel',
 		
 		return value;
 	},
-	
+
+	setValue: function(value){
+		this.value = value;
+		this.updateValue();
+	},
+
 	updateValue: function(){
 		var tempValue = {};
 		if(this.value !==  undefined){
@@ -109,11 +114,6 @@ Ui.LBox.extend('Form.Panel',
 		}
 	},
 	
-	setValue: function(value){
-		this.value = value;
-		this.updateValue();
-	},
-
 	_buildDefaultLayout: function(someFieldRequire){
 		//Default layout is VBox
 		var vbox = new Ui.VBox({
@@ -144,12 +144,10 @@ Ui.LBox.extend('Form.Panel',
 	setFields: function(fields){
 		var someFieldRequire = false;
 		this.fields = {};
-		for(var i = 0; i < fields.length ; i++){
-			var field = fields[i];
-			var formField = Form.Field.create(field);
-			this.fields[formField.fieldName] = formField;
+		for(var name in fields){
+			var f = this.fields[name] = Form.Field.create(fields[name]);
 			
-			if(formField.isRequire()){
+			if(f.isRequire()){
 				someFieldRequire = true;
 			}
 		}
