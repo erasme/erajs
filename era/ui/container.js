@@ -4,9 +4,9 @@ Ui.Element.extend('Ui.Container',
 	children: undefined,
 
     /**
-     * @constructs
+		 * @constructs
 		 * @class
-     * @extends Ui.Element
+		 * @extends Ui.Element
 		 */
 	constructor: function(config) {
 		this.children = [];

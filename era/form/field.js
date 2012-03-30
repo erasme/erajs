@@ -9,6 +9,9 @@ Ui.LBox.extend('Form.Field',
 	defaultValue: undefined,
 	/**Object will have to prepend Ui.Element here*/
 	fieldBox: undefined,
+	/**contains labelBox + fieldBox*/
+	contentBox: undefined,
+	labelAlign: undefined,
 	error: undefined,
 	background: undefined,
 	uiElt: undefined,
@@ -19,19 +22,22 @@ Ui.LBox.extend('Form.Field',
 	constructor: function(config){
 		//Default field width
 		this.setWidth(200);
+		//By default use the styleProperty
+		this.labelAlign = this.getStyleProperty('labelAlign');
 		//If label are align on top of the field, then use a VBox, otherwise HBox an
-		var boxType = this.getStyleProperty('labelAlign') ==='top' ? Ui.VBox : Ui.HBox;
-		var lblHorizontalAlign = this.getStyleProperty('labelAlign') ==='right' ? 'right' : 'left';
+		var boxType = this.labelAlign ==='top' ? Ui.VBox : Ui.HBox;
+		var lblHorizontalAlign = this.labelAlign ==='right' ? 'right' : 'left';
 
 		this.setMargin(2);
 		this.setContent([
 			{type: Ui.Rectangle, name: 'background', opacity: 0.0, fill: 'pink', radius: 8},
 			{
-				type: boxType, margin: 5, 
+				type: boxType, margin: 5, name: 'contentBox',
 				content: [
 					{
 						//Handle label with multiple colors...
-						type: Ui.HBox, name: 'labelBox', verticalAlign: 'top', spacing: 2,
+						type: Ui.HBox, name: 'labelBox', spacing: 2,
+						horizontalAlign: lblHorizontalAlign, verticalAlign: 'top',
 						content: [{type: Ui.Label, name: 'label'}]
 					},
 					{
@@ -44,6 +50,26 @@ Ui.LBox.extend('Form.Field',
 				]
 			}
 		]);
+	},
+
+	/**
+	 * Change label alignement
+	 * @param top|left|right
+	 */
+	setLabelAlign: function(align){
+		if(this.labelAlign !== align){
+			this.labelAlign = align;
+
+			this.contentBox.clear();
+			this.remove(this.contentBox);
+
+			var boxType = this.labelAlign ==='top' ? Ui.VBox : Ui.HBox;
+			var lblHorizontalAlign = this.labelAlign ==='right' ? 'right' : 'left';
+			this.contentBox = new boxType({content: [this.labelBox, this.fieldBox]});
+			this.labelBox.setHorizontalAlign(lblHorizontalAlign);
+
+			this.append(this.contentBox);
+		}
 	},
 
 	/**
