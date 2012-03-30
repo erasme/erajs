@@ -236,9 +236,8 @@ Form.Field.extend('Form.TextField',
 		//All little bit hacky
 		if(this.uiElt.entry != null){
 			this.uiElt.entry.setFontSize(this.getStyleProperty('fontSize'));
+			this.connect(this.uiElt, 'change', this.onChange);
 		}
-
-		this.connect(this.uiElt, 'change', this.onChange);
 	},
 
 	isValid: function(){
@@ -296,6 +295,7 @@ Form.TextField.extend('Form.TextAreaField',
 		Form.TextAreaField.base.setUiElement.call(this, elt);
 		if(this.uiElt.textarea != null){
 			this.uiElt.textarea.setFontSize(this.getStyleProperty('fontSize'));
+			this.connect(this.uiElt.textarea, 'change', this.onChange);
 		}
 	}
 });
