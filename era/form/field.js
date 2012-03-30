@@ -226,6 +226,14 @@ Form.Field.extend('Form.TextField',
 },
 /**@lends From.TextField#*/
 {
+	setUiElement: function(elt){
+		Form.TextField.base.setUiElement.call(this, elt);
+		//All little bit hacky
+		if(this.uiElt.entry != null){
+			this.uiElt.entry.setFontSize(this.getStyleProperty('fontSize'));
+		}
+	},
+
 	isValid: function(){
 		var valid = true;
 		var realValue = this.getValue() != null ? this.getValue().trim() : "";
@@ -256,6 +264,12 @@ Form.Field.extend('Form.TextField',
 
 		return valid;
 	}
+},
+/**@lends From.TextField*/
+{
+	style: {
+		fontSize: 14
+	}
 });
 
 Form.TextField.extend('Form.TextAreaField',
@@ -269,14 +283,25 @@ Form.TextField.extend('Form.TextAreaField',
 	constructor: function(config){
 		this.setUiElementType(Ui.TextAreaField);
 	}
+},
+{
+	setUiElement: function(elt){
+		Form.TextAreaField.base.setUiElement.call(this, elt);
+		if(this.uiElt.textarea != null){
+			this.uiElt.textarea.setFontSize(this.getStyleProperty('fontSize'));
+		}
+	}
 });
 
 
 Form.TextField.extend('Form.PasswordField',
+{},
+/**@lends Form.PasswordField#*/
 {
-	constructor: function(config){
+	setUiElement: function(elt){
+		Form.PasswordField.base.setUiElement.call(this, elt);
 		this.uiElt.setPasswordMode(true);
-	}
+	},
 });
 
 Form.Field.extend('Form.DateField',

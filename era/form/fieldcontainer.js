@@ -1,6 +1,7 @@
 Form.Field.extend('Form.FieldContainer',
 /**@lends Form.FieldContainer#*/
 {
+	fields: undefined,
 	/**
 	 * @constructs
 	 * @class Form.Field that can contain other Form.Field.
@@ -13,7 +14,15 @@ Form.Field.extend('Form.FieldContainer',
 	constructor: function(config){
 		//Default layout is Ui.HBox but it can be change with anything that have a setContent
 		this.setUiElementType(Ui.HBox);
-	}
+	},
+
+	setFields: function(fields){
+		this.fields = {};
+		for(var name in fields){
+			var f = this.fields[name] = Form.Field.create(fields[name]);
+			this.uiElt.append(f);
+		}
+	},
 },
 /**@lends Form.FieldContainer#*/
 {
@@ -21,8 +30,12 @@ Form.Field.extend('Form.FieldContainer',
 		Form.FieldContainer.base.setUiElement.call(this, elt);
 		//Just put the description above the fields
 		this.fieldBox.moveChildAt(this.description, 0);
-		//Recall the function in case of setRequire has been called
-		//before ui element creation.
+		//Recall the function in case of setFields has been called
+		//before ui element creation
+		if(this.fields != null){
+			this.setFields(this.fields);
+		}
+		//Idem for require
 		if(this.require){
 			this.setRequire(this.require);
 		}
@@ -32,13 +45,10 @@ Form.Field.extend('Form.FieldContainer',
 	setValue: function(value){
 		//Only works with objects
 		if(typeof value === 'object' && this.uiElt != null){
-			var fields = this.uiElt.getChildren();
 			for(var name in value){
-				for(var i = 0 ; i < fields.length; i++){
-					var f = fields[i];
-					if(f.fieldName === name){
-						f.setValue(value[name]);
-					}
+				var f = this.fields[name];
+				if(f != null){
+					f.setValue(value[name]);
 				}
 			}
 		}
@@ -46,11 +56,10 @@ Form.Field.extend('Form.FieldContainer',
 
 	getValue: function(){
 		var value = {};
-		var fields = this.uiElt.getChildren();
-		for(var i = 0 ; i < fields.length; i++){
-			var f = fields[i];
-			if(f.fieldName != null){
-				value[f.fieldName] = f.getValue();
+		for(var name in this.fields){
+			var f = this.fields[name];
+			if(f != null){
+				value[name] = f.getValue();
 			}
 		}
 

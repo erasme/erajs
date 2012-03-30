@@ -32,6 +32,27 @@ Ui.LBox.extend('Form.PanelContainer',
 		this._rebuildLayout();
 	},
 
+	appendPanel: function(name, panel){
+		if(this.panels == null){
+			this.panels = {}
+		}
+		var p = this.panels[name] = Form.Panel.create(panel);
+		this.layout.append(p);
+	},
+
+	removePanel: function(name){
+		if(this.panels != null){
+			var p = this.panels[name];
+			if(p != null){
+				this.layout.remove(p);
+			}
+		}
+	},
+
+	getPanel: function(name){
+		return this.panels != null ? this.panels[name] : undefined;
+	},
+
 	setValue: function(value){
 		if(this.panels != null ){
 			for(var name in value){
