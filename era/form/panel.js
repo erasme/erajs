@@ -59,7 +59,12 @@ Ui.LBox.extend('Form.Panel',
 		
 		return value;
 	},
-	
+
+	setValue: function(value){
+		this.value = value;
+		this.updateValue();
+	},
+
 	updateValue: function(){
 		var tempValue = {};
 		if(this.value !==  undefined){
@@ -109,11 +114,6 @@ Ui.LBox.extend('Form.Panel',
 		}
 	},
 	
-	setValue: function(value){
-		this.value = value;
-		this.updateValue();
-	},
-
 	_buildDefaultLayout: function(someFieldRequire){
 		//Default layout is VBox
 		var vbox = new Ui.VBox({
@@ -144,12 +144,10 @@ Ui.LBox.extend('Form.Panel',
 	setFields: function(fields){
 		var someFieldRequire = false;
 		this.fields = {};
-		for(var i = 0; i < fields.length ; i++){
-			var field = fields[i];
-			var formField = Form.Field.create(field);
-			this.fields[formField.fieldName] = formField;
+		for(var name in fields){
+			var f = this.fields[name] = Form.Field.create(fields[name]);
 			
-			if(formField.isRequire()){
+			if(f.isRequire()){
 				someFieldRequire = true;
 			}
 		}
@@ -165,6 +163,40 @@ Ui.LBox.extend('Form.Panel',
 		}
 		
 		this.updateValue();
+	},
+
+	/**
+	 * Append a field at the end of the layout (container)
+	 */
+	appendField: function(name, field){
+		if(this.fields == null){
+			this.fields = {}
+			if(this.defaultLayout){
+				var layout = this._buildDefaultLayout(false);
+				this.setLayout(layout);
+			}
+		}
+		console.log(field);
+		var f = this.fields[name] = Form.Field.create(field);
+		this.layout.append(f);
+	},
+
+	/**
+	 * @warning this function only work with simple layout (ie with only 1 level of children)
+	 * if you've defined a specific layout at the field is not directly 
+	 * a child of the panel's layout, then you'll have to remove it yourself
+	 */
+	removeField: function(name){
+		if(this.fields != null){
+			var f = this.fields[name];
+			if(f != null){
+				this.layout.remove(f);
+			}
+		}
+	},
+
+	getField: function(name){
+		return this.fields != null ? this.fields[name] : undefined;
 	},
 
 	setLayout: function(layout){

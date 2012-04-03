@@ -7,9 +7,11 @@ Ui.LBox.extend('Form.Field',
 	description: undefined,
 	validation: undefined,
 	defaultValue: undefined,
-	fieldName: undefined,
 	/**Object will have to prepend Ui.Element here*/
 	fieldBox: undefined,
+	/**contains labelBox + fieldBox*/
+	contentBox: undefined,
+	labelAlign: undefined,
 	error: undefined,
 	background: undefined,
 	uiElt: undefined,
@@ -18,19 +20,24 @@ Ui.LBox.extend('Form.Field',
 	uiEltType: Ui.Element,
 	
 	constructor: function(config){
+		//Default field width
+		this.setWidth(200);
+		//By default use the styleProperty
+		this.labelAlign = this.getStyleProperty('labelAlign');
 		//If label are align on top of the field, then use a VBox, otherwise HBox an
-		var boxType = this.getStyleProperty('labelAlign') ==='top' ? Ui.VBox : Ui.HBox;
-		var lblHorizontalAlign = this.getStyleProperty('labelAlign') ==='right' ? 'right' : 'left';
+		var boxType = this.labelAlign ==='top' ? Ui.VBox : Ui.HBox;
+		var lblHorizontalAlign = this.labelAlign ==='right' ? 'right' : 'left';
 
 		this.setMargin(2);
 		this.setContent([
 			{type: Ui.Rectangle, name: 'background', opacity: 0.0, fill: 'pink', radius: 8},
 			{
-				type: boxType, margin: 5, 
+				type: boxType, margin: 5, name: 'contentBox',
 				content: [
 					{
 						//Handle label with multiple colors...
-						type: Ui.HBox, name: 'labelBox', width: 200, verticalAlign: 'top', spacing: 2,
+						type: Ui.HBox, name: 'labelBox', spacing: 2,
+						horizontalAlign: lblHorizontalAlign, verticalAlign: 'top',
 						content: [{type: Ui.Label, name: 'label'}]
 					},
 					{
@@ -43,6 +50,26 @@ Ui.LBox.extend('Form.Field',
 				]
 			}
 		]);
+	},
+
+	/**
+	 * Change label alignement
+	 * @param top|left|right
+	 */
+	setLabelAlign: function(align){
+		if(this.labelAlign !== align){
+			this.labelAlign = align;
+
+			this.contentBox.clear();
+			this.remove(this.contentBox);
+
+			var boxType = this.labelAlign ==='top' ? Ui.VBox : Ui.HBox;
+			var lblHorizontalAlign = this.labelAlign ==='right' ? 'right' : 'left';
+			this.contentBox = new boxType({content: [this.labelBox, this.fieldBox]});
+			this.labelBox.setHorizontalAlign(lblHorizontalAlign);
+
+			this.append(this.contentBox);
+		}
 	},
 
 	/**
@@ -87,10 +114,6 @@ Ui.LBox.extend('Form.Field',
 	setDefaultValue: function(defaultValue){
 		this.defaultValue = defaultValue;
 		this.setValue(this.defaultValue);
-	},
-	
-	setFieldName: function(fieldName){
-		this.fieldName = fieldName;
 	},
 	
 	getError: function(){
@@ -159,21 +182,6 @@ Form.Field.extend('Form.ComboField',
 		if(!('uiElement' in config)){
 			this.setUiElement({horizontalAlign: 'left'});
 		}
-	},
-
-	/**
-	 * ComboBox often needs remote data so you can specify a value url 
-	 * and an AjaxRequest will automaticaly be made and data fetch and filled
-	 * into the combo
-	*/
-	setValueUrl: function(url){
-		var req = new Core.HttpRequest({
-			url: url
-		});
-		this.connect(req, "done", function(req){
-				this.setValue(req.getResponseJSON())
-			});
-		req.send();
 	}
 },
 /**@lends Form.ComboField#*/
@@ -214,10 +222,24 @@ Form.Field.extend('Form.TextField',
 {
 	constructor: function(config){
 		this.setUiElementType(Ui.TextField);
+	},
+
+	onChange: function(){
+		//check field validity on each change
+		this.isValid();
 	}
 },
 /**@lends From.TextField#*/
 {
+	setUiElement: function(elt){
+		Form.TextField.base.setUiElement.call(this, elt);
+		//All little bit hacky
+		if(this.uiElt.entry != null){
+			this.uiElt.entry.setFontSize(this.getStyleProperty('fontSize'));
+			this.connect(this.uiElt, 'change', this.onChange);
+		}
+	},
+
 	isValid: function(){
 		var valid = true;
 		var realValue = this.getValue() != null ? this.getValue().trim() : "";
@@ -248,6 +270,12 @@ Form.Field.extend('Form.TextField',
 
 		return valid;
 	}
+},
+/**@lends From.TextField*/
+{
+	style: {
+		fontSize: 14
+	}
 });
 
 Form.TextField.extend('Form.TextAreaField',
@@ -261,14 +289,26 @@ Form.TextField.extend('Form.TextAreaField',
 	constructor: function(config){
 		this.setUiElementType(Ui.TextAreaField);
 	}
+},
+{
+	setUiElement: function(elt){
+		Form.TextAreaField.base.setUiElement.call(this, elt);
+		if(this.uiElt.textarea != null){
+			this.uiElt.textarea.setFontSize(this.getStyleProperty('fontSize'));
+			this.connect(this.uiElt.textarea, 'change', this.onChange);
+		}
+	}
 });
 
 
 Form.TextField.extend('Form.PasswordField',
+{},
+/**@lends Form.PasswordField#*/
 {
-	constructor: function(config){
+	setUiElement: function(elt){
+		Form.PasswordField.base.setUiElement.call(this, elt);
 		this.uiElt.setPasswordMode(true);
-	}
+	},
 });
 
 Form.Field.extend('Form.DateField',
@@ -308,83 +348,26 @@ Form.Field.extend('Form.DateField',
 	}
 });
 
-Form.Field.extend('Form.FieldContainer',
-/**@lends Form.FieldContainer#*/
+Form.Field.extend('Form.CheckBoxField',
+/**@lends Form.CheckBoxField#*/
 {
-	/**
-	 * @constructs
-	 * @class Form.Field that can contain other Form.Field.
-	 * It avoid user to create their own Field types.
-	 * The difference between manual Form layout (using Panel.setLayout) is that the
-	 * FieldContainer has a label, a description and an error message.
-	 * @note Inspired from ExtJs FieldContainer
-	 * @extends Form.Field
-	 */
-	constructor: function(config){
-		//Default layout is Ui.HBox but it can be change with anything that have a setContent
-		this.setUiElementType(Ui.HBox);
+	constructor: function(){
+		this.setUiElementType(Ui.CheckBox);
 	}
 },
-/**@lends Form.FieldContainer#*/
+/**@lends Form.CheckBoxField#*/
 {
-	setUiElement: function(elt){
-		Form.FieldContainer.base.setUiElement.call(this, elt);
-		//Just put the description above the fields
-		this.fieldBox.moveChildAt(this.description, 0);
-		//Recall the function in case of setRequire has been called
-		//before ui element creation.
-		if(this.require){
-			this.setRequire(this.require);
-		}
-	},
-
-	/**Needs to be done after setting elements*/
-	setValue: function(value){
-		//Only works with objects
-		if(typeof value === 'object' && this.uiElt != null){
-			var fields = this.uiElt.getChildren();
-			for(var name in value){
-				for(var i = 0 ; i < fields.length; i++){
-					var f = fields[i];
-					if(f.fieldName === name){
-						f.setValue(value[name]);
-					}
-				}
-			}
-		}
-	},
-
-	getValue: function(){
-		var value = {};
-		var fields = this.uiElt.getChildren();
-		for(var i = 0 ; i < fields.length; i++){
-			var f = fields[i];
-			if(f.fieldName != null){
-				value[f.fieldName] = f.getValue();
-			}
-		}
-
-		return value;
-	},
-
+	/**
+	 * @note that a checkbox can only be require if it MUST be checked
+	 */
 	isValid: function(){
-		var fields = this.uiElt.getChildren();
-		for(var i = 0 ; i < fields.length; i++){
-			if(!fields[i].isValid()){
-				return false;
-			}
+		if((this.isRequire() && !this.getValue())){
+			this.setRequireError();
+			return false;
 		}
-		return true;
-	},
-
-	/** Set all fields to require if true. Otherwise do nothing */
-	setRequire: function(require){
-		this.require = require;
-		if(require){
-			var fields = this.uiElt.getChildren();
-			for(var i = 0 ; i < fields.length; i++){
-				fields[i].setRequire(require);
-			}
+		else{
+			this.validate();
+			return true;
 		}
 	}
 });

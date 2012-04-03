@@ -4,17 +4,17 @@ Ui.Element.extend('Ui.Container',
 	children: undefined,
 
     /**
-    * @constructs
-	* @class
-    * @extends Ui.Element
-	*/
+		 * @constructs
+		 * @class
+		 * @extends Ui.Element
+		 */
 	constructor: function(config) {
 		this.children = [];
 	},
 
 	/**
-	* Add a child in the container at the end
-	*/
+	 * Add a child in the container at the end
+	 */
 	appendChild: function(child) {
 		child.parent = this;
 		this.children.push(child);
@@ -26,8 +26,8 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* Add a child in the container at the begining
-	*/
+	 * Add a child in the container at the begining
+	 */
 	prependChild: function(child) {
 		child.parent = this;
 		this.children.unshift(child);
@@ -43,8 +43,8 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* Remove a child element from the current container
-	*/
+	 * Remove a child element from the current container
+	 */
 	removeChild: function(child) {
 		child.parent = undefined;
 		this.getDrawing().removeChild(child.getDrawing());
@@ -60,10 +60,10 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* Move a child from its current position to
-	* the given position. Negative value allow
-	* to specify position from the end.
-	*/
+	 * Move a child from its current position to
+	 * the given position. Negative value allow
+	 * to specify position from the end.
+	 */
 	moveChildAt: function(child, position) {
 		if(position < 0)
 			position = this.children.length + position;
@@ -83,17 +83,17 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* @return An array of children.
-	* ATTENTION: use it only in READ ONLY
-	*/
+	 * @return An array of children.
+	 * ATTENTION: use it only in READ ONLY
+	 */
 	getChildren: function() {
 		return this.children;
 	},
 
 	/**
-	* @return the first child or undefined
-	* if the container has no children
-	*/
+	 * @return the first child or undefined
+	 * if the container has no children
+	 */
 	getFirstChild: function() {
 		if(this.children.length > 0)
 			return this.children[0];
@@ -102,9 +102,9 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* @return the last child or undefined
-	* if the container has no children
-	*/
+	 * @return the last child or undefined
+	 * if the container has no children
+	 */
 	getLastChild: function() {
 		if(this.children.length > 0)
 			return this.children[this.children.length - 1];
@@ -113,9 +113,9 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* @return the child position in the container or
-	* -1 if the container does not have this child
-	*/
+	 * @return the child position in the container or
+	 * -1 if the container does not have this child
+	 */
 	getChildPosition: function(child) {
 		for(var i = 0; i < this.children.length; i++){
 			if(this.children[i] === child){
@@ -126,10 +126,19 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
-	* @return true if the element passed is one of the container's children
-	*/
+	 * @return true if the element passed is one of the container's children
+	 */
 	hasChild: function(child) {
 		return this.getChildPosition(child) !== -1;
+	},
+
+	/**
+	 * Remove all the container's children
+	 */
+	clear: function(){
+		while(this.getFirstChild() != null){
+			this.removeChild(this.getFirstChild());
+		}
 	}
 }, 
 /** @lends Ui.Container#*/
