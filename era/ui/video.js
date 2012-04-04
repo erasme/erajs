@@ -50,7 +50,6 @@ Ui.Element.extend('Ui.Video',
 	 */
 	play: function() {
 		if(Ui.Video.htmlVideo) {
-			console.log('HTML5 video play '+this.videoDrawing.getAttribute('src'));
 			if(!this.canplaythrough) {
 				try {
 					this.videoDrawing.load();
@@ -90,11 +89,12 @@ Ui.Element.extend('Ui.Video',
 		if(!this.playing)
 			return;
 		if(!this.paused) {
-			if(Ui.Video.htmlVideo) {
-				this.videoDrawing.pause();
-				this.videoDrawing.currentTime = 0;
-			}
+			this.paused = false;
+			this.videoDrawing.pause();
 		}
+		this.playing = false;
+		if(Ui.Video.htmlVideo)
+			this.videoDrawing.currentTime = 0;
 		this.onEnded();
 	},
 
@@ -163,7 +163,7 @@ Ui.Element.extend('Ui.Video',
 		this.naturalHeight = this.videoDrawing.videoHeight;
 		this.fireEvent('ready');
 		this.canplaythrough = true;
-		if(this.playing)
+		if(this.playing && !this.paused)
 			this.videoDrawing.play();
 	},
 
@@ -174,11 +174,12 @@ Ui.Element.extend('Ui.Video',
 
 	onEnded: function() {
 		this.playing = false;
+		this.paused = false;
 		this.fireEvent('ended');
 	},
 
 	onWaiting: function() {
-		if(this.playing)
+		if(this.playing && !this.paused)
 			this.videoDrawing.pause();
 	},
 
@@ -198,7 +199,7 @@ Ui.Element.extend('Ui.Video',
 	},
 
 	checkBuffering: function() {
-		if(this.playing) {
+		if(this.playing && !this.paused) {
 			var timebuffer = this.getCurrentBufferSize();
 			var time = this.videoDrawing.currentTime;
 			var duration = this.videoDrawing.duration;
@@ -217,6 +218,7 @@ Ui.Element.extend('Ui.Video',
 
 	onVideoUnload: function() {
 		this.playing = false;
+		this.paused = false;
 		this.videoDrawing.pause();
 	}
 }, 
