@@ -24,9 +24,7 @@ Ui.Pressable.extend('Ui.Menu',
 		this.connect(this.dialog, 'item', function(dialog, item) {
 			this.fireEvent('item', this, item);
 		});
-
 		this.connect(this, 'press', this.onTitlePress);
-		this.connect(window, 'resize', this.onWindowResize);
 	},
 
 	setHeader: function(header) {
@@ -84,10 +82,6 @@ Ui.Pressable.extend('Ui.Menu',
 
 	onTitlePress: function() {
 		this.open();
-	},
-
-	onWindowResize: function() {
-		this.close();
 	}
 });
 
@@ -131,7 +125,9 @@ Ui.Container.extend('Ui.MenuDialog',
 		this.appendChild(this.scroll);
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+		this.connect(this.scroll.getDrawing(), 'mousedown', function(event) { event.stopPropagation(); });
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+		this.connect(this.scroll.getDrawing(), 'fingerdown', function(event) { event.stopPropagation(); });
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -166,27 +162,15 @@ Ui.Container.extend('Ui.MenuDialog',
 	},
 
 	onMouseDown: function(event) {
-		var contentDrawing = this.scroll.getDrawing();
-		var current = event.target;
-		while((current != undefined) && (current != contentDrawing))
-			current = current.offsetParent;
-		if(current === undefined) {
-			this.hide();
-			event.preventDefault();
-			event.stopPropagation();
-		}
+		this.hide();
+		event.preventDefault();
+		event.stopPropagation();
 	},
 
 	onFingerDown: function(event) {
-		var contentDrawing = this.scroll.getDrawing();
-		var current = event.target;
-		while((current != undefined) && (current != contentDrawing))
-			current = current.offsetParent;
-		if(current === undefined) {
-			this.hide();
-			event.preventDefault();
-			event.stopPropagation();
-		}
+		this.hide();
+		event.preventDefault();
+		event.stopPropagation();
 	},
 
 	onKeyDown: function(event) {
