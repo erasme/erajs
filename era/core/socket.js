@@ -25,6 +25,7 @@ Core.Object.extend('Core.Socket',
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
+		this.addEvents('error', 'message', 'close', 'open');
 		if('host' in config) {
 			this.host = config.host;
 			delete(config.host);
@@ -76,7 +77,6 @@ Core.Object.extend('Core.Socket',
 			this.connect(this.emuopenrequest, 'error', this.onEmuSocketOpenError);
 			this.emuopenrequest.send();
 		}
-		this.addEvents('error', 'message', 'close', 'open');
 	},
 
 	send: function(msg) {
