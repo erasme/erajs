@@ -308,7 +308,7 @@ Form.TextField.extend('Form.PasswordField',
 	setUiElement: function(elt){
 		Form.PasswordField.base.setUiElement.call(this, elt);
 		this.uiElt.setPasswordMode(true);
-	},
+	}
 });
 
 Form.Field.extend('Form.DateField',
