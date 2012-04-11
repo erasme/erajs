@@ -91,8 +91,8 @@ Core.Object.extend('Core.DragDataTransfer',
 
 				this.connect(config.event.finger, 'fingermove', this.onFingerMove);
 				this.connect(config.event.finger, 'fingerup', this.onFingerUp);
-				delete(config.event);
 			}
+			delete(config.event);
 		}
 	},
 
@@ -334,4 +334,5 @@ navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
 
 if(!navigator.supportDrag)
 	Core.DragManager.current = new Core.DragManager();
+
 
