@@ -304,11 +304,18 @@ Ui.Container.extend('Ui.Popup',
 	setCenter: function(width, height) {
 		this.background.setArrowBorder('none');
 
-		x = (width - this.contentBox.getMeasureWidth())/2;
-		y = (height - this.contentBox.getMeasureHeight())/2;
-		this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-		this.shadow.setOpacity(1);
-		this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+		if(this.expandable) {
+			this.background.arrange(40, 40, width-80, height-80);
+			this.shadow.setOpacity(1);
+			this.contentBox.arrange(40, 40, width-80, height-80);
+		}
+		else {
+			x = (width - this.contentBox.getMeasureWidth())/2;
+			y = (height - this.contentBox.getMeasureHeight())/2;
+			this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+			this.shadow.setOpacity(1);
+			this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
+		}
 	}
 }, 
 /**@lends Ui.Popup*/

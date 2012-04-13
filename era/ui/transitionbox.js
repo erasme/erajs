@@ -163,7 +163,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 				return i;
 		}
 		return -1;
-	},
+	}
 });
 
 Ui.LBox.extend('Ui.TransitionBoxContent', {});

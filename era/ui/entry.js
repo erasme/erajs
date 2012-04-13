@@ -39,6 +39,7 @@ Ui.Element.extend('Ui.Entry',
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 	},
 
 	setPasswordMode: function(passwordMode) {
@@ -113,6 +114,8 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	setValue: function(value) {
+		if(value === undefined)
+			value = '';
 		this.value = value;
 		this.entryDrawing.value = this.value;
 	},
@@ -271,6 +274,11 @@ Ui.Element.extend('Ui.Entry',
 			this.value = this.entryDrawing.value;
 			this.fireEvent('change', this, this.value);
 		}
+	},
+
+	onKeyDown: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
 	},
 
 	onKeyUp: function(event) {

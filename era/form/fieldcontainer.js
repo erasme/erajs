@@ -22,7 +22,7 @@ Form.Field.extend('Form.FieldContainer',
 			var f = this.fields[name] = Form.Field.create(fields[name]);
 			this.uiElt.append(f);
 		}
-	},
+	}
 },
 /**@lends Form.FieldContainer#*/
 {

@@ -116,6 +116,9 @@ Ui.LBox.extend('Ui.Draggable',
 	 */
 
 	onDragStart: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
+
 		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);

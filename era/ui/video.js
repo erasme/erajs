@@ -11,6 +11,7 @@ Ui.Element.extend('Ui.Video',
 	paused: false,
 	naturalWidth: undefined,
 	naturalHeight: undefined,
+	canplaythrough: false,
 
 	/**
 	 * @constructs
@@ -19,6 +20,7 @@ Ui.Element.extend('Ui.Video',
 	 */
 	constructor: function(config) {
 		this.addEvents('ready', 'ended', 'timeupdate');
+		this.connect(this, 'unload', this.onVideoUnload);
 		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Video.supportOgg))
 				this.setSrc(config.oggSrc);
@@ -30,7 +32,6 @@ Ui.Element.extend('Ui.Video',
 			delete(config.mp4Src);
 			delete(config.webmSrc);
 		}
-
 	},
 
 	/**
@@ -39,7 +40,6 @@ Ui.Element.extend('Ui.Video',
 	setSrc: function(src) {
 		this.loaddone = false;
 		this.src = src;
-
 		if(Ui.Video.htmlVideo)
 			this.videoDrawing.setAttribute('src', src);
 	},
@@ -50,13 +50,21 @@ Ui.Element.extend('Ui.Video',
 	 */
 	play: function() {
 		if(Ui.Video.htmlVideo) {
-//			console.log('HTML5 video play '+this.videoDrawing.getAttribute('src'));
-			try {
-				this.videoDrawing.pause();
-				this.videoDrawing.currentTime = 0;
-				this.videoDrawing.load();
-			} catch(e) {}
-			this.videoDrawing.play();
+			if(!this.canplaythrough) {
+				try {
+					this.videoDrawing.load();
+				} catch(e) {}				
+			}
+			else {
+				try {
+					this.videoDrawing.play();
+
+//					this.videoDrawing.pause();
+//					this.videoDrawing.currentTime = 0;
+	//				this.videoDrawing.load();
+				} catch(e) {}
+//			this.videoDrawing.play();
+			}
 		}
 		this.playing = true;
 		this.paused = false;
@@ -81,11 +89,12 @@ Ui.Element.extend('Ui.Video',
 		if(!this.playing)
 			return;
 		if(!this.paused) {
-			if(Ui.Video.htmlVideo) {
-				this.videoDrawing.pause();
-				this.videoDrawing.currentTime = 0;
-			}
+			this.paused = false;
+			this.videoDrawing.pause();
 		}
+		this.playing = false;
+		if(Ui.Video.htmlVideo)
+			this.videoDrawing.currentTime = 0;
 		this.onEnded();
 	},
 
@@ -150,21 +159,67 @@ Ui.Element.extend('Ui.Video',
 	//
 
 	onReady: function() {
-//		console.log('Video.onReady');
 		this.naturalWidth = this.videoDrawing.videoWidth;
 		this.naturalHeight = this.videoDrawing.videoHeight;
 		this.fireEvent('ready');
+		this.canplaythrough = true;
+		if(this.playing && !this.paused)
+			this.videoDrawing.play();
 	},
 
 	onTimeupdate: function() {
-//		console.log('Video.onTimeupdate');
+		this.checkBuffering();
 		this.fireEvent('timeupdate', this.videoDrawing.currentTime);
 	},
 
 	onEnded: function() {
-//		console.log('Video.onEnded');
 		this.playing = false;
+		this.paused = false;
 		this.fireEvent('ended');
+	},
+
+	onWaiting: function() {
+		if(this.playing && !this.paused)
+			this.videoDrawing.pause();
+	},
+
+	getCurrentBufferSize: function() {
+		var buffered = this.videoDrawing.buffered;
+		var timebuffer = 0;
+		var time = this.videoDrawing.currentTime;
+		for(var i = 0; i < buffered.length; i++) {
+			var start = buffered.start(i);
+			var end = buffered.end(i);
+			if((start <= time) && (end >= time)) {
+				timebuffer = end - time;
+				break;
+			}
+		}
+		return timebuffer;
+	},
+
+	checkBuffering: function() {
+		if(this.playing && !this.paused) {
+			var timebuffer = this.getCurrentBufferSize();
+			var time = this.videoDrawing.currentTime;
+			var duration = this.videoDrawing.duration;
+			if(time >= duration)
+				return;
+			if(this.videoDrawing.paused) {
+				if((timebuffer > 5) || (time + timebuffer >= duration))
+					this.videoDrawing.play();
+			}
+			else {
+				if((timebuffer < 1) && (time + timebuffer < duration))
+					this.videoDrawing.pause();
+			}
+		}
+	},
+
+	onVideoUnload: function() {
+		this.playing = false;
+		this.paused = false;
+		this.videoDrawing.pause();
 	}
 }, 
 /**@lends Ui.Video#*/
@@ -176,6 +231,8 @@ Ui.Element.extend('Ui.Video',
 			this.connect(this.videoDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.videoDrawing, 'ended', this.onEnded);
 			this.connect(this.videoDrawing, 'timeupdate', this.onTimeupdate);
+			this.connect(this.videoDrawing, 'progress', this.checkBuffering);
+			this.connect(this.videoDrawing, 'waiting', this.onWaiting);
 			this.videoDrawing.setAttribute('preload', 'auto');
 			this.videoDrawing.load();
 			this.videoDrawing.style.position = 'absolute';

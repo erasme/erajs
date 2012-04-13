@@ -77,6 +77,8 @@ Ui.LBox.extend('Ui.App',
 //		});
 
 		this.connect(window, 'focus', function(event) {
+			if(event.target == undefined)
+				return;
 //			console.log('window focus '+event.target);
 			this.focusElement = event.target;
 

@@ -97,7 +97,10 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	setValue: function(value) {
-		this.textareaDrawing.value = value;
+		if(value === undefined)
+			this.textareaDrawing.value = '';
+		else
+			this.textareaDrawing.value = value;
 	},
 
 	setOffset: function(offsetX, offsetY) {
