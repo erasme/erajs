@@ -10,10 +10,10 @@ Core.Object.extend('Anim.AnimationManager',
     *   @extends Core.Object
 	*/
 	constructor: function(config) {
+		this.addEvents('tick');
 		this.onTick.scope = this;
 		this.clocks = [];
 		this.start = new Date().getTime();
-		this.addEvents('tick');
 	},
 
 	add: function(clock) {
