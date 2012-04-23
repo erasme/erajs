@@ -31,6 +31,11 @@ Ui.Element.extend('Ui.Entry',
 		// handle touches
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
+		// handle touches
+		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
+		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+
 		// handle change
 		this.connect(this.getDrawing(), 'change', this.onChange);
 
@@ -187,6 +192,21 @@ Ui.Element.extend('Ui.Entry',
 			this.fireEvent('press', this);
 			this.entryDrawing.focus();
 		}
+	},
+
+	onTouchStart: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
+	},
+
+	onTouchMove: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
+	},
+
+	onTouchEnd: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
 	},
 
 	onFingerDown: function(event) {

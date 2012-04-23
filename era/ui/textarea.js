@@ -30,6 +30,11 @@ Ui.Element.extend('Ui.TextArea',
 		// handle touches
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
+		// handle touches
+		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
+		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+
 		// handle keyboard
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
 
@@ -178,6 +183,21 @@ Ui.Element.extend('Ui.TextArea',
 			this.onUp();
 			this.getDrawing().focus();
 		}
+	},
+
+	onTouchStart: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
+	},
+
+	onTouchMove: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
+	},
+
+	onTouchEnd: function(event) {
+		if(this.getHasFocus())
+			event.stopPropagation();
 	},
 
 	onFingerDown: function(event) {
