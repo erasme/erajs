@@ -13,6 +13,8 @@ Ui.LBox.extend('Form.Panel',
 	submitType: 'ajax',
 
 	constructor: function(config){
+		this.addEvents("change", "submit");
+
 		this.setPadding(10);
 
 		this.title = new Ui.Label({fontSize: 18, horizontalAlign: 'left'});
@@ -91,7 +93,8 @@ Ui.LBox.extend('Form.Panel',
 	},
 	
 	submit: function(){
-		if(this.submitUrl !==  undefined && this.isValid()){
+		var valid = this.isValid();
+		if(this.submitUrl !==  undefined && valid){
 			var values = this.getValue();
 			//Pass the value throw the handler ?
 			if(this.submitHandler !==  undefined){
@@ -101,6 +104,7 @@ Ui.LBox.extend('Form.Panel',
 			if(this.submitType === 'ajax'){
 				//A form is usually a POST request
 				req = new Core.HttpRequest({url: this.submitUrl, method: 'POST', arguments: values});
+				this.connect(req, "done", this.onSubmitDone);
 				req.send();
 			}
 			//The form is a link so no HttpRequest
@@ -112,8 +116,14 @@ Ui.LBox.extend('Form.Panel',
 				window.open(url);
 			}
 		}
+
+		return valid;
 	},
 	
+	onSubmitDone: function(request){
+		this.fireEvent("submit", request);
+	},
+
 	_buildDefaultLayout: function(someFieldRequire){
 		//Default layout is VBox
 		var vbox = new Ui.VBox({
@@ -146,7 +156,7 @@ Ui.LBox.extend('Form.Panel',
 		this.fields = {};
 		for(var name in fields){
 			var f = this.fields[name] = Form.Field.create(fields[name]);
-			
+			this.connect(f, 'change', this.onChange);
 			if(f.isRequire()){
 				someFieldRequire = true;
 			}
@@ -176,8 +186,9 @@ Ui.LBox.extend('Form.Panel',
 				this.setLayout(layout);
 			}
 		}
-		console.log(field);
+		//console.log(field);
 		var f = this.fields[name] = Form.Field.create(field);
+		this.connect(f, 'change', this.onChange);
 		this.layout.append(f);
 	},
 
@@ -231,5 +242,9 @@ Ui.LBox.extend('Form.Panel',
 		if(typeof handler ===  'function'){
 			this.submitHandler = handler;
 		}
+	},
+
+	onChange: function(field){
+		this.fireEvent("change", field);
 	}
 });

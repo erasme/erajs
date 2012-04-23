@@ -44,6 +44,8 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		this.selectedDate = date;
 		this.setValue(this.lastValid);
 		this.isValid = true;
+		//@temp Don't if I need to put this event here or in Ui.Entry.setValue()
+		this.fireEvent('change', this, this.getValue());
 	},
 
 	onDatePickerButtonPress: function() {

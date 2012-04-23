@@ -20,6 +20,7 @@ Ui.LBox.extend('Form.Field',
 	uiEltType: Ui.Element,
 	
 	constructor: function(config){
+		this.addEvents("change");
 		//Default field width
 		this.setWidth(200);
 		//By default use the styleProperty
@@ -165,6 +166,10 @@ Ui.LBox.extend('Form.Field',
 	/**Need to be override*/
 	isValid: function(){
 		return true;
+	},
+
+	onChange: function(){
+		this.fireEvent("change", this);
 	}
 },{},
 {
@@ -222,11 +227,6 @@ Form.Field.extend('Form.TextField',
 {
 	constructor: function(config){
 		this.setUiElementType(Ui.TextField);
-	},
-
-	onChange: function(){
-		//check field validity on each change
-		this.isValid();
 	}
 },
 /**@lends From.TextField#*/
@@ -269,6 +269,12 @@ Form.Field.extend('Form.TextField',
 		}
 
 		return valid;
+	},
+
+	onChange: function(){
+		Form.TextField.base.onChange.call(this);
+		//check field validity on each change
+		this.isValid();
 	}
 },
 /**@lends From.TextField*/
@@ -336,6 +342,11 @@ Form.Field.extend('Form.DateField',
 		this.uiElt.setSelectedDate(date);
 	},
 	
+	setUiElement: function(elt){
+		Form.DateField.base.setUiElement.call(this, elt);
+		this.connect(this.uiElt, 'change', this.onChange);
+	},
+
 	isValid: function(){
 		if((this.isRequire() && !this.uiElt.getIsValid())){
 			this.setRequireError();
@@ -369,5 +380,28 @@ Form.Field.extend('Form.CheckBoxField',
 			this.validate();
 			return true;
 		}
+	}
+});
+
+Form.Field.extend('Form.LabelField',
+/**@lends Form.LabelField#*/
+{
+	constructor: function(){
+		this.setUiElementType(Ui.Label);
+	}
+},
+/**@lends Form.LabelField#*/
+{
+	setUiElement: function(elt){
+		Form.LabelField.base.setUiElement.call(this, elt);
+		this.uiElt.setHorizontalAlign("left");
+	},
+
+	setValue: function(text){
+		this.uiElt.setText(text);
+	},
+
+	getValue: function(){
+		this.uiElt.getText();
 	}
 });
