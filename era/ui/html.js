@@ -2,6 +2,7 @@ Ui.Element.extend('Ui.Html',
 /**@lends Ui.Html#*/
 {
 	htmlDrawing: undefined,
+	html: undefined,
 
 	/**
 	 * @constructs
@@ -17,7 +18,22 @@ Ui.Element.extend('Ui.Html',
 
 	setHtml: function(html) {
 		this.htmlDrawing.innerHTML = html;
+		this.html = this.htmlDrawing.innerHTML;
 		this.invalidateMeasure();
+	},
+
+	onSubtreeModified: function(event) {
+		console.log('onSubtreeModified');
+		this.html = this.htmlDrawing.innerHTML;
+		this.invalidateMeasure();
+	},
+
+	onKeyPress: function(event) {
+		console.log('onKeyPress');
+		if(this.htmlDrawing.innerHTML != this.html) {
+			this.html = this.htmlDrawing.innerHTML;
+			this.invalidateMeasure();
+		}
 	}
 
 }, {
@@ -27,6 +43,8 @@ Ui.Element.extend('Ui.Html',
 		this.htmlDrawing.style.position = 'absolute';
 		this.htmlDrawing.style.left = '0px';
 		this.htmlDrawing.style.top = '0px';
+		this.connect(this.htmlDrawing, 'DOMSubtreeModified', this.onSubtreeModified);
+		this.connect(this.htmlDrawing, 'keypress', this.onKeyPress);
 		return this.htmlDrawing;
 	},
 
