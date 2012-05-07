@@ -275,6 +275,9 @@ Ui.Container.extend('Ui.Scrollable',
 	},
 
 	onMouseDownCtrl: function(event) {
+		if(event.button == 0)
+			this.stopInertia();
+
 		if(event.ctrlKey)
 			this.onMouseDown(event);
 	},
@@ -423,9 +426,6 @@ Ui.Container.extend('Ui.Scrollable',
 	},
 
 	onFingerDown: function(event) {
-
-//		console.log('onFingerDown');
-
 		if(this.lock || this.getIsDisabled() || this.isMoving)
 			return;
 		if((this.viewWidth >= this.contentWidth) && (this.viewHeight >= this.contentHeight))
