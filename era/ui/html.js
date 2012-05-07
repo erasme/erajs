@@ -23,13 +23,11 @@ Ui.Element.extend('Ui.Html',
 	},
 
 	onSubtreeModified: function(event) {
-		console.log('onSubtreeModified');
 		this.html = this.htmlDrawing.innerHTML;
 		this.invalidateMeasure();
 	},
 
 	onKeyPress: function(event) {
-		console.log('onKeyPress');
 		if(this.htmlDrawing.innerHTML != this.html) {
 			this.html = this.htmlDrawing.innerHTML;
 			this.invalidateMeasure();
