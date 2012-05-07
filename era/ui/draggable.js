@@ -1,6 +1,4 @@
-
 Ui.LBox.extend('Ui.Draggable', 
-/**@lends Ui.Draggable#*/
 {
 	icon: undefined,
 	downloadUrl: undefined,
@@ -9,16 +7,15 @@ Ui.LBox.extend('Ui.Draggable',
 	allowedMode: 'copyMove',
 	mimetype: undefined,
 	data: undefined,
-	lock: false,
-	lastTime: undefined,
+	lastPress: undefined,
 	isDown: false,
-	menuTimer: undefined,
-	touchStartX: undefined,
-	touchStartY: undefined,
-	menuPosX: undefined,
-	menuPosY: undefined,
+	isDrag: false,
+	timer: undefined,
 	dragDelta: undefined,
-	isSelected: false,
+	clock: undefined,
+	screenX: undefined,
+	screenY: undefined,
+	lock: false,
 
 	/**
 	 * @constructs
@@ -26,7 +23,7 @@ Ui.LBox.extend('Ui.Draggable',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.addEvents('select', 'unselect', 'dragstart', 'dragend', 'activate', 'menu');
+		this.addEvents('dragstart', 'dragend', 'press', 'activate', 'menu');
 
 		this.getDrawing().setAttribute('draggable', true);
 		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
@@ -34,18 +31,10 @@ Ui.LBox.extend('Ui.Draggable',
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-
-		if(config.downloadUrl != undefined) {
-			this.setDownloadUrl(config.downloadUrl, config.downloadMimetype, config.downloadFilename);
-			delete(config.downloadUrl);
-			delete(config.downloadMimetype);
-			delete(config.downloadFilename);
-		}
 	},
-     
+
 	setLock: function(lock) {
     	this.lock = lock;
-		this.drawing.setAttribute('draggable', !lock && !this.getIsDisabled());
 	},
 
 	getLock: function() {
@@ -116,23 +105,39 @@ Ui.LBox.extend('Ui.Draggable',
 	 */
 
 	onDragStart: function(event) {
-		if(this.lock || this.getIsDisabled())
+		if(!this.dragAllowed) {
+			this.setTransform(new Ui.Matrix());
+			if(this.clock != undefined) {
+				this.clock.stop();
+				this.clock = undefined;
+			}
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
+			}
+			event.stopPropagation();
+			event.preventDefault();
 			return;
+		}
 
+		if(this.clock != undefined) {
+			this.clock.stop();
+			this.clock = undefined;
+			this.setTransform(new Ui.Matrix());
+		}
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+
+		this.isDown = false;
+		this.isDrag = true;
 		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
 		event.stopPropagation();
 		event.dataTransfer.effectAllowed = this.allowedMode;
-
-		// if the element if downloadable to the destkop,
-		// try to provide the link
-		if(this.downloadUrl != undefined) {
-			try {
-				event.dataTransfer.setData('DownloadURL', this.downloadMimetype+':'+this.downloadFilename+':'+this.downloadUrl);
-			} catch(e) {}
-		}
 
 		// use Text as data because it is the only thing
 		// that works cross browser. Only Firefox support different mimetypes
@@ -142,8 +147,6 @@ Ui.LBox.extend('Ui.Draggable',
 
 		if(this.icon != undefined) {
 			// TODO: improve this
-//			console.log(this.icon.drawing.childNodes[0]);
-
 			if(event.dataTransfer.setDragImage != undefined)
 				event.dataTransfer.setDragImage(this.icon.drawing.childNodes[0], 0, 0);
 		}
@@ -151,92 +154,168 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onDragEnd: function(event) {
+		this.isDrag = false;
+		this.isDown = false;
+
 		event.stopPropagation();
 		// dropEffect give the operation done: [none|copy|link|move]
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
 	},
 
 	onMouseDown: function(event) {
-		if(this.getIsDisabled() || !((event.button == 0) || (event.button == 2)))
+		if(this.lock || this.isDown || (event.button != 0))
 			return;
+		this.isDown = true;
+		this.dragAllowed = false;
+		this.setTransform(new Ui.Matrix());
+		if(this.clock != undefined) {
+			this.clock.stop();
+			this.clock = undefined;
+		}
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+
+		this.screenX = event.screenX;
+		this.screenY = event.screenY;
+
+		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
+
 		event.stopPropagation();
 		if(!navigator.supportDrag && (event.button == 0))
 			new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
 	},
 
+	onMouseMove: function(event) {
+		var deltaX = event.screenX - this.screenX;
+		var deltaY = event.screenY - this.screenY;
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		// if the user move to much, release the touch event
+		if(delta > 10) {
+			this.disconnect(window, 'mousemove', this.onMouseMove, true);
+			this.disconnect(window, 'mouseup', this.onMouseUp, true);
+
+			this.isDrag = false;
+			this.isDown = false;
+			this.dragAllowed = false;
+			this.setTransform(new Ui.Matrix());
+			if(this.clock != undefined) {
+				this.clock.stop();
+				this.clock = undefined;
+			}
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
+			}
+
+			var mouseDownEvent = document.createEvent('MouseEvents');
+			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
+				event.clientX, event.clientY,
+				event.ctrlKey, event.altKey, event.shiftKey,
+				event.metaKey, 0, event.target);
+			this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+		}
+	},
+
 	onMouseUp: function(event) {
+		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
-		if(event.button == 0) {
-			var currentTime = (new Date().getTime())/1000;
-			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
-				this.fireEvent('activate', this);
-			this.lastTime = currentTime;
-			this.onSelect();
+		this.isDown = false;
+		this.dragAllowed = false;
+		this.setTransform(new Ui.Matrix());
+		if(this.clock != undefined) {
+			this.clock.stop();
+			this.clock = undefined;
 		}
-		else if(event.button == 2)
-			this.fireEvent('menu', this, event.clientX, event.clientY);
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+
+		if(!this.isDrag) {
+			this.isDrag = false;
+			this.fireEvent('press', this);
+
+			var currentTime = (new Date().getTime())/1000;
+			if((this.lastPress != undefined) && ((currentTime - this.lastPress) < 0.25)) {
+				this.fireEvent('activate', this);
+			}
+			this.lastPress = currentTime;
+		}
 	},
 
 	onFingerDown: function(event) {
-		if(this.getIsDisabled() || this.isDown)
+		if(this.lock || this.isDown)
 			return;
-
-//		console.log('onFingerDown');
-
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
 		this.connect(event.finger, 'fingerup', this.onFingerUp);
-
 		event.finger.capture(this.getDrawing());
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.touchStartX = event.finger.getX();
-		this.touchStartY = event.finger.getY();
+		this.screenX = event.finger.getX();
+		this.screenY = event.finger.getY();
 
-//		this.onDown();
-
-		if(this.menuTimer != undefined)
-			this.menuTimer.abort();
-
-		this.menuTimer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onMenuTimer });
-		this.menuPosX = event.finger.getX();
-		this.menuPosY = event.finger.getY();
+		this.isDown = true;
+		this.dragAllowed = false;
+		this.setTransform(new Ui.Matrix());
+		if(this.clock != undefined) {
+			this.clock.stop();
+			this.clock = undefined;
+		}
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
 	},
 
 	onFingerMove: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
-//		console.log('onFingerMove');
-
-		var deltaX = event.finger.getX() - this.touchStartX;
-		var deltaY = event.finger.getY() - this.touchStartY;
+		var deltaX = event.finger.getX() - this.screenX;
+		var deltaY = event.finger.getY() - this.screenY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		// if the user move to much, release the touch event
 		if(delta > 10) {
-//			this.onUp();
-
-			if(this.menuTimer != undefined) {
-				this.menuTimer.abort();
-				this.menuTimer = undefined;
+			this.setTransform(new Ui.Matrix());
+			if(this.clock != undefined) {
+				this.clock.stop();
+				this.clock = undefined;
+			}
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
 			}
 
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-//			this.onUp();
 
-			if(navigator.supportDrag) {
-				this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-				event.finger.release();
-				this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+			if(this.dragAllowed) {
+				if(navigator.supportDrag) {
+//					this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+					event.finger.release();
+//					this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+				}
+				else
+					new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.finger.getX(), y: event.finger.getY(), event: event, finger: event.finger });
 			}
-			else
-				new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.finger.getX(), y: event.finger.getY(), event: event, finger: event.finger });
-
+			else {
+				event.finger.release();
+			}
+			this.dragAllowed = false;
+			this.isDown = false;
 		}
 	},
 	
@@ -244,67 +323,51 @@ Ui.LBox.extend('Ui.Draggable',
 		event.preventDefault();
 		event.stopPropagation();
 
-//		console.log('onFingerUp');
-
-//		this.onUp();
-
 		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 
-		if(this.menuTimer != undefined) {
-			this.menuTimer.abort();
-			this.menuTimer = undefined;
+		this.dragAllowed = false;
+		this.isDown = false;
+		this.setTransform(new Ui.Matrix());
+		if(this.clock != undefined) {
+			this.clock.stop();
+			this.clock = undefined;
+		}
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+
+		if(!this.isDrag) {
+			this.isDrag = false;
+			this.fireEvent('press', this);
 
 			var currentTime = (new Date().getTime())/1000;
-//			if((this.isSelected) && (this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
-			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
+			if((this.lastPress != undefined) && ((currentTime - this.lastPress) < 0.25)) {
 				this.fireEvent('activate', this);
-			this.lastTime = currentTime;
-			this.onSelect();
+			}
+			this.lastPress = currentTime;
 		}
 	},
 
-	/**#@-*/
+	onTimer: function() {
+		this.timer = undefined;
 
-	getIsSelected: function() {
-		return this.isSelected;
+		this.dragAllowed = true;
+		this.disconnect(window, 'mousemove', this.onMouseMove, true);
+
+		this.clock = new Anim.Clock({ duration: 'forever' });
+		this.connect(this.clock, 'timeupdate', this.onAnim);
+		this.clock.begin();
 	},
 
-	select: function() {
-		this.onSelect();
-	},
+	onAnim: function(clock) {
+		var progress = (clock.getGlobalTime() % 0.8) / 0.8;
+		var ease = new Anim.ElasticEase({ mode: 'inout' });
+		progress = ease.ease(progress);
 
-	unselect: function() {
-		this.onUnselect();
-	},
-
-	onSelect: function() {
-		if(!this.isSelected) {
-			this.isSelected = true;
-			this.fireEvent('select', this);
-		}
-	},
-
-	onUnselect: function() {
-		if(this.isSelected) {
-			this.isSelected = false;
-			this.fireEvent('unselect', this);
-		}
-	},
-
-	onMenuTimer: function() {
-		this.fireEvent('menu', this, this.menuPosX, this.menuPosY);
-		this.menuTimer = undefined;
-	}
-
-}, 
-/**@lends Ui.Draggable#*/
-{
-	onDisable: function() {
-		this.drawing.setAttribute('draggable', !this.lock && !this.getIsDisabled());
-	},
-
-	onEnable: function() {
-		this.drawing.setAttribute('draggable', !this.lock && !this.getIsDisabled());
+		var scale = 1 + (progress/12);
+		this.setTransform(Ui.Matrix.createScale(scale, scale));
 	}
 });
+
