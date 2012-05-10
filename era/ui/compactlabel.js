@@ -13,6 +13,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	isArrangeValid: false,
 	lastMeasureWidth: 0,
 	lastMeasureHeight: 0,
+	superCompact: false,
 
 	/**
 	 * @constructs
@@ -21,6 +22,17 @@ Ui.Element.extend('Ui.CompactLabel',
 	 */
 	constructor: function(config) {
 		this.setColor('black');
+	},
+
+	getSuperCompact: function() {
+		return this.superCompact;
+	},
+
+	setSuperCompact: function(superCompact) {
+		if(superCompact != this.superCompact) {
+			this.superCompact = superCompact;
+			this.invalidateMeasure();
+		}
 	},
 
 	getMaxLine: function() {
@@ -162,6 +174,117 @@ Ui.Element.extend('Ui.CompactLabel',
 		if(line != '')
 			y += this.flushLine(y, line, width, render);
 		return y;
+	},
+
+	updateFlowWords: function(width, render) {
+		if(this.text === undefined)
+			return 0;
+
+		var dotWidth = (Ui.Label.measureText('...', this.fontSize, this.fontFamily, this.fontWeight)).width;
+
+		var words = [];
+		var wordsSize = [];
+
+		var tmpWords = this.text.split(' ');
+		for(var i = 0; i < tmpWords.length; i++) {
+			var word = tmpWords[i];
+			while(true) {
+				var wordSize = (Ui.Label.measureText(word, this.fontSize, this.fontFamily, this.fontWeight)).width;
+				if(wordSize < width) {
+					words.push(word);
+					wordsSize.push(wordSize);
+					break;
+				}
+				else {
+					// find the biggest possible word part
+					var tmpWord = '';
+					for(var i2 = 0; i2 < word.length; i2++) {
+						if((Ui.Label.measureText(tmpWord+word.charAt(i2), this.fontSize, this.fontFamily, this.fontWeight)).width < width)
+							tmpWord += word.charAt(i2);
+						else {
+							words.push(tmpWord);
+							wordsSize.push((Ui.Label.measureText(tmpWord, this.fontSize, this.fontFamily, this.fontWeight)).width);
+							word = word.substr(tmpWord.length, word.length - tmpWord.length);
+							break;
+						}
+					}
+				}
+				if(word.length == 0)
+					break;
+			}
+		}
+
+		var spaceWidth = (Ui.Label.measureText('. .', this.fontSize, this.fontFamily, this.fontWeight)).width - (Ui.Label.measureText('..', this.fontSize, this.fontFamily, this.fontWeight)).width;
+
+		var y = 0;
+		var x = 0;
+		var line = '';
+		var lineCount = 0;
+		for(var i = 0; i < words.length; i++) {
+			if(line != '') {
+				if(x + spaceWidth > width) {
+					if((this.maxLine != undefined) && (lineCount+1 >= this.maxLine)) {
+						var lineWidth;
+						while(true) {
+							lineWidth = (Ui.Label.measureText(line, this.fontSize, this.fontFamily, this.fontWeight)).width;
+							if(lineWidth+dotWidth > width) {
+								if(line.length <= 1) {
+									line = '...';
+									break;
+								}
+								line.substr(0, line.length-1);
+							}
+							else {
+								line += '...';
+								break;
+							}
+						}
+						y += this.flushLine(y, line, width, render);
+						return y;
+					}
+					y += this.flushLine(y, line, width, render);
+					x = 0;
+					lineCount++;
+					line = '';
+				}
+				else {
+					line += ' ';
+					x += spaceWidth;
+				}
+			}
+			if(x + wordsSize[i] > width) {
+				if((this.maxLine != undefined) && (lineCount+1 >= this.maxLine)) {
+					var lineWidth;
+					while(true) {
+						lineWidth = (Ui.Label.measureText(line, this.fontSize, this.fontFamily, this.fontWeight)).width;
+						if(lineWidth+dotWidth > width) {
+							if(line.length <= 1) {
+								line = '...';
+								break;
+							}
+							line = line.substr(0, line.length-1);
+						}
+						else {
+							line += '...';
+							break;
+						}
+					}
+					y += this.flushLine(y, line, width, render);
+					return y;
+				}
+				y += this.flushLine(y, line, width, render);
+				lineCount++;
+				x = wordsSize[i];
+				line = words[i];
+			}
+			else {
+				line += words[i];
+				x += wordsSize[i];
+			}
+		}
+		if(line != '')
+			y += this.flushLine(y, line, width, render);
+		return y;
 	}
 }, 
 /**@lends Ui.CompactLabel#*/
@@ -185,7 +308,11 @@ Ui.Element.extend('Ui.CompactLabel',
 
 		if(!this.isMeasureValid || (this.lastMeasureWidth != width)) {
 			this.lastMeasureWidth = width;
-			var flowHeight = this.updateFlow(width, false);
+			var flowHeight;
+			if(this.superCompact)
+				flowHeight = this.updateFlow(width, false);
+			else
+				flowHeight = this.updateFlowWords(width, false);
 			this.lastMeasureHeight = flowHeight;
 			this.isMeasureValid = true;
 			this.isArrangeValid = false;
@@ -198,7 +325,10 @@ Ui.Element.extend('Ui.CompactLabel',
 			this.isArrangeValid = true;
 			while(this.textDrawing.hasChildNodes())
 				this.textDrawing.removeChild(this.textDrawing.firstChild);
-			this.updateFlow(width, true);
+			if(this.superCompact)
+				this.updateFlow(width, true);
+			else
+				this.updateFlowWords(width, true);
 		}
 	}
 });
