@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test HTML</title>
+	<script src='../../era/era-debug.js'></script>
+<script>
+
+var app = new Ui.App();
+
+var scroll = new Ui.ScrollingArea({ overScroll: true, showScrollbar: false });
+app.setContent(scroll);
+
+var vbox = new Ui.VBox();
+scroll.setContent(vbox);
+
+vbox.append(new Ui.Rectangle({ fill: 'orange', height: 350 }));
+
+var lbox = new Ui.LBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+vbox.append(lbox);
+
+lbox.append(new Ui.Rectangle({ fill: 'lightblue' }));
+
+var html = new Ui.ContentEditable({ horizontalAlign: 'center', width: 200, html: '<font style="font-size: 20px; font-family: Sans-Serif; margin: 5px">Have fun with HTML, I <b>hope</b> the text is enough long</font>', margin: 5 });
+
+lbox.append(html, false);
+
+vbox.append(new Ui.Rectangle({ fill: 'orange', height: 350 }));
+
+</script>
+	</head>
+</html>
