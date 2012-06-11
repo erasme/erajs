@@ -100,7 +100,6 @@ Ui.Element.extend('Ui.Image',
 				document.body = body;
 			}
 			var imgClone = document.createElement('img');
-			imgClone.style.visibility = 'hidden';
 			imgClone.setAttribute('src', this.src);
 			document.body.appendChild(imgClone);
 			this.naturalWidth = imgClone.width;
