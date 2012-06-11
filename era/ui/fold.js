@@ -14,6 +14,7 @@ Ui.Container.extend('Ui.Fold',
 	mode: 'extend',
 	clock: undefined,
 	contentSize: 0,
+	animDuration: 2,
 
 	/**
 	 * @constructs
@@ -33,6 +34,10 @@ Ui.Container.extend('Ui.Fold',
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 		this.contentBox.hide();
+	},
+
+	setHeaderActive: function(active) {
+		this.headerBox.setLock(!active);
 	},
 
 	getIsFolded: function() {
@@ -217,6 +222,10 @@ Ui.Container.extend('Ui.Fold',
 			this.fold();
 	},
 
+	setAnimDuration: function(duration) {
+		this.animDuration = duration;
+	},
+
 	startAnimation: function() {
 		if(this.clock != undefined)
 			this.clock.stop();
@@ -224,7 +233,7 @@ Ui.Container.extend('Ui.Fold',
 		if(!this.isFolded)
 			this.contentBox.show();
 
-		this.clock = new Anim.Clock({ duration: 2, scope: this, target: this, onTimeupdate: this.onClockTick });
+		this.clock = new Anim.Clock({ duration: this.animDuration, scope: this, target: this, onTimeupdate: this.onClockTick });
 		this.clock.begin();
 	},
 
