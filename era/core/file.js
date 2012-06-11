@@ -42,6 +42,25 @@ Core.Object.extend('Core.File',
 	},
 
 	/**
+	 * @description Return the relative path of the file
+	 * when we do directory upload
+	 */	
+	getRelativePath: function() {
+		var res = undefined;
+		if(this.fileApi != undefined) {
+			if('relativePath' in this.fileApi)
+				res = this.fileApi.relativePath;
+			else if('webkitRelativePath' in this.fileApi)
+				res = this.fileApi.webkitRelativePath;
+			else if('mozRelativePath' in this.fileApi)
+				res = this.fileApi.mozRelativePath;
+		}
+		if(res === '')
+			res = undefined;
+		return res;
+	},
+
+	/**
 	 * @description Return MIME type of the file
 	 */
 	getMimetype: function() {
