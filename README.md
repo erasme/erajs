@@ -20,15 +20,22 @@ The main features of the framework are :
 - Awesome animation features.
 - Reusable and stylable components withous using CSS
 
+# Samples
+
+You can checkout sample applications on erajs' website
+(http://erajs.org)
+
 # Project's sources
 
-> git clone git@forge.erasme.org:era
+> git clone git://github.com/erasme/erajs.git
 
 You can generate the documention using JSDoc :
 
 > $ export JSDOCDIR=<path_to_jsdoc-toolkit> 
 > $ cd <path-to-era-repo>
 > $ java -jar $JSDOCDIR/jsrun.jar $JSDOCDIR/app/run.js -c=doc/jsdoc/conf/era.conf
+
+Don't hesitate to fork and submit pull requests.
 
 # Licence
 
