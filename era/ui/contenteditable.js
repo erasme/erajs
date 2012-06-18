@@ -11,9 +11,9 @@ Ui.Element.extend('Ui.ContentEditable', {
 	constructor: function(config) {
 		this.setSelectable(true);
 		this.setFocusable(true);
-		this.getDrawing().style.outline = 'red none 0px';
-		this.getDrawing().style.borderBottom = 'solid red 1px';
-		this.getDrawing().style.borderRight = 'solid red 1px';
+//		this.getDrawing().style.outline = 'red none 0px';
+//		this.getDrawing().style.borderBottom = 'solid red 1px';
+//		this.getDrawing().style.borderRight = 'solid red 1px';
 		this.getDrawing().setAttribute('contenteditable', 'true');
 //		this.connect(this.getDrawing(), 'selectstart', this.onHtmlSelectStart);
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
