@@ -54,6 +54,7 @@ Ui.Pressable.extend('Ui.Button',
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
 		this.graphic.setSpacing(this.getStyleProperty('spacing'));
+		this.graphic.setIconSize(this.getStyleProperty('iconSize'));
 		if(this.getHasFocus())
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
@@ -76,7 +77,8 @@ Ui.Pressable.extend('Ui.Button',
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		focusColor: '#f6caa2',
 		radius: 4,
-		spacing: 3
+		spacing: 3,
+		iconSize: 24
 	}
 });
 

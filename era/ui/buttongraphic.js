@@ -12,6 +12,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	iconBox: undefined,
 	icon1: undefined,
 	icon2: undefined,
+	iconSize: 24,
 	orientation: 'vertical',
 	
 	rect1: undefined,
@@ -65,6 +66,16 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		this.contentBox.append(this.iconBox);
 
 		this.updateColors();
+	},
+
+	setIconSize: function(size) {
+		this.iconSize = size;
+		if(this.icon1 != undefined) {
+			this.icon1.setWidth(size);
+			this.icon1.setHeight(size);
+			this.icon2.setWidth(size);
+			this.icon2.setHeight(size);
+		}
 	},
 
 	getContent: function() {
@@ -134,8 +145,8 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 						this.iconBox.remove(this.icon1);
 					if(this.icon2 != undefined)
 						this.iconBox.remove(this.icon2);
-					this.icon1 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: this.getContentLightColor() });
-					this.icon2 = new Ui.Icon({ icon: icon, width: 24, height: 24, fill: this.getContentColor() });
+					this.icon1 = new Ui.Icon({ icon: icon, width: this.iconSize, height: this.iconSize, fill: this.getContentLightColor() });
+					this.icon2 = new Ui.Icon({ icon: icon, width: this.iconSize, height: this.iconSize, fill: this.getContentColor() });
 					this.iconBox.append(this.icon1);
 					this.iconBox.append(this.icon2);
 				}
