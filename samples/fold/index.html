@@ -16,13 +16,28 @@ app.setContent(vbox);
 var toolbar = new Ui.ToolBar();
 vbox.append(toolbar);
 
-var orientationButton = new Ui.Button({ text: 'change orientation' });
-toolbar.append(orientationButton, true);
-app.connect(orientationButton, 'press', function() {
-	if(fold.getOrientation() == 'horizontal')
-		fold.setOrientation('vertical');
-	else
-		fold.setOrientation('horizontal');
+var leftButton = new Ui.Button({ text: 'left' });
+toolbar.append(leftButton, true);
+app.connect(leftButton, 'press', function() {
+	fold.setPosition('left');
+});
+
+var rightButton = new Ui.Button({ text: 'right' });
+toolbar.append(rightButton, true);
+app.connect(rightButton, 'press', function() {
+	fold.setPosition('right');
+});
+
+var topButton = new Ui.Button({ text: 'top' });
+toolbar.append(topButton, true);
+app.connect(topButton, 'press', function() {
+	fold.setPosition('top');
+});
+
+var bottomButton = new Ui.Button({ text: 'bottom' });
+toolbar.append(bottomButton, true);
+app.connect(bottomButton, 'press', function() {
+	fold.setPosition('bottom');
 });
 
 var overButton = new Ui.Button({ text: 'change over' });
@@ -44,8 +59,14 @@ app.connect(modeButton, 'press', function() {
 });
 
 
-var fold = new Ui.Fold({ horizontalAlign: 'center', verticalAlign: 'center', over: true, mode: 'extend' });
-vbox.append(fold, true);
+var lbox = new Ui.LBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+vbox.append(lbox, true);
+
+lbox.append(new Ui.Rectangle({ fill: 'red' }));
+
+
+var fold = new Ui.Fold({ over: true, mode: 'extend', margin: 5 });
+lbox.append(fold);
 fold.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue' }));
 fold.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
 

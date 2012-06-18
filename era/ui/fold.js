@@ -8,7 +8,7 @@ Ui.Container.extend('Ui.Fold',
 	backgroundBox: undefined,
 	background: undefined,
 	offset: 0,
-	orientation: 'horizontal',
+	position: 'bottom',
 	isFolded: true,
 	over: true,
 	mode: 'extend',
@@ -22,7 +22,7 @@ Ui.Container.extend('Ui.Fold',
 	 * @extends Ui.Container
 	 */	
 	constructor: function(config) {
-		this.addEvents('fold', 'unfold', 'orientationchange');
+		this.addEvents('fold', 'unfold', 'positionchange');
 
 		this.backgroundBox = new Ui.LBox();
 		this.appendChild(this.backgroundBox);
@@ -79,6 +79,7 @@ Ui.Container.extend('Ui.Fold',
 		if(this.over != over) {
 			this.over = over;
 			this.stopAnimation();
+			this.setTransform(Ui.Matrix.createTranslate(0, 0));
 			this.invalidateMeasure();
 		}
 	},
@@ -157,7 +158,7 @@ Ui.Container.extend('Ui.Fold',
 	setBackground: function(background) {
 		if(this.background != background) {
 			if(this.background != undefined)
-				this.backgroundtBox.removeChild(this.background);
+				this.backgroundBox.removeChild(this.background);
 			this.background = background;
 			if(this.background != undefined)
 				this.backgroundBox.appendChild(this.background);
@@ -165,23 +166,23 @@ Ui.Container.extend('Ui.Fold',
 	},
 
 	/**
-	 * Return the orientation of the accordeon
-	 * possibles values: [horizontal|vertical]
-	 * default value: horizontal
+	 * Return the position of the content
+	 * possibles values: [top|bottom|left|right]
+	 * default value: bottom
 	 */
-	getOrientation: function() {
-		return this.orientation;
+	getPosition: function() {
+		return this.position;
 	},
 
 	/**
-	 * Set the orientation of the accordeon
-	 * possibles values: [horizontal|vertical]
-	 * default value: horizontal
+	 * Set the position of the content relative to the header
+	 * possibles values: [top|bottom|left|right]
+	 * default value: right
 	 */
-	setOrientation: function(orientation) {
-		if(this.orientation != orientation) {
-			this.orientation = orientation;
-			this.fireEvent('orientationchange', this, orientation);
+	setPosition: function(position) {
+		if(this.position != position) {
+			this.position = position;
+			this.fireEvent('positionchange', this, position);
 			this.invalidateMeasure();
 		}
 	},
@@ -200,15 +201,35 @@ Ui.Container.extend('Ui.Fold',
 		if(!this.over)
 			this.invalidateMeasure();
 		else {
-			if(this.orientation == 'horizontal') {
+			if(this.position == 'right') {
 				if(this.mode == 'slide')
 					this.setTransform(Ui.Matrix.createTranslate(-this.offset * this.contentSize, 0));
+				else
+					this.setTransform(Ui.Matrix.createTranslate(0, 0));
 				this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), this.getLayoutHeight());
 				this.backgroundBox.setClipRectangle(0, 0, Math.round(this.getLayoutWidth() + this.contentSize*this.offset), this.getLayoutHeight());
+			}
+			else if(this.position == 'left') {
+				if(this.mode == 'slide')
+					this.setTransform(Ui.Matrix.createTranslate(-this.contentSize + (this.offset * this.contentSize), 0));
+				else
+					this.setTransform(Ui.Matrix.createTranslate(-this.contentSize, 0));
+				this.contentBox.setClipRectangle(Math.round(this.contentSize*(1-this.offset)), 0, this.contentSize, this.getLayoutHeight());
+				this.backgroundBox.setClipRectangle(0, 0, Math.round(this.getLayoutWidth() + this.contentSize*this.offset), this.getLayoutHeight());
+			}
+			else if(this.position == 'top') {
+				if(this.mode == 'slide')
+					this.setTransform(Ui.Matrix.createTranslate(0, -this.contentSize + (this.offset * this.contentSize)));
+				else
+					this.setTransform(Ui.Matrix.createTranslate(0, -this.contentSize));
+				this.contentBox.setClipRectangle(0, Math.round(this.contentSize*(1-this.offset)), this.getLayoutWidth(), Math.round(this.contentSize*this.offset));
+				this.backgroundBox.setClipRectangle(0, 0, this.getLayoutWidth(), Math.round(this.getLayoutHeight() + this.contentSize*this.offset));
 			}
 			else {
 				if(this.mode == 'slide')
 					this.setTransform(Ui.Matrix.createTranslate(0, -this.offset * this.contentSize));
+				else
+					this.setTransform(Ui.Matrix.createTranslate(0, 0));
 				this.contentBox.setClipRectangle(0, 0, this.getLayoutWidth(), Math.round(this.contentSize*this.offset));
 				this.backgroundBox.setClipRectangle(0, 0, this.getLayoutWidth(), Math.round(this.getLayoutHeight() + this.contentSize*this.offset));
 			}
@@ -268,9 +289,7 @@ Ui.Container.extend('Ui.Fold',
 		}
 	}
 	/**#@-*/
-}, 
-
-{
+}, {
 	/**
 	 * Return the required size for the current element
 	 */
@@ -278,7 +297,7 @@ Ui.Container.extend('Ui.Fold',
 		this.backgroundBox.measure(width, height);
 		var size = this.headerBox.measure(width, height);
 		var contentSize = { width: 0, height: 0 };
-		if(this.orientation == 'horizontal') {
+		if((this.position == 'left') || (this.position == 'right')) {
 			contentSize = this.contentBox.measure(width - size.width, height);
 			if(contentSize.height > size.height)
 				size.height = contentSize.height;
@@ -301,18 +320,39 @@ Ui.Container.extend('Ui.Fold',
 	 * Arrange children
 	 */
 	arrangeCore: function(width, height) {
-		if(this.orientation == 'horizontal') {
+		if(this.position == 'left') {
+			if(!this.over)
+				this.setTransform(Ui.Matrix.createTranslate(-this.contentSize + (this.offset * this.contentSize), 0));
+			this.contentBox.arrange(0, 0, this.contentBox.getMeasureWidth(), height);
+			this.headerBox.arrange(this.contentBox.getMeasureWidth(), 0, this.headerBox.getMeasureWidth(), height);
+			this.backgroundBox.arrange(0, 0, this.headerBox.getMeasureWidth()+this.contentBox.getMeasureWidth(), height);
+			this.contentBox.setClipRectangle(Math.round(this.contentSize*(1-this.offset)), 0, Math.round(this.contentSize*this.offset), Math.round(height));
+			this.backgroundBox.setClipRectangle(0, 0, Math.round(this.headerBox.getMeasureWidth() + this.contentSize*this.offset), Math.round(height));
+		}
+		else if(this.position == 'right') {
 			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);
 			this.contentBox.arrange(this.headerBox.getMeasureWidth(), 0, this.contentBox.getMeasureWidth(), height);
-			this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), Math.round(height));
 			this.backgroundBox.arrange(0, 0, this.headerBox.getMeasureWidth()+this.contentBox.getMeasureWidth(), height);
+
+			this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), Math.round(height));
 			this.backgroundBox.setClipRectangle(0, 0, Math.round(this.headerBox.getMeasureWidth() + this.contentSize*this.offset), Math.round(height));
+		}
+		else if(this.position == 'top') {
+			if(!this.over)
+				this.setTransform(Ui.Matrix.createTranslate(0, -this.contentSize + (this.offset * this.contentSize)));
+			this.contentBox.arrange(0, 0, width, this.contentBox.getMeasureHeight());
+			this.headerBox.arrange(0, this.contentBox.getMeasureHeight(), width, this.headerBox.getMeasureHeight());
+			this.backgroundBox.arrange(0, 0, width, this.headerBox.getMeasureHeight()+this.contentBox.getMeasureHeight());
+
+			this.contentBox.setClipRectangle(0, Math.round(this.contentSize*(1-this.offset)), Math.round(width), Math.round(this.contentSize*this.offset));
+			this.backgroundBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.headerBox.getMeasureHeight() + this.contentSize*this.offset));
 		}
 		else {
 			this.headerBox.arrange(0, 0, width, this.headerBox.getMeasureHeight());
 			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight());
-			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
 			this.backgroundBox.arrange(0, 0, width, this.headerBox.getMeasureHeight()+this.contentBox.getMeasureHeight());
+
+			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
 			this.backgroundBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.headerBox.getMeasureHeight() + this.contentSize*this.offset));
 		}
 		this.setOffset(this.offset);
