@@ -215,7 +215,7 @@ Ui.Container.extend('Ui.Fold',
 				else
 					this.setTransform(Ui.Matrix.createTranslate(-this.contentSize, 0));
 				this.contentBox.setClipRectangle(Math.round(this.contentSize*(1-this.offset)), 0, this.contentSize, this.getLayoutHeight());
-				this.backgroundBox.setClipRectangle(0, 0, Math.round(this.getLayoutWidth() + this.contentSize*this.offset), this.getLayoutHeight());
+				this.backgroundBox.setClipRectangle(Math.round(this.contentSize*(1-this.offset)), 0, Math.round(this.getLayoutWidth() + this.contentSize*this.offset), this.getLayoutHeight());
 			}
 			else if(this.position == 'top') {
 				if(this.mode == 'slide')
@@ -223,7 +223,7 @@ Ui.Container.extend('Ui.Fold',
 				else
 					this.setTransform(Ui.Matrix.createTranslate(0, -this.contentSize));
 				this.contentBox.setClipRectangle(0, Math.round(this.contentSize*(1-this.offset)), this.getLayoutWidth(), Math.round(this.contentSize*this.offset));
-				this.backgroundBox.setClipRectangle(0, 0, this.getLayoutWidth(), Math.round(this.getLayoutHeight() + this.contentSize*this.offset));
+				this.backgroundBox.setClipRectangle(0, Math.round(this.contentSize*(1-this.offset)), this.getLayoutWidth(), Math.round(this.getLayoutHeight() + this.contentSize*this.offset));
 			}
 			else {
 				if(this.mode == 'slide')
@@ -327,13 +327,12 @@ Ui.Container.extend('Ui.Fold',
 			this.headerBox.arrange(this.contentBox.getMeasureWidth(), 0, this.headerBox.getMeasureWidth(), height);
 			this.backgroundBox.arrange(0, 0, this.headerBox.getMeasureWidth()+this.contentBox.getMeasureWidth(), height);
 			this.contentBox.setClipRectangle(Math.round(this.contentSize*(1-this.offset)), 0, Math.round(this.contentSize*this.offset), Math.round(height));
-			this.backgroundBox.setClipRectangle(0, 0, Math.round(this.headerBox.getMeasureWidth() + this.contentSize*this.offset), Math.round(height));
+			this.backgroundBox.setClipRectangle(Math.round(this.contentSize*(1-this.offset)), 0, Math.round(this.headerBox.getMeasureWidth() + this.contentSize*this.offset), Math.round(height));
 		}
 		else if(this.position == 'right') {
 			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);
 			this.contentBox.arrange(this.headerBox.getMeasureWidth(), 0, this.contentBox.getMeasureWidth(), height);
 			this.backgroundBox.arrange(0, 0, this.headerBox.getMeasureWidth()+this.contentBox.getMeasureWidth(), height);
-
 			this.contentBox.setClipRectangle(0, 0, Math.round(this.contentSize*this.offset), Math.round(height));
 			this.backgroundBox.setClipRectangle(0, 0, Math.round(this.headerBox.getMeasureWidth() + this.contentSize*this.offset), Math.round(height));
 		}
@@ -343,15 +342,13 @@ Ui.Container.extend('Ui.Fold',
 			this.contentBox.arrange(0, 0, width, this.contentBox.getMeasureHeight());
 			this.headerBox.arrange(0, this.contentBox.getMeasureHeight(), width, this.headerBox.getMeasureHeight());
 			this.backgroundBox.arrange(0, 0, width, this.headerBox.getMeasureHeight()+this.contentBox.getMeasureHeight());
-
 			this.contentBox.setClipRectangle(0, Math.round(this.contentSize*(1-this.offset)), Math.round(width), Math.round(this.contentSize*this.offset));
-			this.backgroundBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.headerBox.getMeasureHeight() + this.contentSize*this.offset));
+			this.backgroundBox.setClipRectangle(0, Math.round(this.contentSize*(1-this.offset)), Math.round(width), Math.round(this.headerBox.getMeasureHeight() + this.contentSize*this.offset));
 		}
 		else {
 			this.headerBox.arrange(0, 0, width, this.headerBox.getMeasureHeight());
 			this.contentBox.arrange(0, this.headerBox.getMeasureHeight(), width, this.contentBox.getMeasureHeight());
 			this.backgroundBox.arrange(0, 0, width, this.headerBox.getMeasureHeight()+this.contentBox.getMeasureHeight());
-
 			this.contentBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.contentSize*this.offset));
 			this.backgroundBox.setClipRectangle(0, 0, Math.round(width), Math.round(this.headerBox.getMeasureHeight() + this.contentSize*this.offset));
 		}
