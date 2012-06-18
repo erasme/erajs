@@ -12,6 +12,7 @@ Ui.LBox.extend('Ui.App',
 	arguments: undefined,
 	autoscale: false,
 	ready: false,
+	orientation: 0,
 
 	layoutList: undefined,
 	windowWidth: 0,
@@ -31,7 +32,7 @@ Ui.LBox.extend('Ui.App',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.addEvents('resize', 'ready', 'parentmessage');
+		this.addEvents('resize', 'ready', 'parentmessage', 'orientationchange');
 
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
@@ -136,7 +137,7 @@ Ui.LBox.extend('Ui.App',
 			document.attachEvent('oncontextmenu', function(event) { return false; });
 
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
-//		this.connect(window, 'scroll', function(event) { console.log('scroll: '+window.scrollY);/*window.scrollTo(0, 0);*/ event.stopPropagation(); event.preventDefault(); });
+//		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); event.stopPropagation(); event.preventDefault(); });
 
 		if('onorientationchange' in window)
 			this.connect(window, 'orientationchange', this.onOrientationChange);
@@ -195,6 +196,10 @@ Ui.LBox.extend('Ui.App',
 	closeVirtualKeyboard: function() {
 		if(this.virtualkeyboard !== undefined)
 			this.virtualkeyboard.close();
+	},
+
+	getOrientation: function() {
+		return this.orientation;
 	},
 
 	/**#@+
@@ -260,7 +265,9 @@ Ui.LBox.extend('Ui.App',
 //		console.log(this+'.onWindowResize end updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 	},
 
-	onOrientationChange: function() {
+	onOrientationChange: function(event) {
+		this.orientation = window.orientation;
+		this.fireEvent('orientationchange', this.orientation);
 		this.fireEvent('resize', this);
 		this.invalidateMeasure();
 	},
@@ -437,9 +444,10 @@ Ui.LBox.extend('Ui.App',
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
 		if(navigator.iPad || navigator.iPhone) {
-			var top = document.body.scrollTop;
+//			var top = document.body.scrollTop;
 			document.body.scrollLeft = 0;
-			document.body.scrollTop = top;
+//			document.body.scrollTop = 0;
+//			document.body.scrollTop = top;
 		}
 	},
 
