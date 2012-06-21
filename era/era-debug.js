@@ -92,6 +92,7 @@ include(eraBaseDirectory+'ui/label.js');
 include(eraBaseDirectory+'ui/text.js');
 include(eraBaseDirectory+'ui/compactlabel.js');
 include(eraBaseDirectory+'ui/html.js');
+include(eraBaseDirectory+'ui/contenteditable.js');
 
 //
 // Ui media

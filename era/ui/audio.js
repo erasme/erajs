@@ -17,6 +17,7 @@ Ui.Element.extend('Ui.Audio',
 	*/
 	constructor: function(config) {
 		this.addEvents('ready', 'ended', 'timeupdate');
+		this.connect(this, 'unload', this.onAudioUnload);
 		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.wavSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Audio.supportOgg))
 				this.setSrc(config.oggSrc);
@@ -46,11 +47,16 @@ Ui.Element.extend('Ui.Audio',
 	*/
 	play: function() {
 		if(Ui.Audio.htmlAudio) {
-			try {
-				this.audioDrawing.pause();
-				this.audioDrawing.currentTime = 0;
-			} catch(e) {}
-			this.audioDrawing.play();
+			if(!this.canplaythrough) {
+				try {
+					this.audioDrawing.load();
+				} catch(e) {}				
+			}
+			else {
+				try {
+					this.audioDrawing.play();
+				} catch(e) {}
+			}
 		}
 		this.playing = true;
 		this.paused = false;
@@ -74,8 +80,13 @@ Ui.Element.extend('Ui.Audio',
 	stop: function() {
 		if(!this.playing)
 			return;
-		if(!this.paused)
+		if(!this.paused) {
+			this.paused = false;
 			this.audioDrawing.pause();
+		}
+		this.playing = false;
+		if(Ui.Audio.htmlAudio)
+			this.audioDrawing.currentTime = 0;
 		this.onEnded();
 	},
 
@@ -122,15 +133,64 @@ Ui.Element.extend('Ui.Audio',
 	*/
 	onReady: function() {
 		this.fireEvent('ready');
+		this.canplaythrough = true;
+		if(this.playing && !this.paused)
+			this.audioDrawing.play();
 	},
 
 	onTimeupdate: function() {
+		this.checkBuffering();
 		this.fireEvent('timeupdate', this.audioDrawing.currentTime);
 	},
 
 	onEnded: function() {
 		this.playing = false;
+		this.paused = false;
 		this.fireEvent('ended');
+	},
+
+	onWaiting: function() {
+		if(this.playing && !this.paused)
+			this.audioDrawing.pause();
+	},
+
+	getCurrentBufferSize: function() {
+		var buffered = this.audioDrawing.buffered;
+		var timebuffer = 0;
+		var time = this.audioDrawing.currentTime;
+		for(var i = 0; i < buffered.length; i++) {
+			var start = buffered.start(i);
+			var end = buffered.end(i);
+			if((start <= time) && (end >= time)) {
+				timebuffer = end - time;
+				break;
+			}
+		}
+		return timebuffer;
+	},
+
+	checkBuffering: function() {
+		if(this.playing && !this.paused) {
+			var timebuffer = this.getCurrentBufferSize();
+			var time = this.audioDrawing.currentTime;
+			var duration = this.audioDrawing.duration;
+			if(time >= duration)
+				return;
+			if(this.audioDrawing.paused) {
+				if((timebuffer > 5) || (time + timebuffer >= duration))
+					this.audioDrawing.play();
+			}
+			else {
+				if((timebuffer < 1) && (time + timebuffer < duration))
+					this.audioDrawing.pause();
+			}
+		}
+	},
+
+	onAudioUnload: function() {
+		this.playing = false;
+		this.paused = false;
+		this.audioDrawing.pause();
 	}
 	/**#@-*/
 }, 
@@ -147,6 +207,8 @@ Ui.Element.extend('Ui.Audio',
 			this.connect(this.audioDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.audioDrawing, 'ended', this.onEnded);
 			this.connect(this.audioDrawing, 'timeupdate', this.onTimeupdate);
+			this.connect(this.audioDrawing, 'progress', this.checkBuffering);
+			this.connect(this.audioDrawing, 'waiting', this.onWaiting);
 			this.audioDrawing.setAttribute('preload', 'auto');
 			this.audioDrawing.load();
 			drawing = this.audioDrawing;

@@ -165,7 +165,27 @@ Ui.LBox.extend('Ui.DropBox',
 //			console.log('onDrop data Text: '+data);
 
 			if(data != undefined) {
-				var pos = data.indexOf(':');
+				var tmp = data.split(':');
+				if(tmp.length == 4) {
+					var mimetype = tmp[0];
+					var x = new Number(tmp[1]);
+					var y = new Number(tmp[2]);
+					var data = tmp[3];
+
+					for(var i = 0; i < this.allowedMimetypes.length; i++) {
+						if(this.allowedMimetypes[i] == mimetype) {
+//							console.log('found allowed mimetype: '+mimetype);
+							// accept the drop
+							event.preventDefault();
+							event.stopPropagation();
+							this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y, x, y);
+							return;
+						}
+					}
+//					console.log('allowed mimetype NOT FOUND');
+				}
+
+/*				var pos = data.indexOf(':');
 				if(pos != -1) {
 					var mimetype = data.substring(0, pos);
 					var data = data.substring(pos+1);
@@ -181,7 +201,7 @@ Ui.LBox.extend('Ui.DropBox',
 						}
 					}
 //					console.log('allowed mimetype NOT FOUND');
-				}
+				}*/
 			}
 		}
 

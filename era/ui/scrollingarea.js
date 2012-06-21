@@ -1,8 +1,13 @@
+
 Ui.Scrollable.extend('Ui.ScrollingArea', 
 /**@lends Ui.ScrollingArea#*/
 {
 	horizontalScrollbar: undefined,
 	verticalScrollbar: undefined,
+	topShadow: undefined,
+	bottomShadow: undefined,
+	leftShadow: undefined,
+	rightShadow: undefined,
 
 	/**
      * @constructs
@@ -10,10 +15,22 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
      * @extends Ui.Scrollable
 	 */
 	constructor: function(config) {
-		this.horizontalScrollbar = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }), radius: 4, width: 8, height: 8, margin: 10 });
+		this.horizontalScrollbar = new Ui.Rectangle({ radius: 4, width: 8, height: 8, margin: 10 });
 		this.setScrollbarHorizontal(this.horizontalScrollbar);
-		this.verticalScrollbar = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }), radius: 4, width: 8, height: 8, margin: 10 });
+		this.verticalScrollbar = new Ui.Rectangle({ radius: 4, width: 8, height: 8, margin: 10 });
 		this.setScrollbarVertical(this.verticalScrollbar);
+
+		this.topShadow = new Ui.Rectangle({ height: 5 });
+		this.setTopShadow(this.topShadow);
+
+		this.bottomShadow = new Ui.Rectangle({ height: 5 });
+		this.setBottomShadow(this.bottomShadow);
+
+		this.leftShadow = new Ui.Rectangle({ width: 5 });
+		this.setLeftShadow(this.leftShadow);
+
+		this.rightShadow = new Ui.Rectangle({ width: 5 });
+		this.setRightShadow(this.rightShadow);
 	}
 }, 
 /**@lends Ui.ScrollingArea#*/
@@ -53,11 +70,31 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 		var color = this.getStyleProperty('color');
 		this.horizontalScrollbar.setFill(color);
 		this.verticalScrollbar.setFill(color);
+
+		var c = this.getStyleProperty('shadowColor').getRgb();
+		var start = new Ui.Color({r:c.r,g:c.g,b:c.b,a:0});
+		var end = new Ui.Color({r:c.r,g:c.g,b:c.b,a:0.3});
+		var gradient = new Ui.LinearGradient({ orientation: 'vertical', stops: [
+			{ offset: 0, color: end},	{ offset: 1, color: start} ] });
+		this.topShadow.setFill(gradient);
+
+		gradient = new Ui.LinearGradient({ orientation: 'vertical', stops: [
+			{ offset: 0, color: start},	{ offset: 1, color: end} ] });
+		this.bottomShadow.setFill(gradient);
+
+		var gradient = new Ui.LinearGradient({ orientation: 'horizontal', stops: [
+			{ offset: 0, color: end},	{ offset: 1, color: start} ] });
+		this.leftShadow.setFill(gradient);
+
+		var gradient = new Ui.LinearGradient({ orientation: 'horizontal', stops: [
+			{ offset: 0, color: start},	{ offset: 1, color: end} ] });
+		this.rightShadow.setFill(gradient);
 	}
 }, 
 /**@lends Ui.ScrollingArea*/
 {
 	style: {
-		color: new Ui.Color({ r: 0, g: 0.62, b: 0.88 })
+		color: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }),
+		shadowColor: new Ui.Color({ r: 0, g: 0, b: 0 })
 	}
 });

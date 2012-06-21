@@ -25,6 +25,9 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			"Ui.Button": {
 				color: '#f4f4f4'
 			},
+			"Ui.UploadButton": {
+				color: '#f4f4f4'
+			},
 			"Ui.ToggleButton": {
 				color: '#f4f4f4'
 			},

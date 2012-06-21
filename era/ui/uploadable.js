@@ -38,6 +38,10 @@ Ui.LBox.extend('Ui.Uploadable',
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
+	setDirectoryMode: function(active) {
+		this.input.setDirectoryMode(active);
+	},
+
 	/**#@+
 	 * @private
 	 */
@@ -234,6 +238,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	formDrawing: undefined,
 	inputDrawing: undefined,
 	iframeDrawing: undefined,
+	directoryMode: false,
 
 	/**
 	 * @constructs
@@ -251,6 +256,16 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		this.inputDrawing.click();
 	},
 
+	setDirectoryMode: function(active) {
+		this.directoryMode = active;
+		if(this.inputDrawing != undefined) {
+			if(this.directoryMode)
+				this.inputDrawing.setAttribute('webkitdirectory', '');
+			else
+				this.inputDrawing.removeAttribute('webkitdirectory');
+		}
+	},
+
 	/*#@+
 	 * @private
 	 */
@@ -264,6 +279,8 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
 		this.inputDrawing.setAttribute('name', 'file');
+		if(this.directoryMode)
+			this.inputDrawing.setAttribute('webkitdirectory', '');
 
 		this.connect(this.inputDrawing, 'change', this.onChange);
 		this.formDrawing.appendChild(this.inputDrawing);
@@ -326,6 +343,7 @@ Ui.Element.extend('Ui.UploadableWrapper',
 {
 	formDrawing: undefined,
 	inputDrawing: undefined,
+	directoryMode: false,
 
 	/**
 	 * @constructs
@@ -336,6 +354,9 @@ Ui.Element.extend('Ui.UploadableWrapper',
 		this.setClipToBounds(true);
 		this.setOpacity(0);
 		this.addEvents('file');
+	},
+
+	setDirectoryMode: function(active) {
 	},
 
 	/*#@+
@@ -426,5 +447,6 @@ catch(err) {
 
 Ui.Uploadable.testInput = document.createElement('input');
 navigator.supportFileAPI = 'files' in Ui.Uploadable.testInput;
+navigator.supportUploadDirectory = 'webkitdirectory' in Ui.Uploadable.testInput;
 delete(Ui.Uploadable.testInput);
 

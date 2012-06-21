@@ -320,4 +320,8 @@ x - BUG dans le Ui.Notebook, il semble que dans un VBox en mode resizable, l'aff
 
 - Utiliser les === et !=== en lieu et place des == et != quand on peut
 
+- Dans CompactLabel, essayer de "spliter" uniquement sur les espaces.
+  Si cela ne suffit pas, couper n'importe où.
+  
+
 

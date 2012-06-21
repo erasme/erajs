@@ -2,6 +2,7 @@ Ui.LBox.extend('Ui.Pressable',
 /** @lends Ui.Pressable# */
 {
 	isDown: false,
+	lock: false,
 
     /**
      * @constructs   
@@ -32,11 +33,23 @@ Ui.LBox.extend('Ui.Pressable',
 		return this.isDown;
 	},
 
+	setLock: function(lock) {
+		this.lock = lock;
+		if(lock)
+			this.getDrawing().style.cursor = '';
+		else
+			this.getDrawing().style.cursor = 'pointer';
+	},
+
+	getLock: function() {
+		return this.lock;
+	},
+
 	/**#@+
 	 * @private
 	 */
 	onMouseDown: function(event) {
-		if((event.button != 0) || this.getIsDisabled())
+		if((event.button != 0) || this.getIsDisabled() || this.lock)
 			return;
 
 		event.preventDefault();
@@ -88,7 +101,7 @@ Ui.LBox.extend('Ui.Pressable',
 	},
 
 	onFingerDown: function(event) {
-		if(this.getIsDisabled() || this.isDown)
+		if(this.getIsDisabled() || this.isDown || this.lock)
 			return;
 
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
@@ -134,7 +147,7 @@ Ui.LBox.extend('Ui.Pressable',
 
 	onKeyDown: function(event) {
 		var key = event.which;
-		if((key == 13) && !this.getIsDisabled()) {
+		if((key == 13) && !this.getIsDisabled() && !this.lock) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.onDown();
@@ -143,7 +156,7 @@ Ui.LBox.extend('Ui.Pressable',
 
 	onKeyUp: function(event) {
 		var key = event.which;
-		if((key == 13) && !this.getIsDisabled()) {
+		if((key == 13) && !this.getIsDisabled() && !this.lock) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.onUp();
@@ -172,6 +185,9 @@ Ui.LBox.extend('Ui.Pressable',
 
 	onEnable: function() {
 		Ui.Pressable.base.onEnable.call(this);
-		this.getDrawing().style.cursor = 'pointer';
+		if(this.lock)
+			this.getDrawing().style.cursor = '';
+		else
+			this.getDrawing().style.cursor = 'pointer';
 	}
 });

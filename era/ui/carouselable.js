@@ -11,6 +11,7 @@ Ui.Container.extend('Ui.Carouselable',
 	ease: undefined,
 	autoPlay: undefined,
 	autoTask: undefined,
+	pos: 0,
 
 	/**
 	 * @constructs
@@ -168,6 +169,7 @@ Ui.Container.extend('Ui.Carouselable',
 
 	onChange: function() {
 		var current = this.getCurrentPosition();
+		this.pos = -current;
 		for(var i = 0; i < this.box.getChildren().length; i++) {
 			if(i == current)
 				this.box.getChildren()[i].show();
@@ -198,8 +200,8 @@ Ui.Container.extend('Ui.Carouselable',
 			relprogress = 1;
 		}
 		relprogress = this.ease.ease(relprogress);
-		var newX = -(this.animStart + relprogress * (this.animNext - this.animStart))*this.getLayoutWidth();
-		this.movable.setPosition(newX, undefined);
+		this.pos = -(this.animStart + relprogress * (this.animNext - this.animStart));
+		this.movable.setPosition(this.pos * this.getLayoutWidth(), undefined);		
 
 		if(relprogress >= 1)
 			this.onChange();
@@ -250,7 +252,9 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	arrangeCore: function(width, height) {
-		return this.movable.arrange(0, 0, width * this.box.getChildren().length, height);
+		var res = this.movable.arrange(0, 0, width * this.box.getChildren().length, height);
+		this.movable.setPosition(this.pos * width, undefined);
+		return res;
 	}
 });
 

@@ -1,4 +1,4 @@
-Ui.VBox.extend('Ui.ToolBar', 
+Ui.LBox.extend('Ui.ToolBar', 
 /**@lends Ui.ToolBar*/
 {
 	hbox: undefined,
@@ -11,25 +11,23 @@ Ui.VBox.extend('Ui.ToolBar',
 	 * @extends Ui.VBox
 	 */
 	constructor: function(config) {
-		this.topShadow = new Ui.Rectangle({ height: 1 });
+		this.topShadow = new Ui.Rectangle({ height: 1, verticalAlign: 'top' });
 		Ui.ToolBar.base.append.call(this, this.topShadow);
 
-		var content = new Ui.LBox();
+		this.bottomShadow = new Ui.Rectangle({ height: 1, verticalAlign: 'bottom' });
+		Ui.ToolBar.base.append.call(this, this.bottomShadow);
+
+		var content = new Ui.LBox({ marginTop: 1, marginBottom: 1 });
 		Ui.ToolBar.base.append.call(this, content);
 
 		this.background = new Ui.Rectangle({ });
 		content.append(this.background);
 
-		this.scroll = new Ui.ScrollingArea({ scrollVertical: false });
+		this.scroll = new Ui.ScrollingArea({ scrollVertical: false, verticalAlign: 'center' });
 		content.append(this.scroll);
 
 		this.hbox = new Ui.HBox();
 		this.scroll.setContent(this.hbox);
-
-//		content.append(this.hbox);
-
-		this.bottomShadow = new Ui.Rectangle({ height: 1 });
-		Ui.ToolBar.base.append.call(this, this.bottomShadow);
 	},
 
 	/**#@+
