@@ -3,6 +3,7 @@ Ui.LBox.extend('Form.Field',
 {
 	label: undefined,
 	labelBox: undefined,
+	requireStar: undefined,
 	require: false,
 	description: undefined,
 	validation: undefined,
@@ -89,10 +90,11 @@ Ui.LBox.extend('Form.Field',
 	setRequire: function(require){
 		this.require = require;
 		if(this.require){
-			this.labelBox.append(new Ui.Label({text: '*', color: 'red', fontWeight: 'bold'}));
+			this.requireStar = new Ui.Label({text: '*', color: 'red', fontWeight: 'bold'});
+			this.labelBox.append(this.requireStar);
 		}
-		else if(this.labelBox.getChildren().length > 1){
-			this.labelBox.remove(this.labelBox.getLastChild());
+		else if(this.requireStar != null && this.labelBox.hasChild(this.requireStar)){
+			this.labelBox.remove(this.requireStar);
 		}
 	},
 	
@@ -187,6 +189,8 @@ Form.Field.extend('Form.ComboField',
 		if(!('uiElement' in config)){
 			this.setUiElement({horizontalAlign: 'left'});
 		}
+
+		this.connect(this.uiElt, 'change', this.onChange);
 	}
 },
 /**@lends Form.ComboField#*/
