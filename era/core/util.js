@@ -104,11 +104,11 @@ Core.Util.encodeURIQuery = function(obj) {
 	var args = '';
 	if(obj != undefined) {
 		for(var prop in obj) {
+			var propValue = obj[prop];
+			if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') &&  (typeof(propValue) != 'boolean') && (typeof(propValue) != 'object'))
+				continue;
 			if(args != '')
 				args += '&';
-			var propValue = obj[prop];
-			if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object'))
-				continue;
 			args += encodeURIComponent(prop)+'=';
 			if(typeof(propValue) == 'object')
 				args += encodeURIComponent(JSON.stringify(propValue));
