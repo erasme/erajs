@@ -125,6 +125,7 @@ include(eraBaseDirectory+'ui/carouselable.js');
 //
 include(eraBaseDirectory+'ui/separator.js');
 include(eraBaseDirectory+'ui/popup.js');
+include(eraBaseDirectory+'ui/dialog.js');
 include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');

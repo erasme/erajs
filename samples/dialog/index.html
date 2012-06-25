@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Dialog</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+var app = new Ui.App({ style: {
+	"Ui.Dialog": {
+		"Ui.Button": {
+			color: new Ui.Color({ r: 0.8, g: 0.8, b: 0.8 }),
+			spacing: 5
+		}
+	}
+}});
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var hbox = new Ui.HBox();
+vbox.append(hbox);
+
+hbox.append(new Ui.Button({ text: 'test 1' }));
+hbox.append(new Ui.Button({ text: 'test 2' }));
+
+var button = new Ui.Button({ text: 'open', verticalAlign: 'center', horizontalAlign: 'center' });
+vbox.append(button, true);
+
+app.connect(button, 'press', function() {
+	var dialog = new Ui.Dialog({
+		title: 'Test Dialogue',
+		cancelButton: new Ui.Button({ text: 'Annuler' }),
+		actionButtons: [ new Ui.Button({ text: 'Précédent'}), new Ui.Button({ text: 'Suivant'}) ]
+	});
+	dialog.setContent(new Ui.Rectangle({ fill: 'lightgreen', width: 100, height: 100 }));
+	dialog.open();
+});
+
+</script>
+  </head>
+</html>
