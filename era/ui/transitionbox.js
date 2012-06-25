@@ -8,6 +8,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 	transitionClock: undefined,
 	current: undefined,
 	next: undefined,
+	replaceMode: false,
 	
 	/**
      * @constructs
@@ -89,6 +90,12 @@ Ui.LBox.extend('Ui.TransitionBox',
 			return this.getChildren()[this.position].getChildren()[0];
 	},
 
+	replaceContent: function(content) {
+		this.replaceMode = true;
+		this.append(content);
+		this.setCurrent(content);
+	},
+
 	/**#@+
 	 * @private
 	 */
@@ -110,9 +117,23 @@ Ui.LBox.extend('Ui.TransitionBox',
 	onTransitionComplete: function(clock) {
 		this.transitionClock = undefined;
 
+		var current = this.next;
+
 		if(this.current != undefined)
 			this.current.hide();
 		this.next = undefined;
+		if(this.replaceMode) {
+			this.replaceMode = false;
+
+			var removeList = [];
+			for(var i = 0; i < this.getChildren(); i++) {
+				var item = this.getChildren()[i];
+				if(item !== current)
+					removeList.push(item.getFirstChild());
+			}
+			for(var i = 0; i < removeList.length; i++)
+				this.remove(removeList[i]);
+		}
 		this.fireEvent('change', this, this.position);
 	}
 	/**#@-*/
