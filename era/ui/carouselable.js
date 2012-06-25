@@ -74,6 +74,15 @@ Ui.Container.extend('Ui.Carouselable',
 			this.startAnimation(-1, position);
 	},
 
+	setCurrent: function(current) {
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			if(this.box.getChildren()[i] == current) {
+				this.setCurrentAt(i);
+				break;
+			}
+		}
+	},
+
 	next: function() {
 		if(this.alignClock === undefined)
 			this.startAnimation(-1, this.getCurrentPosition() + 1);
