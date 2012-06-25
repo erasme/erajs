@@ -50,6 +50,13 @@ Ui.LBox.extend('Ui.SegmentBar',
 			this.hbox.getChildren()[position].select();
 	},
 
+	getCurrentPosition: function() {
+		for(var i = 0; i < this.hbox.getChildren().length; i++) {
+			if(this.hbox.getChildren()[i].getIsSelected())
+				return i;
+		}
+	},
+
 	/**
 	* Move the current choice to the next choice
 	*/
