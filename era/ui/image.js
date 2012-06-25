@@ -31,6 +31,9 @@ Ui.Element.extend('Ui.Image',
 	* ready event is fired and getIsReady return true.
 	*/
 	setSrc: function(src) {
+		if(src == undefined)
+			throw('Image src cant be undefined');
+	
 		this.setSrcLock = true;
 		this.loaddone = false;
 		this.naturalWidth = undefined;
