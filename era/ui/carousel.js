@@ -61,6 +61,10 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		this.carouselable.previous();
 	},
 
+	getLogicalChildren: function() {
+		return this.carouselable.getChildren();
+	},
+
 	/**#@+
 	* @private
 	*/
