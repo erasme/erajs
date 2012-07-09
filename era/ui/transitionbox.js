@@ -14,9 +14,9 @@ Ui.LBox.extend('Ui.TransitionBox',
      * @constructs
 	 * @class Container that displays only one element at a time and allows differents kind of transition between elements
      * @extends Ui.LBox
-     * @param {Number} [config.duration] Transition duration in second (can be float)
-	 * @param {String} [config.ease] Transition ease behaviour [linear|bounce|elastic]
-	 * @param {String} [config.transition] Transition type [slide|fade|flip]
+     * @param {number} [config.duration] Transition duration in second (can be float)
+	 * @param {string} [config.ease] Transition ease behaviour [linear|bounce|elastic]
+	 * @param {string} [config.transition] Transition type [slide|fade|flip]
 	 */
 	constructor: function(config) {
 		this.addEvents('change');
@@ -40,6 +40,14 @@ Ui.LBox.extend('Ui.TransitionBox',
 		this.ease = Anim.EasingFunction.create(ease);
 	},
 
+	/**
+	 * @param {Ui.Transition|object|string} transition Type of transition use 
+	 * @example
+	 * t = new TransitionBox();
+	 * t.setTransition('slide');
+	 * t.setTransition({ type: Ui.Slide, direction: 'left' });
+	 * t.setTransition(new Ui.Transition({ type: Ui.Slide, direction: 'left' }));
+	 */
 	setTransition: function(transition) {
 		this.transition = Ui.Transition.create(transition);
 	},

@@ -6,10 +6,10 @@ Ui.LBox.extend('Ui.DropBox',
 	 * @name Ui.DropBox#drop
 	 * @event
 	 * @param {Ui.DropBox} dropbox The dropbox itself
-	 * @param {String} mimetype The dropped object mimetype
-	 * @param {String) data The dropped object linked data (can be a JSON object stringify)
-	 * @param {Int} posX The dropped object x position
-	 * @param {Int} posY The dropped object y position
+	 * @param {string} mimetype The dropped object mimetype
+	 * @param {string) data The dropped object linked data (can be a JSON object stringify)
+	 * @param {number} posX The dropped object x position
+	 * @param {number} posY The dropped object y position
 	 */
 	/**
 	 * Fires when a file is drop from the desktop

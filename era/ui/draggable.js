@@ -1,5 +1,19 @@
 Ui.LBox.extend('Ui.Draggable', 
 {
+	/**
+	 * Fires when object start to be dragged
+	 * @name Ui.Draggable#dragstart
+	 * @event
+	 * @param {Ui.Draggable} draggable The draggable itself
+	 */
+	/**
+	 * Fires when object stop to be dragged
+	 * @name Ui.Draggable#dragend
+	 * @event
+	 * @param {Ui.Draggable} draggable The draggable itself
+	 * @param {string} dropEffect Give the operation done: [none|copy|link|move]
+	 */
+
 	icon: undefined,
 	downloadUrl: undefined,
 	downloadMimetype: undefined,

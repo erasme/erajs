@@ -11,7 +11,7 @@
 /**
  * @constant This is a constant declaration which will be displayed in the _global_ section of the jsdoc
  */
-var acceleration = 9.80665;
+var ACCELERATION = 9.80665;
 
 Core.Object.extend('Sample.MyObject',
 /**
@@ -32,7 +32,7 @@ Core.Object.extend('Sample.MyObject',
 	 * Fires on a connection to something.
 	 * @name Sample.MyObject#connect
  	 * @event
- 	 * @param {Boolean} autodisconnect
+	 * @param {boolean} autodisconnect
 	 */
 
 	/**
@@ -42,17 +42,17 @@ Core.Object.extend('Sample.MyObject',
 	 * default field value with the tag default 
      * @default 12
 	 */
-	myvar: 12,
+	myVar: 12,
 	
 	//This field won't be included in the documentation cause we do
 	//not document it with jsdoc doclet.
-	myvar2: undefined,
+	myVar2: undefined,
 
 	/**
 	 * This one is a documented field but explicitly ignored.
 	 * @ignore
 	 */
-	myvar4: 42,
+	myVar4: 42,
 
 	//This one will be documented with the property tag
 	documentedInConsctructor: 24,
@@ -62,19 +62,19 @@ Core.Object.extend('Sample.MyObject',
 	 * @class Here we can put the description of the class (we can't put it above the extend call cause we won't have the constructor description otherwise, maybe a jsdoc bug).
 	 * Create a new class called MyObject in the namespace Sample.
 	 * @extends Core.Object 
-	 * @property {Number} documentedInConsctructor This is a field documented with the <b>property</b> tag in the constructor, 
+	 * @property {number} documentedInConsctructor This is a field documented with the <b>property</b> tag in the constructor, 
 	 * it's not very elegant but may be usefull in some cases.
-	 * @param {Object} config If you want "config" to be display as a function paramter (inside the parenthesis) you must specify the param name config. 
-	 * @param {Number} config.myvar This is the description of myvar which is a number 
+	 * @param {object} config If you want "config" to be display as a function paramter (inside the parenthesis) you must specify the param name config. 
+	 * @param {number} config.myVar This is the description of myVar which is a number 
 	 */
 	constructor: function(config) {
-		console.log('init Sample.MyObject');
-		// check if myvar is present in config.
+		// check if myVar is present in config.
 		// in this case, init with its value
-		if('myvar' in config)
+		if('myVar' in config) {
 			// use "this" to access all method and field
 			// of the current instance of the class
-			this.myvar = config.myvar;
+			this.myVar = config.myVar;
+		}
 
 		//Events are documented at the begining of the class
 		this.addEvents('connect', 'disconnect');
@@ -86,9 +86,9 @@ Core.Object.extend('Sample.MyObject',
 	 * Multi line description
 	 * We can use the <b>link</b> tag which like the <b>see</b> tag but can be used in others tags like this {@link MyNewNameSpace}
 	 * Note the you can't use the <b>link</b> tag in the see tag.
-	 * @param {String} myarg1 descrption of myarg1 which is a String
-	 * @param {MyNewNameSpace} myarg2 descrption of myarg2 which is an Object documented in the framework (a link will be automatically generated)
-	 * @param {Number} [myarg3=1.618] Optional parameter with a default value
+	 * @param {string} myArg1 descrption of myArg1 which is a String
+	 * @param {MyNewNameSpace} myArg2 descrption of myArg2 which is an Object documented in the framework (a link will be automatically generated)
+	 * @param {number} [myArg3=1.618] Optional parameter with a default value
 	 * @throws {OutOfMemeory} If the function can throw an exception you can add it to the description via the <b>throws</b> tag.
 	 * @see <a href="http://daniel.erasme.lan:8080/era/samples/button/">The see tag can be use to refere to an hyper text link</a>.
 	 * @see MyNewNameSpace or to add a reference to another description
@@ -96,10 +96,10 @@ Core.Object.extend('Sample.MyObject',
 	 * @see Sample.MyObject.myStaticMethod And here it is a reference to an static member of a class
 	 * @example 
 	 * //The example tag will generate a code snippet, properlly display
-	 * var obj = new Sample.MyObject({myvar : 42});
+	 * var obj = new Sample.MyObject({myVar : 42});
 	 * obj.aMethod("foo", new Ui.Button());
 	 */
-	aMethod: function(myarg1, myarg2, myarg3) {
+	aMethod: function(myArg1, myArg2, myArg3) {
 	},
 
 	/**
@@ -159,10 +159,10 @@ Core.Object.extend('Sample.MyObject',
   	/**
 	 * An Example of function treated like a field in the doc. Rare case 
 	 * @field
-	 * @type String
+	 * @type string
 	 */
   	fullName: function() {
-    	return this.myvar + this.myvar2;
+		return this.myVar + this.myVar2;
  	}
 },
 /**

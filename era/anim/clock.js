@@ -1,6 +1,20 @@
 Core.Object.extend('Anim.Clock', 
 /**@lends Anim.Clock#*/
 {
+	/**
+	 * Fires when an anim is complete
+	 * @name Anim.Clock#complete
+	 * @event
+	 * @param {Anim.Clock} clock The animclock itself
+	 */
+	/**
+	 * Fires on animation update
+	 * @name Anim.Clock#timeupdate
+	 * @event
+	 * @param {Anim.Clock} clock The animclock itself
+	 * @param {number} progress Progression's level of the animation (between 0 and 1)
+	 * @param {number} delta Time (in second) between two update calls.
+	 */
 	animation: true,
 	parent: undefined,
 	time: undefined,

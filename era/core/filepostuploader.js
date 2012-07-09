@@ -1,6 +1,27 @@
 Core.Object.extend('Core.FilePostUploader', 
 /**@lends Core.FilePostUploader#*/
 {
+	/**
+	 * Fires when each time upload progress, usefull to create a upload progress bar
+	 * @name Core.FilePostUploader#progress
+	 * @event
+	 * @param {Core.FilePostUploader} uploader The uploader itself
+	 * @param {number} loaded Amount of bytes loaded
+	 * @param {number} total Total amount of bytes to load
+	 */
+	/**
+	 * Fires when upload request got status == 200
+	 * @name Core.FilePostUploader#complete
+	 * @event
+	 * @param {Core.FilePostUploader} uploader The uploader itself
+	 */
+	/**
+	 * Fires when upload request got status != 200 or when there is a error while reading the file
+	 * @name Core.FilePostUploader#complete
+	 * @event
+	 * @param {Core.FilePostUploader} uploader The uploader itself
+	 */
+
 	file: undefined,
 	destination: undefined,
 	service: undefined,
@@ -13,7 +34,8 @@ Core.Object.extend('Core.FilePostUploader',
 
 	/**
 	*	@constructs
-	*	@class
+	*	@class Helper to allow file uploading with progress report and which
+	* use the best technic (FileApi, FormData, input tag) depending on the browser capabilities.
 	*	@extends Core.Object
 	*/
 	constructor: function(config) {
