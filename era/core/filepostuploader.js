@@ -171,8 +171,10 @@ Core.Object.extend('Core.FilePostUploader',
 				this.responseText = this.request.responseText;
 				this.fireEvent('complete', this);
 			}
-			else
+			else {
+				this.responseText = this.request.responseText;
 				this.fireEvent('error', this, this.request.status);
+			}
 			this.request = undefined;
 		}
 	},

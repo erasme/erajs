@@ -84,8 +84,12 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	next: function() {
-		if(this.alignClock === undefined)
-			this.startAnimation(-1, this.getCurrentPosition() + 1);
+		if(this.alignClock === undefined){
+			var currentPos = this.getCurrentPosition();
+			if(currentPos < this.getChildren().length){
+				this.startAnimation(-1, currentPos + 1);
+			}
+		}
 		else {
 			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
 			if(this.animNext > pos)
@@ -96,8 +100,12 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	previous: function() {
-		if(this.alignClock === undefined)
-			this.startAnimation(1, this.getCurrentPosition() - 1);
+		if(this.alignClock === undefined){
+			var currentPos = this.getCurrentPosition();
+			if(currentPos > 0){
+				this.startAnimation(1, this.getCurrentPosition() - 1);
+			}
+		}
 		else {
 			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
 			if(this.animNext < pos)
