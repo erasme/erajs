@@ -1,16 +1,34 @@
 Ui.LBox.extend('Ui.DropBox', 
 /**@lends Ui.DropBox#*/
 {
+	/**
+	 * Fires when a draggable object is drop
+	 * @name Ui.DropBox#drop
+	 * @event
+	 * @param {Ui.DropBox} dropbox The dropbox itself
+	 * @param {string} mimetype The dropped object mimetype
+	 * @param {string) data The dropped object linked data (can be a JSON object stringify)
+	 * @param {number} posX The dropped object x position
+	 * @param {number} posY The dropped object y position
+	 */
+	/**
+	 * Fires when a file is drop from the desktop
+	 * @name Ui.DropBox#dropfile
+	 * @event
+	 * @param {Ui.DropBox} dropbox the dropbox itself
+	 * @param {Core.File} file The dropped file
+	 */
+
 	allowedMimetypes: undefined,
 	allowFiles: false,
 	allowText: false,
 	allowedMode: 'all',
 
 	/**
-	* @constructs
-	* @class
-	* @extends Ui.LBox
-	*/
+	 * @constructs
+	 * @class
+	 * @extends Ui.LBox
+	 */
 	constructor: function(config) {
 		this.allowedMimetypes = [];
 

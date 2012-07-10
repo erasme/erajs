@@ -1,6 +1,36 @@
 Ui.Container.extend('Ui.ListView', 
  /** @lends Ui.ListView#*/
 {
+	/**
+	 * Fires when a row in the listView is selected
+	 * @name Ui.ListView#select
+	 * @event
+	 * @param {Ui.ListView} listview The listview itself
+	 * @param {number} row The selected row position.
+	 */
+	/**
+	 * Fires when a row in the listView is unselected
+	 * @name Ui.ListView#unselect
+	 * @event
+	 * @param {Ui.ListView} listview The listview itself
+	 * @param {number} row The row position that has been unselect.
+	 */
+	/**
+	 * Fires when a cell is activate (ie double-click)
+	 * @name Ui.ListView#activate
+	 * @event
+	 * @param {Ui.ListView} listview The listview itself
+	 * @param {number} row The cell's row position.
+	 * @param {string} key The cell's key 
+	 */
+	/**
+	 * Fires when a header is selected
+	 * @name Ui.ListView#header
+	 * @event
+	 * @param {Ui.ListView} listview The listview itself
+	 * @param {string} key The header's key 
+	 */
+
 	data: undefined,
 	headers: undefined,
 	cols: undefined,
@@ -128,7 +158,7 @@ Ui.Container.extend('Ui.ListView',
 	removeDataAt: function(position) {
 		if(position < this.data.length) {
 			if(this.selectedRow == position)
-				this.fireEvent('unselect', this.selectedRow);
+				this.fireEvent('unselect', this, this.selectedRow);
 			this.data.splice(position, 1);
 			for(var col = 0; col < this.headers.length; col++) {
 				var cell = this.headers[col].rows[position];
@@ -590,7 +620,7 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	}
 });
 
-Ui.Selectable.extend('Ui.ListViewCellString', 
+Ui.Selectable.extend('Ui.ListViewCellString',
 /** @lends Ui.ListViewCellString#*/
 {
 	string: '',
