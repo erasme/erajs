@@ -48,6 +48,12 @@ Core.Object.extend('Core.Uri',
 			authority = res[1];
 			this.port = res[2];
 		}
+		else {
+			if(this.scheme == 'https')
+				this.port = 443;
+			else
+				this.port = 80;
+		}
 		this.host = authority;
 		if(fullpath)
 			this.path = path;

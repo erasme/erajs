@@ -69,7 +69,7 @@ Core.Object.extend('Core.HttpRequest',
 			args = Core.Util.encodeURIQuery(this.arguments);
 		}
 		var url = this.url;
-		if((this.method == 'GET') && (args != '')) {
+		if(((this.method == 'GET') || (this.method == 'DELETE')) && (args != '')) {
 			if(this.url.indexOf('?') == -1)
 				url += '?'+args;
 			else
