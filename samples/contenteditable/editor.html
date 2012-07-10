@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test HTML</title>
+	<script src='../../era/era-debug.js'></script>
+<style>
+pre {
+	margin: 5px;
+	font-size: 20px;
+	font-family: Sans-Serif;
+}
+
+h1 {
+	margin: 10px;
+	color: orange;
+	font-size: 26px;
+	font-family: Sans-Serif;
+}
+</style>
+<script>
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox();
+app.setContent(vbox);
+
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
+
+var button = new Ui.Button({ text: 'bold' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('bold', false, null);
+});
+
+button = new Ui.Button({ text: 'italic' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('italic', false, null);
+});
+
+button = new Ui.Button({ text: 'delete' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('delete', false, null);
+});
+
+button = new Ui.Button({ text: 'center' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('justifyCenter', false, null);
+});
+
+button = new Ui.Button({ text: 'left' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('justifyLeft', false, null);
+});
+
+button = new Ui.Button({ text: 'pre' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('formatBlock', false, 'pre');
+});
+
+button = new Ui.Button({ text: 'h1' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('formatBlock', false, 'h1');
+});
+
+button = new Ui.Button({ text: 'removeFormat' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	document.execCommand('removeFormat', false, null);
+});
+
+var scroll = new Ui.ScrollingArea({ overScroll: true, showScrollbar: false });
+vbox.append(scroll, true);
+
+var html = new Ui.ContentEditable({ width: 200, html: '<pre>Have fun with HTML, I <b>hope</b> the text is enough long</pre>', margin: 5 });
+scroll.setContent(html);
+
+</script>
+	</head>
+</html>
