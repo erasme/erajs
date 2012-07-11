@@ -199,6 +199,16 @@ Ui.Container.extend('Ui.Box',
 	},
 
 	/**
+	 * Insert a child element in the current box at the given position
+	 */
+	insertAt: function(child, position, resizable) {
+		child = Ui.Element.create(child);
+		if(resizable)
+			Ui.Box.setResizable(child, true);
+		this.insertChildAt(child, position);
+	},
+
+	/**
 	 * Remove a child from the box
 	 */
 	remove: function(child) {
