@@ -766,6 +766,7 @@ Ui.LBox.extend('Ui.App',
 		}
 	}
 }, {
+	/**{Ui.App} Reference to the current application instance*/
 	current: undefined,
 
 	getWindowIFrame: function(currentWindow) {
