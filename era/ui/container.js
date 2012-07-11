@@ -60,6 +60,15 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	/**
+	 * Insert a child element in the current container at the given position
+	 */
+
+	insertChildAt: function(child, position) {
+		this.appendChild(child);
+		this.moveChildAt(child, position);
+	},
+
+	/**
 	 * Move a child from its current position to
 	 * the given position. Negative value allow
 	 * to specify position from the end.
