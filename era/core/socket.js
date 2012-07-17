@@ -6,7 +6,8 @@ Core.Object.extend('Core.Socket',
 	port: 80,
 	mode: undefined,
 	secure: false,
-	websocket: undefined,	
+	websocket: undefined,
+	websocketdelay: undefined,
 	emuopenrequest: undefined,
 	emupollrequest: undefined,
 	emusendrequest: undefined,
@@ -65,6 +66,7 @@ Core.Object.extend('Core.Socket',
 
 		if(this.mode == 'websocket') {
 			this.websocket = new WebSocket((this.secure?'wss':'ws')+'://'+this.host+':'+this.port+this.service);
+			this.websocketdelay = new Core.DelayedTask({ scope: this, callback: this.onWebSocketOpenTimeout, delay: 2 });
 			this.connect(this.websocket, 'open', this.onWebSocketOpen);
 			this.connect(this.websocket, 'error', this.onWebSocketError);
 			this.connect(this.websocket, 'message', this.onWebSocketMessage);
@@ -123,11 +125,37 @@ Core.Object.extend('Core.Socket',
 	/**#@+
 	* @private
 	*/
+	onWebSocketOpenTimeout: function() {
+		this.websocketdelay = undefined;
+		this.disconnect(this.websocket, 'open', this.onWebSocketOpen);
+		this.disconnect(this.websocket, 'error', this.onWebSocketError);
+		this.disconnect(this.websocket, 'message', this.onWebSocketMessage);
+		this.disconnect(this.websocket, 'close', this.onWebSocketClose);
+		this.websocket.close();
+		this.websocket = undefined;
+
+		// try emulated socket before giving up
+		this.mode = 'poll';
+		this.emumessages = [];
+		this.emuopenrequest = new Core.HttpRequest({ url: (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket=poll&command=open' });
+		this.connect(this.emuopenrequest, 'done', this.onEmuSocketOpenDone);
+		this.connect(this.emuopenrequest, 'error', this.onEmuSocketOpenError);
+		this.emuopenrequest.send();
+	},
+
 	onWebSocketOpen: function() {
+		if(this.websocketdelay != undefined) {
+			this.websocketdelay.abort();
+			this.websocketdelay = undefined;
+		}
 		this.fireEvent('open', this);
 	},
 
 	onWebSocketError: function() {
+		if(this.websocketdelay != undefined) {
+			this.websocketdelay.abort();
+			this.websocketdelay = undefined;
+		}
 		this.fireEvent('error', this);
 	},
 
@@ -139,6 +167,10 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onWebSocketClose: function(msg) {
+		if(this.websocketdelay != undefined) {
+			this.websocketdelay.abort();
+			this.websocketdelay = undefined;
+		}
 		this.fireEvent('close', this);
 	},
 
