@@ -928,35 +928,55 @@ Ui.Container.extend('Ui.Scrollable',
 			var relOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
 			this.scrollbarHorizontalBox.setTransform(Ui.Matrix.createTranslate((this.viewWidth - this.scrollbarHorizontalWidth) * relOffsetX, 0));
 
-			if(relOffsetX > 0)
+			if(relOffsetX > 0) {
+				this.leftShadowBox.show();
 				this.leftShadowBox.setOpacity(1);
-			else
+			}
+			else {
+				this.leftShadowBox.hide();
 				this.leftShadowBox.setOpacity(0);
-			if(relOffsetX < 1)
+			}
+			if(relOffsetX < 1) {
+				this.rightShadowBox.show();
 				this.rightShadowBox.setOpacity(1);
-			else
+			}
+			else {
+				this.rightShadowBox.hide();
 				this.rightShadowBox.setOpacity(0);
+			}
 		}
 		else {
 			this.leftShadowBox.setOpacity(0);
+			this.leftShadowBox.hide();
 			this.rightShadowBox.setOpacity(0);
+			this.rightShadowBox.hide();
 		}
 		if(this.scrollbarVerticalNeeded) {
 			var relOffsetY = this.offsetY / (this.contentHeight - this.viewHeight);
 			this.scrollbarVerticalBox.setTransform(Ui.Matrix.createTranslate(0, (this.viewHeight - this.scrollbarVerticalHeight) * relOffsetY));
 
-			if(relOffsetY > 0)
+			if(relOffsetY > 0) {
+				this.topShadowBox.show();
 				this.topShadowBox.setOpacity(1);
-			else
+			}
+			else {
 				this.topShadowBox.setOpacity(0);
-			if(relOffsetY < 1)
+				this.topShadowBox.hide();
+			}
+			if(relOffsetY < 1) {
+				this.bottomShadowBox.show();
 				this.bottomShadowBox.setOpacity(1);
-			else
+			}
+			else {
 				this.bottomShadowBox.setOpacity(0);
+				this.bottomShadowBox.hide();
+			}
 		}
 		else {
 			this.topShadowBox.setOpacity(0);
+			this.topShadowBox.hide();
 			this.bottomShadowBox.setOpacity(0);
+			this.bottomShadowBox.hide();
 		}
 //		this.contentBox.setTransform(Ui.Matrix.createTranslate(-this.offsetX, -this.offsetY));
 //		this.contentBox.setClipRectangle(this.offsetX, this.offsetY, this.viewWidth, this.viewHeight);
