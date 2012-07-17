@@ -135,7 +135,7 @@ Core.Object.extend('Ui.LinearGradient',
 		fill.color = this.stops[0].color.getCssHtml();
 		fill.opacity = this.stops[0].color.getRgba().a;
 		fill.color2 = this.stops[this.stops.length - 1].color.getCssHtml();
-		fill.opacity2 = this.stops[0].color.getRgba().a;
+		fill.opacity2 = this.stops[this.stops.length - 1].color.getRgba().a;
 		fill.method = 'None';
 		if(this.stops.length > 2) {
 			var colors = '';
