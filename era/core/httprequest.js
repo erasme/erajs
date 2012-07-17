@@ -6,6 +6,7 @@ Core.Object.extend('Core.HttpRequest',
 	binary: false,
 	request: undefined,
 	arguments: undefined,
+	content: undefined,
 
 	/**
 	*	@constructs
@@ -56,6 +57,10 @@ Core.Object.extend('Core.HttpRequest',
 		this.arguments[argName] = argValue;
 	},
 
+	setContent: function(content) {
+		this.content = content;
+	},
+
 	abort: function() {
 		this.request.abort();
 	},
@@ -69,7 +74,8 @@ Core.Object.extend('Core.HttpRequest',
 			args = Core.Util.encodeURIQuery(this.arguments);
 		}
 		var url = this.url;
-		if(((this.method == 'GET') || (this.method == 'DELETE')) && (args != '')) {
+
+		if(((this.method == 'GET') || (this.method == 'DELETE') || (this.content != undefined)) && (args != '')) {
 			if(this.url.indexOf('?') == -1)
 				url += '?'+args;
 			else
@@ -79,12 +85,20 @@ Core.Object.extend('Core.HttpRequest',
 		if(this.binary)
 			this.request.overrideMimeType('text/plain; charset=x-user-defined');
 		this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		if(this.method == 'POST')
-			this.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		if((this.method == 'POST') && (args != ''))
-			this.request.send(args);
-		else
+		if((this.method == 'POST') || (this.method == 'PUT')) {
+			if(this.content == undefined) {
+				this.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				this.request.send(args);
+			}
+			else {
+				this.request.setRequestHeader('Content-type', 'text/plain; charset=utf-8');
+				this.request.send(this.content);
+			}
+		}
+		// GET, DELETE... method
+		else {
 			this.request.send();
+		}
 	},
 
 	getResponseText: function() {
