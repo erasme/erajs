@@ -136,6 +136,22 @@ Ui.Element.extend('Ui.Shape',
 				y = parser.getCurrent(); parser.next();
 				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
 			}
+			else if(cmd == 'h') {
+				x += parser.getCurrent(); parser.next();
+				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'H') {
+				x = parser.getCurrent(); parser.next();
+				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'v') {
+				y += parser.getCurrent(); parser.next();
+				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
+			else if(cmd == 'V') {
+				y = parser.getCurrent(); parser.next();
+				vml += 'l '+Math.round(x * 100)+','+Math.round(y * 100)+' ';
+			}
 			else if(cmd == 'c') {
 				var x1 = x + parser.getCurrent(); parser.next();
 				var y1 = y + parser.getCurrent(); parser.next();
