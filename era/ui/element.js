@@ -698,8 +698,11 @@ Core.Object.extend('Ui.Element',
 	 * Ask for focus on the current element
 	 */
 	focus: function() {
-		if(this.focusable)
-			this.drawing.focus();
+		if(this.focusable) {
+			try {
+				this.drawing.focus();
+			} catch(e) {}
+		}
 //		var current = this;
 //		while(current.parent != undefined) {
 //			current = current.parent;
@@ -712,7 +715,9 @@ Core.Object.extend('Ui.Element',
 	 * Remove the focus current element
 	 */
 	blur: function() {
-		this.drawing.blur();
+		try {
+			this.drawing.blur();
+		} catch(e) {}
 //		var current = this;
 //		while(current.parent != undefined) {
 //			current = current.parent;
