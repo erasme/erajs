@@ -102,21 +102,21 @@ Core.Object.extend('Ui.Element',
      * @constructs
 	 * @class Define the base class for all GUI elements
      * @extends Core.Object
-     * @param {String} [config.margin]
-     * @param {String} [config.width]
-     * @param {String} [config.height]
-     * @param {String} [config.verticalAlign]
-     * @param {String} [config.horizontalAlign]
-     * @param {String} [config.marginTop]
-     * @param {String} [config.marginBottom]
-     * @param {String} [config.marginLeft]
-     * @param {String} [config.marginRight]
-     * @param {String} [config.opacity]
-     * @param {String} [config.focusable]
-     * @param {String} [config.keyboardRequired]
-     * @param {String} [config.clipToBounds]
-     * @param {String} [config.id]
-     * @param {Boolean} [config.selectable] Whether or not the element can be selected
+     * @param {string} [config.margin]
+     * @param {string} [config.width]
+     * @param {string} [config.height]
+     * @param {string} [config.verticalAlign]
+     * @param {string} [config.horizontalAlign]
+     * @param {string} [config.marginTop]
+     * @param {string} [config.marginBottom]
+     * @param {string} [config.marginLeft]
+     * @param {string} [config.marginRight]
+     * @param {string} [config.opacity]
+     * @param {string} [config.focusable]
+     * @param {string} [config.keyboardRequired]
+     * @param {string} [config.clipToBounds]
+     * @param {string} [config.id]
+     * @param {boolean} [config.selectable] Whether or not the element can be selected
 	 */
 	constructor: function(config) {
 		// create the drawing container

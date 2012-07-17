@@ -17,7 +17,7 @@ Core.Object.prototype.toString = function() {
 /**
 *	Add dump method to objects to allow object
 *	content to be displayed in the console
-*	@param {String} filter Regex filter of the dump
+*	@param {string} filter Regex filter of the dump
 */
 Core.Object.prototype.dump = function(filter) {
 	if(filter != undefined)
@@ -37,7 +37,7 @@ Core.Object.prototype.dump = function(filter) {
 /**
 *	Display all objects properties
 *	@param {mixed} obj Object to dump
-*	@param {String} filter Regex filter of the dump
+*	@param {string} filter Regex filter of the dump
 */
 Core.Object.dump = function(obj, filter) {
 	if(filter != undefined)
@@ -84,10 +84,10 @@ Core.Object.prototype.constructorHelper = function(config, proto) {
 
 /**
 *	Extend a Class to create a new class.
-*	@param {String} classType The full class name with the namespace
-*	@param {String} classDefine The object with the class members (methods, properties and constructor)
-*	@param {String} classOverride An object with the members (fields and methods) that need to be overrided in parents classes. It will trow an error if overrided members are not declare here.
-*	@param {String} classStatic An object with all the static members.
+*	@param {string} classType The full class name with the namespace
+*	@param {string} classDefine The object with the class members (methods, properties and constructor)
+*	@param {string} classOverride An object with the members (fields and methods) that need to be overrided in parents classes. It will trow an error if overrided members are not declare here.
+*	@param {string} classStatic An object with all the static members.
 */
 Function.prototype.extend = function(classType, classDefine, classOverride, classStatic) {
 	var tab = classType.split('.');
@@ -190,7 +190,7 @@ Core.Object.prototype.isSubclassOf = function(parentClassName) {
 
 /**
 *	Declare supported events on this class
-*	@param {String} events List of all class events
+*	@param {string} events List of all class events
 *	@example this.addEvents('press', 'down', 'up');
 */
 Core.Object.prototype.addEvents = function() {
@@ -203,18 +203,26 @@ Core.Object.prototype.addEvents = function() {
 /**
 *	Fire the eventName event. All given arguments are passed to the
 *	registered methods.
-*	@param {String} eventName Name of the event to fire. Must have been registred with {@link Core.Object#addEvents} before.
+*	@param {string} eventName Name of the event to fire. Must have been registred with {@link Core.Object#addEvents} before.
 */
 Core.Object.prototype.fireEvent = function(eventName) {
 	var args = [];
 	for(var i = 1; i < arguments.length; i++)
 		args[i-1] = arguments[i];
 	var handled = false;
-	for(var i = 0; (i < this.events[eventName].length) && !handled; i++) {
-		handled = this.events[eventName][i].method.apply(this.events[eventName][i].scope, args);
-		if(handled == undefined)
-			handled = false;
+	var eventListeners = this.events[eventName];
+	if(eventListeners != null){
+		for(var i = 0; (i < eventListeners.length) && !handled; i++) {
+			handled = this.events[eventName][i].method.apply(this.events[eventName][i].scope, args);
+			if(handled == undefined)
+				handled = false;
+		}
 	}
+//#if DEBUG
+	else{
+		throw('Event \''+eventName+'\' not found on ' + this);
+	}
+//#end
 	return handled;
 };
 
@@ -222,7 +230,7 @@ Core.Object.prototype.fireEvent = function(eventName) {
 * Connect a method to the eventName event of the obj object. The method will
 * be called in the current element scope.
 *	@param {mixed} obj
-*	@param {String} eventName
+*	@param {string} eventName
 *	@param {function} method
 *	@param capture
 */
@@ -258,7 +266,15 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	}
 	else {
 		var signal = { scope: this, method: method, capture: capture };
-		obj.events[eventName].push(signal);
+		eventListeners = obj.events[eventName]
+		if(eventListeners != null){
+			eventListeners.push(signal);
+		}
+//#if DEBUG
+		else{
+			throw('Event \''+eventName+'\' not found on ' + obj);
+		}
+//#end
 	}
 	/**#nocode-*/ 
 };
@@ -267,7 +283,7 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 /**
 * Disconnect the current object from the eventName event on obj.
 *	@param {mixed} obj
-*	@param {String} eventName
+*	@param {string} eventName
 *	@param {function} method
 */
 Core.Object.prototype.disconnect = function(obj, eventName, method) {
