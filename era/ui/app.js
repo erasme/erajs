@@ -443,12 +443,12 @@ Ui.LBox.extend('Ui.App',
 
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
-		if(navigator.iPad || navigator.iPhone) {
+//		if(navigator.iPad || navigator.iPhone) {
 //			var top = document.body.scrollTop;
-			document.body.scrollLeft = 0;
+//			document.body.scrollLeft = 0;
 //			document.body.scrollTop = 0;
 //			document.body.scrollTop = top;
-		}
+//		}
 	},
 
 	getContent: function() {
