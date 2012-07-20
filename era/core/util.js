@@ -67,6 +67,8 @@ Core = {};
 */
 Core.Util = {};
 
+Core.Util.svgNS = svgNS;
+Core.Util.htmlNS = htmlNS;
 Core.Util.idGenerator = 0;
 Core.Util.generateId = function() {
 	return ++Core.Util.idGenerator;

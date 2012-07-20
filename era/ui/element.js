@@ -1424,7 +1424,7 @@ Core.Object.extend('Ui.Element',
 			return matrix;
 		}
 		else {
-			var svg = document.createElementNS(svgNS, 'svg');
+			var svg = document.createElementNS(Core.Util.svgNS, 'svg');
 			if(element.firstChild === undefined)
 				element.appendChild(svg);
 			else

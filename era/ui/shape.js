@@ -337,13 +337,13 @@ Ui.Element.extend('Ui.Shape',
 		if(Ui.Shape.forceCanvas)
 			this.shapeDrawing = document.createElement('canvas');
 		else if(navigator.supportSVG) {
-			this.shapeDrawing = document.createElementNS(svgNS, 'svg');
+			this.shapeDrawing = document.createElementNS(Core.Util.svgNS, 'svg');
 			this.shapeDrawing.setAttribute('focusable', false);
 			
-			this.svgDefs = document.createElementNS(svgNS, 'defs');
+			this.svgDefs = document.createElementNS(Core.Util.svgNS, 'defs');
 			this.shapeDrawing.appendChild(this.svgDefs);
 
-			this.svgPath = document.createElementNS(svgNS, 'path');
+			this.svgPath = document.createElementNS(Core.Util.svgNS, 'path');
 			this.svgPath.style.fillOpacity = '1';
 			this.svgPath.style.stroke = 'none';
 			this.shapeDrawing.appendChild(this.svgPath);

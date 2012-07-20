@@ -89,7 +89,7 @@ Core.Object.extend('Ui.LinearGradient',
 	},
 
 	getSVGGradient: function() {
-		var gradient = document.createElementNS(svgNS, 'linearGradient');
+		var gradient = document.createElementNS(Core.Util.svgNS, 'linearGradient');
 		gradient.setAttributeNS(null, 'gradientUnits', 'objectBoundingBox');
 		gradient.setAttributeNS(null, 'x1', 0);
 		gradient.setAttributeNS(null, 'y1', 0);
@@ -103,7 +103,7 @@ Core.Object.extend('Ui.LinearGradient',
 		}
 		for(var i = 0; i < this.stops.length; i++) {
 			var stop = this.stops[i];
-			var svgStop = document.createElementNS(svgNS, 'stop');
+			var svgStop = document.createElementNS(Core.Util.svgNS, 'stop');
 			svgStop.setAttributeNS(null, 'offset', stop.offset);
 			svgStop.style.stopColor = stop.color.getCssHtml();
 			svgStop.style.stopOpacity = stop.color.getRgba().a;

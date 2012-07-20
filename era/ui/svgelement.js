@@ -6,7 +6,7 @@ Ui.Element.extend('Ui.SVGElement', {},
 /**@lends Ui.SVGElement*/
 {
 	renderDrawing: function() {
-		var svg = document.createElementNS(svgNS, 'svg');
+		var svg = document.createElementNS(Core.Util.svgNS, 'svg');
 		svg.setAttribute('focusable', false);
 		return svg;
 	}
