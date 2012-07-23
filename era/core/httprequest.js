@@ -21,7 +21,7 @@ Core.Object.extend('Core.HttpRequest',
 		var wrapper = function() {
 			var httprequest = arguments.callee.httprequest;
 			if(httprequest.request.readyState == 4) {
-				if(httprequest.request.status == 200)
+				if((httprequest.request.status >= 200) && (httprequest.request.status < 300))
 					httprequest.fireEvent('done', httprequest);
 				else
 					httprequest.fireEvent('error', httprequest, httprequest.request.status);
@@ -157,6 +157,10 @@ Core.Object.extend('Core.HttpRequest',
 			return xmlDoc;
 		} catch(e) {}
 		return undefined;
+	},
+
+	getStatus: function() {
+		return httprequest.request.status;
 	}
 });
 
