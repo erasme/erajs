@@ -232,7 +232,7 @@ Ui.Element.extend('Ui.CompactLabel',
 									line = '...';
 									break;
 								}
-								line.substr(0, line.length-1);
+								line = line.substr(0, line.length-1);
 							}
 							else {
 								line += '...';
