@@ -31,6 +31,7 @@ Core.Object.extend('Core.FilePostUploader',
 	responseText: undefined,
 	fileReader: undefined,
 	boundary: undefined,
+	method: 'POST',
 
 	/**
 	*	@constructs
@@ -40,6 +41,10 @@ Core.Object.extend('Core.FilePostUploader',
 	*/
 	constructor: function(config) {
 		this.addEvents('progress', 'complete', 'error');
+	},
+
+	setMethod: function(method) {
+		this.method = method;
 	},
 
 	getFile: function() {
@@ -72,7 +77,7 @@ Core.Object.extend('Core.FilePostUploader',
 				this.request = new XMLHttpRequest();
 				if('upload' in this.request)
 					this.connect(this.request.upload, 'progress', this.onUpdateProgress);
-				this.request.open("POST", this.service);
+				this.request.open(this.method, this.service);
 				this.request.send(formData);
 	
 				var wrapper = function() {
@@ -87,7 +92,7 @@ Core.Object.extend('Core.FilePostUploader',
 				this.request = new XMLHttpRequest();
 				if('upload' in this.request)
 					this.connect(this.request.upload, 'progress', this.onUpdateProgress);
-				this.request.open("POST", this.service);
+				this.request.open(this.method, this.service);
 
 				this.boundary = '----';
                 var characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
