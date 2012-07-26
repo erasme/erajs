@@ -51,7 +51,7 @@ def remove_module_references(line, package_name_list, internal_class_names):
 	# Tout d'abord on rajoute une tabulation à toutes les lignes
 	new_line = '\t' + line
 	for package in package_name_list:
-		token_list = [' ','"', "'", ';', '(', ')', '[', ']', '.', ',', '\n', '#', '!']
+		token_list = [' ','"', "'", ';', '(', ')', '[', ']', '.', ',', '\n', '#', '!', '\t']
 		start = 0
 		package_dot = package.capitalize() + '.'
 		index = line.find(package_dot, start)
