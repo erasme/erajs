@@ -141,12 +141,12 @@ Ui.Container.extend('Ui.MenuDialog',
 		if(!oldVisible) {
 			this.header.setFontWeight(this.element.getFontWeight());
 			this.header.setFontSize(this.element.getFontSize());
-			Ui.App.current.appendDialog(this);
+			Ui.AppUtil.current.appendDialog(this);
 		}
 	},
 
 	onHidden: function() {
-		Ui.App.current.removeDialog(this);
+		Ui.AppUtil.current.removeDialog(this);
 	},
 
 	measureCore: function(width, height) {

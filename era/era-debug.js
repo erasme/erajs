@@ -69,6 +69,8 @@ include(eraBaseDirectory+'ui/container.js');
 //
 include(eraBaseDirectory+'ui/lbox.js');
 include(eraBaseDirectory+'ui/box.js');
+include(eraBaseDirectory+'ui/vbox.js');
+include(eraBaseDirectory+'ui/hbox.js');
 include(eraBaseDirectory+'ui/flow.js');
 include(eraBaseDirectory+'ui/grid.js');
 include(eraBaseDirectory+'ui/fixed.js');
@@ -154,17 +156,21 @@ include(eraBaseDirectory+'ui/flip.js');
 include(eraBaseDirectory+'ui/slide.js');
 include(eraBaseDirectory+'ui/transitionbox.js');
 include(eraBaseDirectory+'ui/accordeon.js');
+include(eraBaseDirectory+'ui/accordeonpage.js');
 include(eraBaseDirectory+'ui/carousel.js');
 include(eraBaseDirectory+'ui/switch.js');
 include(eraBaseDirectory+'ui/app.js');
+include(eraBaseDirectory+'ui/apputil.js');
 include(eraBaseDirectory+'ui/embed.js');
 include(eraBaseDirectory+'ui/monthcalendar.js');
 include(eraBaseDirectory+'ui/datepicker.js');
 include(eraBaseDirectory+'ui/notebook.js');
 include(eraBaseDirectory+'ui/menu.js');
+include(eraBaseDirectory+'ui/menudialog.js');
 include(eraBaseDirectory+'ui/segmentbar.js');
 include(eraBaseDirectory+'ui/paned.js');
 include(eraBaseDirectory+'ui/virtualkeyboard.js');
+include(eraBaseDirectory+'ui/virtualkeyboardkey.js');
 
 //
 // Ui styles

@@ -336,7 +336,7 @@ Core.Object.extend('Ui.Element',
 //			console.log('invalidateLayout enqueue ('+(new Date()).getTime()+')');
 
 //			this.layoutValid = false;
-//			Ui.App.current.enqueueLayout(this);
+//			Ui.AppUtil.current.enqueueLayout(this);
 //		}
 //	},
 
@@ -704,7 +704,7 @@ Core.Object.extend('Ui.Element',
 //		while(current.parent != undefined) {
 //			current = current.parent;
 //		}
-//		if(Ui.App.hasInstance(current))
+//		if(Ui.AppUtil.hasInstance(current))
 //			current.askFocus(this);
 	},
 
@@ -717,7 +717,7 @@ Core.Object.extend('Ui.Element',
 //		while(current.parent != undefined) {
 //			current = current.parent;
 //		}
-//		if(Ui.App.hasInstance(current))
+//		if(Ui.AppUtil.hasInstance(current))
 //			current.removeFocus(this);
 	},
 

@@ -85,9 +85,9 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 	},
 
 	onKeyPress: function(key) {
-		console.log('onKeyPress '+key.getKey()+', focus: '+Ui.App.current.getFocusElement()+', code: '+key.getKey().charCodeAt(0));
+		console.log('onKeyPress '+key.getKey()+', focus: '+Ui.AppUtil.current.getFocusElement()+', code: '+key.getKey().charCodeAt(0));
 
-		var focusElement = Ui.App.current.getFocusElement();
+		var focusElement = Ui.AppUtil.current.getFocusElement();
 		if(focusElement != undefined) {
 			var charCode = key.getKey().charCodeAt(0);
 			var event;

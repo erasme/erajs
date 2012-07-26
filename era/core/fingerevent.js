@@ -182,9 +182,9 @@ Core.Object.extend('Core.FingerManager',
 		// like the iOS event thread create a famine in the main thread
 		// call the update here if needed
 		if(navigator.iPad || navigator.iPhone) {
-			if(Ui.App.current.updateTask != undefined) {
-				Ui.App.current.updateTask.abort();
-				Ui.App.current.update();
+			if(Ui.AppUtil.current.updateTask != undefined) {
+				Ui.AppUtil.current.updateTask.abort();
+				Ui.AppUtil.current.update();
 			}
 		}
 	}

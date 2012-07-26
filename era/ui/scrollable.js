@@ -353,10 +353,10 @@ Ui.Container.extend('Ui.Scrollable',
 		this.window = window;
 		this.iframe = undefined;
 		if(navigator.isWebkit || navigator.isFirefox3) {
-			var rootWindow = Ui.App.getRootWindow();
+			var rootWindow = Ui.AppUtil.getRootWindow();
 			if(rootWindow != window) {
 				this.window = rootWindow;
-				this.iframe = Ui.App.getWindowIFrame();
+				this.iframe = Ui.AppUtil.getWindowIFrame();
 			}
 		}
 
@@ -682,10 +682,10 @@ Ui.Container.extend('Ui.Scrollable',
 		this.window = window;
 		this.iframe = undefined;
 		if(navigator.isWebkit || navigator.isFirefox3) {
-			var rootWindow = Ui.App.getRootWindow();
+			var rootWindow = Ui.AppUtil.getRootWindow();
 			if(rootWindow != window) {
 				this.window = rootWindow;
-				this.iframe = Ui.App.getWindowIFrame();
+				this.iframe = Ui.AppUtil.getWindowIFrame();
 			}
 		}
 
@@ -816,10 +816,10 @@ Ui.Container.extend('Ui.Scrollable',
 		this.window = window;
 		this.iframe = undefined;
 		if(navigator.isWebkit || navigator.isFirefox3) {
-			var rootWindow = Ui.App.getRootWindow();
+			var rootWindow = Ui.AppUtil.getRootWindow();
 			if(rootWindow != window) {
 				this.window = rootWindow;
-				this.iframe = Ui.App.getWindowIFrame();
+				this.iframe = Ui.AppUtil.getWindowIFrame();
 			}
 		}
 

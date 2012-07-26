@@ -41,11 +41,11 @@ Ui.LBox.extend('Ui.Dialog', {
 	},
 
 	open: function() {
-		Ui.App.current.appendDialog(this);
+		Ui.AppUtil.current.appendDialog(this);
 	},
 
 	close: function() {
-		Ui.App.current.removeDialog(this);
+		Ui.AppUtil.current.removeDialog(this);
 	},
 
 	setTitle: function(title) {

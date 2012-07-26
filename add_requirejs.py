@@ -51,7 +51,7 @@ def remove_module_references(line, package_name_list, internal_class_names):
 	# Tout d'abord on rajoute une tabulation à toutes les lignes
 	new_line = '\t' + line
 	for package in package_name_list:
-		token_list = [' ','"', "'", ';', '(', ')', '[', ']', '.', ',', '\n', '#']
+		token_list = [' ','"', "'", ';', '(', ')', '[', ']', '.', ',', '\n', '#', '!']
 		start = 0
 		package_dot = package.capitalize() + '.'
 		index = line.find(package_dot, start)
@@ -221,6 +221,7 @@ dir_name = 'era_require'
 if not(os.path.exists(dir_name)):
 	os.mkdir(dir_name)
 
+print("Parsing all erajs files and generate requirejs compatible code")
 # Tout d'abord parsons tous les fichiers .js contenus dans le dossier era
 for directory, dirnames, filenames in os.walk('era'):
 	# S'il n'y pas de répertoire enfant, on est dans un package
@@ -233,7 +234,7 @@ for directory, dirnames, filenames in os.walk('era'):
 			module_name_map[module_name] = class_name
 		if len(module_name_map) > 0:
 			create_package_main(package_name, module_name_map, dir_name)
-
+print("All files generated at era_require")
 
 		#print(dirnames)
 		#print(module_names)

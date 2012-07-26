@@ -12,11 +12,11 @@ Ui.LBox.extend('Ui.Embed',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		if(Ui.App.current === undefined)
+		if(Ui.AppUtil.current === undefined)
 			new Ui.App();
 		this.getDrawing().style.cursor = 'default';
 		this.setIsLoaded(true);
-		this.connect(Ui.App.current, 'ready', this.onReady);
+		this.connect(Ui.AppUtil.current, 'ready', this.onReady);
 	},
 
 	getDiv: function() {

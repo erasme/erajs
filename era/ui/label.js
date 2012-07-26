@@ -220,7 +220,7 @@ Ui.Element.extend('Ui.Label',
 	createMeasureCanvas: function() {
 		var measureWindow = window;
 		if(navigator.isIE || navigator.isGecko)
-			measureWindow = Ui.App.getRootWindow();
+			measureWindow = Ui.AppUtil.getRootWindow();
 
 		if(measureWindow.document.body === undefined) {
 			var body = measureWindow.document.createElement('body');
@@ -249,7 +249,7 @@ Ui.Element.extend('Ui.Label',
 	createMeasureHtml: function() {
 		var measureWindow = window;
 		if(navigator.isIE || navigator.isGecko)
-			measureWindow = Ui.App.getRootWindow();
+			measureWindow = Ui.AppUtil.getRootWindow();
 
 		if(measureWindow.document.body === undefined) {
 			var body = measureWindow.document.createElement('body');

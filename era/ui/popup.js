@@ -141,12 +141,12 @@ Ui.Container.extend('Ui.Popup',
 				this.background.setArrowBorder('none');
 			}
 			this.invalidateArrange();
-			Ui.App.current.appendDialog(this);
+			Ui.AppUtil.current.appendDialog(this);
 		}
 	},
 
 	onHidden: function() {
-		Ui.App.current.removeDialog(this);
+		Ui.AppUtil.current.removeDialog(this);
 	},
 
 	measureCore: function(width, height) {

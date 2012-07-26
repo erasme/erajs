@@ -89,13 +89,13 @@ Ui.Element.extend('Ui.Image',
 	},
 
 	onAppReady: function() {
-		this.disconnect(Ui.App.current, 'ready', this.onAppReady);
+		this.disconnect(Ui.AppUtil.current, 'ready', this.onAppReady);
 		this.onImageDelayReady();
 	},
 
 	onImageDelayReady: function() {
-		if(!Ui.App.current.getIsReady())
-			this.connect(Ui.App.current, 'ready', this.onAppReady);
+		if(!Ui.AppUtil.current.getIsReady())
+			this.connect(Ui.AppUtil.current, 'ready', this.onAppReady);
 		else {
 			this.loaddone = true;
 			if(document.body === undefined) {
