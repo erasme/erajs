@@ -9,7 +9,7 @@
 # dans le même package ou que ce qui vient après le Core. ou Ui. est définit à l'intérieur même du fichier ou sauf si la ligne est
 # dans un commentaire (// ou /* ou *) ou à l'intérieur d'une string (extend)
 # Attention aussi a bien mettre Object de Core.Object en minuscule
-import os
+import os, shutil
 
 packages = ["core", "ui", "form", "anim"]
 
@@ -32,7 +32,7 @@ def get_module_class_names(content):
 def get_external_packages(content):
 	package_used = []
 	for name in packages:
-		if name != package_name and content.find(name.capitalize() + '.') != -1:
+		if content.find(name.capitalize() + '.') != -1:
 			package_used.append(name)
 	return package_used
 
@@ -83,21 +83,18 @@ def remove_module_references(line, package_name_list, internal_class_names):
 	return new_line, define_map
 
 # Génère la première ligne de define d'un fichier
-def get_define_line(define_list):
-	line = "define(["
+def get_define_line(define_list, keyword="define"):
+	line = keyword + "(["
 	first = True
 	for module in define_list:
 		if first:
-			if len(define_list) > 1:
-				line = line + "'" + module + "' "
-			else:
-				line = line + "'" + module + "'"
+			line = line + "'" + module + "'"
 			first = False
 		else:
 			line = line + ", '" + module + "'"
 	line = line + "], "
 	# S'il y a trop de modules on met sur 2 lignes
-	if len(define_list) > 4:
+	if len(define_list) > 3:
 		line = line + '\n'
 	line = line + "function("
 	first = True
@@ -105,10 +102,7 @@ def get_define_line(define_list):
 		namespace_pair = define_list[module]
 		namespace = namespace_pair[0]
 		if first:
-			if len(define_list) > 1:
-				line = line + namespace + " "
-			else:
-				line = line + namespace
+			line = line + namespace
 			first = False
 		else:
 			line = line + ", " + namespace
@@ -216,6 +210,54 @@ def create_package_main(package_name, module_names, export_dir):
 	main_file.write('\n\t};\n')
 	main_file.write('});')
 
+def modify_sample_file(directory, name):
+	new_content = []
+
+	#Premièrement on recherche tous les packages utilisés
+	f = open(os.path.join(directory, name))
+	content = f.read()
+	package_list = get_external_packages(content)
+	define_list = {}
+	for package in package_list:
+		define_list[package] = [package.capitalize()]
+	define_line = get_define_line(define_list, 'require')
+	f.close()
+
+	f = open(os.path.join(directory, name))
+	first_script = True
+	sample_started = False
+	for line in f.readlines():
+		# Si c'est du code html
+		sline = line.lstrip()
+		if len(sline) > 0 and sline[0] == '<':
+			if sline[0:7] == "<script":
+				if first_script:
+					# On change la dependance vers era
+					new_content.append("    <script src='../../era_require/bootstrap.js'></script>")
+					first_script = False
+				else:
+					new_content.append(line)
+					#On rajoute le require
+					new_content.append(define_line)
+					sample_started = True
+			else:
+				# On est manifestement à la fin de l'exemple
+				if sample_started:
+					sample_started = False
+					new_content.append("});\n")
+				new_content.append(line)
+
+		elif sample_started:
+			new_content.append('\t' + line)
+		else:
+			new_content.append(line)
+
+	f.close()
+
+	f = open(os.path.join(directory, name), 'w')
+	for line in new_content:
+		f.write(line)
+	f.close()
 # Dossier où vont se trouver les fichiers générés
 dir_name = 'era_require'
 if not(os.path.exists(dir_name)):
@@ -236,8 +278,18 @@ for directory, dirnames, filenames in os.walk('era'):
 			create_package_main(package_name, module_name_map, dir_name)
 print("All files generated at era_require")
 
-		#print(dirnames)
-		#print(module_names)
-	# On fait par dossier "package"
-	# Ensuite regardons s'ils n'ont pas de define au début
-	# On peut rajouter un define et on regarde combien il y a de extend dans le module
+print("Parsing all samples files and generate requirejs compatible code")
+# Dossier où vont se trouver les fichiers générés
+sample_dir = 'samples_require'
+if os.path.isdir(sample_dir):
+	shutil.rmtree(sample_dir)
+
+shutil.copytree('samples', sample_dir)
+# Todo : convertir tous les samples
+for directory, dirnames, filenames in os.walk(sample_dir):
+	for name in filenames:
+		# On cherche à modifier les fichiers index.html
+		# pour leur rajouter une directive requirejs
+		if name == "index.html":
+			modify_sample_file(directory, name)
+print("All files generated at samples_require")

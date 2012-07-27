@@ -3,109 +3,107 @@
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
     <title>Test Accordeon</title>
-    <script src='../../era_require/bootstrap.js'></script>
+    <script src='../../era/era-debug.js'></script>
 <style>
 </style>
 <script>
-require(['ui'], function(Ui){
-	var app = new Ui.App();
+var app = new Ui.App();
 
-	var vbox = new Ui.VBox();
-	app.setContent(vbox);
+var vbox = new Ui.VBox();
+app.setContent(vbox);
 
-	var toolbar = new Ui.ToolBar();
-	vbox.append(toolbar);
+var toolbar = new Ui.ToolBar();
+vbox.append(toolbar);
 
-	var button = new Ui.Button({ text: 'change orientation' });
-	toolbar.append(button);
-	app.connect(button, 'press', function() {
-		if(accordeon.getOrientation() == 'horizontal')
-			accordeon.setOrientation('vertical');
-		else
-			accordeon.setOrientation('horizontal');
-	});
-
-	button = new Ui.Button({ text: 'set page1' });
-	toolbar.append(button);
-	app.connect(button, 'press', function() {
-		page1.select();
-	});
-
-	button = new Ui.Button({ text: 'add pageX' });
-	toolbar.append(button);
-	app.connect(button, 'press', function() {
-		var page = new Ui.AccordeonPage();
-	//	app.connect(page, 'select', function() { console.log('pageX select'); });
-	//	app.connect(page, 'unselect', function() { console.log('pageX unselect'); });
-		accordeon.appendPage(page);
-		page.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'green', margin: 3 }));
-		page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
-	});
-
-	button = new Ui.Button({ text: 'remove last page' });
-	toolbar.append(button);
-	app.connect(button, 'press', function() {
-		var pos = accordeon.getChildren().length - 1;
-		if(pos >= 0) {
-			var page = accordeon.getChildren()[pos];
-			accordeon.removePage(page);
-		}
-	});
-
-	button = new Ui.Button({ text: 'remove current page' });
-	toolbar.append(button);
-	app.connect(button, 'press', function() {	
-		var pos = accordeon.getCurrentPosition();
-		if(pos >= 0) {
-			var page = accordeon.getChildren()[pos];
-			accordeon.removePage(page);
-		}
-	});
-
-
-	var label = new Ui.Label({ text: 'Current page: ', margin: 5 });
-	vbox.append(label);
-
-	var accordeon = new Ui.Accordeon({ margin: 20 });
-	vbox.append(accordeon, true);
-
-	app.connect(accordeon, 'change', function(accordeon, page, pos) {
-		label.setText('Current page: '+(pos+1));
-	});
-
-	var page1 = new Ui.AccordeonPage();
-	//app.connect(page1, 'select', function() { console.log('page1 select'); });
-	//app.connect(page1, 'unselect', function() { console.log('page1 unselect'); });
-	accordeon.appendPage(page1);
-	page1.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue' }));
-	var content1 = new Ui.LBox();
-	content1.append(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
-	var vbox1 = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center' });
-	content1.append(vbox1);
-	vbox1.append(new Ui.Button({ text: 'button1 p1' }));
-	vbox1.append(new Ui.Button({ text: 'button2 p1' }));
-	page1.setContent(content1);
-
-	var page2 = new Ui.AccordeonPage();
-	//app.connect(page2, 'select', function() { console.log('page2 select'); });
-	//app.connect(page2, 'unselect', function() { console.log('page2 unselect'); });
-	accordeon.appendPage(page2);
-	page2.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'pink' }));
-	var content2 = new Ui.LBox();
-	content2.append(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
-	var vbox2 = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center' });
-	content2.append(vbox2);
-	vbox2.append(new Ui.Button({ text: 'button1 p2' }));
-	vbox2.append(new Ui.Button({ text: 'button2 p2' }));
-	page2.setContent(content2);
-
-	var page3 = new Ui.AccordeonPage();
-	//app.connect(page3, 'select', function() { console.log('page3 select'); });
-	//app.connect(page3, 'unselect', function() { console.log('page3 unselect'); });
-	accordeon.appendPage(page3);
-	page3.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'purple' }));
-	page3.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+var button = new Ui.Button({ text: 'change orientation' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	if(accordeon.getOrientation() == 'horizontal')
+		accordeon.setOrientation('vertical');
+	else
+		accordeon.setOrientation('horizontal');
 });
+
+button = new Ui.Button({ text: 'set page1' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	page1.select();
+});
+
+button = new Ui.Button({ text: 'add pageX' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	var page = new Ui.AccordeonPage();
+//	app.connect(page, 'select', function() { console.log('pageX select'); });
+//	app.connect(page, 'unselect', function() { console.log('pageX unselect'); });
+	accordeon.appendPage(page);
+	page.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'green', margin: 3 }));
+	page.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+});
+
+button = new Ui.Button({ text: 'remove last page' });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	var pos = accordeon.getChildren().length - 1;
+	if(pos >= 0) {
+		var page = accordeon.getChildren()[pos];
+		accordeon.removePage(page);
+	}
+});
+
+button = new Ui.Button({ text: 'remove current page' });
+toolbar.append(button);
+app.connect(button, 'press', function() {	
+	var pos = accordeon.getCurrentPosition();
+	if(pos >= 0) {
+		var page = accordeon.getChildren()[pos];
+		accordeon.removePage(page);
+	}
+});
+
+
+var label = new Ui.Label({ text: 'Current page: ', margin: 5 });
+vbox.append(label);
+
+var accordeon = new Ui.Accordeon({ margin: 20 });
+vbox.append(accordeon, true);
+
+app.connect(accordeon, 'change', function(accordeon, page, pos) {
+	label.setText('Current page: '+(pos+1));
+});
+
+var page1 = new Ui.AccordeonPage();
+//app.connect(page1, 'select', function() { console.log('page1 select'); });
+//app.connect(page1, 'unselect', function() { console.log('page1 unselect'); });
+accordeon.appendPage(page1);
+page1.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue' }));
+var content1 = new Ui.LBox();
+content1.append(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+var vbox1 = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+content1.append(vbox1);
+vbox1.append(new Ui.Button({ text: 'button1 p1' }));
+vbox1.append(new Ui.Button({ text: 'button2 p1' }));
+page1.setContent(content1);
+
+var page2 = new Ui.AccordeonPage();
+//app.connect(page2, 'select', function() { console.log('page2 select'); });
+//app.connect(page2, 'unselect', function() { console.log('page2 unselect'); });
+accordeon.appendPage(page2);
+page2.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'pink' }));
+var content2 = new Ui.LBox();
+content2.append(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
+var vbox2 = new Ui.VBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+content2.append(vbox2);
+vbox2.append(new Ui.Button({ text: 'button1 p2' }));
+vbox2.append(new Ui.Button({ text: 'button2 p2' }));
+page2.setContent(content2);
+
+var page3 = new Ui.AccordeonPage();
+//app.connect(page3, 'select', function() { console.log('page3 select'); });
+//app.connect(page3, 'unselect', function() { console.log('page3 unselect'); });
+accordeon.appendPage(page3);
+page3.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'purple' }));
+page3.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen' }));
 </script>
   </head>
 </html>
