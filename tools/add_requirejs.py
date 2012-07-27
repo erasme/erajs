@@ -233,7 +233,8 @@ def modify_sample_file(directory, name):
 			if sline[0:7] == "<script":
 				if first_script:
 					# On change la dependance vers era
-					new_content.append("    <script src='../../era/era-require.js'></script>")
+					new_content.append("    <script src='../../era/require.js'></script>\n")
+					new_content.append("    <script src='../../era/era-require.js'></script>\n")
 					first_script = False
 				else:
 					new_content.append(line)
@@ -259,13 +260,13 @@ def modify_sample_file(directory, name):
 		f.write(line)
 	f.close()
 # Dossier où vont se trouver les fichiers générés
-dir_name = 'era_require'
+dir_name = os.path.join('..', 'era_require')
 if not(os.path.exists(dir_name)):
 	os.mkdir(dir_name)
 
 print("Parsing all erajs files and generate requirejs compatible code")
 # Tout d'abord parsons tous les fichiers .js contenus dans le dossier era
-for directory, dirnames, filenames in os.walk('era'):
+for directory, dirnames, filenames in os.walk(os.path.join('..', 'era')):
 	# S'il n'y pas de répertoire enfant, on est dans un package
 	if len(dirnames) == 0:
 		package_name = os.path.basename(directory)
@@ -280,11 +281,11 @@ print("All files generated at era_require")
 
 print("Parsing all samples files and generate requirejs compatible code")
 # Dossier où vont se trouver les fichiers générés
-sample_dir = 'samples_require'
+sample_dir = os.path.join('..', 'samples_require')
 if os.path.isdir(sample_dir):
 	shutil.rmtree(sample_dir)
 
-shutil.copytree('samples', sample_dir)
+shutil.copytree(os.path.join('..', 'samples'), sample_dir)
 # Todo : convertir tous les samples
 for directory, dirnames, filenames in os.walk(sample_dir):
 	for name in filenames:
