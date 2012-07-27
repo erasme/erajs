@@ -258,3 +258,6 @@ Core.Object.extend('Core.DragDataTransfer',
 	}
 	/**#@-*/
 });
+
+if(!navigator.supportDrag)
+	Core.DragManager.current = new Core.DragManager();

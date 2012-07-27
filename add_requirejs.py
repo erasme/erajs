@@ -233,7 +233,7 @@ def modify_sample_file(directory, name):
 			if sline[0:7] == "<script":
 				if first_script:
 					# On change la dependance vers era
-					new_content.append("    <script src='../../era_require/bootstrap.js'></script>")
+					new_content.append("    <script src='../../era/era-require.js'></script>")
 					first_script = False
 				else:
 					new_content.append(line)
@@ -290,6 +290,6 @@ for directory, dirnames, filenames in os.walk(sample_dir):
 	for name in filenames:
 		# On cherche à modifier les fichiers index.html
 		# pour leur rajouter une directive requirejs
-		if name == "index.html":
+		if name.find(".html") != -1:
 			modify_sample_file(directory, name)
 print("All files generated at samples_require")

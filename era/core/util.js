@@ -57,6 +57,21 @@ try {
 	navigator.supportRgb = false;
 }
 
+navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
+  !navigator.isIE && !navigator.iPad && !navigator.iPhone && !navigator.Android;
+
+navigator.supportFormData = true;
+try {
+	new FormData();
+}
+catch(err) {
+	navigator.supportFormData = false;
+}
+
+var testInput = document.createElement('input');
+navigator.supportFileAPI = 'files' in testInput;
+navigator.supportUploadDirectory = 'webkitdirectory' in testInput;
+delete(testInput);
 /**
 *	@namespace Regroup all the non Ui related classes : event, object, httprequest etc. 
 */

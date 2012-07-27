@@ -436,17 +436,3 @@ Ui.Element.extend('Ui.UploadableWrapper',
 		this.inputDrawing.style.height = height+'px';
 	}
 });
-
-navigator.supportFormData = true;
-try {
-	new FormData();
-}
-catch(err) {
-	navigator.supportFormData = false;
-}
-
-Ui.Uploadable.testInput = document.createElement('input');
-navigator.supportFileAPI = 'files' in Ui.Uploadable.testInput;
-navigator.supportUploadDirectory = 'webkitdirectory' in Ui.Uploadable.testInput;
-delete(Ui.Uploadable.testInput);
-
