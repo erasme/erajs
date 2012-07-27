@@ -303,6 +303,11 @@ You can generate the documentation using JSDoc :
     $ java -jar $JSDOCDIR/jsrun.jar $JSDOCDIR/app/run.js -c=doc/jsdoc/conf/era.conf
 
 
+# Minify Erajs
+
+    $ cd tools
+    $ node r.js -o build.js
+
 # Licence
 
 Copyright (c) Departement du Rhone Erasme <support@erasme.org>
