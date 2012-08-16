@@ -88,7 +88,7 @@ Core.Object.extend('Core.Finger',
 				target = document.elementFromPoint(this.x, this.y);
 			if(target != undefined) {
 				var fingerEvent = document.createEvent('FingerEvent');
-				fingerEvent.initFingerEvent('fingermove', (this.captureElement == undefined), true, event.window, this);
+				fingerEvent.initFingerEvent('fingermove', (this.captureElement == undefined), true, window, this);
 				this.fireEvent('fingermove', fingerEvent);
 				if(!fingerEvent.defaultPrevented)
 					target.dispatchEvent(fingerEvent);
@@ -110,7 +110,7 @@ Core.Object.extend('Core.Finger',
 			if(parent != undefined) {
 				// resend the up event
 				var fingerEvent = document.createEvent('FingerEvent');
-				fingerEvent.initFingerEvent('fingerdown', true, true, event.window, this);
+				fingerEvent.initFingerEvent('fingerdown', true, true, window, this);
 				parent.dispatchEvent(fingerEvent);
 			}
 		}
@@ -124,7 +124,7 @@ Core.Object.extend('Core.Finger',
 			target = document.elementFromPoint(this.x, this.y);
 		if(target != undefined) {
 			var fingerEvent = document.createEvent('FingerEvent');
-			fingerEvent.initFingerEvent('fingerup', (this.captureElement == undefined), true, event.window, this);
+			fingerEvent.initFingerEvent('fingerup', (this.captureElement == undefined), true, window, this);
 
 			this.fireEvent('fingerup', fingerEvent);
 			if(!fingerEvent.defaultPrevented)
@@ -150,9 +150,9 @@ Core.Object.extend('Core.FingerManager',
 
 	onWindowLoad: function() {
 		try {
-			this.connect(document.body, 'touchstart', this.updateTouches);
-			this.connect(document.body, 'touchmove', this.updateTouches);
-			this.connect(document.body, 'touchend', this.updateTouches);
+			this.connect(window, 'touchstart', this.updateTouches);
+			this.connect(window, 'touchmove', this.updateTouches);
+			this.connect(window, 'touchend', this.updateTouches);
 		} catch(e) {}
 	},
 
@@ -188,7 +188,11 @@ Core.Object.extend('Core.FingerManager',
 			}
 		}
 	}
-});
+}, {}, {
+	current: undefined,
 
-new Core.FingerManager();
+	constructor: function() {
+		this.current =new Core.FingerManager(); 
+	}
+});
 
