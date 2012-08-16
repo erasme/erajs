@@ -8,6 +8,8 @@ Ui.LBox.extend('Ui.Dialog', {
 	cancelBox: undefined,
 
 	constructor: function(config) {
+		this.addEvents('close');
+
 		this.append(new Ui.Rectangle({ fill: '#ffffff', opacity: 0.5 }));
 
 		this.lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', margin: 20 });
@@ -46,6 +48,7 @@ Ui.LBox.extend('Ui.Dialog', {
 
 	close: function() {
 		Ui.App.current.removeDialog(this);
+		this.fireEvent('close', this);
 	},
 
 	setTitle: function(title) {
