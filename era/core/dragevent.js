@@ -73,7 +73,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			delete(config.finger);
 
 			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('dragstart', false, true, event.window, this, this.startX, this.startY, this.startX, this.startY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			dragEvent.initDragEvent('dragstart', false, true, config.event.window, this, this.startX, this.startY, this.startX, this.startY, config.event.ctrlKey, config.event.altKey, config.event.shiftKey, config.event.metaKey);
 			this.draggable.dispatchEvent(dragEvent);
 
 			if(this.hasData()) {
@@ -86,8 +86,8 @@ Core.Object.extend('Core.DragDataTransfer',
 				this.image.style.left = this.startImagePoint.x+'px';
 				this.image.style.top = this.startImagePoint.y+'px';
 
-				event.preventDefault();
-				event.stopPropagation();
+				config.event.preventDefault();
+				config.event.stopPropagation();
 
 				this.connect(config.event.finger, 'fingermove', this.onFingerMove);
 				this.connect(config.event.finger, 'fingerup', this.onFingerUp);
