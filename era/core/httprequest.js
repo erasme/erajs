@@ -85,6 +85,10 @@ Core.Object.extend('Core.HttpRequest',
 		if(this.binary)
 			this.request.overrideMimeType('text/plain; charset=x-user-defined');
 		this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		if(Core.HttpRequest.requestHeaders != undefined) {
+			for(var header in Core.HttpRequest.requestHeaders)
+				this.request.setRequestHeader(header, Core.HttpRequest.requestHeaders[header]);
+		}
 		if((this.method == 'POST') || (this.method == 'PUT')) {
 			if(this.content == undefined) {
 				this.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -99,6 +103,14 @@ Core.Object.extend('Core.HttpRequest',
 		else {
 			this.request.send();
 		}
+	},
+
+	setRequestHeader: function(header, value) {
+		this.request.setRequestHeader(header, value);
+	},
+
+	getResponseHeader: function(header) {
+		return this.request.getResponseHeader(header);
 	},
 
 	getResponseText: function() {
@@ -161,6 +173,14 @@ Core.Object.extend('Core.HttpRequest',
 
 	getStatus: function() {
 		return httprequest.request.status;
+	}
+}, {}, {
+	requestHeaders: undefined,
+
+	setRequestHeader: function(header, value) {
+		if(Core.HttpRequest.requestHeaders == undefined)
+			Core.HttpRequest.requestHeaders =  {};
+		Core.HttpRequest.requestHeaders[header] = value;
 	}
 });
 
