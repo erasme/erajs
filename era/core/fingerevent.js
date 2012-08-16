@@ -170,12 +170,13 @@ Core.Object.extend('Core.FingerManager',
 				delete(this.touches[id]);
 			}
 		}
-		for(var i = 0; i < event.targetTouches.length; i++) {
-			if(this.touches[event.targetTouches[i].identifier] == undefined) {
-				var finger = new Core.Finger({ id: event.targetTouches[i].identifier, x: event.targetTouches[i].clientX, y: event.targetTouches[i].clientY });
-				this.touches[event.targetTouches[i].identifier] = finger;
+		for(var i = 0; i < event.touches.length; i++) {
+			if(this.touches[event.touches[i].identifier] == undefined) {
+				var finger = new Core.Finger({ id: event.touches[i].identifier, x: event.touches[i].clientX, y: event.touches[i].clientY });
+				this.touches[event.touches[i].identifier] = finger;
 			}
 		}
+
 		event.preventDefault();
 		event.stopPropagation();
 
