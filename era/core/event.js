@@ -245,7 +245,8 @@ Core.Object.extend('Core.Event',
 	cleanTarget: function(target) {
 		var current = target;
 		while(current != undefined) {
-			if(('dispatchEvent' in current) && ('innerHTML' in current))
+			if(('dispatchEvent' in current) && ('innerHTML' in current) &&
+			   (current.dispatchEvent === Core.Event.dispatchEvent))
 				return current;
 			if('offsetParent' in current)
 				current = current.offsetParent;
