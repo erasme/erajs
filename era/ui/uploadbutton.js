@@ -10,7 +10,7 @@ Ui.Uploadable.extend('Ui.UploadButton',
 	 */
 	constructor: function(config) {
 		this.graphic = new Ui.ButtonGraphic();
-		this.setContent(this.graphic);
+		this.append(this.graphic);
 
 		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
 		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
@@ -46,6 +46,10 @@ Ui.Uploadable.extend('Ui.UploadButton',
 }, 
 /**@lends Ui.UploadButton#*/
 {
+	setContent: function(content) {
+		this.graphic.setContent(content);
+	},
+
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
 		this.graphic.setSpacing(this.getStyleProperty('spacing'));

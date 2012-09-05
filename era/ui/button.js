@@ -39,6 +39,7 @@ Ui.Pressable.extend('Ui.Button',
 		this.graphic.setIcon(icon);
 	},
 
+
     /** @return {String} Orientation */
 	getOrientation: function() {
 		return this.graphic.getOrientation();
@@ -51,6 +52,10 @@ Ui.Pressable.extend('Ui.Button',
 }, 
 /** @lends Ui.Button# */
 {
+	setContent: function(content) {
+		this.graphic.setContent(content);
+	},
+
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
 		this.graphic.setSpacing(this.getStyleProperty('spacing'));
