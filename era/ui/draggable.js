@@ -153,6 +153,14 @@ Ui.LBox.extend('Ui.Draggable',
 		event.stopPropagation();
 		event.dataTransfer.effectAllowed = this.allowedMode;
 
+		// if the element if downloadable to the destkop,
+		// try to provide the link
+		if(this.downloadUrl != undefined) {
+			try {
+				event.dataTransfer.setData('DownloadURL', this.downloadMimetype+':'+this.downloadFilename+':'+this.downloadUrl);
+			} catch(e) {}
+		}
+
 		// use Text as data because it is the only thing
 		// that works cross browser. Only Firefox support different mimetypes
 		event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.data);
