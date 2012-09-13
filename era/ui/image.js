@@ -15,8 +15,9 @@ Ui.Element.extend('Ui.Image',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.addEvents('ready');
+		this.addEvents('ready', 'error');
 		this.connect(this.imageDrawing, 'load', this.onImageLoad);
+		this.connect(this.imageDrawing, 'error', this.onImageError);
 	},
 
 	/**
@@ -71,6 +72,10 @@ Ui.Element.extend('Ui.Image',
 	/**#@+
 	* @private
 	*/
+
+	onImageError: function(event) {
+		this.fireEvent('error', this);
+	},
 
 	onImageLoad: function(event) {
 		if((event.target != undefined) && (event.target.naturalWidth != undefined) && (event.target.naturalHeight != undefined)) {
