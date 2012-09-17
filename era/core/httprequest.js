@@ -172,7 +172,7 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	getStatus: function() {
-		return httprequest.request.status;
+		return this.request.status;
 	}
 }, {}, {
 	requestHeaders: undefined,
