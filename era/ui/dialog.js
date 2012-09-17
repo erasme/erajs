@@ -4,8 +4,11 @@ Ui.LBox.extend('Ui.Dialog', {
 	vbox: undefined,
 	titleLabel: undefined,
 	contentBox: undefined,
+	actionButtonsBox: undefined,
 	actionButtons: undefined,
 	cancelBox: undefined,
+	buttonsBox: undefined,
+	buttonsVisible: false,
 
 	constructor: function(config) {
 		this.addEvents('close');
@@ -24,10 +27,12 @@ Ui.LBox.extend('Ui.Dialog', {
 		this.contentBox = new Ui.LBox({ margin: 10 });
 		this.vbox.append(this.contentBox, true);
 
-		this.vbox.append(new Ui.Rectangle({ height: 1, fill: '#d8d8d8' }));
+		this.buttonsBox = new Ui.VBox();
+
+		this.buttonsBox.append(new Ui.Rectangle({ height: 1, fill: '#d8d8d8' }));
 
 		lbox = new Ui.LBox({ height: 32 });
-		this.vbox.append(lbox);
+		this.buttonsBox.append(lbox);
 
 		lbox.append(new Ui.Rectangle({ radiusBottomLeft: 3, radiusBottomRight: 3, fill: '#e8e8e8' }));
 
@@ -37,8 +42,8 @@ Ui.LBox.extend('Ui.Dialog', {
 		this.cancelBox = new Ui.LBox();
 		hbox.append(this.cancelBox);
 
-		this.actionButtons = new Ui.HBox({ uniform: true, horizontalAlign: 'right' });
-		hbox.append(this.actionButtons, true);
+		this.actionButtonsBox = new Ui.HBox({ uniform: true, horizontalAlign: 'right' });
+		hbox.append(this.actionButtonsBox, true);
 		
 	},
 
@@ -76,10 +81,37 @@ Ui.LBox.extend('Ui.Dialog', {
 		var newbutton = this.cancelBox.getFirstChild();
 		if((newbutton != undefined) && Ui.Pressable.hasInstance(newbutton))
 			this.connect(newbutton, 'press', this.onCancelPress);
+
+		if(button != undefined) {
+			if(!this.buttonsVisible) {
+				this.buttonsVisible = true;
+				this.vbox.append(this.buttonsBox);
+			}
+		}
+		else {
+			if(this.buttonsVisible) {
+				if((this.actionButtons == undefined) || (this.actionButtons.length == 0)) {
+					this.buttonsVisible = false;
+					this.vbox.remove(this.buttonsBox);
+				}
+			}
+		}
 	},
 
 	setActionButtons: function(buttons) {
-		this.actionButtons.setContent(buttons);
+		this.actionButtonsBox.setContent(buttons);
+		if((buttons != undefined) && (buttons.length > 0)) {
+			if(!this.buttonsVisible) {
+				this.buttonsVisible = true;
+				this.vbox.append(this.buttonsBox);
+			}
+		}
+		else {
+			if((this.buttonsVisible) && (this.cancelBox.getFirstChild() == undefined)) {
+					this.buttonsVisible = false;
+					this.vbox.remove(this.buttonsBox);				
+			}
+		}
 	},
 
 	onCancelPress: function() {
