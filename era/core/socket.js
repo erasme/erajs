@@ -19,6 +19,7 @@ Core.Object.extend('Core.Socket',
 	data: '',
 	isClosed: false,
 	closeSent: false,
+	sep: '?',
 
 	/**
 	*	@constructs
@@ -52,6 +53,10 @@ Core.Object.extend('Core.Socket',
 		if('service' in config) {
 			this.service = config.service;
 			delete(config.service);
+			if(this.service.indexOf('?') == -1)
+				this.sep = '?';
+			else
+				this.sep = '&';
 		}
 		if('mode' in config) {
 			this.mode = config.mode;
@@ -74,7 +79,8 @@ Core.Object.extend('Core.Socket',
 		}
 		else {
 			this.emumessages = [];
-			this.emuopenrequest = new Core.HttpRequest({ url: (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket=poll&command=open' });
+			var url = (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=open';
+			this.emuopenrequest = new Core.HttpRequest({ url: url });
 			this.connect(this.emuopenrequest, 'done', this.onEmuSocketOpenDone);
 			this.connect(this.emuopenrequest, 'error', this.onEmuSocketOpenError);
 			this.emuopenrequest.send();
@@ -87,7 +93,8 @@ Core.Object.extend('Core.Socket',
 		}
 		else {
 			if(this.emusendrequest == undefined) {
-				this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent((JSON.stringify(msg)).toBase64()) });
+				var url = (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent((JSON.stringify(msg)).toBase64());
+				this.emusendrequest = new Core.HttpRequest({ url: url });
 				this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 				this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
 				this.emusendrequest.send();
@@ -112,7 +119,7 @@ Core.Object.extend('Core.Socket',
 				else if(this.emuid != undefined) {
 					if(this.emusendrequest == undefined) {
 						this.closeSent = true;
-						this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=close&id='+this.emuid });
+						this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=close&id='+this.emuid });
 						this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 						this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
 						this.emusendrequest.send();
@@ -137,7 +144,7 @@ Core.Object.extend('Core.Socket',
 		// try emulated socket before giving up
 		this.mode = 'poll';
 		this.emumessages = [];
-		this.emuopenrequest = new Core.HttpRequest({ url: (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket=poll&command=open' });
+		this.emuopenrequest = new Core.HttpRequest({ url: (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=open' });
 		this.connect(this.emuopenrequest, 'done', this.onEmuSocketOpenDone);
 		this.connect(this.emuopenrequest, 'error', this.onEmuSocketOpenError);
 		this.emuopenrequest.send();
@@ -217,14 +224,14 @@ Core.Object.extend('Core.Socket',
 					messages += ';';
 				messages += this.emumessages[i];
 			}
-			this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent(messages) });
+			this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent(messages) });
 			this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 			this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
 			this.emusendrequest.send();
 			this.emumessages = [];
 		}
 		else if(this.isClosed && !this.closeSent) {
-			this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket='+this.mode+'&command=close&id='+this.emuid });
+			this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=close&id='+this.emuid });
 			this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 			this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
 			this.emusendrequest.send();
@@ -252,7 +259,7 @@ Core.Object.extend('Core.Socket',
 			}
 			else {
 				this.fireEvent('open', this);
-				this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
+				this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=poll&id='+this.emuid });
 				this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
 				this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
 				this.emupollrequest.send();
@@ -284,7 +291,7 @@ Core.Object.extend('Core.Socket',
 				this.fireEvent('close', this);
 			}
 			else {
-				this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+'?socket=poll&command=poll&id='+this.emuid });
+				this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=poll&id='+this.emuid });
 				this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
 				this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
 				this.emupollrequest.send();
