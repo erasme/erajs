@@ -326,7 +326,11 @@ Ui.Element.extend('Ui.Entry',
 		this.entryDrawing.style.margin = '0px';
 		this.entryDrawing.style.padding = '0px';
 		this.entryDrawing.style.outline = 'none';
-		if(!navigator.isIE7 && !navigator.isIE8)
+		if(navigator.isIE) {
+			if(!navigator.isIE7 && !navigator.isIE8)
+				this.entryDrawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
+		}
+		else
 			this.entryDrawing.style.background = 'none';
 		if(navigator.isWebkit)
 			this.entryDrawing.style.webkitAppearance = 'none';
