@@ -55,6 +55,13 @@ Ui.Container.extend('Ui.Flow',
 	},
 
 	/**
+	 * Append a child at the given position
+	 */
+	insertAt: function(child, position) {
+		this.insertChildAt(child, position);
+	},
+
+	/**
 	 * Remove a child from the flow
 	 */
 	remove: function(child) {
