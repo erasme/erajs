@@ -84,11 +84,10 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	next: function() {
-		if(this.alignClock === undefined){
+		if(this.alignClock === undefined) {
 			var currentPos = this.getCurrentPosition();
-			if(currentPos < this.getChildren().length){
+			if(currentPos < this.box.getChildren().length - 1)
 				this.startAnimation(-1, currentPos + 1);
-			}
 		}
 		else {
 			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
@@ -100,11 +99,10 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	previous: function() {
-		if(this.alignClock === undefined){
+		if(this.alignClock === undefined) {
 			var currentPos = this.getCurrentPosition();
-			if(currentPos > 0){
+			if(currentPos > 0)
 				this.startAnimation(1, this.getCurrentPosition() - 1);
-			}
 		}
 		else {
 			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
