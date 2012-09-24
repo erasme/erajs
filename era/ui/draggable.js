@@ -272,6 +272,7 @@ Ui.LBox.extend('Ui.Draggable',
 			}
 			this.lastPress = currentTime;
 		}
+		this.isDrag = false;
 	},
 
 	onFingerDown: function(event) {
@@ -370,11 +371,13 @@ Ui.LBox.extend('Ui.Draggable',
 			}
 			this.lastPress = currentTime;
 		}
+		this.isDrag = false;
 	},
 
 	onTimer: function() {
 		this.timer = undefined;
 
+		this.isDrag = true;
 		this.dragAllowed = true;
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 
