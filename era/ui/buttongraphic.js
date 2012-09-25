@@ -24,6 +24,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	isDown: false,
 	isEnable: true,
 	color: undefined,
+	contentColor: undefined,
 	radius: 4,
 	spacing: 3,
 
@@ -233,6 +234,13 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		}
 	},
 
+	setContentColor: function(color) {
+		if(this.contentColor != color) {
+			this.contentColor = Ui.Color.create(color);
+			this.updateColors();
+		}
+	},
+
 	/**#@+
 	 * @private
 	 */
@@ -401,18 +409,28 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	},
 
 	getContentColor: function() {
-		var yuv = this.color.getYuv();
 		var deltaY = 0;
 		if(this.getIsDown())
 			deltaY = 0.20;
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y + (0.60 + deltaY), u: yuv.u, v: yuv.v });
-		else
-			return new Ui.Color({ y: yuv.y - (0.60 + deltaY), u: yuv.u, v: yuv.v });
+		if(this.contentColor != undefined) {
+			yuv = this.contentColor.getYuv();
+			return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
+		}
+		else {
+			var yuv = this.color.getYuv();
+			if(yuv.y < 0.4)
+				return new Ui.Color({ y: yuv.y + (0.60 + deltaY), u: yuv.u, v: yuv.v });
+			else
+				return new Ui.Color({ y: yuv.y - (0.60 + deltaY), u: yuv.u, v: yuv.v });
+		}
 	},
 
 	getContentLightColor: function() {
-		var yuv = this.color.getYuv();
+		var yuv;
+		if(this.contentColor != undefined)
+			yuv = this.contentColor.getYuv();
+		else
+			yuv = this.color.getYuv();
 		var deltaY = 0;
 		if(this.getIsDown())
 			deltaY = -0.20;
