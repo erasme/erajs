@@ -363,8 +363,6 @@ Ui.LBox.extend('Ui.App',
 		// update without having finish this code
 		this.updateTask = undefined;
 
-//		window.scrollTo(0, 0);
-
 		// update measure
 //		var innerWidth = window.innerWidth;
 //		var innerHeight = window.innerHeight;
@@ -372,7 +370,9 @@ Ui.LBox.extend('Ui.App',
 		var innerWidth = document.body.clientWidth;
 		var innerHeight = document.body.clientHeight;
 
-
+		// to avoid offscreen scroll problem on iOS
+		if(innerHeight >= this.windowHeight)
+			window.scrollTo(0, 0);
 
 //		console.log('window.update('+innerWidth+' x '+innerHeight+') '+document.body.clientWidth+' x '+document.body.clientHeight+' '+window.title+', iframe ? '+(window.parent != window));
 
@@ -447,7 +447,6 @@ Ui.LBox.extend('Ui.App',
 //			var top = document.body.scrollTop;
 //			document.body.scrollLeft = 0;
 //			document.body.scrollTop = 0;
-//			document.body.scrollTop = top;
 //		}
 	},
 
