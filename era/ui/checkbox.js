@@ -55,6 +55,10 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.connect(this, 'up', this.onCheckBoxUp);
 		this.connect(this, 'toggle', this.onCheckBoxToggle);
 		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
+
+		this.connect(this, 'focus', this.updateColors);
+		this.connect(this, 'blur', this.updateColors);
+
 	},
 
 	getValue: function() {
@@ -102,6 +106,18 @@ Ui.Togglable.extend('Ui.CheckBox',
 	 *#@+ @private
 	 */
 
+	updateColors: function() {
+		this.check.setFill(this.getStyleProperty('checkColor'));
+		if(this.getIsDown()) {
+			this.background.setFill(this.getColorDown());
+			this.lightBorder.setFill(this.getLightBorderColorDown());
+		}
+		else {
+			this.background.setFill(this.getColor());
+			this.lightBorder.setFill(this.getLightBorderColor());
+		}
+	},
+
 	onCheckBoxDown: function() {
 		this.background.setFill(this.getColorDown());
 		this.lightBorder.setFill(this.getLightBorderColorDown());
@@ -121,22 +137,38 @@ Ui.Togglable.extend('Ui.CheckBox',
 	},
 
 	getColor: function() {
-		var rgba = this.getStyleProperty('color').getRgba();
+		var rgba;
+		if(this.getHasFocus())
+			rgba = Ui.Color.create(this.getStyleProperty('focusColor')).getRgba();
+		else
+			rgba = Ui.Color.create(this.getStyleProperty('color')).getRgba();
 		return new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: 0.25 });
 	},
 
 	getColorDown: function() {
-		var yuva = this.getStyleProperty('color').getYuva();
+		var yuva;
+		if(this.getHasFocus())
+			yuva = Ui.Color.create(this.getStyleProperty('focusColor')).getYuva();
+		else
+			yuva = Ui.Color.create(this.getStyleProperty('color')).getYuva();
 		return new Ui.Color({ y: yuva.y - 0.10, u: yuva.u, v: yuva.v, a: 0.25 });
 	},
 
 	getLightBorderColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv;
+		if(this.getHasFocus())
+			yuv = Ui.Color.create(this.getStyleProperty('focusColor')).getYuv();
+		else
+			yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
 		return new Ui.Color({ y: yuv.y + 0.20, u: yuv.u, v: yuv.v });
 	},
 
 	getLightBorderColorDown: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv;
+		if(this.getHasFocus())
+			yuv = Ui.Color.create(this.getStyleProperty('focusColor')).getYuv();
+		else
+			yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 		else
@@ -147,15 +179,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 /**Ui.CheckBox#*/
 {
 	onStyleChange: function() {
-		this.check.setFill(this.getStyleProperty('checkColor'));
-		if(this.getIsDown()) {
-			this.background.setFill(this.getColorDown());
-			this.lightBorder.setFill(this.getLightBorderColorDown());
-		}
-		else {
-			this.background.setFill(this.getColor());
-			this.lightBorder.setFill(this.getLightBorderColor());
-		}
+		this.updateColors();
 		var radius = this.getStyleProperty('radius');
 		this.lightShadow.setRadius(radius);
 		this.darkShadow.setRadius(radius);
@@ -215,6 +239,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 {
 	style: {
 		color: new Ui.Color({ r: 1, g: 1, b: 1 }),
+		focusColor: '#f6caa2',
 		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
 		radius: 5
 	}
