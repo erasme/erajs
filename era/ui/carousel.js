@@ -62,7 +62,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	getLogicalChildren: function() {
-		return this.carouselable.getChildren();
+		return this.carouselable.getLogicalChildren();
 	},
 
 	/**#@+
@@ -71,6 +71,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 
 	onCarouselableChange: function(carouselable, position) {
 		this.showArrows();
+		this.fireEvent('change', this, position);
 	},
 
 	onCarouselableFocus: function() {

@@ -19,10 +19,11 @@ Ui.Container.extend('Ui.Carouselable',
 	 * @extends Ui.Container
 	 */
 	constructor: function(config) {
+		this.addEvents('change');
+
 		this.setClipToBounds(true);
 		this.setFocusable(true);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
-		this.addEvents('change');
 
 		this.movable = new Ui.Movable({ inertia: false, moveVertical: false, directionRelease: true });
 		this.movable.setFocusable(false);
