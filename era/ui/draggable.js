@@ -39,6 +39,8 @@ Ui.LBox.extend('Ui.Draggable',
 	constructor: function(config) {
 		this.addEvents('dragstart', 'dragend', 'press', 'activate', 'menu');
 
+		this.setFocusable(true);
+
 		this.getDrawing().setAttribute('draggable', true);
 		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
 		this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
@@ -271,6 +273,7 @@ Ui.LBox.extend('Ui.Draggable',
 				this.fireEvent('activate', this);
 			}
 			this.lastPress = currentTime;
+			this.focus();
 		}
 		this.isDrag = false;
 	},
@@ -367,6 +370,7 @@ Ui.LBox.extend('Ui.Draggable',
 				this.fireEvent('activate', this);
 			}
 			this.lastPress = currentTime;
+			this.focus();
 		}
 		this.isDrag = false;
 	},
