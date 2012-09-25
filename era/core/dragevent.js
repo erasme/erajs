@@ -80,6 +80,7 @@ Core.Object.extend('Core.DragDataTransfer',
 				this.hasStarted = true;
 
 				this.image = this.draggable.cloneNode(true);
+				this.image.style.zIndex = 100000;
 				document.body.appendChild(this.image);
 
 				this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
@@ -147,6 +148,7 @@ Core.Object.extend('Core.DragDataTransfer',
 //				}
 
 				this.image = this.draggable.cloneNode(true);
+				this.image.style.zIndex = 100000;
 //				if(navigator.isIE7 || navigator.isIE8)
 //					this.image.innerHTML = this.draggable.innerHTML;
 

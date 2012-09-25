@@ -326,11 +326,8 @@ Ui.LBox.extend('Ui.Draggable',
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 
 			if(this.dragAllowed) {
-				if(navigator.supportDrag) {
-//					this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+				if(navigator.supportDrag)
 					event.finger.release();
-//					this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-				}
 				else
 					new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.finger.getX(), y: event.finger.getY(), event: event, finger: event.finger });
 			}
