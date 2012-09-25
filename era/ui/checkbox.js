@@ -10,6 +10,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 	darkShadow: undefined,
 	lightBorder: undefined,
 	background: undefined,
+	shadow: undefined,
 
 	content: undefined,
 	text: undefined,
@@ -39,10 +40,13 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.lightBorder = new Ui.Rectangle({ fill: 'lightgray', radius: 4, marginTop: 11, marginBottom: 12, marginLeft: 11, marginRight: 11  });
 		this.checkBox.append(this.lightBorder);
 
-		this.background = new Ui.Rectangle({ fill: 'darkgray', radius: 3, marginTop: 12, marginBottom: 12, marginLeft: 11, marginRight: 11 });
+		this.background = new Ui.Rectangle({ radius: 3, marginTop: 12, marginBottom: 12, marginLeft: 11, marginRight: 11 });
 		this.checkBox.append(this.background);
 
-		this.check = new Ui.Icon({ icon: 'check', width: 24, height: 24, fill: 'green' });
+		this.shadow = new Ui.Shadow({ margin: 11, marginBottom: 12, shadowWidth: 2, inner: true, radius: 3, opacity: 0.2 });
+		this.checkBox.append(this.shadow);
+
+		this.check = new Ui.Icon({ icon: 'check', width: 20, height: 20, fill: 'green' });
 		this.check.setMargin(12);
 		this.check.hide();
 		this.checkBox.append(this.check);
@@ -99,12 +103,12 @@ Ui.Togglable.extend('Ui.CheckBox',
 	 */
 
 	onCheckBoxDown: function() {
-		this.background.setFill(this.getGradientDown());
+		this.background.setFill(this.getColorDown());
 		this.lightBorder.setFill(this.getLightBorderColorDown());
 	},
 
 	onCheckBoxUp: function() {
-		this.background.setFill(this.getGradient());
+		this.background.setFill(this.getColor());
 		this.lightBorder.setFill(this.getLightBorderColor());
 	},
 
@@ -116,24 +120,14 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.check.hide();
 	},
 
-	getGradient: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 0.05, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
-			{ offset: 0.9, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
-		] });
+	getColor: function() {
+		var rgba = this.getStyleProperty('color').getRgba();
+		return new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: 0.25 });
 	},
 
-	getGradientDown: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 0.1, color: new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 0.9, color: new Ui.Color({ y: yuv.y - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) }
-		] });
+	getColorDown: function() {
+		var yuva = this.getStyleProperty('color').getYuva();
+		return new Ui.Color({ y: yuva.y - 0.10, u: yuva.u, v: yuva.v, a: 0.25 });
 	},
 
 	getLightBorderColor: function() {
@@ -155,18 +149,19 @@ Ui.Togglable.extend('Ui.CheckBox',
 	onStyleChange: function() {
 		this.check.setFill(this.getStyleProperty('checkColor'));
 		if(this.getIsDown()) {
-			this.background.setFill(this.getGradientDown());
+			this.background.setFill(this.getColorDown());
 			this.lightBorder.setFill(this.getLightBorderColorDown());
 		}
 		else {
-			this.background.setFill(this.getGradient());
+			this.background.setFill(this.getColor());
 			this.lightBorder.setFill(this.getLightBorderColor());
 		}
 		var radius = this.getStyleProperty('radius');
 		this.lightShadow.setRadius(radius);
 		this.darkShadow.setRadius(radius);
 		this.lightBorder.setRadius(radius);
-		this.background.setRadius(radius);		
+		this.background.setRadius(radius);
+		this.shadow.setRadius(radius);
 	},
 
 	onDisable: function() {
@@ -219,9 +214,9 @@ Ui.Togglable.extend('Ui.CheckBox',
 /**Ui.CheckBox*/
 {
 	style: {
-		color: new Ui.Color({ r: 0.89, g: 0.89, b: 0.89 }),
+		color: new Ui.Color({ r: 1, g: 1, b: 1 }),
 		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
-		radius: 4
+		radius: 5
 	}
 });
 
