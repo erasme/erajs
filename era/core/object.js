@@ -201,6 +201,15 @@ Core.Object.prototype.addEvents = function() {
 };
 
 /**
+*	Test is an event is supported on this class
+*	@param {string} event
+*	@example this.hasEvent('press');
+*/
+Core.Object.prototype.hasEvent = function(event) {
+	return (this.events != undefined) && (event in this.events);
+};
+
+/**
 *	Fire the eventName event. All given arguments are passed to the
 *	registered methods.
 *	@param {string} eventName Name of the event to fire. Must have been registred with {@link Core.Object#addEvents} before.
