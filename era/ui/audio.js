@@ -128,6 +128,21 @@ Ui.Element.extend('Ui.Audio',
 		return this.audioDrawing.duration;
 	},
 
+	/**
+	 * Seek the current position of the audio file.
+	 */
+	setCurrentTime: function(time) {
+		this.audioDrawing.currentTime = time;
+	},
+
+	/**
+	 * Return the current position in seconds.
+	 * This value is only known after the ready event.
+	 */
+	getCurrentTime: function() {
+		return this.audioDrawing.currentTime;
+	},
+
 	/**#@+
 	* @private
 	*/

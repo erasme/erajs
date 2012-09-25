@@ -137,6 +137,21 @@ Ui.Element.extend('Ui.Video',
 	},
 
 	/**
+	 * Seek the current position of the video.
+	 */
+	setCurrentTime: function(time) {
+		this.videoDrawing.currentTime = time;
+	},
+
+	/**
+	 * Return the current position in seconds.
+	 * This value is only known after the ready event.
+	 */
+	getCurrentTime: function() {
+		return this.videoDrawing.currentTime;
+	},
+
+	/**
 	 * Return the natural width of the image as defined
 	 * in the image file. Return undefined if the image is
 	 * not ready
