@@ -14,8 +14,8 @@ Ui.Togglable.extend('Ui.ToggleButton',
 
 		this.connect(this, 'down', function() {	this.graphic.setIsDown(true); });
 		this.connect(this, 'up', function() { this.graphic.setIsDown(this.getIsDown() || this.getIsToggled()); });
-		this.connect(this, 'toggle', function() { this.graphic.setIsDown(true); });
-		this.connect(this, 'untoggle', function() { this.graphic.setIsDown(this.getIsDown() || this.getIsToggled()); });
+		this.connect(this, 'toggle', function() { this.graphic.setContentColor(this.getStyleProperty('toggleColor')); });
+		this.connect(this, 'untoggle', function() { this.graphic.setContentColor(undefined);  this.graphic.setIsDown(this.getIsDown()); });
 		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
 		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
 	},
@@ -49,6 +49,7 @@ Ui.Togglable.extend('Ui.ToggleButton',
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
 		this.graphic.setSpacing(this.getStyleProperty('spacing'));
+		this.graphic.setIconSize(this.getStyleProperty('iconSize'));
 		if(this.getHasFocus())
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
@@ -70,8 +71,10 @@ Ui.Togglable.extend('Ui.ToggleButton',
 	style: {
 		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
 		focusColor: '#f6caa2',
+		toggleColor: '#fdf636',
 		radius: 4,
-		spacing: 3
+		spacing: 3,
+		iconSize: 24
 	}
 });
 
