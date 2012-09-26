@@ -12,6 +12,7 @@ Ui.Container.extend('Ui.Carouselable',
 	autoPlay: undefined,
 	autoTask: undefined,
 	pos: 0,
+	startTime: undefined,
 
 	/**
 	 * @constructs
@@ -19,11 +20,12 @@ Ui.Container.extend('Ui.Carouselable',
 	 * @extends Ui.Container
 	 */
 	constructor: function(config) {
-		this.addEvents('change');
+		this.addEvents('change', 'press');
 
 		this.setClipToBounds(true);
 		this.setFocusable(true);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 
 		this.movable = new Ui.Movable({ inertia: false, moveVertical: false, directionRelease: true });
 		this.movable.setFocusable(false);
@@ -152,6 +154,17 @@ Ui.Container.extend('Ui.Carouselable',
 			this.next();
 	},
 
+	onKeyUp: function(event) {
+		if(this.getIsDisabled())
+			return;
+		// Enter = press
+		if(event.which == 13) {
+			event.stopPropagation();
+			event.preventDefault();
+			this.fireEvent('press', this);
+		}
+	},
+
 	onMove: function(movable) {
 		if(this.box.getChildren().length < 2)
 			movable.setPosition(0, 0);
@@ -167,11 +180,17 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	onDown: function(movable) {
-		this.focus();
+		this.startTime = (new Date().getTime())/1000;
 		this.stopAnimation();
 	},
 
-	onUp: function(movable, speedX, speedY, deltaX, deltaY) {
+	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove) {
+		this.focus();
+		// test if it is a press
+		var deltaTime = ((new Date().getTime())/1000) - this.startTime;
+		if((deltaTime < 0.25) && (cumulMove < 10))
+			this.fireEvent('press', this);
+
 		if(Math.abs(speedX) < 100) {
 			var mod = (-this.movable.getPositionX() / this.getLayoutWidth()) % 1;
 			if(mod > 0.5)
