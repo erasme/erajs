@@ -74,6 +74,14 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		return this.carouselable.getCurrent();
 	},
 
+	setCurrentAt: function(position) {
+		this.carouselable.setCurrentAt(position);
+	},
+
+	setCurrent: function(current) {
+		this.carouselable.setCurrent(current);
+	},
+
 	/**#@+
 	* @private
 	*/
