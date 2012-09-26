@@ -71,10 +71,7 @@ Ui.Container.extend('Ui.Carouselable',
 
 	setCurrentAt: function(position) {
 		position = Math.min(this.box.getChildren().length - 1, Math.max(0, position));
-		if(position < this.getCurrentPosition())
-			this.startAnimation(1, position);
-		else
-			this.startAnimation(-1, position);
+		this.startAnimation(this.getCurrentPosition()-position, position);
 	},
 
 	setCurrent: function(current) {
