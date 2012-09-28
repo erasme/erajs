@@ -181,12 +181,13 @@ Ui.Container.extend('Ui.Carouselable',
 		this.stopAnimation();
 	},
 
-	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove) {
-		this.focus();
+	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
 		// test if it is a press
 		var deltaTime = ((new Date().getTime())/1000) - this.startTime;
-		if((deltaTime < 0.25) && (cumulMove < 10))
+		if(!abort && this.getHasFocus() && (deltaTime < 0.25) && (cumulMove < 10))
 			this.fireEvent('press', this);
+
+		this.focus();
 
 		if(Math.abs(speedX) < 100) {
 			var mod = (-this.movable.getPositionX() / this.getLayoutWidth()) % 1;
