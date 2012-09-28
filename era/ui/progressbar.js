@@ -123,7 +123,7 @@ Ui.Container.extend('Ui.ProgressBar',
 
 	onStyleChange: function() {
 		var radius = this.getStyleProperty('radius');
-		this.bar.setRadius(radius);
+		this.bar.setRadius(radius-2);
 		this.bar.setFill(this.getGradient());
 		this.barBackground.setRadius(radius);
 		this.barBackground.setFill(this.getBarBorderColor());
