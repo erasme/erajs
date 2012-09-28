@@ -33,6 +33,9 @@ Core.Object.extend('Core.FilePostUploader',
 	boundary: undefined,
 	method: 'POST',
 
+	loadedOctets: undefined,
+	totalOctets: undefined,
+
 	/**
 	*	@constructs
 	*	@class Helper to allow file uploading with progress report and which
@@ -152,6 +155,11 @@ Core.Object.extend('Core.FilePostUploader',
 	/**#nocode-*/
 	},
 
+	abort: function() {
+		if(this.request != undefined)
+			this.request.abort();
+	},
+
 	getResponseText: function() {
 		return this.responseText;
 	},
@@ -184,7 +192,17 @@ Core.Object.extend('Core.FilePostUploader',
 		}
 	},
 
+	getTotal: function() {
+		return this.totalOctets;
+	},
+
+	getLoaded: function() {
+		return this.loadedOctets;
+	},
+
 	onUpdateProgress: function(event) {
+		this.loadedOctets = event.loaded;
+		this.totalOctets = event.total;
 		this.fireEvent('progress', this, event.loaded, event.total);
 	},
 
