@@ -371,8 +371,8 @@ Ui.LBox.extend('Ui.App',
 		var innerHeight = document.body.clientHeight;
 
 		// to avoid offscreen scroll problem on iOS
-		if(innerHeight >= this.windowHeight)
-			window.scrollTo(0, 0);
+//		if(innerHeight >= this.windowHeight)
+//			window.scrollTo(0, 0);
 
 //		console.log('window.update('+innerWidth+' x '+innerHeight+') '+document.body.clientWidth+' x '+document.body.clientHeight+' '+window.title+', iframe ? '+(window.parent != window));
 
