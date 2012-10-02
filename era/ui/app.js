@@ -80,6 +80,10 @@ Ui.LBox.extend('Ui.App',
 		this.connect(window, 'focus', function(event) {
 			if(event.target == undefined)
 				return;
+
+			window.scrollTo(0, document.body.scrollTop);
+//			document.body.scrollLeft = 0;
+
 //			console.log('window focus '+event.target);
 			this.focusElement = event.target;
 
@@ -98,6 +102,7 @@ Ui.LBox.extend('Ui.App',
 		this.connect(window, 'blur', function(event) {
 //			console.log('window blur');
 			this.focusElement = undefined;
+			window.scrollTo(0, 0);
 		}, true);
 
 		// prevent bad event handling
