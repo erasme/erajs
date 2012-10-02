@@ -1187,6 +1187,12 @@ Ui.Container.extend('Ui.Scrollable',
 		}
 		else
 			resWidth = this.contentBox.getMeasureWidth();
+
+		if(resWidth < minWidth)
+			minWidth = resWidth;
+		if(resHeight < minHeight)
+			minHeight = resHeight;
+
 		return { width: Math.max(resWidth, minWidth), height: Math.max(resHeight, minHeight) };
 	},
 
