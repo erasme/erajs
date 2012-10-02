@@ -150,9 +150,16 @@ Core.Object.extend('Core.FingerManager',
 
 	onWindowLoad: function() {
 		try {
-			this.connect(window, 'touchstart', this.updateTouches);
-			this.connect(window, 'touchmove', this.updateTouches);
-			this.connect(window, 'touchend', this.updateTouches);
+			if(navigator.iPad && (navigator.userAgent.match(/Version\/5\./i) != null)) {
+				this.connect(document.body, 'touchstart', this.updateTouches);
+				this.connect(document.body, 'touchmove', this.updateTouches);
+				this.connect(document.body, 'touchend', this.updateTouches);
+			}
+			else {
+				this.connect(window, 'touchstart', this.updateTouches);
+				this.connect(window, 'touchmove', this.updateTouches);
+				this.connect(window, 'touchend', this.updateTouches);
+			}
 		} catch(e) {}
 	},
 
