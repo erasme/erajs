@@ -275,12 +275,12 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	}
 	else {
 		var signal = { scope: this, method: method, capture: capture };
-		eventListeners = obj.events[eventName]
-		if(eventListeners != null){
+		var eventListeners = obj.events[eventName];
+		if(eventListeners != undefined) {
 			eventListeners.push(signal);
 		}
 //#if DEBUG
-		else{
+		else {
 			throw('Event \''+eventName+'\' not found on ' + obj);
 		}
 //#end
