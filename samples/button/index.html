@@ -4,6 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<script src='../../era/era-debug.js'></script>
 <script>
+
 //
 // Play with Ui.Button, the normal looking button
 //
@@ -16,6 +17,7 @@ var button1 = new Ui.Button({
 	horizontalAlign: 'center'
 });
 app.setContent(button1);
+app.connect(button1, 'press', function() { console.log('button pressed') });
 
 </script>
   </head>

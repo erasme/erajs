@@ -16,7 +16,6 @@ Ui.App.extend('Infos.App', {
 		var msg = '';
 		for(var prop in navigator) {
 			var val = navigator[prop];
-			console.log(typeof(val));
 			if((typeof(val) === 'string') || (typeof(val) === 'boolean'))
 				msg += prop+': '+val+'\n';
 		}
