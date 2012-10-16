@@ -290,6 +290,17 @@ if(navigator.isIE) {
 	}
 }
 
+// correct bug with high density screen on Chrome mobile
+if(('devicePixelRatio' in window) && (devicePixelRatio != 1)) {
+	var element = document.elementFromPoint(window.innerWidth+10, window.innerHeight+10);
+	if(element != undefined) {
+		document.__elementFromPoint = document.elementFromPoint;
+		document.elementFromPoint = function(x,y) {
+			return document.__elementFromPoint(x*devicePixelRatio, y*devicePixelRatio);
+		};
+	}
+}
+
 // correct Opera specific bugs
 if(navigator.isOpera) {
 	CanvasRenderingContext2D.prototype.arcTo = function(x1, y1, x2, y2, r) {
