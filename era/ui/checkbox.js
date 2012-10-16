@@ -190,11 +190,13 @@ Ui.Togglable.extend('Ui.CheckBox',
 
 	onDisable: function() {
 		Ui.CheckBox.base.onDisable.call(this);
+		this.contentBox.setOpacity(0.4);
 		this.check.setOpacity(0.4);
 	},
 
 	onEnable: function() {
 		Ui.CheckBox.base.onEnable.call(this);
+		this.contentBox.setOpacity(1);
 		this.check.setOpacity(1);
 	},
 
