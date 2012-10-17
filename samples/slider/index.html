@@ -45,8 +45,8 @@ app.connect(slider, 'change', function() {
 	label.setText('Value: '+slider.getValue().toFixed(2));
 });
 
-var clock = new Anim.Clock({ duration: 4.0, target: slider,
-	callback: function(clock, progress) {
+var clock = new Anim.Clock({ duration: 4.0, scope: slider,
+	onTimeupdate: function(clock, progress) {
 		this.setValue(progress);
 	}
 });
