@@ -6,7 +6,7 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 	constructor: function(config) {
 		this.addEvents('open', 'close');
 
-		this.fold = new Ui.Fold({ mode: 'extend', over: false, orientation: 'vertical' });
+		this.fold = new Ui.Fold({ mode: 'extend', over: false, position: 'bottom' });
 		this.setContent(this.fold);
 
 		var gradient = new Ui.LinearGradient({ orientation: 'vertical', stops: [
