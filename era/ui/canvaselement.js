@@ -12,6 +12,16 @@ Ui.Element.extend('Ui.CanvasElement',
 	},
 
 	/**
+	 * Call this method when the canvas need to be redraw
+	 */
+	update: function() {
+		this.context.clearRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight());
+		this.context.save();
+		this.updateCanvas(this.context);
+		this.context.restore();
+	},
+
+	/**
 	 * Override this method to provide the Canvas rendering
 	 */
 	updateCanvas: function(context) {
@@ -21,14 +31,17 @@ Ui.Element.extend('Ui.CanvasElement',
 {
 	renderDrawing: function() {
 		var canvas = document.createElement('canvas');
+		if('G_vmlCanvasManager' in window)
+			canvas = G_vmlCanvasManager.initElement(canvas);
 		this.context = canvas.getContext('2d');
+		this.canvas = canvas;
 		return canvas;
 	},
 
 	arrangeCore: function(width, height) {
 		this.getDrawing().setAttribute('width', width, null);
 		this.getDrawing().setAttribute('height', height, null);
-		this.updateCanvas(this.context);
+		this.update();
 	}
 });
 

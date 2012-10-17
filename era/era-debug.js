@@ -21,6 +21,11 @@ function include(fileName) {
 }
 
 //
+// Emulated canvas for IE < 9
+//
+include(eraBaseDirectory+'excanvas/excanvas.js');
+
+//
 // Core functions
 //
 include(eraBaseDirectory+'core/util.js');
@@ -179,3 +184,4 @@ include(eraBaseDirectory+'form/fieldcontainer.js');
 include(eraBaseDirectory+'form/panel.js');
 include(eraBaseDirectory+'form/panelcontainer.js');
 include(eraBaseDirectory+'form/popup.js');
+
