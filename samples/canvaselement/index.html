@@ -20,7 +20,8 @@ Ui.CanvasElement.extend('Sample.MyCanvas', {
 
 	setFill: function(fill) {
 		this.fill = Ui.Color.create(fill);
-		this.invalidateArrange();
+		this.invalidateDraw();
+//		this.invalidateArrange();
 	}
 }, {
 	updateCanvas: function(ctx) {
