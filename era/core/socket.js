@@ -314,3 +314,4 @@ if(("MozWebSocket" in window) && !("WebSocket" in window)) {
 
 Core.Socket.supportWebSocket = "WebSocket" in window;
 
+
