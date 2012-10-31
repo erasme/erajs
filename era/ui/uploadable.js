@@ -17,9 +17,11 @@ Ui.Pressable.extend('Ui.Uploadable',
 
 		this.addEvents('file');
 
-		if(navigator.isOpera || navigator.isFirefox3 || navigator.isIE7 || navigator.isIE8)
-			this.input = new Ui.UploadableWrapper();
-		else
+//		if(navigator.isOpera || navigator.isFirefox3 || navigator.isIE7 || navigator.isIE8) {
+//			this.input = new Ui.UploadableWrapper();
+//			console.log('UploadableWrapper');
+//		}
+//		else
 			this.input = new Ui.UploadableFileWrapper();
 		this.append(this.input);
 		this.connect(this.input, 'file', this.onFile);
