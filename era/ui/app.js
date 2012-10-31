@@ -13,7 +13,9 @@ Ui.LBox.extend('Ui.App',
 	autoscale: false,
 	ready: false,
 	orientation: 0,
+	webApp: true,
 
+	drawList: undefined,
 	layoutList: undefined,
 	windowWidth: 0,
 	windowHeight: 0,
@@ -40,8 +42,15 @@ Ui.LBox.extend('Ui.App',
 		this.contentBox = new Ui.VBox();
 		this.append(this.contentBox);
 
-		if(config.autoscale != undefined)
+		if('webApp' in config) {
+			this.webApp = config.webApp;
+			delete(config.webApp);
+		}
+
+		if('autoscale' in config) {
 			this.setAutoScale(config.autoscale);
+			delete(config.autoscale);
+		}
 
 //		this.getDrawing().style.position = 'fixed';
 
@@ -234,16 +243,18 @@ Ui.LBox.extend('Ui.App',
 
 	onWindowLoad: function() {
 		if(navigator.iPad || navigator.iPhone || navigator.Android) {
-			// support app mode for iPad, iPod and iPhone
-			var meta = document.createElement('meta');
-			meta.name = 'apple-mobile-web-app-capable';
-			meta.content = 'yes';
-			document.getElementsByTagName("head")[0].appendChild(meta);
-			// black status bar for iPhone
-			meta = document.createElement('meta');
-			meta.name = 'apple-mobile-web-app-status-bar-style';
-			meta.content = 'black';
-			document.getElementsByTagName("head")[0].appendChild(meta);
+			if(this.webApp) {
+				// support app mode for iPad, iPod and iPhone
+				var meta = document.createElement('meta');
+				meta.name = 'apple-mobile-web-app-capable';
+				meta.content = 'yes';
+				document.getElementsByTagName("head")[0].appendChild(meta);
+				// black status bar for iPhone
+				meta = document.createElement('meta');
+				meta.name = 'apple-mobile-web-app-status-bar-style';
+				meta.content = 'black';
+				document.getElementsByTagName("head")[0].appendChild(meta);
+			}
 			// stop the scaling of the page
 			meta = document.createElement('meta');
 			meta.name = 'viewport';
@@ -444,7 +455,14 @@ Ui.LBox.extend('Ui.App',
 //			this.layoutList.layoutNext = undefined;
 //			this.layoutList.updateLayout();
 //			this.layoutList = next;
-//		}
+
+		// update draw
+		while(this.drawList != undefined) {
+			var next = this.drawList.drawNext;
+			this.drawList.drawNext = undefined;
+			this.drawList.draw();
+			this.drawList = next;
+		}
 
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
@@ -612,6 +630,13 @@ Ui.LBox.extend('Ui.App',
 			}
 		}
 		return undefined;
+	},
+
+	enqueueDraw: function(element) {
+		element.drawNext = this.drawList;
+		this.drawList = element;
+		if((this.updateTask === undefined) && this.ready)
+			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 	}
 
 /*

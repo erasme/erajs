@@ -1,5 +1,5 @@
 
-Ui.LBox.extend('Ui.Shadow', 
+Ui.CanvasElement.extend('Ui.Shadow', 
 /**@lends Ui.Shadow#*/
 {
 	radiusTopLeft: 0,
@@ -27,7 +27,7 @@ Ui.LBox.extend('Ui.Shadow',
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = Ui.Color.create(color);
-			this.updateOpacityColor();
+			this.invalidateDraw();
 		}
 	},
 
@@ -38,33 +38,14 @@ Ui.LBox.extend('Ui.Shadow',
 	setInner: function(inner) {
 		if(this.inner != inner) {
 			this.inner = inner;
-			this.updateWidth();
-			this.updateRadius();
-			this.updateOpacityColor();
+			this.invalidateDraw();
 		}
 	},
 
 	setShadowWidth: function(shadowWidth) {
 		if(this.shadowWidth != shadowWidth) {
 			this.shadowWidth = shadowWidth;
-			this.updateWidth();
-/*
-//			if(!this.inner && (this.getLastChild() != undefined))
-//				this.remove(this.getLastChild());
-			while(this.shadowWidth > shadowWidth) {
-				this.remove(this.getLastChild());
-				this.shadowWidth--;
-			}
-			while(this.shadowWidth < shadowWidth) {
-				this.append(new Ui.Rectangle({ fill: 'black', margin: this.shadowWidth }));
-				//this.append(new Ui.Frame({ fill: 'black', frameWidth: 1, margin: this.shadowWidth }));
-				this.shadowWidth++;
-			}
-//			if(!this.inner)
-//				this.append(new Ui.Rectangle({ fill: 'black', margin: this.shadowWidth }));
-*/
-			this.updateOpacityColor();
-			this.updateRadius();
+			this.invalidateDraw();
 		}
 	},
 
@@ -77,7 +58,7 @@ Ui.LBox.extend('Ui.Shadow',
 		this.radiusTopRight = radius;
 		this.radiusBottomLeft = radius;
 		this.radiusBottomRight = radius;
-		this.updateRadius();
+		this.invalidateDraw();
 	},
 
 	getRadiusTopLeft: function() {
@@ -87,7 +68,7 @@ Ui.LBox.extend('Ui.Shadow',
 	setRadiusTopLeft: function(radiusTopLeft) {
 		if(this.radiusTopLeft != radiusTopLeft) {
 			this.radiusTopLeft = radiusTopLeft;
-			this.updateRadius();
+			this.invalidateDraw();
 		}
 	},
 
@@ -98,7 +79,7 @@ Ui.LBox.extend('Ui.Shadow',
 	setRadiusTopRight: function(radiusTopRight) {
 		if(this.radiusTopRight != radiusTopRight) {
 			this.radiusTopRight = radiusTopRight;
-			this.updateRadius();
+			this.invalidateDraw();
 		}
 	},
 
@@ -109,7 +90,7 @@ Ui.LBox.extend('Ui.Shadow',
 	setRadiusBottomLeft: function(radiusBottomLeft) {
 		if(this.radiusBottomLeft != radiusBottomLeft) {
 			this.radiusBottomLeft = radiusBottomLeft;
-			this.updateRadius();
+			this.invalidateDraw();
 		}
 	},
 
@@ -120,25 +101,16 @@ Ui.LBox.extend('Ui.Shadow',
 	setRadiusBottomRight: function(radiusBottomRight) {
 		if(this.radiusBottomRight != radiusBottomRight) {
 			this.radiusBottomRight = radiusBottomRight;
-			this.updateRadius();
+			this.invalidateDraw();
 		}
-	},
+	}
+}, {
+	updateCanvas: function(ctx) {
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
 
-	updateWidth: function() {
-		while(this.getFirstChild() != undefined)
-			this.remove(this.getFirstChild());
 		for(var i = 0; i < this.shadowWidth; i++) {
-			if(this.inner)
-				this.append(new Ui.Frame({ fill: 'black', frameWidth: this.shadowWidth - i }));
-			else
-				this.append(new Ui.Rectangle({ fill: 'black', margin: i }));
-		}
-	},
-
-	updateOpacityColor: function() {
-		var rgba = this.color.getRgba();
-		var a = rgba.a;
-		for(var i = 0; i < this.getChildren().length; i++) {
+			var rgba = this.color.getRgba();
 			var opacity;
 			if(this.inner) {
 				if(this.shadowWidth == 1)
@@ -146,30 +118,27 @@ Ui.LBox.extend('Ui.Shadow',
 				else {
 					var x = (i + 1) / this.shadowWidth;
 					opacity = x * x;
-//					opacity = 1 / (this.shadowWidth + 1);
-//					opacity = 1 - (i / (this.shadowWidth - 1));
 				}
 			}
 			else
 				opacity = (i+1) / (this.shadowWidth + 1);
-			rgba.a = a * opacity;
-			this.getChildren()[i].setFill(new Ui.Color(rgba));
-		}
-	},
 
-	updateRadius: function() {
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			child.setRadiusTopLeft(this.radiusTopLeft);
-			child.setRadiusTopRight(this.radiusTopRight);
-			child.setRadiusBottomLeft(this.radiusBottomLeft);
-			child.setRadiusBottomRight(this.radiusBottomRight);
+			var color = new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a*opacity });
+			ctx.fillStyle = color.getCssRgba();
 
-
-//			child.setRadiusTopLeft(this.radiusTopLeft - (i * 1.1));
-//			child.setRadiusTopRight(this.radiusTopRight - (i * 1.1));
-//			child.setRadiusBottomLeft(this.radiusBottomLeft - (i * 1.1));
-//			child.setRadiusBottomRight(this.radiusBottomRight - (i * 1.1));
+			if(this.inner) {
+				ctx.beginPath();
+				this.roundRect(0, 0, width, height, this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft);
+				this.roundRect(this.shadowWidth-i, this.shadowWidth-i, width-((this.shadowWidth-i)*2), height-((this.shadowWidth-i)*2), this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft, true);
+				ctx.closePath();
+				ctx.fill();			
+			}
+			else {
+				ctx.beginPath();
+				this.roundRect(i, i, width-i*2, height-i*2, this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft);
+				ctx.closePath();
+				ctx.fill();
+			}
 		}
 	}
 });

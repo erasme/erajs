@@ -62,6 +62,10 @@ Ui.Shape.extend('Ui.Icon',
 		this.register('map', 'M 32 5 L 16 13 L 16 45 L 32 37 L 32 5 z M 35 5 L 35 37 L 47 45 L 47 13 L 35 5 z M 1 6 L 1 38 L 13 45 L 13 13 L 1 6 z M 24.625 12.625 L 26.3125 14.3125 L 28 12.625 L 29.6875 14.3125 L 28 16 L 29.6875 17.6875 L 28 19.375 L 26.3125 17.6875 L 24.625 19.375 L 22.9375 17.6875 L 24.625 16 L 22.9375 14.3125 L 24.625 12.625 z');
 	},
 
+	getPath: function(icon) {
+		return Ui.Icon.icons[icon];
+	},
+
 	getNames: function() {
 		var names = [];
 		for(var tmp in Ui.Icon.icons)

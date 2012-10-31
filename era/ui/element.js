@@ -35,6 +35,10 @@ Core.Object.extend('Ui.Element',
 	arrangeWidth: 0,
 	arrangeHeight: 0,
 
+	/** render */
+	drawValid: true,
+	drawNext: undefined,
+
 	layoutValid: true,
 	layoutNext: undefined,
 	layoutX: 0,
@@ -445,6 +449,32 @@ Core.Object.extend('Ui.Element',
 
 	onChildInvalidateArrange: function(child) {
 		this.invalidateArrange();
+	},
+
+	/**
+	 * Update the current element drawing
+	 */
+	draw: function() {
+		this.drawCore();
+		this.drawValid = true;
+	},
+
+	/**
+	 * Override this to provide your own
+	 * custom drawing
+	 */
+	drawCore: function() {
+	},
+
+	/**
+	 * Signal that the current element drawing need
+	 * to be updated
+	 */
+	invalidateDraw: function() {
+		if(this.drawValid) {
+			this.drawValid = false;
+			Ui.App.current.enqueueDraw(this);
+		}
 	},
 
 	/**
@@ -886,6 +916,8 @@ Core.Object.extend('Ui.Element',
 //		console.log(this.classType+'.onInternalVisible');
 		// DEBUG
 //		this.checkVisible();
+		if(navigator.isIE8 || navigator.isIE7)
+			this.invalidateDraw();
 		this.onVisible();
 		this.fireEvent('visible', this);
 	},
