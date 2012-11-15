@@ -1,5 +1,6 @@
 
-Ui.LBox.extend('Ui.Dialog', {
+Ui.Container.extend('Ui.Dialog', {
+	bg: undefined,
 	lbox: undefined,
 	vbox: undefined,
 	titleLabel: undefined,
@@ -9,14 +10,18 @@ Ui.LBox.extend('Ui.Dialog', {
 	cancelBox: undefined,
 	buttonsBox: undefined,
 	buttonsVisible: false,
+	preferedWidth: 100,
+	preferedHeight: 100,
 
 	constructor: function(config) {
 		this.addEvents('close');
 
-		this.append(new Ui.Rectangle({ fill: '#ffffff', opacity: 0.5 }));
+		this.bg = new Ui.Rectangle({ fill: '#ffffff', opacity: 0.5 });
+		this.appendChild(this.bg);
 
-		this.lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', margin: 20 });
-		this.append(this.lbox);
+//		this.lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', margin: 20 });
+		this.lbox = new Ui.LBox();
+		this.appendChild(this.lbox);
 
 		this.lbox.append(new Ui.Shadow({ shadowWidth: 5, radius: 6, inner: false, opacity: 0.3 }));
 		this.lbox.append(new Ui.Rectangle({ radius: 3, fill: '#f8f8f8', margin: 3 }));
@@ -45,6 +50,16 @@ Ui.LBox.extend('Ui.Dialog', {
 		this.actionButtonsBox = new Ui.HBox({ uniform: true, horizontalAlign: 'right' });
 		hbox.append(this.actionButtonsBox, true);
 		
+	},
+
+	setPreferedWidth: function(width) {
+		this.preferedWidth = width;
+		this.invalidateMeasure();
+	},
+
+	setPreferedHeight: function(height) {
+		this.preferedHeight = height;
+		this.invalidateMeasure();
 	},
 
 	open: function() {
@@ -114,13 +129,30 @@ Ui.LBox.extend('Ui.Dialog', {
 		}
 	},
 
+	setContent: function(content) {
+		this.contentBox.setContent(content);
+	},
+
 	onCancelPress: function() {
 		this.close();
 	}
 
 }, {
-	setContent: function(content) {
-		this.contentBox.setContent(content);
+	measureCore: function(width, height) {
+		this.bg.measure(width, height);
+		this.lbox.measure((width < this.preferedWidth)?width:this.preferedWidth,
+			(height < this.preferedHeight)?height:this.preferedHeight);
+		return { width: width, height: height };
+	},
+
+	//
+	// Arrange children
+	//
+	arrangeCore: function(width, height) {
+		this.bg.arrange(0, 0, width, height);
+		var usedWidth = Math.max((width < this.preferedWidth)?width:this.preferedWidth, this.lbox.getMeasureWidth());		
+		var usedHeight = Math.max((height < this.preferedHeight)?height:this.preferedHeight, this.lbox.getMeasureHeight());
+		this.lbox.arrange((width-usedWidth)/2, (height-usedHeight)/2, usedWidth, usedHeight);
 	}
 });
 
