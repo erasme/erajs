@@ -89,6 +89,7 @@ Ui.LBox.extend('Ui.Togglable',
 		event.stopPropagation();
 		if(event.button == 0) {
 			this.onUp();
+			this.focus();
 			if(!this.isToggled)
 				this.onToggle();
 			else
@@ -139,6 +140,7 @@ Ui.LBox.extend('Ui.Togglable',
 		event.stopPropagation();
 
 		this.onUp();
+		this.focus();
 		if(!this.isToggled)
 			this.onToggle();
 		else
@@ -171,7 +173,6 @@ Ui.LBox.extend('Ui.Togglable',
 
 	onDown: function() {
 		this.isDown = true;
-		this.focus();
 		this.fireEvent('down', this);
 
 	},
