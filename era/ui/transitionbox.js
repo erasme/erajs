@@ -134,7 +134,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 			this.replaceMode = false;
 
 			var removeList = [];
-			for(var i = 0; i < this.getChildren(); i++) {
+			for(var i = 0; i < this.getChildren().length; i++) {
 				var item = this.getChildren()[i];
 				if(item !== current)
 					removeList.push(item.getFirstChild());
