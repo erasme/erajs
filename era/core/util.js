@@ -19,6 +19,7 @@ navigator.isFirefox3_6 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null)
 
 navigator.iPad = (navigator.userAgent.match(/iPad/i) != null);
 navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
+navigator.iOs = navigator.iPad || navigator.iPhone;
 
 navigator.Android = (navigator.userAgent.match(/Android/i) != null);
 
