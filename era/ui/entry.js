@@ -14,6 +14,8 @@ Ui.Element.extend('Ui.Entry',
 	mouseStartY: undefined,
 	touchStartX: undefined,
 	touchStartY: undefined,
+	allowSelect: false,
+	timer: undefined,
 
 	/**
 	 * @constructs
@@ -29,12 +31,12 @@ Ui.Element.extend('Ui.Entry',
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+//		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
 		// handle touches
 		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
 
 		// handle change
 		this.connect(this.getDrawing(), 'change', this.onChange);
@@ -137,6 +139,7 @@ Ui.Element.extend('Ui.Entry',
 	 */
 
 	onMouseDown: function(event) {
+		console.log('onMouseDown');
 		if(this.getHasFocus()) {
 			event.stopPropagation();
 			return;
@@ -198,19 +201,67 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onTouchStart: function(event) {
-		if(this.getHasFocus())
+		if(event.targetTouches.length == 1) {
+			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
+
 			event.stopPropagation();
+
+			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
+			this.connect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
+
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
+			}
+			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
+		}
 	},
 
 	onTouchMove: function(event) {
-		if(this.getHasFocus())
-			event.stopPropagation();
+		if(!this.allowSelect) {
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
+			}
+			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
+			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
+			this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+		}
 	},
 
 	onTouchEnd: function(event) {
-		if(this.getHasFocus())
-			event.stopPropagation();
+		event.stopPropagation();
+
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+
+		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
+		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
+		this.allowSelect = false;
+		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 	},
+
+	onTimer: function(timer) {
+		this.allowSelect = true;
+		this.timer = undefined;
+	},
+
+//	onTouchStart: function(event) {
+//		if(this.getHasFocus())
+//			event.stopPropagation();
+//	},
+
+//	onTouchMove: function(event) {
+//		if(this.getHasFocus())
+//			event.stopPropagation();
+//	},
+
+//	onTouchEnd: function(event) {
+//		if(this.getHasFocus())
+//			event.stopPropagation();
+//	},
 
 	onFingerDown: function(event) {
 		if(this.getHasFocus()) {

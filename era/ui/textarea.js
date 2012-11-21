@@ -13,6 +13,11 @@ Ui.Element.extend('Ui.TextArea',
 	touchStartX: undefined,
 	touchStartY: undefined,
 
+	startTime: undefined,
+	allowSelect: false,
+	timer: undefined,
+	hasHtmlFocus: false,
+
 	/**
 	 * @constructs
 	 * @class
@@ -28,25 +33,28 @@ Ui.Element.extend('Ui.TextArea',
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+//		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
 
 		// handle touches
 		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+		this.connect(this.getDrawing(), 'focus', this.onHtmlFocus);
+		this.connect(this.getDrawing(), 'blur', this.onHtmlBlur);
+
 
 		// handle keyboard
 		this.connect(this.textareaDrawing, 'keyup', this.onKeyUp);
 
-		this.connect(this.textareaDrawing, 'scroll', function() {
+//		this.connect(this.textareaDrawing, 'scroll', function() {
 //			console.log('textarea scroll');
 //			console.log(this+' scroll event ('+this.textareaDrawing.scrollLeft+','+this.textareaDrawing.scrollTop+')');
-			if((this.getMeasureWidth() != this.textareaDrawing.scrollWidth) || (this.getMeasureHeight() != this.textareaDrawing.scrollHeight)) {
+//			if((this.getMeasureWidth() != this.textareaDrawing.scrollWidth) || (this.getMeasureHeight() != this.textareaDrawing.scrollHeight)) {
 //				console.log('invalidateMeasure');
-				this.invalidateMeasure();
-			}
-			this.fireEvent('scroll', this, this.textareaDrawing.scrollLeft, this.textareaDrawing.scrollTop);
-		});
+//				this.invalidateMeasure();
+//			}
+//			this.fireEvent('scroll', this, this.textareaDrawing.scrollLeft, this.textareaDrawing.scrollTop);
+//		});
 	},
 
 	setFontSize: function(fontSize) {
@@ -106,6 +114,7 @@ Ui.Element.extend('Ui.TextArea',
 			this.textareaDrawing.value = '';
 		else
 			this.textareaDrawing.value = value;
+		this.invalidateMeasure();
 	},
 
 	setOffset: function(offsetX, offsetY) {
@@ -185,7 +194,77 @@ Ui.Element.extend('Ui.TextArea',
 		}
 	},
 
+/////
 	onTouchStart: function(event) {
+		if(event.targetTouches.length == 1) {
+			event.stopPropagation();
+
+			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
+			this.connect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
+
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
+			}
+			this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+		}
+	},
+
+	onTouchMove: function(event) {
+		if(!this.allowSelect) {
+			if(this.timer != undefined) {
+				this.timer.abort();
+				this.timer = undefined;
+			}
+			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
+			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);			
+		}
+		else {
+			if(this.hasHtmlFocus)
+				event.stopPropagation();
+		}
+	},
+
+	onTouchEnd: function(event) {
+		event.stopPropagation();
+
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+
+		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
+		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
+		this.allowSelect = false;
+	},
+
+	onTimer: function(timer) {
+		this.allowSelect = true;
+		this.timer = undefined;
+	},
+
+	onHtmlFocus: function(event) {
+		this.hasHtmlFocus = true;
+		this.setSelectable(true);
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+	},
+
+	onHtmlBlur: function(event) {
+		this.hasHtmlFocus = false;
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+		this.allowSelect = false;
+	},
+
+/////
+
+/*	onTouchStart: function(event) {
 		if(this.getHasFocus())
 			event.stopPropagation();
 	},
@@ -198,7 +277,7 @@ Ui.Element.extend('Ui.TextArea',
 	onTouchEnd: function(event) {
 		if(this.getHasFocus())
 			event.stopPropagation();
-	},
+	},*/
 
 	onFingerDown: function(event) {
 		if(this.getHasFocus()) {

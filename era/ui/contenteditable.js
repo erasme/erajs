@@ -7,8 +7,12 @@ Ui.Element.extend('Ui.ContentEditable', {
 	allowSelect: false,
 	timer: undefined,
 	hasHtmlFocus: false,
+	anchorNode: null,
+	anchorOffset: 0,
 	
 	constructor: function(config) {
+		this.addEvents('anchorchange');
+
 		this.setSelectable(true);
 		this.setFocusable(true);
 //		this.getDrawing().style.outline = 'red none 0px';
@@ -17,11 +21,13 @@ Ui.Element.extend('Ui.ContentEditable', {
 		this.getDrawing().setAttribute('contenteditable', 'true');
 //		this.connect(this.getDrawing(), 'selectstart', this.onHtmlSelectStart);
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
-		this.connect(this.getDrawing(), 'focus', this.onHtmlFocus);
-		this.connect(this.getDrawing(), 'blur', this.onHtmlBlur);
-		this.connect(this.getDrawing(), 'keypress', this.onHtmlKeyPress);
+//		this.connect(this.getDrawing(), 'focus', this.onHtmlFocus);
+//		this.connect(this.getDrawing(), 'blur', this.onHtmlBlur);
+//		this.connect(this.getDrawing(), 'keypress', this.onHtmlKeyPress);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 
 		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
+		this.connect(this.getDrawing(), 'touchend', this.onTouchEndCapture, true);
 	},
 
 	getHtml: function() {
@@ -34,7 +40,16 @@ Ui.Element.extend('Ui.ContentEditable', {
 		this.invalidateMeasure();
 	},
 
+	getText: function() {
+		return ('innerText' in this.getDrawing())?this.getDrawing().innerText:this.getDrawing().textContent;
+	},
+
+	onKeyUp: function(event) {
+		this.testAnchorChange();
+	},
+
 	onSubtreeModified: function(event) {
+		this.testAnchorChange();
 		this.html = this.getDrawing().innerHTML;
 		this.invalidateMeasure();
 	},
@@ -44,6 +59,12 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.html = this.getDrawing().innerHTML;
 			this.invalidateMeasure();
 		}
+	},
+
+	onTouchEndCapture: function() {
+		new Core.DelayedTask({ scope: this, delay: 0, callback: function() {
+			this.testAnchorChange();
+		}});
 	},
 
 	onTouchStart: function(event) {
@@ -57,7 +78,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 				this.timer.abort();
 				this.timer = undefined;
 			}
-			this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
 		}
 	},
 
@@ -90,6 +111,8 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onHtmlKeyPress: function(event) {
+//		console.log('onHtmlKeyPress');
+
 /*		console.log('keypress: '+event.which);
 		if(event.which == 13) {
 			event.stopPropagation();
@@ -98,6 +121,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onHtmlFocus: function(event) {
+		console.log('onHtmlFocus');
 		this.hasHtmlFocus = true;
 		this.setSelectable(true);
 		if(this.timer != undefined) {
@@ -108,6 +132,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onHtmlBlur: function(event) {
+		console.log('onHtmlBlur');
 		this.hasHtmlFocus = false;
 		if(this.timer != undefined) {
 			this.timer.abort();
@@ -130,7 +155,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.timer = undefined;
 		}
 		this.allowSelect = false;
-		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+		this.timer = new Core.DelayedTask({	delay: 0.50, scope: this, callback: this.onTimer });
 
 		this.screenX = event.screenX;
 		this.screenY = event.screenY;
@@ -178,6 +203,8 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onMouseUp: function(event) {
+		this.testAnchorChange();
+
 		if(this.timer != undefined) {
 			this.timer.abort();
 			this.timer = undefined;
@@ -186,9 +213,19 @@ Ui.Element.extend('Ui.ContentEditable', {
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 	},
 
-	onHtmlSelectStart: function(event) {
-		event.stopPropagation();
+	testAnchorChange: function() {
+		if((window.getSelection().anchorNode != this.anchorNode) ||
+			(window.getSelection().anchorOffset != this.anchorOffset)) {
+			this.anchorNode = window.getSelection().anchorNode;
+			this.anchorOffset = window.getSelection().anchorOffset;
+//			console.log('anchor changed (offset: '+this.anchorOffset+')');
+			this.fireEvent('anchorchange', this);
+		}
 	}
+
+//	onHtmlSelectStart: function(event) {
+//		event.stopPropagation();
+//	}
 
 }, {
 	renderDrawing: function() {
