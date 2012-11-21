@@ -238,7 +238,9 @@ Ui.Element.extend('Ui.Label',
 		Ui.Label.measureBox.style.fontSize = fontSize+'px';
 		Ui.Label.measureBox.style.fontFamily = fontFamily;
 		Ui.Label.measureBox.style.fontWeight = fontWeight;
-		Ui.Label.measureBox.style.fontWeight = fontWeight;
+//		while(Ui.Label.measureBox.hasChildNodes())
+//			Ui.Label.measureBox.removeChild(Ui.Label.measureBox.lastChild);
+//		Ui.Label.measureBox.appendChild(document.createTextNode(text));
 		if('textContent' in Ui.Label.measureBox)
 			Ui.Label.measureBox.textContent = text;
 		else
