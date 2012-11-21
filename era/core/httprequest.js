@@ -7,6 +7,7 @@ Core.Object.extend('Core.HttpRequest',
 	request: undefined,
 	arguments: undefined,
 	content: undefined,
+	headers: undefined,
 
 	/**
 	*	@constructs
@@ -44,7 +45,9 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	setRequestHeader: function(header, value) {
-		this.request.setRequestHeader(header, value);
+		if(this.headers == undefined)
+			this.headers = {};
+		this.headers[header] = value;
 	},
 
 	setArguments: function(arguments) {
@@ -89,13 +92,19 @@ Core.Object.extend('Core.HttpRequest',
 			for(var header in Core.HttpRequest.requestHeaders)
 				this.request.setRequestHeader(header, Core.HttpRequest.requestHeaders[header]);
 		}
+		if(this.headers != undefined) {
+			for(var header in this.headers)
+				this.request.setRequestHeader(header, this.headers[header]);
+		}
 		if((this.method == 'POST') || (this.method == 'PUT')) {
 			if(this.content == undefined) {
-				this.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
+					this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 				this.request.send(args);
 			}
 			else {
-				this.request.setRequestHeader('Content-type', 'text/plain; charset=utf-8');
+				if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
+					this.request.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
 				this.request.send(this.content);
 			}
 		}
@@ -103,10 +112,6 @@ Core.Object.extend('Core.HttpRequest',
 		else {
 			this.request.send();
 		}
-	},
-
-	setRequestHeader: function(header, value) {
-		this.request.setRequestHeader(header, value);
 	},
 
 	getResponseHeader: function(header) {
