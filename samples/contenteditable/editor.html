@@ -28,59 +28,141 @@ app.setContent(vbox);
 var toolbar = new Ui.ToolBar();
 vbox.append(toolbar);
 
-var button = new Ui.Button({ text: 'bold' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	document.execCommand('bold', false, null);
+var boldButton = new Ui.ToggleButton({ text: 'bold', focusable: false });
+toolbar.append(boldButton);
+app.connect(boldButton, 'toggle', function() {
+	if(!document.queryCommandState('bold'))
+		document.execCommand('bold', false, null);
+});
+app.connect(boldButton, 'untoggle', function() {
+	if(document.queryCommandState('bold'))
+		document.execCommand('bold', false, null);
 });
 
-button = new Ui.Button({ text: 'italic' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	document.execCommand('italic', false, null);
+italicButton = new Ui.ToggleButton({ text: 'italic', focusable: false });
+toolbar.append(italicButton);
+app.connect(italicButton, 'toggle', function() {
+	if(!document.queryCommandState('italic'))
+		document.execCommand('italic', false, null);
+});
+app.connect(italicButton, 'untoggle', function() {
+	if(document.queryCommandState('italic'))
+		document.execCommand('italic', false, null);
 });
 
-button = new Ui.Button({ text: 'delete' });
+button = new Ui.Button({ text: 'delete', focusable: false });
 toolbar.append(button);
 app.connect(button, 'press', function() {
 	document.execCommand('delete', false, null);
 });
 
-button = new Ui.Button({ text: 'center' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	document.execCommand('justifyCenter', false, null);
+centerButton = new Ui.ToggleButton({ text: 'center', focusable: false });
+toolbar.append(centerButton);
+app.connect(centerButton, 'toggle', function() {
+	if(!document.queryCommandState('justifyCenter'))
+		document.execCommand('justifyCenter', false, null);
+});
+app.connect(centerButton, 'untoggle', function() {
+	if(document.queryCommandState('justifyCenter'))
+		document.execCommand('justifyCenter', false, null);
 });
 
-button = new Ui.Button({ text: 'left' });
+button = new Ui.Button({ text: 'left', focusable: false });
 toolbar.append(button);
 app.connect(button, 'press', function() {
 	document.execCommand('justifyLeft', false, null);
 });
 
-button = new Ui.Button({ text: 'pre' });
+button = new Ui.Button({ text: 'pre', focusable: false });
 toolbar.append(button);
 app.connect(button, 'press', function() {
 	document.execCommand('formatBlock', false, 'pre');
 });
 
-button = new Ui.Button({ text: 'h1' });
+button = new Ui.Button({ text: 'h1', focusable: false });
 toolbar.append(button);
 app.connect(button, 'press', function() {
 	document.execCommand('formatBlock', false, 'h1');
 });
 
-button = new Ui.Button({ text: 'removeFormat' });
+button = new Ui.Button({ text: 'removeFormat', focusable: false });
 toolbar.append(button);
 app.connect(button, 'press', function() {
 	document.execCommand('removeFormat', false, null);
 });
 
+button = new Ui.Button({ text: 'status', focusable: false });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	console.log('bold ? '+document.queryCommandState('bold'));
+});
+
+button = new Ui.Button({ text: 'li', focusable: false });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	var ul = document.createElement('ul');
+	var li = document.createElement('li');
+	ul.appendChild(li);
+	window.getSelection().anchorNode.appendChild(ul);
+	window.getSelection().selectAllChildren(li);
+});
+
+button = new Ui.Button({ text: 'dump', focusable: false });
+toolbar.append(button);
+app.connect(button, 'press', function() {
+	console.log(html.getHtml());
+});
+
+
 var scroll = new Ui.ScrollingArea({ overScroll: true, showScrollbar: false });
 vbox.append(scroll, true);
 
+var vbox2 = new Ui.VBox();
+scroll.setContent(vbox2);
+
 var html = new Ui.ContentEditable({ width: 200, html: '<pre>Have fun with HTML, I <b>hope</b> the text is enough long</pre>', margin: 5 });
-scroll.setContent(html);
+//scroll.setContent(html);
+vbox2.append(html);
+
+vbox2.append(new Ui.Element({ height: 10 }));
+
+app.connect(html, 'anchorchange', function() {
+	var isBold = document.queryCommandState('bold');
+	console.log('isBold: '+isBold);
+	if(isBold)
+		boldButton.toggle();
+	else
+		boldButton.untoggle();
+	if(document.queryCommandState('italic'))
+		italicButton.toggle();
+	else
+		italicButton.untoggle();
+	if(document.queryCommandState('justifyCenter'))
+		centerButton.toggle();
+	else
+		centerButton.untoggle();
+});
+
+//app.connect(html.getDrawing(), 'selectstart', function() {
+//	console.log('selectstart');
+//}, true);
+
+//app.connect(html.getDrawing(), 'select', function() {
+//	console.log('select');
+//}, true);
+
+app.connect(scroll.getDrawing(), 'DOMSubtreeModified', function() {
+//	console.log('DOMSubtreeModified');
+//	logs.setText(logs.getText()+'\n'+'DOMSubtreeModified');
+//	console.log(window.getSelection().anchorNode+' (offset: '+window.getSelection().anchorOffset+')');
+//	if(window.getSelection().anchorNode != null)
+//		window.getSelection().anchorNode.scrollIntoView(true);
+});
+
+var logs = new Ui.Text();
+vbox.append(logs);
+
+console.log(window);
 
 </script>
 	</head>

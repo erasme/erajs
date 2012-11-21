@@ -7,14 +7,16 @@
 
 var app = new Ui.App({ });
 
-var fbox = new Ui.Flow({ margin: 40 });
+var fbox = new Ui.Flow({ margin: 40, uniform: true });
 app.setContent(fbox);
 
-fbox.setContent({ type: Ui.Icon, icon: 'home', width: 48, height: 48, fill: 'lightblue' });
-
 var colors = ['lightblue', 'pink', 'lightgreen' ];
-for(var i = 0; i < Ui.Icon.getNames().length; i++)
-	fbox.append(new Ui.Icon({ icon: Ui.Icon.getNames()[i], width: 48, height: 48, fill: colors[i % colors.length] }));
+for(var i = 0; i < Ui.Icon.getNames().length; i++) {
+	var vbox = new Ui.VBox();
+	vbox.append(new Ui.Icon({ icon: Ui.Icon.getNames()[i], horizontalAlign: 'center', width: 48, height: 48, fill: colors[i % colors.length] }))
+	vbox.append(new Ui.Label({ horizontalAlign: 'center', text: Ui.Icon.getNames()[i] }));
+	fbox.append(vbox);
+}
 
 </script>
   </head>
