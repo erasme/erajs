@@ -1359,7 +1359,8 @@ Ui.Container.extend('Ui.ScrollableContent',
 		this.getDrawing().style.overflow = 'hidden';
 		this.addEvents('scroll');
 
-		this.connect(this.getDrawing(), 'scroll', function() {
+		this.connect(this.getDrawing(), 'scroll', function(event) {
+//			console.log(event);
 			this.fireEvent('scroll', this, this.getDrawing().scrollLeft, this.getDrawing().scrollTop);
 		});
 	},
