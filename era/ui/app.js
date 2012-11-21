@@ -27,6 +27,8 @@ Ui.LBox.extend('Ui.App',
 	dialogs: undefined,
 	virtualkeyboard: undefined,
 
+	bottomMarker: undefined,
+
 	/**
 	 * @constructs
 	 * @ class Define the App class. A web application always start
@@ -87,10 +89,18 @@ Ui.LBox.extend('Ui.App',
 //		});
 
 		this.connect(window, 'focus', function(event) {
+//			console.log('focus');
+//			if(navigator.iOs)
+//				window.scrollTo(0, this.bottomMarker.offsetTop);
+
+			this.checkSize();
+//			this.checkWindowSize();
+
 			if(event.target == undefined)
 				return;
 
-			window.scrollTo(0, document.body.scrollTop);
+//			window.scrollTo(0, document.body.scrollTop);
+//			window.scrollTo(0, 0);
 //			document.body.scrollLeft = 0;
 
 //			console.log('window focus '+event.target);
@@ -109,9 +119,13 @@ Ui.LBox.extend('Ui.App',
 		}, true);
 
 		this.connect(window, 'blur', function(event) {
-//			console.log('window blur');
+//			console.log('blur');
 			this.focusElement = undefined;
-			window.scrollTo(0, 0);
+			this.checkSize();
+//			this.checkWindowSize();
+//			if(navigator.iOs)
+//				window.scrollTo(0, this.bottomMarker.offsetTop);
+//			window.scrollTo(0, 0);
 		}, true);
 
 		// prevent bad event handling
@@ -152,6 +166,7 @@ Ui.LBox.extend('Ui.App',
 
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 //		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); event.stopPropagation(); event.preventDefault(); });
+		this.connect(window, 'scroll', this.onWindowScroll);
 
 		if('onorientationchange' in window)
 			this.connect(window, 'orientationchange', this.onOrientationChange);
@@ -185,6 +200,32 @@ Ui.LBox.extend('Ui.App',
 		}
 		else
 			this.arguments = {};
+
+//		if(navigator.iOs)
+//			this.timedCheckSize();
+	},
+
+	checkWindowSize: function() {
+		var innerWidth = document.body.clientWidth;
+		var innerHeight = document.body.clientHeight;
+		if(navigator.iOs)
+			innerHeight = this.bottomMarker.offsetTop - document.body.scrollTop;
+		if((innerWidth != this.getLayoutWidth()) || (innerHeight != this.getLayoutHeight()))
+			this.invalidateMeasure();
+	},
+
+	timedCheckSize: function(task) {
+		this.checkSize();
+		new Core.DelayedTask({ scope: this, callback: this.timedCheckSize, delay: 1 });
+	},
+
+	checkSize: function() {
+		if(this.bottomMarker != undefined) {
+//			document.body.scrollTop = this.bottomMarker.offsetTop;
+			window.scrollTo(0, this.bottomMarker.offsetTop);
+//			console.log('checkSize '+(this.bottomMarker.offsetTop - document.body.scrollTop));
+		}
+		this.checkWindowSize();
 	},
 
 	setVirtualKeyboard: function(wanted) {
@@ -266,7 +307,43 @@ Ui.LBox.extend('Ui.App',
 
 	},
 
-	onWindowResize: function() {
+	onWindowScroll: function(event) {
+		if(event.target != document)
+			return;
+
+//		console.log('onWindowScroll');
+		this.checkWindowSize();
+
+		// for Safari on iOS
+//		if(navigator.iOs) {
+//			if(this.lastScrollTop != this.bottomMarker.offsetTop) {
+//				this.lastScrollTop = this.bottomMarker.offsetTop;
+
+//			console.log('scroll m: '+this.bottomMarker.offsetTop+', t:'+document.body.scrollTop);
+
+//		var innerWidth = document.body.clientWidth;
+//		var innerHeight = document.body.clientHeight;
+//		if(navigator.iOs)
+//			innerHeight = this.bottomMarker.offsetTop;
+
+//		if((innerWidth != this.getLayoutWidth()) || (innerHeight != this.getLayoutHeight()))
+//			this.invalidateMeasure();
+
+
+//			this.disconnect(window, 'scroll', this.onWindowScroll);
+//			window.scrollTo(0, this.bottomMarker.offsetTop);
+//			document.body.style.top = document.body.scrollTop+'px';
+//			this.connect(window, 'scroll', this.onWindowScroll);
+//			}
+//		}
+//		else {
+//			window.scrollTo(0, 0);
+//		}
+//		event.stopPropagation();
+//		event.preventDefault();
+	},
+
+	onWindowResize: function(event) {
 //		console.log('onWindowResize');
 
 //		console.log('onWindowResize iframe ? '+(window != Ui.App.getRootWindow())+' ('+document.body.clientWidth+' x '+document.body.clientHeight+')');
@@ -275,8 +352,18 @@ Ui.LBox.extend('Ui.App',
 //		if(this.focusElement != undefined)
 //			this.focusElement.blur();
 
-		this.fireEvent('resize', this);
-		this.invalidateMeasure();
+//		this.fireEvent('resize', this);
+
+		this.checkSize();
+//		this.checkWindowSize();
+
+//		var innerWidth = document.body.clientWidth;
+//		var innerHeight = document.body.clientHeight;
+//		if(navigator.iOs)
+//			innerHeight = this.bottomMarker.offsetTop - document.body.scrollTop;
+
+//		if((innerWidth != this.getLayoutWidth()) || (innerHeight != this.getLayoutHeight()))
+//			this.invalidateMeasure();
 
 //		console.log(this+'.onWindowResize end updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 	},
@@ -284,8 +371,9 @@ Ui.LBox.extend('Ui.App',
 	onOrientationChange: function(event) {
 		this.orientation = window.orientation;
 		this.fireEvent('orientationchange', this.orientation);
-		this.fireEvent('resize', this);
-		this.invalidateMeasure();
+//		this.fireEvent('resize', this);
+		this.checkWindowSize();
+//		this.invalidateMeasure();
 	},
 
 	/**#@-*/
@@ -385,6 +473,11 @@ Ui.LBox.extend('Ui.App',
 
 		var innerWidth = document.body.clientWidth;
 		var innerHeight = document.body.clientHeight;
+		if(navigator.iOs)
+			innerHeight = this.bottomMarker.offsetTop - document.body.scrollTop;
+
+//		if((document.body != undefined) && (this.bottomMarker != undefined))
+//			console.log('i: '+window.innerHeight+', c: '+document.body.clientHeight+', s: '+document.body.scrollTop+', b: '+this.bottomMarker.offsetTop);
 
 		// to avoid offscreen scroll problem on iOS
 //		if(innerHeight >= this.windowHeight)
@@ -441,12 +534,10 @@ Ui.LBox.extend('Ui.App',
 			this.windowScale = 1;
 			size = this.measure(innerWidth, innerHeight);
 		}
-		this.windowWidth = innerWidth;
-		this.windowHeight = innerHeight;
-
 //		console.log(this+'.update size: '+this.windowWidth+' x '+this.windowHeight+', child: '+size.width+' x '+size.height);
 
-		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
+//		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
+		this.arrange(0, 0, innerWidth * this.windowScale, innerHeight * this.windowScale);
 
 		// update arrange
 //		while(this.layoutList != undefined) {
@@ -463,6 +554,15 @@ Ui.LBox.extend('Ui.App',
 			this.drawList.draw();
 			this.drawList = next;
 		}
+
+		if((this.windowWidth != innerWidth) || (this.windowHeight != innerHeight)) {
+			this.windowWidth = innerWidth;
+			this.windowHeight = innerHeight;
+			this.fireEvent('resize', this);
+		}
+
+		if(navigator.iOs)
+			this.getDrawing().style.top = document.body.scrollTop+'px';
 
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
@@ -564,10 +664,32 @@ Ui.LBox.extend('Ui.App',
 				document.body.style.margin = '0px';
 				document.body.style.border = '0px solid black';
 				document.body.style.overflow = 'hidden';
-				document.body.style.width = '100%';
-				document.body.style.height = '100%';
+
+				document.body.style.position = 'absolute';
+				document.body.style.right = '0px';
+				document.body.style.left = '0px';
+				document.body.style.top = '0px';
+				document.body.style.bottom = '0px';
+
+//				document.body.style.width = '100%';
+//				document.body.style.height = '100%';
 				document.body.appendChild(this.getDrawing());
 //			}
+
+			// iOS hack to know the visible part (without the virtual keyboard size)
+			if(navigator.iOs) {
+				this.bottomMarker = document.createElement('div');
+				this.bottomMarker.style.position = 'absolute';
+				this.bottomMarker.style.width = '0px';
+				this.bottomMarker.style.height = '0px';
+				this.bottomMarker.style.background = 'red';
+				this.bottomMarker.style.bottom = '0px';
+				this.bottomMarker.style.left = '0px';
+				document.body.appendChild(this.bottomMarker);
+			}
+
+			document.body.appendChild(this.getDrawing());
+
 /*
 			this.forceKeyboard = document.createElement('input');
 			this.forceKeyboard.setAttribute('type', 'text');
