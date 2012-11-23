@@ -3,6 +3,7 @@ Ui.LBox.extend('Ui.Pressable',
 {
 	isDown: false,
 	lock: false,
+	lastTime: undefined,
 
     /**
      * @constructs   
@@ -11,12 +12,12 @@ Ui.LBox.extend('Ui.Pressable',
 	 * @param {mixed} [config] see {@link Ui.LBox} constructor for more options.  
      */
 	constructor: function(config) {
+		this.addEvents('press', 'down', 'up', 'activate');
+
 		this.getDrawing().style.cursor = 'pointer';
 
 		this.setFocusable(true);
 		this.setRole('button');
-
-		this.addEvents('press', 'down', 'up');
 
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
@@ -97,6 +98,11 @@ Ui.LBox.extend('Ui.Pressable',
 			this.onUp();
 			this.fireEvent('press', this);
 			this.focus();
+			// test for activate signal
+			var currentTime = (new Date().getTime())/1000;
+			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
+				this.fireEvent('activate', this);
+			this.lastTime = currentTime;
 		}
 	},
 
@@ -143,6 +149,11 @@ Ui.LBox.extend('Ui.Pressable',
 		this.onUp();
 		this.fireEvent('press', this);
 		this.focus();
+		// test for activate signal
+		var currentTime = (new Date().getTime())/1000;
+		if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
+			this.fireEvent('activate', this);
+		this.lastTime = currentTime;
 	},
 
 	onKeyDown: function(event) {
