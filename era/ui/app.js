@@ -201,8 +201,10 @@ Ui.LBox.extend('Ui.App',
 		else
 			this.arguments = {};
 
-//		if(navigator.iOs)
-//			this.timedCheckSize();
+		if(this.arguments['remotedebug'] != undefined) {
+			var args = this.arguments['remotedebug'].split(':');
+			new Core.RemoteDebug({ host: args[0], port: args[1] });
+		}
 	},
 
 	checkWindowSize: function() {
@@ -215,6 +217,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	timedCheckSize: function(task) {
+//		console.log('timedCheckSize');
 		this.checkSize();
 		new Core.DelayedTask({ scope: this, callback: this.timedCheckSize, delay: 1 });
 	},
@@ -466,6 +469,7 @@ Ui.LBox.extend('Ui.App',
 		// bad thread system can trigger code that will ask for an
 		// update without having finish this code
 		this.updateTask = undefined;
+//		console.log('update task: '+this.updateTask);
 
 		// update measure
 //		var innerWidth = window.innerWidth;
@@ -475,6 +479,8 @@ Ui.LBox.extend('Ui.App',
 		var innerHeight = document.body.clientHeight;
 		if(navigator.iOs)
 			innerHeight = this.bottomMarker.offsetTop - document.body.scrollTop;
+
+//		console.log('update innerHeight: '+innerHeight);
 
 //		if((document.body != undefined) && (this.bottomMarker != undefined))
 //			console.log('i: '+window.innerHeight+', c: '+document.body.clientHeight+', s: '+document.body.scrollTop+', b: '+this.bottomMarker.offsetTop);
@@ -724,6 +730,9 @@ Ui.LBox.extend('Ui.App',
 			this.setIsLoaded(true);
 			this.setParentVisible(true);
 			this.fireEvent('ready');
+
+			if(navigator.iOs)
+				this.timedCheckSize();
 		}
 	},
 
