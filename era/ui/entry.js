@@ -139,7 +139,6 @@ Ui.Element.extend('Ui.Entry',
 	 */
 
 	onMouseDown: function(event) {
-		console.log('onMouseDown');
 		if(this.getHasFocus()) {
 			event.stopPropagation();
 			return;
