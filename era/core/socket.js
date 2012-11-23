@@ -71,7 +71,7 @@ Core.Object.extend('Core.Socket',
 
 		if(this.mode == 'websocket') {
 			this.websocket = new WebSocket((this.secure?'wss':'ws')+'://'+this.host+':'+this.port+this.service);
-			this.websocketdelay = new Core.DelayedTask({ scope: this, callback: this.onWebSocketOpenTimeout, delay: 2 });
+			this.websocketdelay = new Core.DelayedTask({ scope: this, callback: this.onWebSocketOpenTimeout, delay: 5 });
 			this.connect(this.websocket, 'open', this.onWebSocketOpen);
 			this.connect(this.websocket, 'error', this.onWebSocketError);
 			this.connect(this.websocket, 'message', this.onWebSocketMessage);
