@@ -99,7 +99,6 @@ Ui.LBox.extend('Ui.App',
 			if(event.target == undefined)
 				return;
 
-//			window.scrollTo(0, document.body.scrollTop);
 //			window.scrollTo(0, 0);
 //			document.body.scrollLeft = 0;
 
