@@ -158,6 +158,27 @@ Ui.Element.extend('Ui.CanvasElement',
 				ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
+			else if(cmd == 's') {
+				var x1 = x + parser.getCurrent(); parser.next();
+				var y1 = y + parser.getCurrent(); parser.next();
+				var x2 = x1;
+				var y2 = y1;
+				var x3 = x + parser.getCurrent(); parser.next();
+				var y3 = y + parser.getCurrent(); parser.next();
+				ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+				ctx.lineTo(x3, y3);
+				x = x3; y = y3;
+			}
+			else if(cmd == 'S') {
+				var x1 = parser.getCurrent(); parser.next();
+				var y1 = parser.getCurrent(); parser.next();
+				var x2 = x1;
+				var y2 = y1;
+				var x3 = parser.getCurrent(); parser.next();
+				var y3 = parser.getCurrent(); parser.next();
+				ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+				x = x3; y = y3;
+			}
 			else if(cmd == 'q') {
 				var x1 = x + parser.getCurrent(); parser.next();
 				var y1 = y + parser.getCurrent(); parser.next();
