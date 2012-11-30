@@ -7,8 +7,9 @@ Ui.Element.extend('Ui.Audio',
 	wavSrc: undefined,
 	loaddone: false,
 	audioDrawing: undefined,
-	playing: false,
-	paused: false,
+	canplaythrough: false,
+	// possible values [initial|playing|paused|buffering|error]
+	state: 'initial',
 
 	/**
 	*	@constructs
@@ -16,16 +17,19 @@ Ui.Element.extend('Ui.Audio',
 	*	@extends Ui.Element
 	*/
 	constructor: function(config) {
-		this.addEvents('ready', 'ended', 'timeupdate');
+		this.addEvents('ready', 'ended', 'timeupdate', 'bufferingupdate', 'statechange', 'error');
 		this.connect(this, 'unload', this.onAudioUnload);
 		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.wavSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Audio.supportOgg))
 				this.setSrc(config.oggSrc);
+			else if((config.aacSrc != undefined) && (Ui.Audio.supportAac))
+				this.setSrc(config.aacSrc);
 			else if((config.mp3Src != undefined) && (Ui.Audio.supportMp3))
 				this.setSrc(config.mp3Src);
 			else if((config.wavSrc != undefined) && (Ui.Audio.supportWav))
 				this.setSrc(config.wavSrc);
 			delete(config.oggSrc);
+			delete(config.aacSrc);
 			delete(config.mp3Src);
 			delete(config.wavSrc);
 		}
@@ -35,10 +39,13 @@ Ui.Element.extend('Ui.Audio',
 	* Set the file URL for the current audio element
 	*/
 	setSrc: function(src) {
-		this.loaddone = false;
+		this.canplaythrough = false;
+		this.state = 'initial';
 		this.src = src;
-		if(Ui.Audio.htmlAudio)
-			this.audioDrawing.setAttribute('src', src);
+		this.audioDrawing.setAttribute('src', src);
+		try {
+			this.audioDrawing.load();
+		} catch(e) {}
 	},
 
 	/**
@@ -46,20 +53,12 @@ Ui.Element.extend('Ui.Audio',
 	* stop it and restart from the begining.
 	*/
 	play: function() {
-		if(Ui.Audio.htmlAudio) {
-			if(!this.canplaythrough) {
-				try {
-					this.audioDrawing.load();
-				} catch(e) {}				
-			}
-			else {
-				try {
-					this.audioDrawing.play();
-				} catch(e) {}
-			}
-		}
-		this.playing = true;
-		this.paused = false;
+		this.state = 'playing';
+		this.fireEvent('statechange', this, this.state);
+		if(this.canplaythrough)
+			this.audioDrawing.play();
+		else
+			this.audioDrawing.load();
 	},
 
 	/**
@@ -67,56 +66,34 @@ Ui.Element.extend('Ui.Audio',
 	* currently playing, do nothing.
 	*/
 	pause: function() {
-		if(!this.playing || this.paused)
-			return;
-		this.paused = true;
-		if(Ui.Audio.htmlAudio)
+		this.state = 'paused';
+		this.fireEvent('statechange', this, this.state);
+		if(this.canplaythrough)
 			this.audioDrawing.pause();
+		else
+			this.audioDrawing.load();
 	},
 
 	/**
 	* Stop the sound if playing.
 	*/
 	stop: function() {
-		if(!this.playing)
-			return;
-		if(!this.paused) {
-			this.paused = false;
-			this.audioDrawing.pause();
-		}
-		this.playing = false;
-		if(Ui.Audio.htmlAudio)
-			this.audioDrawing.currentTime = 0;
+		this.audioDrawing.pause();
 		this.onEnded();
-	},
-
-	/**
-	* Resume the audio element if in paused else
-	* do nothing.
-	*/
-	resume: function() {
-		if(!this.playing || !this.paused)
-			return;
-		this.paused = false;
-		if(Ui.Audio.htmlAudio)
-			this.audioDrawing.play();
 	},
 
 	/**
 	* Set the audio volume between 0 and 1
 	*/
 	setVolume: function(volume) {
-		if(Ui.Audio.htmlAudio)
-			this.audioDrawing.volume = volume;
+		this.audioDrawing.volume = volume;
 	},
 
 	/**
 	* Get the audio volume between 0 and 1
 	*/
 	getVolume: function() {
-		if(Ui.Audio.htmlAudio)
-			return this.audioDrawing.volume;
-		return 1;
+		return this.audioDrawing.volume;
 	},
 
 	/**
@@ -140,72 +117,122 @@ Ui.Element.extend('Ui.Audio',
 	 * This value is only known after the ready event.
 	 */
 	getCurrentTime: function() {
-		return this.audioDrawing.currentTime;
+		if(this.audioDrawing.currentTime == undefined)
+			return 0;
+		else
+			return this.audioDrawing.currentTime;
+	},
+
+	/**
+	 * Return the current state of the media
+	 */
+	getState: function() {
+		return this.state;
+	},
+
+	/**
+	 * Return true if the audio is ready to play
+	 * and infos like duration, currentTime... are
+	 * known
+	 */
+	getIsReady: function() {
+		return this.canplaythrough;
 	},
 
 	/**#@+
 	* @private
 	*/
 	onReady: function() {
-		this.fireEvent('ready');
 		this.canplaythrough = true;
-		if(this.playing && !this.paused)
+		if(this.state == 'playing')
 			this.audioDrawing.play();
+		else if(this.state == 'paused')
+			this.audioDrawing.pause();
+		this.fireEvent('ready');
 	},
 
-	onTimeupdate: function() {
+	onTimeUpdate: function() {
+		this.fireEvent('timeupdate', this, this.audioDrawing.currentTime);
 		this.checkBuffering();
-		this.fireEvent('timeupdate', this.audioDrawing.currentTime);
 	},
 
 	onEnded: function() {
-		this.playing = false;
-		this.paused = false;
-		this.fireEvent('ended');
+		this.state = 'initial';
+		this.audioDrawing.currentTime = 0;
+		this.fireEvent('ended', this);
+		this.fireEvent('statechange', this, this.state);
 	},
 
-	onWaiting: function() {
-		if(this.playing && !this.paused)
-			this.audioDrawing.pause();
+	onProgress: function() {
+		this.checkBuffering();
 	},
 
 	getCurrentBufferSize: function() {
 		var buffered = this.audioDrawing.buffered;
 		var timebuffer = 0;
 		var time = this.audioDrawing.currentTime;
+		if(time == undefined)
+			time = 0;
+		var lastEnd = undefined;
 		for(var i = 0; i < buffered.length; i++) {
 			var start = buffered.start(i);
 			var end = buffered.end(i);
-			if((start <= time) && (end >= time)) {
-				timebuffer = end - time;
-				break;
+			if(lastEnd == undefined) {
+				if((start <= time) && (end >= time)) {
+					timebuffer = end - time;
+					lastEnd = end;
+				}
+			}
+			else {
+				if((lastEnd >= (start-0.01)) && (lastEnd <= end)) {
+					timebuffer += (end - lastEnd);
+					lastEnd = end;
+				}
 			}
 		}
 		return timebuffer;
 	},
 
 	checkBuffering: function() {
-		if(this.playing && !this.paused) {
-			var timebuffer = this.getCurrentBufferSize();
-			var time = this.audioDrawing.currentTime;
-			var duration = this.audioDrawing.duration;
-			if(time >= duration)
-				return;
-			if(this.audioDrawing.paused) {
-				if((timebuffer > 5) || (time + timebuffer >= duration))
-					this.audioDrawing.play();
-			}
-			else {
-				if((timebuffer < 1) && (time + timebuffer < duration))
-					this.audioDrawing.pause();
+		var timebuffer = this.getCurrentBufferSize();
+		var time = this.audioDrawing.currentTime;
+		var duration = this.audioDrawing.duration;
+
+		if(this.state == 'buffering') {
+			// if we have 5s in the buffer or if the browser already decided
+			// to stop buffering or if we are at the end
+			if((timebuffer >= 5) || (this.audioDrawing.networkState == 1) || (time + timebuffer >= duration)) {
+				this.state = 'playing';
+				this.audioDrawing.play();
+				this.fireEvent('statechange', this, this.state);
 			}
 		}
+		else if(this.state == 'playing') {
+			// if remains less than 100ms in the buffer, pause
+			// to let enought time for the buffer to grow
+			if((timebuffer <= 0.1) && (time + timebuffer < duration)) {
+				this.state = 'buffering';
+				this.audioDrawing.pause();
+				this.fireEvent('statechange', this, this.state);
+			}
+		}
+		this.fireEvent('bufferingupdate', this, timebuffer);
+	},
+
+	onError: function() {
+		this.state = 'error';
+		this.fireEvent('error', this, this.audioDrawing.error.code);
+		this.fireEvent('statechange', this, this.state);
+	},
+
+	onWaiting: function() {
+		if(!this.canplaythrough)
+			this.audioDrawing.load();
 	},
 
 	onAudioUnload: function() {
-		this.playing = false;
-		this.paused = false;
-		this.audioDrawing.pause();
+		if(this.canplaythrough)
+			this.pause();
 	}
 	/**#@-*/
 }, 
@@ -215,20 +242,19 @@ Ui.Element.extend('Ui.Audio',
 	horizontalAlign: 'left',
 
 	render: function() {
-		var drawing;
 		if(Ui.Audio.htmlAudio) {
 			this.audioDrawing = document.createElement('audio');
 			this.audioDrawing.style.display = 'none';
 			this.connect(this.audioDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.audioDrawing, 'ended', this.onEnded);
-			this.connect(this.audioDrawing, 'timeupdate', this.onTimeupdate);
-			this.connect(this.audioDrawing, 'progress', this.checkBuffering);
+			this.connect(this.audioDrawing, 'timeupdate', this.onTimeUpdate);
+			this.connect(this.audioDrawing, 'error', this.onError);
+			this.connect(this.audioDrawing, 'progress', this.onProgress);
 			this.connect(this.audioDrawing, 'waiting', this.onWaiting);
 			this.audioDrawing.setAttribute('preload', 'auto');
 			this.audioDrawing.load();
-			drawing = this.audioDrawing;
 		}
-		return drawing;
+		return this.audioDrawing;
 	}
 });
 
@@ -238,6 +264,7 @@ Ui.Audio.flashAudio = false;
 Ui.Audio.supportOgg = false;
 Ui.Audio.supportMp3 = false;
 Ui.Audio.supportWav = false;
+Ui.Audio.supportAac = false;
 
 // check for HTMLAudioElement
 Ui.Audio.audioTest = document.createElement('audio');
@@ -246,9 +273,8 @@ if(Ui.Audio.audioTest.play != undefined) {
 	Ui.Audio.supportWav = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/wav');
 	Ui.Audio.supportMp3 = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/mpeg');
 	Ui.Audio.supportOgg = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/ogg; codecs="vorbis"');
+	Ui.Audio.supportAac = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/mp4; codecs="mp4a.40.2"');
 }
-// TODO: flash support
-//		Ui.Audio.flashAudio = true;
 Ui.Audio.audioTest = undefined;
 
 

@@ -7,137 +7,103 @@ Ui.Element.extend('Ui.Video',
 	webmSrc: undefined,
 	loaddone: false,
 	videoDrawing: undefined,
-	playing: false,
-	paused: false,
-	naturalWidth: undefined,
-	naturalHeight: undefined,
 	canplaythrough: false,
+	// possible values [initial|playing|paused|buffering|error]
+	state: 'initial',
 
 	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.Element
-	 */
+	*	@constructs
+	*	@class
+	*	@extends Ui.Element
+	*/
 	constructor: function(config) {
-		this.addEvents('ready', 'ended', 'timeupdate');
+		this.addEvents('ready', 'ended', 'timeupdate', 'bufferingupdate', 'statechange', 'error');
 		this.connect(this, 'unload', this.onVideoUnload);
-		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
+		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.webmSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Video.supportOgg))
 				this.setSrc(config.oggSrc);
-			else if((config.mp4Src != undefined) && (Ui.Video.supportMp4))
-				this.setSrc(config.mp4Src);
+			else if((config.mp3Src != undefined) && (Ui.Video.supportMp3))
+				this.setSrc(config.mp3Src);
 			else if((config.webmSrc != undefined) && (Ui.Video.supportWebm))
 				this.setSrc(config.webmSrc);
 			delete(config.oggSrc);
-			delete(config.mp4Src);
+			delete(config.mp3Src);
 			delete(config.webmSrc);
 		}
 	},
 
 	/**
-	 * Set the file URL for the current video element
-	 */
+	* Set the file URL for the current video element
+	*/
 	setSrc: function(src) {
-		this.loaddone = false;
+		this.canplaythrough = false;
+		this.state = 'initial';
 		this.src = src;
-		if(Ui.Video.htmlVideo)
-			this.videoDrawing.setAttribute('src', src);
+		this.videoDrawing.setAttribute('src', src);
+		try {
+			this.videoDrawing.load();
+		} catch(e) {}
 	},
 
 	/**
-	 * Play the video element. If the element is already playing
-	 * stop it and restart from the begining.
-	 */
+	* Play the video element. If the element is already playing
+	* stop it and restart from the begining.
+	*/
 	play: function() {
-		if(Ui.Video.htmlVideo) {
-			if(!this.canplaythrough) {
-				try {
-					this.videoDrawing.load();
-				} catch(e) {}				
-			}
-			else {
-				try {
-					this.videoDrawing.play();
-
-//					this.videoDrawing.pause();
-//					this.videoDrawing.currentTime = 0;
-	//				this.videoDrawing.load();
-				} catch(e) {}
-//			this.videoDrawing.play();
-			}
-		}
-		this.playing = true;
-		this.paused = false;
+		this.state = 'playing';
+		this.fireEvent('statechange', this, this.state);
+		if(this.canplaythrough)
+			this.videoDrawing.play();
+		else
+			this.videoDrawing.load();
 	},
 
 	/**
-	 * Pause the video element. If the element is not
-	 * currently playing, do nothing.
-	 */
+	* Pause the video element. If the element is not
+	* currently playing, do nothing.
+	*/
 	pause: function() {
-		if(!this.playing || this.paused)
-			return;
-		this.paused = true;
-		if(Ui.Video.htmlVideo)
+		this.state = 'paused';
+		this.fireEvent('statechange', this, this.state);
+		if(this.canplaythrough)
 			this.videoDrawing.pause();
+		else
+			this.videoDrawing.load();
 	},
 
 	/**
-	 * Stop the video if playing.
-	 */
+	* Stop the sound if playing.
+	*/
 	stop: function() {
-		if(!this.playing)
-			return;
-		if(!this.paused) {
-			this.paused = false;
-			this.videoDrawing.pause();
-		}
-		this.playing = false;
-		if(Ui.Video.htmlVideo)
-			this.videoDrawing.currentTime = 0;
+		this.videoDrawing.pause();
 		this.onEnded();
 	},
 
 	/**
-	 * Resume the videl element if in paused else
-	 * do nothing.
-	 */
-	resume: function() {
-		if(!this.playing || !this.paused)
-			return;
-		this.paused = false;
-		if(Ui.Video.htmlVideo)
-			this.videoDrawing.play();
-	},
-
-	/**
-	 * Set the audio volume between 0 and 1
-	 */
+	* Set the video volume between 0 and 1
+	*/
 	setVolume: function(volume) {
-		if(Ui.Video.htmlVideo)
-			this.videoDrawing.volume = volume;
+		this.videoDrawing.volume = volume;
 	},
 
 	/**
-	 * Get the audio volume between 0 and 1
-	 */
+	* Get the video volume between 0 and 1
+	*/
 	getVolume: function() {
-		if(Ui.Video.htmlVideo)
-			return this.videoDrawing.volume;
-		return 1;
+		return this.videoDrawing.volume;
 	},
 
 	/**
-	 * Return the duration in seconds of the video file
-	 * or undefined if unknown. This value is only known
-	 * after the ready event.
-	 */
+	* @return the duration in seconds of the video file
+	* or undefined if unknown. This value is only known
+	* after the ready event.
+	*/
 	getDuration: function() {
 		return this.videoDrawing.duration;
 	},
 
 	/**
-	 * Seek the current position of the video.
+	 * Seek the current position of the video file.
 	 */
 	setCurrentTime: function(time) {
 		this.videoDrawing.currentTime = time;
@@ -148,7 +114,26 @@ Ui.Element.extend('Ui.Video',
 	 * This value is only known after the ready event.
 	 */
 	getCurrentTime: function() {
-		return this.videoDrawing.currentTime;
+		if(this.videoDrawing.currentTime == undefined)
+			return 0;
+		else
+			return this.videoDrawing.currentTime;
+	},
+
+	/**
+	 * Return the current state of the media
+	 */
+	getState: function() {
+		return this.state;
+	},
+
+	/**
+	 * Return true if the video is ready to play
+	 * and infos like duration, currentTime... are
+	 * known
+	 */
+	getIsReady: function() {
+		return this.canplaythrough;
 	},
 
 	/**
@@ -169,111 +154,130 @@ Ui.Element.extend('Ui.Video',
 		return this.naturalHeight;
 	},
 
-	//
-	// Private
-	//
-
+	/**#@+
+	* @private
+	*/
 	onReady: function() {
+		this.canplaythrough = true;
 		this.naturalWidth = this.videoDrawing.videoWidth;
 		this.naturalHeight = this.videoDrawing.videoHeight;
-		this.fireEvent('ready');
-		this.canplaythrough = true;
-		if(this.playing && !this.paused)
+		if(this.state == 'playing')
 			this.videoDrawing.play();
+		else if(this.state == 'paused')
+			this.videoDrawing.pause();
+		this.fireEvent('ready');
 	},
 
-	onTimeupdate: function() {
+	onTimeUpdate: function() {
+		this.fireEvent('timeupdate', this, this.videoDrawing.currentTime);
 		this.checkBuffering();
-		this.fireEvent('timeupdate', this.videoDrawing.currentTime);
 	},
 
 	onEnded: function() {
-		this.playing = false;
-		this.paused = false;
-		this.fireEvent('ended');
+		this.state = 'initial';
+		this.videoDrawing.currentTime = 0;
+		this.fireEvent('ended', this);
+		this.fireEvent('statechange', this, this.state);
 	},
 
-	onWaiting: function() {
-		if(this.playing && !this.paused)
-			this.videoDrawing.pause();
+	onProgress: function() {
+		this.checkBuffering();
 	},
 
 	getCurrentBufferSize: function() {
 		var buffered = this.videoDrawing.buffered;
 		var timebuffer = 0;
 		var time = this.videoDrawing.currentTime;
+		if(time == undefined)
+			time = 0;
+		var lastEnd = undefined;
 		for(var i = 0; i < buffered.length; i++) {
 			var start = buffered.start(i);
 			var end = buffered.end(i);
-			if((start <= time) && (end >= time)) {
-				timebuffer = end - time;
-				break;
+			if(lastEnd == undefined) {
+				if((start <= time) && (end >= time)) {
+					timebuffer = end - time;
+					lastEnd = end;
+				}
+			}
+			else {
+				if((lastEnd >= (start-0.01)) && (lastEnd <= end)) {
+					timebuffer += (end - lastEnd);
+					lastEnd = end;
+				}
 			}
 		}
 		return timebuffer;
 	},
 
 	checkBuffering: function() {
-		if(this.playing && !this.paused) {
-			var timebuffer = this.getCurrentBufferSize();
-			var time = this.videoDrawing.currentTime;
-			var duration = this.videoDrawing.duration;
-			if(time >= duration)
-				return;
-			if(this.videoDrawing.paused) {
-				if((timebuffer > 5) || (time + timebuffer >= duration))
-					this.videoDrawing.play();
-			}
-			else {
-				if((timebuffer < 1) && (time + timebuffer < duration))
-					this.videoDrawing.pause();
+		var timebuffer = this.getCurrentBufferSize();
+		var time = this.videoDrawing.currentTime;
+		var duration = this.videoDrawing.duration;
+
+		if(this.state == 'buffering') {
+			// if we have 5s in the buffer or if the browser already decided
+			// to stop buffering or if we are at the end
+			if((timebuffer >= 5) || (this.videoDrawing.networkState == 1) || (time + timebuffer >= duration)) {
+				this.state = 'playing';
+				this.videoDrawing.play();
+				this.fireEvent('statechange', this, this.state);
 			}
 		}
+		else if(this.state == 'playing') {
+			// if remains less than 100ms in the buffer, pause
+			// to let enought time for the buffer to grow
+			if((timebuffer <= 0.1) && (time + timebuffer < duration)) {
+				this.state = 'buffering';
+				this.videoDrawing.pause();
+				this.fireEvent('statechange', this, this.state);
+			}
+		}
+		this.fireEvent('bufferingupdate', this, timebuffer);
+	},
+
+	onError: function() {
+		this.state = 'error';
+		this.fireEvent('error', this, this.videoDrawing.error.code);
+		this.fireEvent('statechange', this, this.state);
+	},
+
+	onWaiting: function() {
+		if(!this.canplaythrough)
+			this.videoDrawing.load();
 	},
 
 	onVideoUnload: function() {
-		this.playing = false;
-		this.paused = false;
-		this.videoDrawing.pause();
+		if(this.canplaythrough)
+			this.pause();
 	}
+	/**#@-*/
 }, 
 /**@lends Ui.Video#*/
 {
 	render: function() {
-		var drawing;
 		if(Ui.Video.htmlVideo) {
 			this.videoDrawing = document.createElement('video');
 			this.connect(this.videoDrawing, 'canplaythrough', this.onReady);
 			this.connect(this.videoDrawing, 'ended', this.onEnded);
-			this.connect(this.videoDrawing, 'timeupdate', this.onTimeupdate);
-			this.connect(this.videoDrawing, 'progress', this.checkBuffering);
+			this.connect(this.videoDrawing, 'timeupdate', this.onTimeUpdate);
+			this.connect(this.videoDrawing, 'error', this.onError);
+			this.connect(this.videoDrawing, 'progress', this.onProgress);
 			this.connect(this.videoDrawing, 'waiting', this.onWaiting);
 			this.videoDrawing.setAttribute('preload', 'auto');
 			this.videoDrawing.load();
 			this.videoDrawing.style.position = 'absolute';
 			this.videoDrawing.style.left = '0px';
 			this.videoDrawing.style.top = '0px';
-			drawing = this.videoDrawing;
 		}
-		return drawing;
+		return this.videoDrawing;
 	},
+
 
 	arrangeCore: function(width, height) {
 		if(Ui.Video.htmlVideo) {
 			this.videoDrawing.setAttribute('width', width);
 			this.videoDrawing.setAttribute('height', height);
-			// correct webkit bug
-//			if(navigator.isWebkit) {
-//				var matrix = this.foreignObject.getScreenCTM();
-//				this.videoDrawing.style.webkitTransform = 'matrix('+matrix.a.toFixed(4)+','+matrix.b.toFixed(4)+','+matrix.c.toFixed(4)+','+matrix.d.toFixed(4)+','+matrix.e.toFixed(4)+','+matrix.f.toFixed(4)+')';
-//				this.videoDrawing.style.webkitTransformOrigin = '0px 0px';
-//			}
-			// correct IE that handle nothing
-//			if(navigator.isIE) {
-//				var matrix = this.foreignObject.getScreenCTM();
-//				this.videoDrawing.style.left = matrix.e+'px';
-//				this.videoDrawing.style.top = matrix.f+'px';
-//			}
 		}
 	}
 });
@@ -293,9 +297,5 @@ if(Ui.Video.videoTest.play != undefined) {
 	Ui.Video.supportOgg = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/ogg; codecs="theora, vorbis"');
 	Ui.Video.supportWebm = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/webm; codecs="vp8, vorbis"');
 }
-// TODO: flash support
-//		Ui.Video.flashVideo = true;
 Ui.Video.videoTest = undefined;
 
-//console.log('Video rendering HTML: '+Ui.Video.htmlVideo+', Flash: '+Ui.Video.flashVideo);
-//console.log('Video format OGG: '+Ui.Video.supportOgg+', MP4: '+Ui.Video.supportMp4+', WebM: '+Ui.Video.supportWebm);
