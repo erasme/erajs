@@ -19,6 +19,12 @@ Ui.App.extend('Infos.App', {
 			if((typeof(val) === 'string') || (typeof(val) === 'boolean'))
 				msg += prop+': '+val+'\n';
 		}
+		for(var prop in Ui.Audio) {
+			var val = Ui.Audio[prop];
+			if((typeof(val) === 'string') || (typeof(val) === 'boolean'))
+				msg += 'Ui.Audio.'+prop+': '+val+'\n';
+		}
+
 		text.setText(msg);
 	}
 });
