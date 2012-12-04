@@ -289,6 +289,16 @@ if(navigator.isIE) {
 			return undefined;
 		}
 	}
+	if((navigator.isIE7 || navigator.isIE8) && !('DOMParser' in window)) {
+		window.DOMParser = function() {
+			this.parseFromString = function(str) {
+				var xmlDocument = new ActiveXObject('Microsoft.XMLDOM');
+				xmlDocument.async = false;
+				xmlDocument.loadXML(str);
+				return xmlDocument;
+			}
+		};
+	}
 }
 
 // correct bug with high density screen on Chrome mobile
