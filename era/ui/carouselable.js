@@ -234,9 +234,9 @@ Ui.Container.extend('Ui.Carouselable',
 		}
 		relprogress = this.ease.ease(relprogress);
 		this.pos = -(this.animStart + relprogress * (this.animNext - this.animStart));
-		this.movable.setPosition(this.pos * this.getLayoutWidth(), undefined);		
+		this.movable.setPosition(this.pos * this.getLayoutWidth(), undefined);
 
-		if(relprogress >= 1)
+		if(this.alignClock == undefined)
 			this.onChange();
 		else
 			this.updateShow();
