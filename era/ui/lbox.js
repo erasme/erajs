@@ -20,6 +20,8 @@ Ui.Container.extend('Ui.LBox',
 	},
 
 	setContent: function(content) {
+		if((this.getChildren().length == 1) && (content === this.getFirstChild()))
+			return;
 		while(this.getFirstChild() != undefined)
 			this.removeChild(this.getFirstChild());
 		if((content != undefined) && (typeof(content) == 'object')) {
