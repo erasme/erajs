@@ -121,6 +121,8 @@ Ui.LBox.extend('Ui.Draggable',
 	 */
 
 	onDragStart: function(event) {
+		if(this.lock || this.getIsDisabled())
+			return;
 		if(!this.dragAllowed) {
 			this.setTransform(new Ui.Matrix());
 			if(this.clock != undefined) {
@@ -187,7 +189,7 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onMouseDown: function(event) {
-		if(this.lock || this.isDown || (event.button != 0))
+		if(this.lock || this.isDown || (event.button != 0) || this.getIsDisabled())
 			return;
 		this.isDown = true;
 		this.dragAllowed = false;
@@ -279,7 +281,7 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onFingerDown: function(event) {
-		if(this.lock || this.isDown)
+		if(this.lock || this.isDown || this.getIsDisabled())
 			return;
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
 		this.connect(event.finger, 'fingerup', this.onFingerUp);
