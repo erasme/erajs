@@ -2,9 +2,9 @@ Ui.Element.extend('Ui.CompactLabel',
 /**@lends Ui.CompactLabel#*/
 {
 	text: '',
-	fontSize: 16,
-	fontFamily: 'Sans-serif',
-	fontWeight: 'normal',
+	fontSize: undefined,
+	fontFamily: undefined,
+	fontWeight: undefined,
 	color: undefined,
 	textDrawing: undefined,
 	maxLine: undefined,
@@ -81,7 +81,10 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	getFontSize: function() {
-		return this.fontSize;
+		if(this.fontSize != undefined)
+			return this.fontSize;
+		else
+			return this.getStyleProperty('fontSize');
 	},
 
 	setFontFamily: function(fontFamily) {
@@ -94,7 +97,10 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	getFontFamily: function() {
-		return this.fontFamily;
+		if(this.fontFamily != undefined)
+			return this.fontFamily;
+		else
+			return this.getStyleProperty('fontFamily');
 	},
 
 	setFontWeight: function(fontWeight) {
@@ -107,7 +113,10 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	getFontWeight: function() {
-		return this.fontWeight;
+		if(this.fontWeight != undefined)
+			return this.fontWeight;
+		else
+			return this.getStyleProperty('fontWeight');
 	},
 
 	setColor: function(color) {
@@ -121,11 +130,14 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	getColor: function() {
-		return this.color;
+		if(this.color != undefined)
+			return this.color;
+		else
+			return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
 	flushLine: function(y, line, width, render) {
-		var size = Ui.Label.measureText(line, this.fontSize, this.fontFamily, this.fontWeight);
+		var size = Ui.Label.measureText(line, this.getFontSize(), this.getFontFamily(), this.getFontWeight());
 		if(render) {
 			var x;
 			if(this.textAlign == 'left')
@@ -153,12 +165,16 @@ Ui.Element.extend('Ui.CompactLabel',
 		if(this.text === undefined)
 			return 0;
 
-		var dotWidth = (Ui.Label.measureText('...', this.fontSize, this.fontFamily, this.fontWeight)).width;
+		var fontSize = this.getFontSize();
+		var fontFamily = this.getFontFamily();
+		var fontWeight = this.getFontWeight();
+
+		var dotWidth = (Ui.Label.measureText('...', fontSize, fontFamily, fontWeight)).width;
 		var y = 0;
 		var line = '';
 		var lineCount = 0;
 		for(var i = 0; i < this.text.length; i++) {
-			var size = Ui.Label.measureText(line+this.text.charAt(i), this.fontSize, this.fontFamily, this.fontWeight);
+			var size = Ui.Label.measureText(line+this.text.charAt(i), fontSize, fontFamily, fontWeight);
 			if((this.maxLine != undefined) && (lineCount+1 >= this.maxLine) && (size.width + dotWidth > width)) {
 				y += this.flushLine(y, line+'...', width, render);
 				return y;
@@ -180,7 +196,11 @@ Ui.Element.extend('Ui.CompactLabel',
 		if(this.text === undefined)
 			return 0;
 
-		var dotWidth = (Ui.Label.measureText('...', this.fontSize, this.fontFamily, this.fontWeight)).width;
+		var fontSize = this.getFontSize();
+		var fontFamily = this.getFontFamily();
+		var fontWeight = this.getFontWeight();
+
+		var dotWidth = (Ui.Label.measureText('...', fontSize, fontFamily, fontWeight)).width;
 
 		var words = [];
 		var wordsSize = [];
@@ -189,7 +209,7 @@ Ui.Element.extend('Ui.CompactLabel',
 		for(var i = 0; i < tmpWords.length; i++) {
 			var word = tmpWords[i];
 			while(true) {
-				var wordSize = (Ui.Label.measureText(word, this.fontSize, this.fontFamily, this.fontWeight)).width;
+				var wordSize = (Ui.Label.measureText(word, fontSize, fontFamily, fontWeight)).width;
 				if(wordSize < width) {
 					words.push(word);
 					wordsSize.push(wordSize);
@@ -199,11 +219,11 @@ Ui.Element.extend('Ui.CompactLabel',
 					// find the biggest possible word part
 					var tmpWord = '';
 					for(var i2 = 0; i2 < word.length; i2++) {
-						if((Ui.Label.measureText(tmpWord+word.charAt(i2), this.fontSize, this.fontFamily, this.fontWeight)).width < width)
+						if((Ui.Label.measureText(tmpWord+word.charAt(i2), fontSize, fontFamily, fontWeight)).width < width)
 							tmpWord += word.charAt(i2);
 						else {
 							words.push(tmpWord);
-							wordsSize.push((Ui.Label.measureText(tmpWord, this.fontSize, this.fontFamily, this.fontWeight)).width);
+							wordsSize.push((Ui.Label.measureText(tmpWord, fontSize, fontFamily, fontWeight)).width);
 							word = word.substr(tmpWord.length, word.length - tmpWord.length);
 							break;
 						}
@@ -214,7 +234,7 @@ Ui.Element.extend('Ui.CompactLabel',
 			}
 		}
 
-		var spaceWidth = (Ui.Label.measureText('. .', this.fontSize, this.fontFamily, this.fontWeight)).width - (Ui.Label.measureText('..', this.fontSize, this.fontFamily, this.fontWeight)).width;
+		var spaceWidth = (Ui.Label.measureText('. .', fontSize, fontFamily, fontWeight)).width - (Ui.Label.measureText('..', fontSize, fontFamily, fontWeight)).width;
 
 		var y = 0;
 		var x = 0;
@@ -226,7 +246,7 @@ Ui.Element.extend('Ui.CompactLabel',
 					if((this.maxLine != undefined) && (lineCount+1 >= this.maxLine)) {
 						var lineWidth;
 						while(true) {
-							lineWidth = (Ui.Label.measureText(line, this.fontSize, this.fontFamily, this.fontWeight)).width;
+							lineWidth = (Ui.Label.measureText(line, fontSize, fontFamily, fontWeight)).width;
 							if(lineWidth+dotWidth > width) {
 								if(line.length <= 1) {
 									line = '...';
@@ -256,7 +276,7 @@ Ui.Element.extend('Ui.CompactLabel',
 				if((this.maxLine != undefined) && (lineCount+1 >= this.maxLine)) {
 					var lineWidth;
 					while(true) {
-						lineWidth = (Ui.Label.measureText(line, this.fontSize, this.fontFamily, this.fontWeight)).width;
+						lineWidth = (Ui.Label.measureText(line, fontSize, fontFamily, fontWeight)).width;
 						if(lineWidth+dotWidth > width) {
 							if(line.length <= 1) {
 								line = '...';
@@ -302,6 +322,17 @@ Ui.Element.extend('Ui.CompactLabel',
 		return this.textDrawing;
 	},
 
+	onStyleChange: function() {
+		this.textDrawing.style.fontSize = this.getFontSize()+'px';
+		this.textDrawing.style.fontFamily = this.getFontFamily();
+		this.textDrawing.style.fontWeight = this.getFontWeight();
+		if(navigator.supportRgba)
+			this.textDrawing.style.color = this.getColor().getCssRgba();
+		else
+			this.textDrawing.style.color = this.getColor().getCssHtml();
+		this.invalidateMeasure();
+	},
+
 	measureCore: function(width, height) {
 		if(this.getWidth() != undefined)
 			width = this.getWidth();
@@ -330,6 +361,13 @@ Ui.Element.extend('Ui.CompactLabel',
 			else
 				this.updateFlowWords(width, true);
 		}
+	}
+}, {
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		fontSize: 16,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
 	}
 });
 
