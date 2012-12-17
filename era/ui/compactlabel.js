@@ -312,10 +312,13 @@ Ui.Element.extend('Ui.CompactLabel',
 	render: function() {
 		// create the container for all text rendering
 		this.textDrawing = document.createElement('div');
-		this.textDrawing.style.fontFamily = this.fontFamily;
-		this.textDrawing.style.fontWeight = this.fontWeight;
-		this.textDrawing.style.fontSize = this.fontSize+'px';
-		this.textDrawing.style.color = this.color;
+		this.textDrawing.style.fontFamily = this.getFontFamily();
+		this.textDrawing.style.fontWeight = this.getFontWeight();
+		this.textDrawing.style.fontSize = this.getFontSize()+'px';
+		if(navigator.supportRgba)
+			this.textDrawing.style.color = this.getColor().getCssRgba();
+		else
+			this.textDrawing.style.color = this.getColor().getCssHtml();
 		this.textDrawing.style.position = 'absolute';
 		this.textDrawing.style.left = '0px';
 		this.textDrawing.style.top = '0px';
