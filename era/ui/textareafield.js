@@ -2,7 +2,6 @@ Ui.LBox.extend('Ui.TextAreaField',
 /**@lends Ui.TextAreaField#*/
 {
 	textarea: undefined,
-	scroll: undefined,
 
 	/**
 	 * @constructs
@@ -20,14 +19,11 @@ Ui.LBox.extend('Ui.TextAreaField',
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radius: 4, marginTop: 1, marginBottom: 1 }));
 		this.append(new Ui.Shadow({ inner: true, radius: 4, marginTop: 1, marginBottom: 1, opacity: 0.2 }));
 
-		this.scroll = new Ui.ScrollingArea();
-		this.append(this.scroll);
-
 		this.textarea = new Ui.TextArea({ margin: 4, fontSize: 16 });
 		this.connect(this.textarea, 'change', function(textarea, value) {
 			this.fireEvent('change', this, value);
 		});
-		this.scroll.setScrollingContent(this.textarea);
+		this.append(this.textarea);
 	},
 
 	getValue: function() {
