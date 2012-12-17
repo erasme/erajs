@@ -6,7 +6,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 	startTime: undefined,
 	allowSelect: false,
 	timer: undefined,
-	hasHtmlFocus: false,
+//	hasHtmlFocus: false,
 	anchorNode: null,
 	anchorOffset: 0,
 	
@@ -91,10 +91,10 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);			
 		}
-		else {
-			if(this.hasHtmlFocus)
-				event.stopPropagation();
-		}
+//		else {
+//			if(this.hasHtmlFocus)
+//				event.stopPropagation();
+//		}
 	},
 
 	onTouchEnd: function(event) {
@@ -120,7 +120,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 		}*/
 	},
 
-	onHtmlFocus: function(event) {
+/*	onHtmlFocus: function(event) {
 		console.log('onHtmlFocus');
 		this.hasHtmlFocus = true;
 		this.setSelectable(true);
@@ -139,7 +139,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.timer = undefined;
 		}
 		this.allowSelect = false;
-	},
+	},*/
 
 	onTimer: function(timer) {
 		this.allowSelect = true;
