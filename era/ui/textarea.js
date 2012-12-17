@@ -16,7 +16,7 @@ Ui.Element.extend('Ui.TextArea',
 	startTime: undefined,
 	allowSelect: false,
 	timer: undefined,
-	hasHtmlFocus: false,
+//	hasHtmlFocus: false,
 
 	/**
 	 * @constructs
@@ -24,7 +24,7 @@ Ui.Element.extend('Ui.TextArea',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.addEvents('down', 'up', 'change', 'scroll');
+		this.addEvents('down', 'up', 'press', 'change', 'scroll');
 		this.setSelectable(true);
 		this.setFocusable(true);
 
@@ -39,8 +39,8 @@ Ui.Element.extend('Ui.TextArea',
 		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
 //		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
 //		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
-		this.connect(this.getDrawing(), 'focus', this.onHtmlFocus);
-		this.connect(this.getDrawing(), 'blur', this.onHtmlBlur);
+//		this.connect(this.getDrawing(), 'focus', this.onHtmlFocus);
+//		this.connect(this.getDrawing(), 'blur', this.onHtmlBlur);
 
 
 		// handle keyboard
@@ -196,7 +196,8 @@ Ui.Element.extend('Ui.TextArea',
 
 /////
 	onTouchStart: function(event) {
-		if(event.targetTouches.length == 1) {
+		// test for <= 1 because of bugged firefox mobile
+		if(event.targetTouches.length <= 1) {
 			event.stopPropagation();
 
 			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
@@ -206,7 +207,9 @@ Ui.Element.extend('Ui.TextArea',
 				this.timer.abort();
 				this.timer = undefined;
 			}
-			this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
+
+			this.onDown();
 		}
 	},
 
@@ -217,12 +220,13 @@ Ui.Element.extend('Ui.TextArea',
 				this.timer = undefined;
 			}
 			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);			
+			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
+			this.onUp();
 		}
-		else {
-			if(this.hasHtmlFocus)
-				event.stopPropagation();
-		}
+//		else {
+//			if(this.hasHtmlFocus)
+//				event.stopPropagation();
+//		}
 	},
 
 	onTouchEnd: function(event) {
@@ -236,6 +240,11 @@ Ui.Element.extend('Ui.TextArea',
 		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
 		this.allowSelect = false;
+
+		this.onUp();
+
+		this.fireEvent('press', this);
+		this.textareaDrawing.focus();
 	},
 
 	onTimer: function(timer) {
@@ -243,24 +252,24 @@ Ui.Element.extend('Ui.TextArea',
 		this.timer = undefined;
 	},
 
-	onHtmlFocus: function(event) {
-		this.hasHtmlFocus = true;
-		this.setSelectable(true);
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
-	},
+//	onHtmlFocus: function(event) {
+//		this.hasHtmlFocus = true;
+//		this.setSelectable(true);
+//		if(this.timer != undefined) {
+//			this.timer.abort();
+//			this.timer = undefined;
+//		}
+//		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+//	},
 
-	onHtmlBlur: function(event) {
-		this.hasHtmlFocus = false;
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.allowSelect = false;
-	},
+//	onHtmlBlur: function(event) {
+//		this.hasHtmlFocus = false;
+//		if(this.timer != undefined) {
+//			this.timer.abort();
+//			this.timer = undefined;
+//		}
+//		this.allowSelect = false;
+//	},
 
 /////
 

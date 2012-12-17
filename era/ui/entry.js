@@ -200,8 +200,9 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onTouchStart: function(event) {
-		if(event.targetTouches.length == 1) {
-			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
+		// test for <= 1 because of bugged firefox mobile
+		if(event.targetTouches.length <= 1) {
+//			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 			event.stopPropagation();
 
@@ -213,6 +214,8 @@ Ui.Element.extend('Ui.Entry',
 				this.timer = undefined;
 			}
 			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
+
+			this.onDown();
 		}
 	},
 
@@ -224,7 +227,8 @@ Ui.Element.extend('Ui.Entry',
 			}
 			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-			this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+//			this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+			this.onUp();
 		}
 	},
 
@@ -239,10 +243,17 @@ Ui.Element.extend('Ui.Entry',
 		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
 		this.allowSelect = false;
-		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+//		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+		this.onUp();
+
+		this.fireEvent('press', this);
+		this.entryDrawing.focus();
+
 	},
 
 	onTimer: function(timer) {
+		console.log('onTimer');
+
 		this.allowSelect = true;
 		this.timer = undefined;
 	},
@@ -262,7 +273,7 @@ Ui.Element.extend('Ui.Entry',
 //			event.stopPropagation();
 //	},
 
-	onFingerDown: function(event) {
+/*	onFingerDown: function(event) {
 		if(this.getHasFocus()) {
 			event.stopPropagation();
 			return;
@@ -314,7 +325,7 @@ Ui.Element.extend('Ui.Entry',
 		this.onUp();
 		this.fireEvent('press', this);
 		this.entryDrawing.focus();
-	},
+	},*/
 
 	onDown: function() {
 		this.isDown = true;
