@@ -89,12 +89,17 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 		var gradient = new Ui.LinearGradient({ orientation: 'horizontal', stops: [
 			{ offset: 0, color: start},	{ offset: 1, color: end} ] });
 		this.rightShadow.setFill(gradient);
+		
+		this.setShowScrollbar(this.getStyleProperty('showScrollbar'));
+		this.setOverScroll(this.getStyleProperty('overScroll'));
 	}
 }, 
 /**@lends Ui.ScrollingArea*/
 {
 	style: {
 		color: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }),
-		shadowColor: new Ui.Color({ r: 0, g: 0, b: 0 })
+		shadowColor: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		showScrollbar: true,
+		overScroll: false
 	}
 });
