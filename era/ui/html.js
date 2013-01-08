@@ -21,6 +21,22 @@ Ui.Element.extend('Ui.Html',
 		this.html = this.htmlDrawing.innerHTML;
 		this.invalidateMeasure();
 	},
+	
+	setText: function(text) {
+		if('textContent' in this.htmlDrawing)
+			this.htmlDrawing.textContent = text;
+		else
+			this.htmlDrawing.innerText = text;
+		this.html = this.htmlDrawing.innerHTML;	
+		this.invalidateMeasure();
+	},
+	
+	getText: function() {
+		if('textContent' in this.htmlDrawing)
+			return this.htmlDrawing.textContent;
+		else
+			return this.htmlDrawing.innerText;
+	},
 
 	onSubtreeModified: function(event) {
 		this.html = this.htmlDrawing.innerHTML;
