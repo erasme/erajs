@@ -2,10 +2,10 @@ Ui.Element.extend('Ui.TextArea',
 /**@lends Ui.TextArea#*/
 {
 	textareaDrawing: undefined,
-	fontSize: 14,
-	fontFamily: 'sans-serif',
-	fontWeight: 'normal',
-	color: 'black',
+	fontSize: undefined,
+	fontFamily: undefined,
+	fontWeight: undefined,
+	color: undefined,
 	value: '',
 	isDown: false,
 	mouseStartX: undefined,
@@ -60,49 +60,63 @@ Ui.Element.extend('Ui.TextArea',
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.textareaDrawing.style.fontSize = this.fontSize+'px';
+			this.textareaDrawing.style.fontSize = this.getFontSize()+'px';
 			this.invalidateMeasure();
 		}
 	},
 
 	getFontSize: function() {
-		return this.fontSize;
+		if(this.fontSize != undefined)
+			return this.fontSize;
+		else
+			return this.getStyleProperty('fontSize');
 	},
 
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.textareaDrawing.style.fontFamily = this.fontFamily;
+			this.textareaDrawing.style.fontFamily = this.getFontFamily();
 			this.invalidateMeasure();
 		}
 	},
 
 	getFontFamily: function() {
-		return this.fontFamily;
+		if(this.fontFamily != undefined)
+			return this.fontFamily;
+		else
+			return this.getStyleProperty('fontFamily');
 	},
 
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.textareaDrawing.style.fontWeight = this.fontWeight;
+			this.textareaDrawing.style.fontWeight = this.getFontWeight();
 			this.invalidateMeasure();
 		}
 	},
 
 	getFontWeight: function() {
-		return this.fontWeight;
+		if(this.fontWeight != undefined)
+			return this.fontWeight;
+		else
+			return this.getStyleProperty('fontWeight');
 	},
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
-			this.textareaDrawing.style.color = this.color;
-			this.invalidateMeasure();
+			this.color = Ui.Color.create(color);
+			if(navigator.supportRgba)
+				this.textareaDrawing.style.color = this.getColor().getCssRgba();
+			else
+				this.textareaDrawing.style.color = this.getColor().getCssHtml();
 		}
 	},
 
 	getColor: function() {
-		return this.color;
+		if(this.color != undefined)
+			return this.color;
+		else
+			return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
 	getValue: function() {
@@ -407,6 +421,17 @@ Ui.Element.extend('Ui.TextArea',
 	arrangeCore: function(width, height) {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = height+'px';
+	},
+
+	onStyleChange: function() {
+		this.textareaDrawing.style.fontSize = this.getFontSize()+'px';
+		this.textareaDrawing.style.fontFamily = this.getFontFamily();
+		this.textareaDrawing.style.fontWeight = this.getFontWeight();
+		if(navigator.supportRgba)
+			this.textareaDrawing.style.color = this.getColor().getCssRgba();
+		else
+			this.textareaDrawing.style.color = this.getColor().getCssHtml();
+		this.invalidateMeasure();
 	}
 }, 
 /**@lends Ui.TextArea*/
@@ -434,5 +459,12 @@ Ui.Element.extend('Ui.TextArea',
 		Ui.Label.measureBox.textContent = text;
 		return { width: Ui.Label.measureBox.offsetWidth, height: Ui.Label.measureBox.offsetHeight };
 	},*/
+
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		fontSize: 14,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
+	}
 });
 

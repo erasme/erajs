@@ -2,11 +2,11 @@
 Ui.Element.extend('Ui.Entry', 
 /**@lends Ui.Entry#*/
 {
-//	entryDrawing: undefined,
-	fontSize: 14,
-	fontFamily: 'Sans-serif',
-	fontWeight: 'normal',
-	color: 'black',
+	entryDrawing: undefined,
+	fontSize: undefined,
+	fontFamily: undefined,
+	fontWeight: undefined,
+	color: undefined,
 	value: '',
 	passwordMode: false,
 	isDown: false,
@@ -75,48 +75,63 @@ Ui.Element.extend('Ui.Entry',
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.entryDrawing.style.fontSize = this.fontSize+'px';
+			this.entryDrawing.style.fontSize = this.getFontSize()+'px';
 			this.invalidateMeasure();
 		}
 	},
 
 	getFontSize: function() {
-		return this.fontSize;
+		if(this.fontSize != undefined)
+			return this.fontSize;
+		else
+			return this.getStyleProperty('fontSize');
 	},
 
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.entryDrawing.style.fontFamily = this.fontFamily;
+			this.entryDrawing.style.fontFamily = this.getFontFamily();
 			this.invalidateMeasure();
 		}
 	},
 
 	getFontFamily: function() {
-		return this.fontFamily;
+		if(this.fontFamily != undefined)
+			return this.fontFamily;
+		else
+			return this.getStyleProperty('fontFamily');
 	},
 
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.entryDrawing.style.fontWeight = this.fontWeight;
+			this.entryDrawing.style.fontWeight = this.getFontWeight();
 			this.invalidateMeasure();
 		}
 	},
 
 	getFontWeight: function() {
-		return this.fontWeight;
+		if(this.fontWeight != undefined)
+			return this.fontWeight;
+		else
+			return this.getStyleProperty('fontWeight');
 	},
 
 	setColor: function(color) {
 		if(this.color != color) {
-			this.color = color;
-			this.entryDrawing.style.color = this.color;
+			this.color = Ui.Color.create(color);
+			if(navigator.supportRgba)
+				this.entryDrawing.style.color = this.getColor().getCssRgba();
+			else
+				this.entryDrawing.style.color = this.getColor().getCssHtml();
 		}
 	},
 
 	getColor: function() {
-		return this.color;
+		if(this.color != undefined)
+			return this.color;
+		else
+			return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
 	getValue: function() {
@@ -395,10 +410,10 @@ Ui.Element.extend('Ui.Entry',
 			this.entryDrawing.style.background = 'none';
 		if(navigator.isWebkit)
 			this.entryDrawing.style.webkitAppearance = 'none';
-		this.entryDrawing.style.fontSize = this.fontSize+'px';
-		this.entryDrawing.style.fontFamily = this.fontFamily;
-		this.entryDrawing.style.fontWeight = this.fontWeight;
-		this.entryDrawing.style.color = this.color;
+		this.entryDrawing.style.fontSize = this.getFontSize()+'px';
+		this.entryDrawing.style.fontFamily = this.getFontFamily();
+		this.entryDrawing.style.fontWeight = this.getFontWeight();
+		this.entryDrawing.style.color = this.getColor();
 		return this.entryDrawing;
 	},
 
@@ -418,5 +433,23 @@ Ui.Element.extend('Ui.Entry',
 
 	onEnable: function() {
 		Ui.Entry.base.onEnable.call(this);
+	},
+
+	onStyleChange: function() {
+		this.entryDrawing.style.fontSize = this.getFontSize()+'px';
+		this.entryDrawing.style.fontFamily = this.getFontFamily();
+		this.entryDrawing.style.fontWeight = this.getFontWeight();
+		if(navigator.supportRgba)
+			this.entryDrawing.style.color = this.getColor().getCssRgba();
+		else
+			this.entryDrawing.style.color = this.getColor().getCssHtml();
+		this.invalidateMeasure();
+	}
+}, {
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		fontSize: 14,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
 	}
 });
