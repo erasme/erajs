@@ -151,8 +151,9 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		}
 		else {
 			this.disconnect(this.inputDrawing, 'change', this.onChange);
-			this.fireEvent('file', this, new Core.File({ iframe: this.iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing }));
+			var file = new Core.File({ iframe: this.iframeDrawing, form: this.formDrawing, fileInput: this.inputDrawing });			
 			this.createInput();
+			this.fireEvent('file', this, file);
 		}
 	}
 
@@ -168,7 +169,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	onUnload: function() {
 		this.disconnect(this.inputDrawing, 'change', this.onChange);
         if(this.iframeDrawing != undefined)
-            document.body.removeChild(this.iframeDrawing);
+			document.body.removeChild(this.iframeDrawing);
 		Ui.UploadableFileWrapper.base.onUnload.call(this);
 	}
 });
