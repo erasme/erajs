@@ -61,6 +61,10 @@ Ui.Container.extend('Ui.Flow',
 		this.insertChildAt(child, position);
 	},
 
+	moveAt: function(child, position) {
+		this.moveChildAt(child, position);
+	},
+
 	/**
 	 * Remove a child from the flow
 	 */
