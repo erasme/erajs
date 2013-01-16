@@ -207,6 +207,13 @@ Ui.Container.extend('Ui.Box',
 			Ui.Box.setResizable(child, true);
 		this.insertChildAt(child, position);
 	},
+	
+	/**
+	 * Move a child element in the current box at the given position
+	 */
+	moveAt: function(child, position) {
+		this.moveChildAt(child, position);
+	},
 
 	/**
 	 * Remove a child from the box
