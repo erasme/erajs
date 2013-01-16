@@ -21,7 +21,6 @@ Ui.LBox.extend('Ui.DropBox',
 
 	allowedMimetypes: undefined,
 	allowFiles: false,
-	allowText: false,
 	allowedMode: 'all',
 
 	/**
@@ -30,13 +29,13 @@ Ui.LBox.extend('Ui.DropBox',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
+		this.addEvents('dragover', 'drop', 'dropfile');
+
 		this.allowedMimetypes = [];
 
 		this.connect(this.drawing, 'dragenter', this.onDragEnter);
 		this.connect(this.drawing, 'dragover', this.onDragOver);
 		this.connect(this.drawing, 'drop', this.onDrop);
-
-		this.addEvents('drop', 'dropfile');
 	},
 
 	/**
@@ -57,91 +56,70 @@ Ui.LBox.extend('Ui.DropBox',
 		this.allowedMimetypes.push(mimetype);
 		if(mimetype.toLowerCase() == 'files')
 			this.allowFiles = true;
-		else
-			this.allowText = true;
 	},
 
 	/**#@+
 	 * @private
 	 */
 
+	dragMimetype: function(event) {
+		var found = undefined;
+		if(event.dataTransfer.types != undefined) {
+			for(var i = 0; (found === undefined) && (i < event.dataTransfer.types.length); i++) {
+				var type = event.dataTransfer.types[i].toLowerCase();
+				for(var i2 = 0; (found === undefined) && (i2 < this.allowedMimetypes.length); i2++) {
+					if(type == this.allowedMimetypes[i2])
+						found = this.allowedMimetypes[i2];
+				}
+			}
+		}
+		return found;
+	},
+
+
 	onDragEnter: function(event) {
 //		console.log('onDragEnter allowText: '+this.allowText+', allowFiles: '+this.allowFiles);
-		if(event.dataTransfer.types != undefined) {
-//			console.log('onDragEnter: '+event.dataTransfer.types);
-//			for(var i = 0; i < event.dataTransfer.types.length; i++)
-//				console.log('detail: '+event.dataTransfer.types[i]);
-			var foundFiles = false;
-			var foundText = false;
-			for(var i = 0; i < event.dataTransfer.types.length; i++) {
-				var type = event.dataTransfer.types[i].toLowerCase();
-//				console.log('text type: '+type);
-				if((type == 'text') || (type == 'text/plain'))
-					foundText = true;
-				else if(type.toLowerCase() == 'files')
-					foundFiles = true;
-			}
-//			console.log('text type found ? '+foundText);
-//			console.log('files type found ? '+foundFiles);
-			if(!(foundFiles && this.allowFiles) && !(foundText && this.allowText))
-				return;
+		if(this.dragMimetype(event) !== undefined) {
+			// accept the drag
+			event.preventDefault();
+			event.stopPropagation();
+			return false;
 		}
-		// accept the drag
-		event.preventDefault();
-		event.stopPropagation();
-
-		return false;
 	},
 
 	onDragOver: function(event) {
-//		console.log('onDragOver effectAllowed: '+event.dataTransfer.effectAllowed);
+//		console.log(this+'.onDragOver effectAllowed: '+event.dataTransfer.effectAllowed+', mimetype: '+this.dragMimetype(event));
+		if((event.dataTransfer !== undefined) && (this.dragMimetype(event) !== undefined)) {
+			// accept the drag over
+			var effectAllowed = 'all';
+			if(event.dataTransfer.effectAllowed != undefined)
+				effectAllowed = event.dataTransfer.effectAllowed;
+			if(effectAllowed == 'uninitialized')
+				effectAllowed = 'all';
 
-		if(event.dataTransfer === undefined)
-			return;
+			var dropEffect = 'copy';
+			if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
+			   ((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
+				dropEffect = 'copy';
+			else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyMove') ||  (this.allowedMode == 'linkMove') || (this.allowedMode == 'move')) &&
+					((effectAllowed == 'all') || (effectAllowed == 'copyMove') || (effectAllowed == 'linkMove') || (effectAllowed == 'move')))
+				dropEffect = 'move';
+			else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyLink') ||  (this.allowedMode == 'link') || (this.allowedMode == 'linkMove')) &&
+					((effectAllowed == 'all') || (effectAllowed == 'copyLink') || (effectAllowed == 'link') || (effectAllowed == 'linkMove')))
+				dropEffect = 'link';
+			else
+				dropEffect = 'none';
 
-		if(event.dataTransfer.types != undefined) {
-//			console.log('onDragOver: '+event.dataTransfer.types);
-			var foundFiles = false;
-			var foundText = false;
-			for(var i = 0; i < event.dataTransfer.types.length; i++) {
-				var type = event.dataTransfer.types[i].toLowerCase();
-				if((type == 'text') || (type == 'text/plain'))
-					foundText = true;
-				else if(type.toLowerCase() == 'files')
-					foundFiles = true;
-			}
-//			console.log('text type found ? '+foundText);
-//			console.log('files type found ? '+foundFiles);
-			if(!(foundFiles && this.allowFiles) && !(foundText && this.allowText))
-				return;
+//			console.log('effectAllowed: '+effectAllowed+', dropEffect: '+dropEffect);
+
+			event.dataTransfer.dropEffect = dropEffect;
+			event.preventDefault();
+			event.stopPropagation();
+
+			var point = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+			this.fireEvent('dragover', this, point.x, point.y);
+			return false;
 		}
-		// accept the drag over
-		var effectAllowed = 'all';
-		if(event.dataTransfer.effectAllowed != undefined)
-			effectAllowed = event.dataTransfer.effectAllowed;
-		if(effectAllowed == 'uninitialized')
-			effectAllowed = 'all';
-
-		var dropEffect = 'copy';
-		if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
-		   ((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
-			dropEffect = 'copy';
-		else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyMove') ||  (this.allowedMode == 'linkMove') || (this.allowedMode == 'move')) &&
-				((effectAllowed == 'all') || (effectAllowed == 'copyMove') || (effectAllowed == 'linkMove') || (effectAllowed == 'move')))
-			dropEffect = 'move';
-		else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyLink') ||  (this.allowedMode == 'link') || (this.allowedMode == 'linkMove')) &&
-				((effectAllowed == 'all') || (effectAllowed == 'copyLink') || (effectAllowed == 'link') || (effectAllowed == 'linkMove')))
-			dropEffect = 'link';
-		else
-			dropEffect = 'none';
-
-//		console.log('effectAllowed: '+effectAllowed+', dropEffect: '+dropEffect);
-
-		event.dataTransfer.dropEffect = dropEffect;
-
-		event.preventDefault();
-		event.stopPropagation();
-		return false;
 	},
 
 	onDrop: function(event) {
@@ -161,23 +139,15 @@ Ui.LBox.extend('Ui.DropBox',
 				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }));
 		}
 		else {
-			// look for native types
-			if('types' in event.dataTransfer) {
-				for(var i = 0; i < event.dataTransfer.types.length; i++) {
-					var mimetype = event.dataTransfer.types[i];
-					for(var i2 = 0; i2 < this.allowedMimetypes.length; i2++) {
-						if(this.allowedMimetypes[i2] == mimetype) {
-							var data = event.dataTransfer.getData(mimetype);
-							// accept the drop
-							event.preventDefault();
-							event.stopPropagation();
-							this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
-							return;
-						}
-					}
-				}
+			var mimetype = this.dragMimetype(event);
+			if(mimetype !== undefined) {
+				var data = event.dataTransfer.getData(mimetype);
+				// accept the drop
+				event.preventDefault();
+				event.stopPropagation();
+				this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
 			}
-
+/*
 			// handle "text encoded" mimetypes
 			var data = event.dataTransfer.getData('Text');
 //			console.log('onDrop data Text: '+data);
@@ -203,75 +173,26 @@ Ui.LBox.extend('Ui.DropBox',
 //					console.log('allowed mimetype NOT FOUND');
 				}
 
-/*				var pos = data.indexOf(':');
-				if(pos != -1) {
-					var mimetype = data.substring(0, pos);
-					var data = data.substring(pos+1);
-
-					for(var i = 0; i < this.allowedMimetypes.length; i++) {
-						if(this.allowedMimetypes[i] == mimetype) {
+//				var pos = data.indexOf(':');
+//				if(pos != -1) {
+//					var mimetype = data.substring(0, pos);
+//					var data = data.substring(pos+1);
+//
+//					for(var i = 0; i < this.allowedMimetypes.length; i++) {
+//						if(this.allowedMimetypes[i] == mimetype) {
 //							console.log('found allowed mimetype: '+mimetype);
-							// accept the drop
-							event.preventDefault();
-							event.stopPropagation();
-							this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
-							return;
-						}
-					}
+//							// accept the drop
+//							event.preventDefault();
+//							event.stopPropagation();
+//							this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
+//							return;
+//						}
+//					}
 //					console.log('allowed mimetype NOT FOUND');
-				}*/
-			}
+//				}
+			}*/
 		}
-
-//		event.dump();
-
-//		event.dataTransfer.dropEffect = 'copy';
-//		event.dataTransfer.dump();
-
-//		var data = event.dataTransfer.getData('text/plain');
-//		if(data != undefined)
-//			console.log('drop text/plain: '+data);
-/*
-		try {
-		data = event.dataTransfer.getData('Text');
-		if(data != undefined)
-			console.log('drop Text: '+data);
-		} catch(e) {}
-
-		try {
-		data = event.dataTransfer.getData('Image');
-		if(data != undefined)
-			console.log('drop Image: '+data);
-		} catch(e) {}
-
-		try {
-		data = event.dataTransfer.getData('URL');
-		if(data != undefined)
-			console.log('drop URL: '+data);
-		} catch(e) {}
-
-		try {
-		data = event.dataTransfer.getData('File');
-		if(data != undefined)
-			console.log('drop File: '+data);
-		} catch(e) {}
-
-
-		try {
-		data = event.dataTransfer.getData('application/era');
-		if(data != undefined)
-			console.log('drop application/era: '+data);
-		} catch(e) {}
-
-*/
-
-//		data = event.dataTransfer.getData('url');
-//		if(data != undefined)
-//			console.log('drop url: '+data);
 		return false;
 	}
 	/**#@-*/
-}, 
-/**@lends Ui.DropBox#*/
-{
 });

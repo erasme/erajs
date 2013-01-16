@@ -38,6 +38,7 @@ Core.Object.extend('Core.DragDataTransfer',
 	overElement: undefined,
 	hasStarted: false,
 	rootWindow: undefined,
+	types: undefined,
 
 	dropEffect: 'none',
 	type: undefined,
@@ -79,8 +80,10 @@ Core.Object.extend('Core.DragDataTransfer',
 			if(this.hasData()) {
 				this.hasStarted = true;
 
-				this.image = this.draggable.cloneNode(true);
+				this.image = this.generateImage(this.draggable);
+//				this.image = this.draggable.cloneNode(true);
 				this.image.style.zIndex = 100000;
+											
 				document.body.appendChild(this.image);
 
 				this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
@@ -99,6 +102,7 @@ Core.Object.extend('Core.DragDataTransfer',
 
 	setData: function(type, data) {
 		this.data[type] = data;
+		this.updateTypes();
 	},
 
 	getData: function(type) {
@@ -115,6 +119,31 @@ Core.Object.extend('Core.DragDataTransfer',
 	/**#@+
 	* @private
 	*/
+	generateImage: function(element) {
+		var res;
+		if(('tagName' in element) && (element.tagName.toUpperCase() == 'CANVAS')) {
+			res = document.createElement('img');
+			// copy styles (position)
+			for(var key in element.style)
+				res.style[key] = element.style[key];
+			res.setAttribute('src', element.toDataURL('image/png'));
+		}
+		else {
+			res = element.cloneNode(false);
+			for(var i = 0; i < element.childNodes.length; i++) {
+				var child = element.childNodes[i];
+				res.appendChild(this.generateImage(child));
+			}
+		}
+		return res;
+	},
+		
+	updateTypes: function() {
+		this.types = [];
+		for(var type in this.data)
+			this.types.push(type);
+	},
+	
 	onMouseMove: function(event) {
 		var deltaX = event.clientX - this.startX;
 		var deltaY = event.clientY - this.startY;
@@ -250,6 +279,8 @@ Core.Object.extend('Core.DragDataTransfer',
 		document.body.removeChild(this.image);
 		var overElement = document.elementFromPoint(event.finger.getX(), event.finger.getY());
 		document.body.appendChild(this.image);
+
+		console.log('onFingerMove overElement: '+overElement);
 
 		var deltaX = event.finger.getX() - this.startX;
 		var deltaY = event.finger.getY() - this.startY;

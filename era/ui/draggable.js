@@ -167,7 +167,8 @@ Ui.LBox.extend('Ui.Draggable',
 
 		// use Text as data because it is the only thing
 		// that works cross browser. Only Firefox support different mimetypes
-		event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.data);
+		//event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.data);
+		event.dataTransfer.setData(this.mimetype, this.data);
 
 		this.fireEvent('dragstart', this);
 
