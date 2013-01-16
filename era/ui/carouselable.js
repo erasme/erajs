@@ -126,6 +126,14 @@ Ui.Container.extend('Ui.Carouselable',
 		// TODO: provide animation
 	},
 
+	insertAt: function(child, pos) {
+		this.box.insertAt(child, pos);
+	},
+	
+	moveAt: function(child, pos) {
+		this.box.moveAt(child, pos);
+	},
+
 	getLogicalChildren: function() {
 		return this.box.getChildren();
 	},
@@ -304,6 +312,14 @@ Ui.Container.extend('Ui.CarouselableBox', {
 
 	remove: function(child) {
 		this.removeChild(child);
+	},
+	
+	insertAt: function(child, pos) {
+		this.insertChildAt(child, pos);
+	},
+	
+	moveAt: function(child, pos) {
+		this.moveChildAt(child, pos);
 	},
 
 	getElementWidth: function() {

@@ -217,6 +217,14 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	remove: function(child) {
 		this.carouselable.remove(child);
 	},
+	
+	insertAt: function(child, pos) {
+		this.carouselable.insertAt(child, pos);
+	},
+	
+	moveAt: function(child, pos) {
+		this.carouselable.moveAt(child, pos);
+	},
 
 	onStyleChange: function() {
 		var color = this.getStyleProperty('focusColor');
