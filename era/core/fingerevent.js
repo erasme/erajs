@@ -100,6 +100,10 @@ Core.Object.extend('Core.Finger',
 		this.captureElement = element;
 	},
 
+	getCaptureElement: function() {
+		return this.captureElement;
+	},
+
 	release: function() {
 		if(this.captureElement != undefined) {
 			this.x = this.initialX;
