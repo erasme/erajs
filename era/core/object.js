@@ -212,7 +212,8 @@ Core.Object.prototype.hasEvent = function(event) {
 /**
 *	Fire the eventName event. All given arguments are passed to the
 *	registered methods.
-*	@param {string} eventName Name of the event to fire. Must have been registred with {@link Core.Object#addEvents} before.
+*	@param {string} eventName Name of the event to fire.
+*   Must have been registred with {@link Core.Object#addEvents} before.
 */
 Core.Object.prototype.fireEvent = function(eventName) {
 	var args = [];
@@ -220,7 +221,7 @@ Core.Object.prototype.fireEvent = function(eventName) {
 		args[i-1] = arguments[i];
 	var handled = false;
 	var eventListeners = this.events[eventName];
-	if(eventListeners != null){
+	if(eventListeners != null) {
 		for(var i = 0; (i < eventListeners.length) && !handled; i++) {
 			handled = this.events[eventName][i].method.apply(this.events[eventName][i].scope, args);
 			if(handled == undefined)
@@ -228,7 +229,7 @@ Core.Object.prototype.fireEvent = function(eventName) {
 		}
 	}
 //#if DEBUG
-	else{
+	else {
 		throw('Event \''+eventName+'\' not found on ' + this);
 	}
 //#end
