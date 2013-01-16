@@ -418,7 +418,7 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	measureCore: function(width, height) {
-		return { width: 8, height: (this.fontSize * 3/2) };
+		return { width: 8, height: (this.getFontSize() * 3/2) };
 	},
 
 	arrangeCore: function(width, height) {
