@@ -12,12 +12,13 @@ Ui.LBox.extend('Ui.TextField',
      * @param {String} [config.value] TextField intial value
      */ 
 	constructor: function(config) {
+		this.addEvents('change', 'validate');
+
 		this.setPadding(3);
 
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1  }));
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  }));
-
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radius: 4, margin: 1, marginBottom: 2  }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1 }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4 }), radius: 4, marginBottom: 1 }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radius: 4, margin: 1, marginBottom: 2 }));
 
 		this.textholder = new Ui.Label({ opacity: 0.5, horizontalAlign: 'center', color: new Ui.Color({ r: 0.4, g: 0.4, b: 0.4 }), margin: 3 });
 		this.append(this.textholder);
@@ -31,8 +32,6 @@ Ui.LBox.extend('Ui.TextField',
 
 		this.connect(this.entry, 'change', this.onEntryChange);
 		this.connect(this.entry, 'validate', this.onEntryValidate);
-
-		this.addEvents('change', 'validate');
 	},
 
 	setTextHolder: function(text) {
@@ -49,6 +48,8 @@ Ui.LBox.extend('Ui.TextField',
 
 	setValue: function(value) {
 		this.entry.setValue(value);
+		if((value == undefined) || (value == ''))
+			this.textholder.show();
 	},
 
 	/**#@+
