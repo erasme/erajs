@@ -133,7 +133,6 @@ Ui.Element.extend('Ui.TextArea',
 
 	setOffset: function(offsetX, offsetY) {
 //		console.log(this+'.setOffset('+offsetX+','+offsetY+')');
-
 		this.textareaDrawing.scrollLeft = offsetX;
 		this.textareaDrawing.scrollTop = offsetY;
 	},
@@ -401,18 +400,21 @@ Ui.Element.extend('Ui.TextArea',
 		else
 			this.textareaDrawing.style.background = 'none';
 		if(navigator.isWebkit)
-			this.textareaDrawing.style.webkitAppearance = 'none'
-		this.textareaDrawing.style.fontSize = this.fontSize+'px';
-		this.textareaDrawing.style.fontFamily = this.fontFamily;
-		this.textareaDrawing.style.fontWeight = this.fontWeight;
-		this.textareaDrawing.style.color = this.color;
+			this.textareaDrawing.style.webkitAppearance = 'none';
+		this.textareaDrawing.style.fontSize = this.getFontSize()+'px';
+		this.textareaDrawing.style.fontFamily = this.getFontFamily();
+		this.textareaDrawing.style.fontWeight = this.getFontWeight();
+		if(navigator.supportRgba)
+			this.textareaDrawing.style.color = this.getColor().getCssRgba();
+		else
+			this.textareaDrawing.style.color = this.getColor().getCssHtml();
 		return this.textareaDrawing;
 	},
 
 	measureCore: function(width, height) {
 		this.textareaDrawing.style.width = width+'px';
 		this.textareaDrawing.style.height = '0px';
-		var size = { width: this.textareaDrawing.scrollWidth, height: this.textareaDrawing.scrollHeight };
+		var size = { width: this.textareaDrawing.scrollWidth, height: Math.max(this.getFontSize() * 3/2, this.textareaDrawing.scrollHeight) };
 		this.textareaDrawing.style.width = this.getLayoutWidth()+'px';
 		this.textareaDrawing.style.height = this.getLayoutHeight()+'px';
 		return size;
