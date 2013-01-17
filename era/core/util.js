@@ -57,7 +57,7 @@ try {
 } catch(e) {
 	navigator.supportRgb = false;
 }
-delete(window.test);
+test = undefined;
 
 /**
 *	@namespace Regroup all the non Ui related classes : event, object, httprequest etc. 
