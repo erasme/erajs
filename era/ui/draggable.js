@@ -39,6 +39,8 @@ Ui.LBox.extend('Ui.Draggable',
 	constructor: function(config) {
 		this.addEvents('dragstart', 'dragend', 'press', 'activate', 'menu');
 
+		this.getDrawing().style.cursor = 'pointer';
+
 		this.setFocusable(true);
 
 		this.getDrawing().setAttribute('draggable', true);
