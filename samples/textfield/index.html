@@ -33,7 +33,7 @@ app.setContent(vbox);
 var hbox = new Ui.HBox({ spacing: 10 });
 vbox.append(hbox);
 
-var textfield = new Ui.TextField();
+var textfield = new Ui.TextField({ textHolder: 'Text Holder' });
 hbox.append(textfield, true);
 
 app.connect(textfield, 'change', function(textfield, value) {
@@ -53,6 +53,10 @@ app.connect(getButton, 'press', function() {
 
 var logs = new Test.Logs();
 vbox.append(logs, true);
+
+console.log = function(msg) {
+	var html = logs.log(msg, 'orange');
+};
 
 </script>
   </head>
