@@ -17,19 +17,28 @@ Ui.App.extend('Infos.App', {
 		for(var prop in navigator) {
 			var val = navigator[prop];
 			if((typeof(val) === 'string') || (typeof(val) === 'boolean'))
-				msg += prop+': '+val+'\n';
+				msg += 'navigator.'+prop+': '+val+'\n';
 		}
 		for(var prop in Ui.Audio) {
 			var val = Ui.Audio[prop];
 			if((typeof(val) === 'string') || (typeof(val) === 'boolean'))
 				msg += 'Ui.Audio.'+prop+': '+val+'\n';
 		}
+		for(var prop in Ui.Video) {
+			var val = Ui.Video[prop];
+			if((typeof(val) === 'string') || (typeof(val) === 'boolean'))
+				msg += 'Ui.Video.'+prop+': '+val+'\n';
+		}
+		msg += 'window.devicePixelRatio: '+window.devicePixelRatio+'\n';
+		msg += 'window.innerWidth: '+window.innerWidth+'\n';
+		msg += 'window.innerHeight: '+window.innerHeight+'\n';
+
 
 		text.setText(msg);
 	}
 });
 
-new Infos.App();
+new Infos.App({ style: { "Ui.ScrollingArea": { "overScroll": true } } });
 
 </script>
   </head>
