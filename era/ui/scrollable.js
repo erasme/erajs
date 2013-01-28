@@ -1392,6 +1392,15 @@ Ui.Container.extend('Ui.ScrollableContent',
 }, 
 /**@lends Ui.ScrollableContent#*/
 {
+	renderDrawing: function() {
+		var drawing = Ui.Scrollable.base.renderDrawing.call(this);
+		if(navigator.isIE) {
+			if(!navigator.isIE7 && !navigator.isIE8)
+				drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
+		}
+		return drawing;
+	},
+
 	measureCore: function(width, height) {
 		var size;
 		if(this.content != undefined)
