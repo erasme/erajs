@@ -185,7 +185,8 @@ Core.Object.extend('Core.FingerManager',
 			}
 		}
 
-		event.preventDefault();
+		if(!event.dontPreventDefault)
+			event.preventDefault();
 		event.stopPropagation();
 
 		// like the iOS event thread create a famine in the main thread

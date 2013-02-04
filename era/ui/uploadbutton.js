@@ -10,7 +10,7 @@ Ui.Uploadable.extend('Ui.UploadButton',
 	 */
 	constructor: function(config) {
 		this.graphic = new Ui.ButtonGraphic();
-		this.append(this.graphic);
+		Ui.UploadButton.base.setContent.call(this, this.graphic);
 
 		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
 		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });

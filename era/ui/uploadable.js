@@ -21,7 +21,9 @@ Ui.Pressable.extend('Ui.Uploadable',
 //			this.input = new Ui.UploadableWrapper();
 //			console.log('UploadableWrapper');
 //		}
-//		else
+		if(navigator.iOs)
+			this.input = new Ui.UploadableWrapper();
+		else
 			this.input = new Ui.UploadableFileWrapper();
 		this.append(this.input);
 		this.connect(this.input, 'file', this.onFile);
@@ -81,8 +83,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.setVerticalAlign('top');
-		this.setHorizontalAlign('left');
+		this.setOpacity(0);
 		this.setClipToBounds(true);
 		this.addEvents('file');
 	},
@@ -110,18 +111,25 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		this.formDrawing.enctype = 'multipart/form-data';
 		// needed for IE < 9
 		this.formDrawing.encoding = 'multipart/form-data';
+		this.formDrawing.style.position = 'absolute';
+		this.formDrawing.style.zIndex = 1;
 
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
 		this.inputDrawing.setAttribute('name', 'file');
 		if(this.directoryMode)
 			this.inputDrawing.setAttribute('webkitdirectory', '');
+		this.inputDrawing.style.position = 'absolute';
+		this.inputDrawing.style.zIndex = 1;
 
 		this.connect(this.inputDrawing, 'change', this.onChange);
 		this.formDrawing.appendChild(this.inputDrawing);
 
 		if(navigator.supportFileAPI) {
+			while(this.getDrawing().childNodes.length > 0)
+				this.getDrawing().removeChild(this.getDrawing().childNodes[0]);
 			this.getDrawing().appendChild(this.formDrawing);
+			this.arrangeCore(this.getLayoutX(), this.getLayoutY(), this.getLayoutWidth(), this.getLayoutHeight());
 		}
 		else {
 			// create an iframe now for the async POST
@@ -171,6 +179,22 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
         if(this.iframeDrawing != undefined)
 			document.body.removeChild(this.iframeDrawing);
 		Ui.UploadableFileWrapper.base.onUnload.call(this);
+	},
+	
+	arrangeCore: function(x, y, w, h) {
+		Ui.UploadableFileWrapper.base.arrangeCore.call(this, x, y, w, h);
+		if(this.formDrawing != undefined) {
+			this.formDrawing.style.top = x+'px';
+			this.formDrawing.style.left = y+'px';
+			this.formDrawing.style.width = w+'px';
+			this.formDrawing.style.height = h+'px';
+		}
+		if(this.inputDrawing != undefined) {
+			this.inputDrawing.style.top = x+'px';
+			this.inputDrawing.style.left = y+'px';
+			this.inputDrawing.style.width = w+'px';
+			this.inputDrawing.style.height = h+'px';
+		}
 	}
 });
 
@@ -210,7 +234,7 @@ Ui.Element.extend('Ui.UploadableWrapper',
 		this.formDrawing.style.top = '0px';
 		this.formDrawing.style.width = this.getLayoutWidth()+'px';
 		this.formDrawing.style.height = this.getLayoutHeight()+'px';
-
+		
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
 		this.inputDrawing.name = 'file';
@@ -227,6 +251,15 @@ Ui.Element.extend('Ui.UploadableWrapper',
 		this.formDrawing.appendChild(this.inputDrawing);
 
 		this.connect(this.inputDrawing, 'change', this.onChange);
+		
+		if(navigator.isWebkit)
+			this.inputDrawing.style.webkitUserSelect = 'none';
+		this.connect(this.inputDrawing, 'touchstart', function(event) {
+			event.dontPreventDefault = true;
+		});
+		this.connect(this.inputDrawing, 'touchend', function(event) {
+			event.dontPreventDefault = true;
+		});
 		
 		return this.formDrawing;
 	},
