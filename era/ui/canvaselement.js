@@ -85,6 +85,42 @@ Ui.Element.extend('Ui.CanvasElement',
 			this.context.lineTo(x+width,y+0);
 	},
 
+	roundRectFilledShadow: function(x, y, width, height, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, inner, shadowWidth, color) {
+		this.context.save();
+		for(var i = 0; i < shadowWidth; i++) {
+			var rgba = color.getRgba();
+			var opacity;
+			if(inner) {
+				if(shadowWidth == 1)
+					opacity = 1;
+				else {
+					var x = (i + 1) / shadowWidth;
+					opacity = x * x;
+				}
+			}
+			else
+				opacity = (i+1) / (shadowWidth + 1);
+
+			var color = new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a*opacity });
+			this.context.fillStyle = color.getCssRgba();
+
+			if(inner) {
+				this.context.beginPath();
+				this.roundRect(x, y, width, height, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft);
+				this.roundRect(x+shadowWidth-i, y+shadowWidth-i, width-((shadowWidth-i)*2), height-((shadowWidth-i)*2), radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, true);
+				this.context.closePath();
+				this.context.fill();			
+			}
+			else {
+				this.context.beginPath();
+				this.roundRect(x+i, y+i, width-i*2, height-i*2, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft);
+				this.context.closePath();
+				this.context.fill();
+			}
+		}
+		this.context.restore();
+	},
+
 	svgPath: function(path) {
 		var ctx = this.context;
 		var x = 0;
