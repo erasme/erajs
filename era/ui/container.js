@@ -170,14 +170,20 @@ Ui.Element.extend('Ui.Container',
 	 * @private
 	 */
 	setIsLoaded: function(isLoaded) {
-		if(isLoaded != this.isLoaded) {
+		if(this.isLoaded != isLoaded) {
+			this.isLoaded = isLoaded;
+			if(isLoaded)
+				this.onLoad();
+			else
+				this.onUnload();
 			for(var i = 0; i < this.children.length; i++)
 				this.children[i].setIsLoaded(isLoaded);
-			Ui.Container.base.setIsLoaded.call(this, isLoaded);
 		}
 	},
 
 	onInternalStyleChange: function() {
+		if(!this.isLoaded)
+			return;
 		this.onStyleChange();
 		if(this.children != undefined) {
 			for(var i = 0; i < this.children.length; i++)
@@ -207,14 +213,6 @@ Ui.Element.extend('Ui.Container',
 		Ui.Container.base.onInternalHidden.call(this);
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].setParentVisible(false);
-	},
-
-	onInternalSetOpacity: function(cumulOpacity) {
-		if(this.children === undefined)
-			return;
-		Ui.Container.base.onInternalSetOpacity.call(this);
-		for(var i = 0; i < this.children.length; i++)
-			this.children[i].setParentCumulOpacity(cumulOpacity);
 	}
 	/**#@-*/
 });

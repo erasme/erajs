@@ -706,22 +706,7 @@ Core.Object.extend('Ui.Element',
 
 			if(navigator.supportOpacity)
 				this.drawing.style.opacity = this.opacity;
-			else
-				this.onInternalSetOpacity(this.parentOpacity * this.opacity);
 		}
-	},
-
-	onInternalSetOpacity: function(cumulOpacity) {
-		this.onCumulOpacityChange(cumulOpacity);
-	},
-
-	onCumulOpacityChange: function(cumulOpacity) {
-//		console.log(this+'.onCumulOpacityChange '+cumulOpacity);
-	},
-
-	setParentCumulOpacity: function(parentOpacity) {
-		this.parentOpacity = parentOpacity;
-		this.onInternalSetOpacity(this.parentOpacity * this.opacity);
 	},
 
 	/**
@@ -1119,9 +1104,8 @@ Core.Object.extend('Ui.Element',
 	},
 
 	setParentStyle: function(parentStyle) {
-		if(this.parentStyle != parentStyle) {
+		if(this.parentStyle != parentStyle)
 			this.parentStyle = parentStyle;
-		}
 		this.mergeStyles();
 		this.onInternalStyleChange();
 	},
@@ -1152,6 +1136,8 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onInternalStyleChange: function() {
+		if(!this.isLoaded)
+			return;	
 		this.onStyleChange();
 	},
 
@@ -1304,13 +1290,11 @@ Core.Object.extend('Ui.Element',
 			this.connect(clock, 'complete', function() { this.animClock = undefined; });
 	},
 
-	onLoad: function() {
+	onLoad: function() {	
 		if(this.parent != undefined) {
 			this.setParentStyle(this.parent.mergeStyle);
 			this.setParentDisabled(this.getIsDisabled());
 			this.setParentVisible(this.getIsVisible());
-			if(!navigator.supportOpacity)
-				this.setParentCumulOpacity(this.parentOpacity * this.opacity);
 		}
 		this.fireEvent('load');
 	},
