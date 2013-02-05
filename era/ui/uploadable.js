@@ -182,18 +182,26 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	},
 	
 	arrangeCore: function(x, y, w, h) {
+		if(x === undefined)
+			x = 0;
+		if(y === undefined)
+			y = 0;
+		if(w === undefined)
+			w = 0;
+		if(h === undefined)
+			h = 0;
 		Ui.UploadableFileWrapper.base.arrangeCore.call(this, x, y, w, h);
 		if(this.formDrawing != undefined) {
-			this.formDrawing.style.top = x+'px';
-			this.formDrawing.style.left = y+'px';
-			this.formDrawing.style.width = w+'px';
-			this.formDrawing.style.height = h+'px';
+			this.formDrawing.style.top = Math.round(x)+'px';
+			this.formDrawing.style.left = Math.round(y)+'px';
+			this.formDrawing.style.width = Math.round(w)+'px';
+			this.formDrawing.style.height = Math.round(h)+'px';
 		}
 		if(this.inputDrawing != undefined) {
-			this.inputDrawing.style.top = x+'px';
-			this.inputDrawing.style.left = y+'px';
-			this.inputDrawing.style.width = w+'px';
-			this.inputDrawing.style.height = h+'px';
+			this.inputDrawing.style.top = Math.round(x)+'px';
+			this.inputDrawing.style.left = Math.round(y)+'px';
+			this.inputDrawing.style.width = Math.round(w)+'px';
+			this.inputDrawing.style.height = Math.round(h)+'px';
 		}
 	}
 });
@@ -299,10 +307,10 @@ Ui.Element.extend('Ui.UploadableWrapper',
 	},
 
 	arrangeCore: function(width, height) {
-		this.formDrawing.style.width = width+'px';
-		this.formDrawing.style.height = height+'px';
-		this.inputDrawing.style.width = width+'px';
-		this.inputDrawing.style.height = height+'px';
+		this.formDrawing.style.width = Math.round(width)+'px';
+		this.formDrawing.style.height = Math.round(height)+'px';
+		this.inputDrawing.style.width = Math.round(width)+'px';
+		this.inputDrawing.style.height = Math.round(height)+'px';
 	}
 });
 
