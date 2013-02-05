@@ -261,7 +261,9 @@ Core.Object.extend('Ui.Element',
 	 * the minimum required size
 	 */
 	measure: function(width, height) {
-
+		// no need to measure if the element is not loaded
+		if(!this.isLoaded)
+			return;
 //		console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
 
 		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
@@ -355,6 +357,9 @@ Core.Object.extend('Ui.Element',
 	 * Update the current element arrangement
 	 */
 	arrange: function(x, y, width, height) {
+		// no need to arrange if not loaded
+		if(!this.isLoaded)
+			return;
 		if(isNaN(x))
 			x = 0;
 		if(isNaN(y))

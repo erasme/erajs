@@ -725,9 +725,9 @@ Ui.LBox.extend('Ui.App',
 
 //			document.body.appendChild(this.forceKeyboard);
 
-			this.update();
 			this.setIsLoaded(true);
 			this.setParentVisible(true);
+			this.update();
 			this.fireEvent('ready');
 
 			if(navigator.iOs)
