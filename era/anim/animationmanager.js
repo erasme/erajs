@@ -16,18 +16,10 @@ Core.Object.extend('Anim.AnimationManager',
 		this.start = new Date().getTime();
 	},
 
-	add: function(clock) {
+	add: function(clock) {	
 		this.clocks.push(clock);
-		if(this.clocks.length == 1) {
-			if('webkitRequestAnimationFrame' in window)
-				webkitRequestAnimationFrame(this.onTick);
-			else if('mozRequestAnimationFrame' in window)
-				mozRequestAnimationFrame(this.onTick);
-			else if('msRequestAnimationFrame' in window)
-				msRequestAnimationFrame(this.onTick);
-			else
-				setTimeout(this.onTick, 1/60);
-		}
+		if(this.clocks.length == 1)
+			requestAnimationFrame(this.onTick);
 	},
 
 	remove: function(clock) {
@@ -53,22 +45,20 @@ Core.Object.extend('Anim.AnimationManager',
 			scope.clocks[i].update(current);
 		scope.fireEvent('tick');
 
-		if(scope.clocks.length > 0) {
-			if('webkitRequestAnimationFrame' in window)
-				webkitRequestAnimationFrame(scope.onTick);
-			else if('mozRequestAnimationFrame' in window)
-				mozRequestAnimationFrame(scope.onTick);
-			else if('msRequestAnimationFrame' in window)
-				msRequestAnimationFrame(scope.onTick);
-			else {
-				var endTime = (new Date().getTime())/1000;
-				var deltaTime = endTime - startTime;
-				if(deltaTime < 0)
-					deltaTime = 0;
-				setTimeout(scope.onTick, Math.max(1/60 - deltaTime, 0));
-			}
-		}
+		if(scope.clocks.length > 0)
+			requestAnimationFrame(scope.onTick);
 	}
 });
+
+if(!('requestAnimationFrame' in window)) {
+	if('webkitRequestAnimationFrame' in window)
+		window.requestAnimationFrame = window.webkitRequestAnimationFrame;
+	else if('mozRequestAnimationFrame' in window)
+		window.requestAnimationFrame = window.mozRequestAnimationFrame;
+	else if('msRequestAnimationFrame' in window)
+		window.requestAnimationFrame = window.msRequestAnimationFrame;
+	else
+		window.requestAnimationFrame = function(cb) { setTimeout(cb, 1/60);	}
+}
 
 Anim.AnimationManager.current = new Anim.AnimationManager();
