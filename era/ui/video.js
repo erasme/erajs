@@ -3,7 +3,7 @@ Ui.Element.extend('Ui.Video',
 {
 	src: undefined,
 	oggSrc: undefined,
-	mp3Src: undefined,
+	mp4Src: undefined,
 	webmSrc: undefined,
 	loaddone: false,
 	videoDrawing: undefined,
@@ -19,15 +19,15 @@ Ui.Element.extend('Ui.Video',
 	constructor: function(config) {
 		this.addEvents('ready', 'ended', 'timeupdate', 'bufferingupdate', 'statechange', 'error');
 		this.connect(this, 'unload', this.onVideoUnload);
-		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.webmSrc != undefined)) {
+		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
 			if((config.oggSrc != undefined) && (Ui.Video.supportOgg))
 				this.setSrc(config.oggSrc);
-			else if((config.mp3Src != undefined) && (Ui.Video.supportMp3))
-				this.setSrc(config.mp3Src);
+			else if((config.mp4Src != undefined) && (Ui.Video.supportMp4))
+				this.setSrc(config.mp4Src);
 			else if((config.webmSrc != undefined) && (Ui.Video.supportWebm))
 				this.setSrc(config.webmSrc);
 			delete(config.oggSrc);
-			delete(config.mp3Src);
+			delete(config.mp4Src);
 			delete(config.webmSrc);
 		}
 	},
