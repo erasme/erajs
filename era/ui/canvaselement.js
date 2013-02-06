@@ -21,6 +21,13 @@ Ui.Element.extend('Ui.CanvasElement',
 		this.context.restore();
 	},
 
+	/*
+	 * Get the canvas context
+	 */
+	getContext: function() {
+		return this.context;
+	},
+
 	/**
 	 * Override this method to provide the Canvas rendering
 	 */
