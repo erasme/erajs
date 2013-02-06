@@ -765,8 +765,14 @@ Ui.LBox.extend('Ui.App',
 	enqueueDraw: function(element) {
 		element.drawNext = this.drawList;
 		this.drawList = element;
-		if((this.updateTask === undefined) && this.ready)
-			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+//		if((this.updateTask === undefined) && this.ready)
+//			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+			
+		if((this.updateTask === undefined) && this.ready) {
+			var app = this;
+			this.updateTask = true;
+			requestAnimationFrame(function() { app.update() });
+		}
 	}
 
 /*
@@ -880,8 +886,14 @@ Ui.LBox.extend('Ui.App',
 //		if(this.measureValid) {
 			this.invalidateArrange();
 			this.measureValid = false;
-			if((this.updateTask === undefined) && this.ready)
-				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+//			if((this.updateTask === undefined) && this.ready)
+//				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });				
+				
+			if((this.updateTask === undefined) && this.ready) {
+				var app = this;
+				this.updateTask = true;
+				requestAnimationFrame(function() { app.update() });
+			}
 //		}
 	},
 
@@ -892,8 +904,14 @@ Ui.LBox.extend('Ui.App',
 
 //			this.enqueueArrange(this);
 
-			if((this.updateTask === undefined) && this.ready)
-				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+//			if((this.updateTask === undefined) && this.ready)
+//				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
+			if((this.updateTask === undefined) && this.ready) {
+				var app = this;
+				this.updateTask = true;
+				requestAnimationFrame(function() { app.update() });
+			}
+				
 //		}
 	},
 
