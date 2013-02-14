@@ -122,8 +122,7 @@ Ui.Element.extend('Ui.Image',
 }, 
 /**@lends Ui.Image#*/
 {
-	render: function() {
-		/**#nocode+ Avoid Jsdoc warnings...*/
+	renderDrawing: function() {
 		this.imageDrawing = document.createElement('img');
 		this.imageDrawing.style.position = 'absolute';
 		this.imageDrawing.style.top = '0px';
@@ -149,7 +148,6 @@ Ui.Element.extend('Ui.Image',
 		else if(navigator.isOpera)
 			this.imageDrawing.onmousedown = function(event) { event.preventDefault(); };
 		return this.imageDrawing;
-		/**#nocode-*/
 	},
 
 	measureCore: function(width, height) {
