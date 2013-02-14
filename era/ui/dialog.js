@@ -5,6 +5,7 @@ Ui.Container.extend('Ui.Dialog', {
 	vbox: undefined,
 	titleLabel: undefined,
 	contentBox: undefined,
+	contentVBox: undefined,
 	actionButtonsBox: undefined,
 	actionButtons: undefined,
 	cancelBox: undefined,
@@ -23,14 +24,23 @@ Ui.Container.extend('Ui.Dialog', {
 		this.lbox = new Ui.LBox();
 		this.appendChild(this.lbox);
 
-		this.lbox.append(new Ui.Shadow({ shadowWidth: 5, radius: 6, inner: false, opacity: 0.3 }));
-		this.lbox.append(new Ui.Rectangle({ radius: 3, fill: '#f8f8f8', margin: 3 }));
+		this.lbox.append(new Ui.Shadow({ shadowWidth: 5, radius: 2, inner: false, opacity: 0.3 }));
+		this.lbox.append(new Ui.Rectangle({ fill: '#f8f8f8', margin: 3 }));
 
 		this.vbox = new Ui.VBox({ margin: 3 });
 		this.lbox.append(this.vbox);
 
-		this.contentBox = new Ui.LBox({ margin: 10 });
-		this.vbox.append(this.contentBox, true);
+		this.scroll = new Ui.ScrollingArea({ marginLeft: 2, marginTop: 2, marginRight: 2 });
+		this.scroll.setScrollHorizontal(false);
+		this.scroll.setScrollVertical(false);
+		this.vbox.append(this.scroll, true);
+		
+		this.contentVBox = new Ui.VBox();
+		this.scroll.setContent(this.contentVBox);
+		
+		this.contentBox = new Ui.LBox({ margin: 8 });
+		this.contentVBox.append(this.contentBox, true);
+//		this.vbox.append(this.contentBox, true);
 
 		this.buttonsBox = new Ui.VBox();
 
@@ -39,7 +49,7 @@ Ui.Container.extend('Ui.Dialog', {
 		lbox = new Ui.LBox({ height: 32 });
 		this.buttonsBox.append(lbox);
 
-		lbox.append(new Ui.Rectangle({ radiusBottomLeft: 3, radiusBottomRight: 3, fill: '#e8e8e8' }));
+		lbox.append(new Ui.Rectangle({ fill: '#e8e8e8' }));
 
 		var hbox = new Ui.HBox({ margin: 5, spacing: 30 });
 		lbox.append(hbox);
@@ -71,17 +81,22 @@ Ui.Container.extend('Ui.Dialog', {
 		this.fireEvent('close', this);
 	},
 
+	setFullScrolling: function(fullScrolling) {
+		this.scroll.setScrollHorizontal(fullScrolling);
+		this.scroll.setScrollVertical(fullScrolling);	
+	},
+
 	setTitle: function(title) {
 		this.title = title;
 
 		if(((this.title == '') || (this.title === undefined))  && (this.titleLabel !== undefined)) {
-			this.vbox.remove(this.titleLabel);
+			this.contentVBox.remove(this.titleLabel);
 			this.titleLabel = undefined;
 		}
 		else {
 			if(this.titleLabel === undefined) {
 				this.titleLabel = new Ui.Label({ horizontalAlign: 'left', margin: 10, fontWeight: 'bold', fontSize: 18, color: '#666666' });
-				this.vbox.prepend(this.titleLabel);
+				this.contentVBox.prepend(this.titleLabel);
 			}
 			this.titleLabel.setText(this.title);
 		}
