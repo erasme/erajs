@@ -73,21 +73,22 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 
 		var c = this.getStyleProperty('shadowColor').getRgb();
 		var start = new Ui.Color({r:c.r,g:c.g,b:c.b,a:0});
-		var end = new Ui.Color({r:c.r,g:c.g,b:c.b,a:0.3});
+		var middle = new Ui.Color({r:c.r,g:c.g,b:c.b,a:0.3});
+		var end = new Ui.Color({r:c.r,g:c.g,b:c.b,a:1});
 		var gradient = new Ui.LinearGradient({ orientation: 'vertical', stops: [
-			{ offset: 0, color: end},	{ offset: 1, color: start} ] });
+			{ offset: 0, color: end}, { offset: 0.05, color: middle}, { offset: 1, color: start} ] });
 		this.topShadow.setFill(gradient);
 
 		gradient = new Ui.LinearGradient({ orientation: 'vertical', stops: [
-			{ offset: 0, color: start},	{ offset: 1, color: end} ] });
+			{ offset: 0, color: start}, { offset: 0.95, color: middle}, { offset: 1, color: end} ] });
 		this.bottomShadow.setFill(gradient);
 
 		var gradient = new Ui.LinearGradient({ orientation: 'horizontal', stops: [
-			{ offset: 0, color: end},	{ offset: 1, color: start} ] });
+			{ offset: 0, color: end}, { offset: 0.05, color: middle}, { offset: 1, color: start} ] });
 		this.leftShadow.setFill(gradient);
 
 		var gradient = new Ui.LinearGradient({ orientation: 'horizontal', stops: [
-			{ offset: 0, color: start},	{ offset: 1, color: end} ] });
+			{ offset: 0, color: start}, { offset: 0.95, color: middle},	{ offset: 1, color: end} ] });
 		this.rightShadow.setFill(gradient);
 		
 		this.setShowScrollbar(this.getStyleProperty('showScrollbar'));

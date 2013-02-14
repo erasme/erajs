@@ -135,7 +135,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.rightShadowBox.setContent(content);
 	},
 
-	setShowScrollbar: function(show) {
+	setShowScrollbar: function(show) {			
 		if(this.showScrollbar != show) {
 			this.showScrollbar = show;
 			if(this.showClock != undefined) {
@@ -978,7 +978,7 @@ Ui.Container.extend('Ui.Scrollable',
 //		this.connect(this.contentBox, 'scroll', this.onContentBoxScroll);
 	},
 
-	showScrollbars: function() {
+	showScrollbars: function() {	
 		if(this.showScrollbar)
 			return;
 		this.nextShow = true;
@@ -1371,6 +1371,11 @@ Ui.Container.extend('Ui.ScrollableContent',
 	},
 
 	setOffset: function(offsetX, offsetY) {
+//		var matrix = Ui.Matrix.createTranslate(-offsetX, -offsetY);
+//		this.content.setTransform();
+//		this.content.getDrawing().style.webkitTransform = matrix.toString();
+//		this.content.getDrawing().style.webkitTransformOrigin = '0% 0%';
+
 		this.getDrawing().scrollLeft = offsetX;
 		this.getDrawing().scrollTop = offsetY;
 	},
@@ -1410,4 +1415,3 @@ Ui.Container.extend('Ui.ScrollableContent',
 			this.content.arrange(0, 0, Math.max(width, this.contentWidth), Math.max(height, this.contentHeight));
 	}
 });
-
