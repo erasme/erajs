@@ -137,7 +137,7 @@ Ui.Element.extend('Ui.Label',
 		this.invalidateMeasure();
 	},
 
-	render: function() {
+	renderDrawing: function() {
 		/**#nocode+ Avoid Jsdoc warnings...*/
 		this.labelDrawing = document.createElement('div');
 		this.labelDrawing.style.whiteSpace = 'nowrap';
