@@ -52,14 +52,13 @@ Ui.Pressable.extend('Ui.Button',
 }, 
 /** @lends Ui.Button# */
 {
-	setContent: function(content) {
-		this.graphic.setContent(content);
-	},
-
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
 		this.graphic.setSpacing(this.getStyleProperty('spacing'));
 		this.graphic.setIconSize(this.getStyleProperty('iconSize'));
+		this.graphic.setFontFamily(this.getStyleProperty('fontFamily'));
+		this.graphic.setFontSize(this.getStyleProperty('fontSize'));
+		this.graphic.setFontWeight(this.getStyleProperty('fontWeight'));
 		if(this.getHasFocus())
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
@@ -83,7 +82,10 @@ Ui.Pressable.extend('Ui.Button',
 		focusColor: '#f6caa2',
 		radius: 4,
 		spacing: 3,
-		iconSize: 24
+		iconSize: 24,
+		fontSize: 16,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
 	}
 });
 

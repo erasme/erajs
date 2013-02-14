@@ -1,86 +1,23 @@
-Ui.LBox.extend('Ui.ButtonGraphic', 
-/** @lends Ui.ButtonGraphic# */
-{
-	allcontent: undefined,
-	contentBox: undefined,
-	content: undefined,
+
+Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	text: undefined,
-	textBox: undefined,
-	text1: undefined,
-	text2: undefined,
 	icon: undefined,
-	iconBox: undefined,
-	icon1: undefined,
-	icon2: undefined,
 	iconSize: 24,
 	orientation: 'vertical',
-	
-	rect1: undefined,
-	rect2: undefined,
-    
-	lightShadow: undefined,
-	darkShadow: undefined,
-
-	isDown: false,
 	isEnable: true,
-	color: undefined,
-	contentColor: undefined,
+	isDown: false,
 	radius: 4,
 	spacing: 3,
+	color: undefined,
+	contentColor: undefined,
+	fontSize: 16,
+	fontFamily: 'Sans-serif',
+	fontWeight: 'normal',
+	textWidth: 0,
+	textMeasureValid: false,
 
-    /**
-     * @constructs
-	 * @class A ButtonGraphic the graphical representation of a button without any style and logic.
-     * @extends Ui.LBox
-     * @param {String} [config.text] Button's text
-     * @param {String} [config.icon] Icon name
-     * @param {String} [config.orientation] 'vertical' or 'horizontal'
-     * @param {String} [config.color] Color
-     * @param {String} [config.spacing] Inner content spacing
-     * @param {String} [config.radius] Border radius
-	 * @param {mixed} [config] see {@link Ui.LBox} constructor for more options.
-     */
 	constructor: function(config) {
-		this.setPadding(3);
-
 		this.color = new Ui.Color({ r: 0.31, g: 0.66, b: 1 });
-
-		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.2 }), radius: 4, marginTop: 1  });
-		this.append(this.lightShadow);
-
-		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, marginBottom: 1  });
-		this.append(this.darkShadow);
-
-		this.allcontent = new Ui.LBox();
-		this.append(this.allcontent);
-
-		this.rect2 = new Ui.Rectangle({ radius: 4, marginTop: 1, marginBottom: 2, marginLeft: 1, marginRight: 1  });
-		this.allcontent.append(this.rect2);
-
-		this.rect1 = new Ui.Rectangle({ radius: 3, marginTop: 2, marginBottom: 2, marginLeft: 1, marginRight: 1 });
-		this.allcontent.append(this.rect1);
-
-		this.contentBox = new Ui.Box({ verticalAlign: 'center', horizontalAlign: 'center' });
-		this.allcontent.append(this.contentBox);
-
-		this.iconBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center' });
-		this.contentBox.append(this.iconBox);
-
-		this.updateColors();
-	},
-
-	setIconSize: function(size) {
-		this.iconSize = size;
-		if(this.icon1 != undefined) {
-			this.icon1.setWidth(size);
-			this.icon1.setHeight(size);
-			this.icon2.setWidth(size);
-			this.icon2.setHeight(size);
-		}
-	},
-
-	getContent: function() {
-		return this.content;
 	},
 
 	getText: function() {
@@ -90,29 +27,9 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	setText: function(text) {
 		if(this.text != text) {
 			this.text = text;
-			if(this.text === undefined) {
-				if(this.textBox != undefined) {
-					this.contentBox.remove(this.textBox);
-					this.textBox = undefined;
-					this.text1 = undefined;
-					this.text2 = undefined;
-				}
-			}
-			else {
-				if(this.textBox === undefined) {
-					this.textBox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', height: 24 });
-					this.contentBox.append(this.textBox);
-					this.text1 = new Ui.Label({ text: this.text, color: this.getContentLightColor(), verticalAlign: 'center' });
-					this.text2 = new Ui.Label({ text: this.text, color: this.getContentColor(), verticalAlign: 'center' });
-					this.textBox.append(this.text1);
-					this.textBox.append(this.text2);
-				}
-				else {
-					this.text1.setText(this.text);
-					this.text2.setText(this.text);
-				}
-			}
-			this.updateSizes();
+			this.textMeasureValid = false;
+			this.invalidateMeasure();
+			this.invalidateDraw();
 		}
 	},
 
@@ -121,68 +38,70 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	},
 
 	setIcon: function(icon) {
-		if(icon === undefined) {
-			if(this.icon != undefined) {
-				this.iconBox.remove(this.icon1);
-				this.iconBox.remove(this.icon2);
-				this.icon1 = undefined;
-				this.icon2 = undefined;
-				this.icon = undefined;
-			}
-			if(this.content != undefined) {
-				this.iconBox.remove(this.content);
-				this.content = undefined;
-			}
+		if(this.icon != icon) {
+			this.icon = icon;
+			this.invalidateMeasure();
+			this.invalidateDraw();
 		}
-		else {
-			if(typeof(icon) == 'string') {
-				if(this.content != undefined) {
-					this.iconBox.remove(this.content);
-					this.content = undefined;
-				}
-				if(this.icon != icon) {
-					this.icon = icon;
-					if(this.icon1 != undefined)
-						this.iconBox.remove(this.icon1);
-					if(this.icon2 != undefined)
-						this.iconBox.remove(this.icon2);
-					this.icon1 = new Ui.Icon({ icon: icon, width: this.iconSize, height: this.iconSize, fill: this.getContentLightColor() });
-					this.icon2 = new Ui.Icon({ icon: icon, width: this.iconSize, height: this.iconSize, fill: this.getContentColor() });
-					this.iconBox.append(this.icon1);
-					this.iconBox.append(this.icon2);
-				}
-			}
-			else {
-				if(this.icon1 != undefined)
-					this.iconBox.remove(this.icon1);
-				if(this.icon2 != undefined)
-					this.iconBox.remove(this.icon2);
-				this.icon1 = undefined;
-				this.icon2 = undefined;
-				this.icon = undefined;
-				if(this.content != icon) {
-					if(this.content != undefined)
-						this.iconBox.remove(this.content);
-					this.content = icon;
-					this.iconBox.append(this.content);
-				}
-			}
-		}
-		this.updateSizes();
 	},
 
-    /** @return {String} Orientation */
+	setIconSize: function(size) {
+		if(this.iconSize != size) {
+			this.iconSize = size;
+			this.invalidateMeasure();
+			this.invalidateDraw();
+		}
+	},
+
 	getOrientation: function() {
 		return this.orientation;
 	},
-    
-    /** @param {String} orientation can be 'vertical' or 'horizontal' */
+
 	setOrientation: function(orientation) {
 		if(this.orientation != orientation) {
 			this.orientation = orientation;
-			this.contentBox.setOrientation(this.orientation);
-			this.updateSizes();
+			this.invalidateMeasure();
+			this.invalidateDraw();
 		}
+	},
+
+	setFontSize: function(fontSize) {
+		if(this.fontSize != fontSize) {
+			this.fontSize = fontSize;
+			this.textMeasureValid = false;
+			this.invalidateMeasure();
+			this.invalidateDraw();
+		}
+	},
+
+	getFontSize: function() {
+		return this.fontSize;
+	},
+
+	setFontFamily: function(fontFamily) {
+		if(this.fontFamily != fontFamily) {
+			this.fontFamily = fontFamily;
+			this.textMeasureValid = false;
+			this.invalidateMeasure();
+			this.invalidateDraw();
+		}
+	},
+
+	getFontFamily: function() {
+		return this.fontFamily;
+	},
+
+	setFontWeight: function(fontWeight) {
+		if(this.fontWeight != fontWeight) {
+			this.fontWeight = fontWeight;
+			this.textMeasureValid = false;
+			this.invalidateMeasure();
+			this.invalidateDraw();
+		}
+	},
+
+	getFontWeight: function() {
+		return this.fontWeight;
 	},
 
 	getIsDown: function() {
@@ -192,7 +111,7 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	setIsDown: function(isDown) {
 		if(this.isDown != isDown) {
 			this.isDown = isDown;
-			this.updateColors();
+			this.invalidateDraw();
 		}
 	},
 
@@ -203,197 +122,37 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 	setIsEnable: function(isEnable) {
 		if(this.isEnable != isEnable) {
 			this.isEnable = isEnable;
-			if(this.isEnable)
-				this.contentBox.setOpacity(1);
-			else
-				this.contentBox.setOpacity(0.2);
+			this.invalidateDraw();
 		}
 	},
 
 	setRadius: function(radius) {
 		if(this.radius != radius) {
 			this.radius = radius;
-			this.lightShadow.setRadius(this.radius);
-			this.darkShadow.setRadius(this.radius);
-			this.rect2.setRadius(this.radius);
-			this.rect1.setRadius(this.radius - 1);
+			this.invalidateMeasure();
+			this.invalidateDraw();
 		}
 	},
 
 	setSpacing: function(spacing) {
 		if(this.spacing != spacing) {
 			this.spacing = spacing;
-			this.updateSizes();
+			this.invalidateMeasure();
+			this.invalidateDraw();
 		}
 	},
 
 	setColor: function(color) {
 		if(this.color != color) {
 			this.color = Ui.Color.create(color);
-			this.updateColors();
+			this.invalidateDraw();
 		}
 	},
 
 	setContentColor: function(color) {
 		if(this.contentColor != color) {
 			this.contentColor = Ui.Color.create(color);
-			this.updateColors();
-		}
-	},
-
-	/**#@+
-	 * @private
-	 */
-
-	updateSizes: function() {
-		var spacing = this.spacing;
-		// vertical
-		if(this.orientation == 'vertical') {
-			if(this.text != undefined) {
-				// icon + text
-				if(this.icon != undefined) {
-					this.textBox.setMarginLeft(spacing + 2);
-					this.textBox.setMarginRight(spacing + 2);
-					this.textBox.setMarginTop(spacing);
-					this.textBox.setMarginBottom(spacing + 1);
-					this.text1.setMargin(0);
-					this.text1.setMarginTop(2);
-					this.text2.setMargin(1);
-					this.text1.setFontWeight('normal');
-					this.text2.setFontWeight('normal');
-
-					this.iconBox.setMarginLeft(spacing + 2);
-					this.iconBox.setMarginRight(spacing + 2);
-					this.iconBox.setMarginTop(spacing +1);
-					this.iconBox.setMarginBottom(0);
-					this.icon1.setMarginTop(2);
-					this.icon1.setMarginBottom(0);
-					this.icon2.setMarginTop(1);
-					this.icon2.setMarginBottom(1);
-				}
-				// content + text
-				else if(this.content != undefined) {
-					this.textBox.setMarginLeft(spacing + 2);
-					this.textBox.setMarginRight(spacing + 2);
-					this.textBox.setMarginTop(spacing + 1);
-					this.textBox.setMarginBottom(spacing + 1);
-					this.text1.setMargin(0);
-					this.text1.setMarginTop(2);
-					this.text2.setMargin(1);
-					this.text1.setFontWeight('normal');
-					this.text2.setFontWeight('normal');
-
-					this.iconBox.setMarginLeft(spacing + 2);
-					this.iconBox.setMarginRight(spacing + 2);
-					this.iconBox.setMarginTop(spacing + 2);
-					this.iconBox.setMarginBottom(0);
-				}
-				// text only
-				else {
-					this.textBox.setMarginLeft(spacing + 4);
-					this.textBox.setMarginRight(spacing + 4);
-					this.textBox.setMarginTop(spacing + 1);
-					this.textBox.setMarginBottom(spacing + 1);
-					this.text1.setMargin(0);
-					this.text1.setMarginTop(2);
-					this.text2.setMargin(1);
-
-					this.text1.setFontWeight('bold');
-					this.text2.setFontWeight('bold');
-
-					this.iconBox.setMargin(0);
-				}
-			}
-			// icon only
-			else {
-				if(this.icon != undefined) {
-					this.iconBox.setMarginLeft(spacing + 2);
-					this.iconBox.setMarginRight(spacing + 2);
-					this.iconBox.setMarginTop(spacing + 1);
-					this.iconBox.setMarginBottom(spacing + 1);
-					this.icon1.setMarginTop(2);
-					this.icon1.setMarginBottom(0);
-					this.icon2.setMarginTop(1);
-					this.icon2.setMarginBottom(1);
-				}
-				else if(this.content != undefined) {
-					this.iconBox.setMargin(spacing + 2);
-				}
-			}
-		}
-		// horizontal
-		else {
-			if(this.text != undefined) {
-				// icon + text
-				if(this.icon != undefined) {
-					this.textBox.setMarginLeft(spacing + 2);
-					this.textBox.setMarginRight(spacing + 2);
-					this.textBox.setMarginTop(spacing + 1);
-					this.textBox.setMarginBottom(spacing + 1);
-					this.text1.setMargin(0);
-					this.text1.setMarginTop(2);
-					this.text2.setMargin(1);
-					this.text1.setFontWeight('bold');
-					this.text2.setFontWeight('bold');
-
-					this.iconBox.setMarginLeft(spacing + 2);
-					this.iconBox.setMarginRight(0);
-					this.iconBox.setMarginTop(spacing + 1);
-					this.iconBox.setMarginBottom(spacing + 1);
-					this.icon1.setMarginTop(2);
-					this.icon1.setMarginBottom(0);
-					this.icon2.setMarginTop(1);
-					this.icon2.setMarginBottom(1);
-				}
-				// content + text
-				else if(this.content != undefined) {
-					this.textBox.setMarginLeft(spacing + 2);
-					this.textBox.setMarginRight(spacing + 2);
-					this.textBox.setMarginTop(spacing + 1);
-					this.textBox.setMarginBottom(spacing + 1);
-					this.text1.setMargin(0);
-					this.text1.setMarginTop(2);
-					this.text2.setMargin(1);
-					this.text1.setFontWeight('bold');
-					this.text2.setFontWeight('bold');
-
-					this.iconBox.setMarginLeft(spacing + 2);
-					this.iconBox.setMarginRight(0);
-					this.iconBox.setMarginTop(spacing + 2);
-					this.iconBox.setMarginBottom(0);
-				}
-				// text only
-				else {
-					this.textBox.setMarginLeft(spacing + 4);
-					this.textBox.setMarginRight(spacing + 4);
-					this.textBox.setMarginTop(spacing + 1);
-					this.textBox.setMarginBottom(spacing + 1);
-					this.text1.setMargin(0);
-					this.text1.setMarginTop(2);
-					this.text2.setMargin(1);
-
-					this.text1.setFontWeight('bold');
-					this.text2.setFontWeight('bold');
-
-					this.iconBox.setMargin(0);
-				}
-			}
-			// icon only
-			else {
-				if(this.icon != undefined) {
-					this.iconBox.setMarginLeft(spacing + 2);
-					this.iconBox.setMarginRight(spacing + 2);
-					this.iconBox.setMarginTop(spacing + 1);
-					this.iconBox.setMarginBottom(spacing + 1);
-					this.icon1.setMarginTop(2);
-					this.icon1.setMarginBottom(0);
-					this.icon2.setMarginTop(1);
-					this.icon2.setMarginBottom(1);
-				}
-				else if(this.content != undefined) {
-					this.iconBox.setMargin(spacing + 2);
-				}
-			}
+			this.invalidateDraw();
 		}
 	},
 
@@ -448,26 +207,180 @@ Ui.LBox.extend('Ui.ButtonGraphic',
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y - 0.20 + deltaY, u: yuv.u, v: yuv.v });
 		else
-			return new Ui.Color({ y: yuv.y + 0.30 + deltaY, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y + 0.20 + deltaY, u: yuv.u, v: yuv.v });
+	}
+
+}, {
+	updateCanvas: function(ctx) {
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
+
+		// light shadow
+		ctx.fillStyle = 'rgba(255,255,255,0.2)';
+		ctx.beginPath();
+		this.roundRect(3, 4, width-6, height-7, this.radius, this.radius, this.radius, this.radius);
+		ctx.closePath();
+		ctx.fill();
+
+		// dark shadow
+		ctx.fillStyle = 'rgba(0,0,0,0.4)';
+		ctx.beginPath();
+		this.roundRect(3, 3, width-6, height-7, this.radius, this.radius, this.radius, this.radius);
+		ctx.closePath();
+		ctx.fill();
+
+		// rect2
+		ctx.fillStyle = this.getLightColor().getCssRgba();
+		ctx.beginPath();
+		this.roundRect(4, 4, width-8, height-9, this.radius, this.radius, this.radius, this.radius);
+		ctx.closePath();
+		ctx.fill();
+
+		// rect1
+		ctx.fillStyle = this.getGradient().getCanvasGradient(ctx, width, height);
+		ctx.beginPath();
+		this.roundRect(4, 5, width-8, height-10, this.radius-1, this.radius-1, this.radius-1, this.radius-1);
+		ctx.closePath();
+		ctx.fill();
+
+		// handle disable
+		if(!this.isEnable)
+			ctx.globalAlpha = 0.2;
+
+		// icon only
+		if((this.icon !== undefined) && (this.text === undefined)) {
+			var path = Ui.Icon.getPath(this.icon);
+			var scale = this.iconSize/48;
+			// icon 1
+			ctx.save();
+			ctx.translate((width-this.iconSize)/2, (height-this.iconSize)/2);
+			ctx.scale(scale, scale);
+			ctx.fillStyle = this.getContentLightColor().getCssRgba();
+			ctx.beginPath();
+			this.svgPath(path);
+			ctx.closePath();
+			ctx.fill();
+			ctx.restore();
+			// icon 2
+			ctx.save();
+			ctx.translate((width-this.iconSize)/2, (height-this.iconSize)/2 -1);
+			ctx.scale(scale, scale);
+			ctx.fillStyle = this.getContentColor().getCssRgba();
+			ctx.beginPath();
+			this.svgPath(path);
+			ctx.closePath();
+			ctx.fill();
+			ctx.restore();
+		}
+		// text only
+		else if((this.icon === undefined) && (this.text !== undefined)) {
+			// text1
+			ctx.fillStyle = this.getContentLightColor().getCssRgba();
+			ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
+			ctx.textBaseline = 'top';
+			ctx.fillText(this.text, (width-this.textWidth)/2, (height-this.fontSize)/2);
+
+			// text2
+			ctx.fillStyle = this.getContentColor().getCssRgba();
+			ctx.fillText(this.text, (width-this.textWidth)/2, (height-this.fontSize)/2 -1);
+		}
+		// text + icon
+		else if((this.icon !== undefined) && (this.text !== undefined)) {
+			// vertical
+			if(this.orientation == 'vertical') {
+				var path = Ui.Icon.getPath(this.icon);
+				var scale = this.iconSize/48;
+				// icon 1
+				ctx.save();			
+				ctx.translate((width-this.iconSize)/2, (height-this.fontSize-this.iconSize-this.spacing)/2);
+				ctx.scale(scale, scale);
+				ctx.fillStyle = this.getContentLightColor().getCssRgba();
+				ctx.beginPath();
+				this.svgPath(path);
+				ctx.closePath();
+				ctx.fill();
+				ctx.restore();
+				// icon 2
+				ctx.save();
+				ctx.translate((width-this.iconSize)/2, (height-this.fontSize-this.iconSize-this.spacing)/2 -1);
+				ctx.scale(scale, scale);
+				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.beginPath();
+				this.svgPath(path);
+				ctx.closePath();
+				ctx.fill();
+				ctx.restore();
+				// text1
+				ctx.fillStyle = this.getContentLightColor().getCssRgba();
+				ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
+				ctx.textBaseline = 'top';
+				ctx.fillText(this.text, (width-this.textWidth)/2, height-this.fontSize-4-this.spacing);
+				// text2
+				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.fillText(this.text, (width-this.textWidth)/2, height-this.fontSize-4-this.spacing-1);
+
+			}
+			// horizontal
+			else {
+				var path = Ui.Icon.getPath(this.icon);
+				var scale = this.iconSize/48;
+				// icon 1
+				ctx.save();
+				ctx.translate(this.spacing+4, (height-this.iconSize)/2);
+				ctx.scale(scale, scale);
+				ctx.fillStyle = this.getContentLightColor().getCssRgba();
+				ctx.beginPath();
+				this.svgPath(path);
+				ctx.closePath();
+				ctx.fill();
+				ctx.restore();
+				// icon 2
+				ctx.save();
+				ctx.translate(this.spacing+4, (height-this.iconSize)/2 -1);
+				ctx.scale(scale, scale);
+				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.beginPath();
+				this.svgPath(path);
+				ctx.closePath();
+				ctx.fill();
+				ctx.restore();
+				// text1
+				ctx.fillStyle = this.getContentLightColor().getCssRgba();
+				ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
+				ctx.textBaseline = 'top';
+				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, (height-this.fontSize)/2);
+				// text2
+				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, (height-this.fontSize)/2 -1);
+			}
+		}
 	},
 
-	updateColors: function() {
-		this.rect1.setFill(this.getGradient());
-		if(this.icon1 != undefined)
-			this.icon1.setFill(this.getContentLightColor());
-		if(this.text1 != undefined)
-			this.text1.setColor(this.getContentLightColor());
-		if(this.icon2 != undefined)
-			this.icon2.setFill(this.getContentColor());
-		if(this.text2 != undefined)
-			this.text2.setColor(this.getContentColor());
-		this.rect2.setFill(this.getLightColor());
-	}
-	/**#@-*/
-}, {
-	setContent: function(content) {
-		this.content = Ui.Element.create(content);
-		this.contentBox.setContent(this.content);
+	measureCore: function(width, height) {
+		// measure text if needed
+		if((this.text != undefined) &&!this.textMeasureValid) {
+			this.textWidth = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight).width;
+			this.textMeasureValid = true;
+		}
+
+		var size = { width: 10, height: 10 };
+		// icon only
+		if((this.icon !== undefined) && (this.text === undefined)) {
+			size = { width: this.iconSize + this.spacing*2 + 4 + 6, height: this.iconSize + this.spacing*2 + 4 + 6 };
+		}
+		// text only
+		else if((this.icon === undefined) && (this.text !== undefined)) {
+			size = { width: this.textWidth + this.spacing*2 + 4 + 6, height: this.fontSize + this.spacing*2 + 4 + 6 };
+		}
+		// text + icon
+		else if((this.icon !== undefined) && (this.text !== undefined)) {
+			// vertical
+			if(this.orientation == 'vertical')
+				size = { width: Math.max(this.textWidth, this.iconSize) + this.spacing*2 + 4 + 6, height: this.iconSize + this.fontSize + this.spacing*3 + 4 + 6 };
+			// horizontal
+			else
+				size = { width: this.textWidth + this.iconSize + this.spacing*3 + 4 + 6, height: Math.max(this.iconSize, this.fontSize) + this.spacing*2 + 4 + 6 };
+		}
+		return size;
 	}
 });
-
