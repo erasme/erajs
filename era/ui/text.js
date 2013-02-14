@@ -272,7 +272,7 @@ Ui.Element.extend('Ui.Text',
 		this.invalidateMeasure();
 	},
 
-	render: function() {
+	renderDrawing: function() {
 		// create the container for all text rendering
 		this.textDrawing = document.createElement('div');
 		this.textDrawing.style.position = 'absolute';
