@@ -13,6 +13,8 @@ Ui.Container.extend('Ui.Carouselable',
 	autoTask: undefined,
 	pos: 0,
 	startTime: undefined,
+	lastTime: undefined,
+
 
 	/**
 	 * @constructs
@@ -20,7 +22,7 @@ Ui.Container.extend('Ui.Carouselable',
 	 * @extends Ui.Container
 	 */
 	constructor: function(config) {
-		this.addEvents('change', 'press');
+		this.addEvents('change', 'press', 'activate');
 
 		this.setClipToBounds(true);
 		this.setFocusable(true);
@@ -162,11 +164,11 @@ Ui.Container.extend('Ui.Carouselable',
 	onKeyUp: function(event) {
 		if(this.getIsDisabled())
 			return;
-		// Enter = press
+		// Enter = activate
 		if(event.which == 13) {
 			event.stopPropagation();
 			event.preventDefault();
-			this.fireEvent('press', this);
+			this.fireEvent('activate', this);
 		}
 	},
 
@@ -192,10 +194,15 @@ Ui.Container.extend('Ui.Carouselable',
 	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
 		// test if it is a press
 		var deltaTime = ((new Date().getTime())/1000) - this.startTime;
-		if(!abort && this.getHasFocus() && (deltaTime < 0.25) && (cumulMove < 10))
+		if(!abort && (deltaTime < 0.25) && (cumulMove < 10)) {
 			this.fireEvent('press', this);
-
-		this.focus();
+			this.focus();
+			// test for activate signal
+			var currentTime = (new Date().getTime())/1000;
+			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.25))
+				this.fireEvent('activate', this);
+			this.lastTime = currentTime;
+		}
 
 		if(Math.abs(speedX) < 100) {
 			var mod = (-this.movable.getPositionX() / this.getLayoutWidth()) % 1;

@@ -20,7 +20,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	 * @extends Ui.MouseOverable
      */
 	constructor: function(config) {
-		this.addEvents('change', 'press');
+		this.addEvents('change', 'press', 'activate');
 
 		this.connect(this, 'enter', this.onMouseEnter);
 		this.connect(this, 'leave', this.onMouseLeave);
@@ -32,6 +32,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		this.connect(this.carouselable, 'blur', this.onCarouselableBlur);
 		this.connect(this.carouselable, 'change', this.onCarouselableChange);
 		this.connect(this.carouselable, 'press', this.onCarouselablePress);
+		this.connect(this.carouselable, 'activate', this.onCarouselableActivate);
 		
 		this.buttonPrevious = new Ui.Pressable({ horizontalAlign: 'left', verticalAlign: 'center', opacity: 0 });
 		this.buttonPrevious.setFocusable(false);
@@ -88,6 +89,10 @@ Ui.MouseOverable.extend('Ui.Carousel',
 
 	onCarouselablePress: function(carouselable) {
 		this.fireEvent('press', this);
+	},
+
+	onCarouselableActivate: function(carouselable) {
+		this.fireEvent('activate', this);
 	},
 
 	onCarouselableChange: function(carouselable, position) {
