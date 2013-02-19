@@ -20,7 +20,6 @@ Ui.Transition.extend('Ui.Fade',
 }, 
 /**@lends Ui.Fade*/
 {
-
 	/**
 	* @constructs
 	* @class

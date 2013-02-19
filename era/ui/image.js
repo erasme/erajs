@@ -77,7 +77,7 @@ Ui.Element.extend('Ui.Image',
 		this.fireEvent('error', this);
 	},
 
-	onImageLoad: function(event) {
+	onImageLoad: function(event) {	
 		if((event.target != undefined) && (event.target.naturalWidth != undefined) && (event.target.naturalHeight != undefined)) {
 			this.loaddone = true;
 			this.naturalWidth = event.target.naturalWidth;
@@ -98,7 +98,7 @@ Ui.Element.extend('Ui.Image',
 		this.onImageDelayReady();
 	},
 
-	onImageDelayReady: function() {
+	onImageDelayReady: function() {	
 		if(!Ui.App.current.getIsReady())
 			this.connect(Ui.App.current, 'ready', this.onAppReady);
 		else {
