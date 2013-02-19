@@ -203,13 +203,20 @@ Ui.Container.extend('Ui.Carouselable',
 				this.fireEvent('activate', this);
 			this.lastTime = currentTime;
 		}
-
+		// if too slow just re-align the content
 		if(Math.abs(speedX) < 100) {
 			var mod = (-this.movable.getPositionX() / this.getLayoutWidth()) % 1;
 			if(mod > 0.5)
 				speedX = -400;
 			else
 				speedX = 400;
+		}
+		// if slow set a minimun speed
+		else if(Math.abs(speedX) < 800) {
+			if(speedX < 0)
+				speedX = -800;
+			else
+				speedX = 800;
 		}
 		if(speedX != 0)
 			this.startAnimation(speedX / this.getLayoutWidth());
