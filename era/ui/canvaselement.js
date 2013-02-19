@@ -1,4 +1,4 @@
-Ui.Element.extend('Ui.CanvasElement', 
+Ui.Container.extend('Ui.CanvasElement', 
 /**@lends Ui.CanvasElement#*/
 {
 	context: undefined,
@@ -94,8 +94,8 @@ Ui.Element.extend('Ui.CanvasElement',
 
 	roundRectFilledShadow: function(x, y, width, height, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, inner, shadowWidth, color) {
 		this.context.save();
+		var rgba = color.getRgba();
 		for(var i = 0; i < shadowWidth; i++) {
-			var rgba = color.getRgba();
 			var opacity;
 			if(inner) {
 				if(shadowWidth == 1)
@@ -108,7 +108,7 @@ Ui.Element.extend('Ui.CanvasElement',
 			else
 				opacity = (i+1) / (shadowWidth + 1);
 
-			var color = new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a*opacity });
+			var color = new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a*opacity });			
 			this.context.fillStyle = color.getCssRgba();
 
 			if(inner) {
