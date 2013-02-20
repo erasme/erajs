@@ -28,6 +28,9 @@ Ui.LBox.extend('Ui.App',
 	virtualkeyboard: undefined,
 
 	bottomMarker: undefined,
+	
+	requireFonts: undefined,
+	testFontTask: undefined,
 
 	/**
 	 * @constructs
@@ -204,6 +207,52 @@ Ui.LBox.extend('Ui.App',
 			var args = this.arguments['remotedebug'].split(':');
 			new Core.RemoteDebug({ host: args[0], port: args[1] });
 		}
+	},
+		
+	forceInvalidateMeasure: function(element) {
+		if(element === undefined)
+			element = this;
+		element.invalidateMeasure();
+		if('getChildren' in element) {
+			for(var i = 0; i < element.getChildren().length; i++)
+				this.forceInvalidateMeasure(element.getChildren()[i]);
+		}
+	},
+	
+	requireFont: function(fontFamily, fontWeight) {
+		var fontKey = fontFamily+':'+fontWeight;
+		if(this.requireFonts === undefined)
+			this.requireFonts = {};
+		
+		if(!this.requireFonts[fontKey]) {
+			var test = false;
+			if(this.getIsReady())
+				test = Ui.Label.isFontAvailable(fontFamily, fontWeight);
+			this.requireFonts[fontKey] = test;
+			if(!test && (this.testFontTask === undefined))
+				this.testFontTask = new Core.DelayedTask({ scope: this, delay: 0.25, callback: this.testRequireFonts });
+		}
+	},
+	
+	testRequireFonts: function() {
+		var allDone = true;
+		for(var fontKey in this.requireFonts) {
+			var test = this.requireFonts[fontKey];
+			if(!test) {
+				var fontTab = fontKey.split(':');
+				test = Ui.Label.isFontAvailable(fontTab[0], fontTab[1]);
+				if(test) {
+					this.requireFonts[fontKey] = true;
+					this.forceInvalidateMeasure(this);
+				}
+				else
+					allDone = false;
+			}
+		}
+		if(!allDone)
+			this.testFontTask = new Core.DelayedTask({ scope: this, delay: 0.25, callback: this.testRequireFonts });
+		else
+			this.testFontTask = undefined;
 	},
 
 	checkWindowSize: function() {
@@ -724,6 +773,9 @@ Ui.LBox.extend('Ui.App',
 */
 
 //			document.body.appendChild(this.forceKeyboard);
+
+			if((this.requireFonts !== undefined) && (this.testFontTask === undefined))
+				this.testRequireFonts();
 
 			this.setIsLoaded(true);
 			this.setParentVisible(true);
