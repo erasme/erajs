@@ -228,8 +228,29 @@ Ui.Element.extend('Ui.Label',
 		}
 		Ui.Label.measureBox = measureWindow.document.createElement('canvas');
 		Ui.Label.measureBox.style.visibility = 'hidden';
+		Ui.Label.measureBox.setAttribute('width', 10, null);
+		Ui.Label.measureBox.setAttribute('height', 10, null);
 		measureWindow.document.body.appendChild(Ui.Label.measureBox);
 		Ui.Label.measureContext = Ui.Label.measureBox.getContext('2d');
+	},
+	
+	isFontAvailable: function(fontFamily, fontWeight) {
+		if(!navigator.supportCanvas)
+			return true;
+		if(Ui.Label.measureBox === undefined)
+			this.createMeasureCanvas();
+		var ctx = Ui.Label.measureContext;
+		ctx.clearRect(0, 0, 10, 10);
+		ctx.font = fontWeight+' 10px '+fontFamily;
+		ctx.fillStyle = '#000000';
+		ctx.textBaseline = 'top';
+		ctx.fillText('@', 0, 0);
+		// test if the canvas is empty
+  		var imageData = ctx.getImageData(0,0,10,10);
+  		for(var i = 0; i < imageData.data.length; i += 4)
+    		if(imageData.data[i+3] !== 0)
+    			return true;
+  		return false;
 	},
 
 	measureTextHtml: function(text, fontSize, fontFamily, fontWeight) {
