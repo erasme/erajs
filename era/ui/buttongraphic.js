@@ -211,7 +211,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	}
 
 }, {
-	updateCanvas: function(ctx) {
+	updateCanvas: function(ctx) {	
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 
