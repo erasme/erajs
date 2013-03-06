@@ -184,21 +184,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		}
 	},
 
-	getContentLightColor: function() {
-		var yuv;
-		if(this.contentColor != undefined)
-			yuv = this.contentColor.getYuv();
-		else
-			yuv = this.color.getYuv();
-		var deltaY = 0;
-		if(this.getIsDown())
-			deltaY = -0.20;
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v });
-		else
-			return new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v });
-	},
-
 	getLightColor: function() {
 		var yuv = this.color.getYuv();
 		var deltaY = 0;
@@ -251,19 +236,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		if((this.icon !== undefined) && (this.text === undefined)) {
 			var path = Ui.Icon.getPath(this.icon);
 			var scale = this.iconSize/48;
-			// icon 1
+			// icon
 			ctx.save();
 			ctx.translate((width-this.iconSize)/2, (height-this.iconSize)/2);
-			ctx.scale(scale, scale);
-			ctx.fillStyle = this.getContentLightColor().getCssRgba();
-			ctx.beginPath();
-			this.svgPath(path);
-			ctx.closePath();
-			ctx.fill();
-			ctx.restore();
-			// icon 2
-			ctx.save();
-			ctx.translate((width-this.iconSize)/2, (height-this.iconSize)/2 -1);
 			ctx.scale(scale, scale);
 			ctx.fillStyle = this.getContentColor().getCssRgba();
 			ctx.beginPath();
@@ -274,13 +249,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		}
 		// text only
 		else if((this.icon === undefined) && (this.text !== undefined)) {
-			// text1
-			ctx.fillStyle = this.getContentLightColor().getCssRgba();
+			// text
 			ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 			ctx.textBaseline = 'top';
-			ctx.fillText(this.text, (width-this.textWidth)/2, (height-this.fontSize)/2);
-
-			// text2
 			ctx.fillStyle = this.getContentColor().getCssRgba();
 			ctx.fillText(this.text, (width-this.textWidth)/2, (height-this.fontSize)/2 -1);
 		}
@@ -290,51 +261,27 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			if(this.orientation == 'vertical') {
 				var path = Ui.Icon.getPath(this.icon);
 				var scale = this.iconSize/48;
-				// icon 1
-				ctx.save();			
+				// icon
+				ctx.save();
 				ctx.translate((width-this.iconSize)/2, (height-this.fontSize-this.iconSize-this.spacing)/2);
 				ctx.scale(scale, scale);
-				ctx.fillStyle = this.getContentLightColor().getCssRgba();
-				ctx.beginPath();
-				this.svgPath(path);
-				ctx.closePath();
-				ctx.fill();
-				ctx.restore();
-				// icon 2
-				ctx.save();
-				ctx.translate((width-this.iconSize)/2, (height-this.fontSize-this.iconSize-this.spacing)/2 -1);
-				ctx.scale(scale, scale);
 				ctx.fillStyle = this.getContentColor().getCssRgba();
 				ctx.beginPath();
 				this.svgPath(path);
 				ctx.closePath();
 				ctx.fill();
 				ctx.restore();
-				// text1
-				ctx.fillStyle = this.getContentLightColor().getCssRgba();
+				// text
 				ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 				ctx.textBaseline = 'top';
-				ctx.fillText(this.text, (width-this.textWidth)/2, height-this.fontSize-4-this.spacing);
-				// text2
 				ctx.fillStyle = this.getContentColor().getCssRgba();
 				ctx.fillText(this.text, (width-this.textWidth)/2, height-this.fontSize-4-this.spacing-1);
-
 			}
 			// horizontal
 			else {
 				var path = Ui.Icon.getPath(this.icon);
 				var scale = this.iconSize/48;
-				// icon 1
-				ctx.save();
-				ctx.translate(this.spacing+4, (height-this.iconSize)/2);
-				ctx.scale(scale, scale);
-				ctx.fillStyle = this.getContentLightColor().getCssRgba();
-				ctx.beginPath();
-				this.svgPath(path);
-				ctx.closePath();
-				ctx.fill();
-				ctx.restore();
-				// icon 2
+				// icon
 				ctx.save();
 				ctx.translate(this.spacing+4, (height-this.iconSize)/2 -1);
 				ctx.scale(scale, scale);
@@ -344,12 +291,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.closePath();
 				ctx.fill();
 				ctx.restore();
-				// text1
-				ctx.fillStyle = this.getContentLightColor().getCssRgba();
+				// text
 				ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 				ctx.textBaseline = 'top';
-				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, (height-this.fontSize)/2);
-				// text2
 				ctx.fillStyle = this.getContentColor().getCssRgba();
 				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, (height-this.fontSize)/2 -1);
 			}
