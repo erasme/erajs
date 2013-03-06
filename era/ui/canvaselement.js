@@ -128,7 +128,7 @@ Ui.Container.extend('Ui.CanvasElement',
 		this.context.restore();
 	},
 
-	svgPath: function(path) {
+	svgPath: function(path) {	
 		var ctx = this.context;
 		var x = 0;
 		var y = 0;
