@@ -20,7 +20,6 @@ Ui.LBox.extend('Ui.Movable',
 	lastTime: undefined,
 	inertiaClock: undefined,
 	inertia: false,
-	touchId: undefined,
 	touchStart: undefined,
 	touchLast: undefined,
 	isDown: false,
@@ -32,6 +31,7 @@ Ui.LBox.extend('Ui.Movable',
 	iframe: undefined,
 	directionLock: false,
 	directionRelease: false,
+	speedBuffer: undefined,
 
 	/**
 	 * @constructs
@@ -103,6 +103,7 @@ Ui.LBox.extend('Ui.Movable',
 			this.posX = x;
 		if((y != undefined) && (this.moveVertical))
 			this.posY = y;
+			
 		this.contentBox.setTransform(Ui.Matrix.createTranslate(this.posX, this.posY));
 
 		if(!this.isInMoveEvent) {
@@ -118,6 +119,10 @@ Ui.LBox.extend('Ui.Movable',
 
 	getPositionY: function() {
 		return this.posY;
+	},
+
+	getContent: function() {
+		return this.contentBox.getChildren()[0];
 	},
 
 	/**#@+
@@ -249,7 +254,7 @@ Ui.LBox.extend('Ui.Movable',
 		this.cumulMove += Math.sqrt(dX * dX + dY * dY);
 
 		this.setPosition(this.startPosX + deltaX, this.startPosY + deltaY);
-		this.hasMoved = true;
+		this.measureSpeed();
 	},
 
 	onMouseUp: function(event) {
@@ -334,7 +339,7 @@ Ui.LBox.extend('Ui.Movable',
 		this.cumulMove += Math.sqrt(dX * dX + dY * dY);
 
 		this.setPosition(posX, posY);
-		this.hasMoved = true;
+		this.measureSpeed();
 	},
 
 	onFingerUp: function(event) {
@@ -352,56 +357,29 @@ Ui.LBox.extend('Ui.Movable',
 		this.onUp(false);
 	},
 
-	measureSpeed: function() {
-		if(!this.hasMoved)
-			return;
-
-		// compute speed
-		var currentTime = (new Date().getTime())/1000;
-		var deltaTime = currentTime - this.lastTime;
-
-		if(deltaTime < 0.025)
-			return;
-
-		var deltaPosX = this.posX - this.lastPosX;
-		var deltaPosY = this.posY - this.lastPosY;
-		this.speedX = deltaPosX / deltaTime;
-		this.speedY = deltaPosY / deltaTime;
-		this.lastTime = currentTime;
-
-		this.lastPosX = this.posX;
-		this.lastPosY = this.posY;
-		this.speedComputed = true;
+	measureSpeed: function() {		
+		if(this.speedBuffer.length > 20)
+			this.speedBuffer.shift();
+		this.speedBuffer.push({ time: (new Date().getTime())/1000, x: this.posX, y: this.posY });
 	},
 
 	startComputeInertia: function() {
-		if(this.measureSpeedTimer != undefined)
-			this.measureSpeedTimer.abort();
-
-		this.lastPosX = this.posX;
-		this.lastPosY = this.posY;
-		this.lastTime = (new Date().getTime())/1000;
+		this.speedBuffer = [];
+		this.speedBuffer.push({ time: (new Date().getTime())/1000, x: this.posX, y: this.posY });
 		this.speedX = 0;
 		this.speedY = 0;
-		this.speedComputed = false;
-		this.hasMoved = false;
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, onTimeupdate: this.measureSpeed });
 	},
 
 	stopComputeInertia: function() {
-		if(this.measureSpeedTimer != undefined) {
-			this.measureSpeedTimer.abort();
-			this.measureSpeedTimer = undefined;
+		var now = (new Date().getTime())/1000;
+		var i = this.speedBuffer.length;
+		do {
+			var measure = this.speedBuffer[--i];
 		}
-		if(!this.speedComputed) {
-			// compute speed
-			var currentTime = (new Date().getTime())/1000;
-			var deltaTime = currentTime - this.lastTime;
-			var deltaPosX = this.posX - this.lastPosX;
-			var deltaPosY = this.posY - this.lastPosY;
-			this.speedX = deltaPosX / deltaTime;
-			this.speedY = deltaPosY / deltaTime;
-		}
+		while((i > 0) && ((now - measure.time) < 0.08));
+		var deltaTime = now - measure.time;
+		this.speedX = (this.posX - measure.x) / deltaTime;
+		this.speedY = (this.posY - measure.y) / deltaTime;
 	},
 
 	startInertia: function() {
