@@ -283,7 +283,7 @@ Ui.LBox.extend('Ui.Draggable',
 		this.isDrag = false;
 	},
 
-	onFingerDown: function(event) {
+	onFingerDown: function(event) {	
 		if(this.lock || this.isDown || this.getIsDisabled())
 			return;
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
@@ -317,9 +317,9 @@ Ui.LBox.extend('Ui.Draggable',
 		var deltaX = event.finger.getX() - this.screenX;
 		var deltaY = event.finger.getY() - this.screenY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
+		
 		// if the user move to much, release the touch event
-		if(delta > 10) {
+		if(delta > 20) {
 			this.setTransform(new Ui.Matrix());
 			if(this.clock != undefined) {
 				this.clock.stop();
@@ -347,7 +347,7 @@ Ui.LBox.extend('Ui.Draggable',
 		}
 	},
 	
-	onFingerUp: function(event) {
+	onFingerUp: function(event) {	
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -369,7 +369,6 @@ Ui.LBox.extend('Ui.Draggable',
 		if(!this.isDrag) {
 			this.isDrag = false;
 			this.fireEvent('press', this);
-
 			var currentTime = (new Date().getTime())/1000;
 			if((this.lastPress != undefined) && ((currentTime - this.lastPress) < 0.25)) {
 				this.fireEvent('activate', this);
