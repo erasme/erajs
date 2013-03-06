@@ -64,7 +64,7 @@ app.connect(audio, 'ended', function() {
 //	console.log('audio ended');
 });
 
-app.connect(audio, 'timeupdate', function(time) {
+app.connect(audio, 'timeupdate', function(audio, time) {
 //	console.log('audio pos: '+time);
 	progressbar.setValue(time/audio.getDuration());
 });
