@@ -20,6 +20,8 @@ Core.Object.extend('Core.Socket',
 	isClosed: false,
 	closeSent: false,
 	sep: '?',
+	lastPoll: undefined,
+	delayPollTask: undefined,
 
 	/**
 	*	@constructs
@@ -69,6 +71,8 @@ Core.Object.extend('Core.Socket',
 				this.mode = 'poll';
 		}
 
+		//console.log('new Socket mode: '+this.mode);
+
 		if(this.mode == 'websocket') {
 			this.websocket = new WebSocket((this.secure?'wss':'ws')+'://'+this.host+':'+this.port+this.service);
 			this.websocketdelay = new Core.DelayedTask({ scope: this, callback: this.onWebSocketOpenTimeout, delay: 30 });
@@ -105,6 +109,11 @@ Core.Object.extend('Core.Socket',
 	},
 
 	close: function() {
+		//console.log('close');
+		if(this.delayPollTask != undefined) {
+			this.delayPollTask.abort();
+			this.delayPollTask = undefined;
+		}
 		if(this.websocket != undefined) {
 			this.isClosed = true;
 			this.websocket.close();
@@ -216,6 +225,7 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketSendDone: function() {
+		//console.log('onEmuSocketSendDone');
 		var response = this.emusendrequest.getResponseJSON();
 		if(this.emumessages.length > 0) {
 			var messages = '';
@@ -241,10 +251,13 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketSendError: function() {
+		//console.log('onEmuSocketSendError');
 		this.emusendrequest = undefined;
 	},
 
 	onEmuSocketOpenDone: function() {
+		//console.log('onEmuSocketOpenDone');
+		this.lastPoll = new Date();
 		var response = this.emuopenrequest.getResponseJSON();
 		this.emuopenrequest = undefined;
 		if(response == undefined) {
@@ -268,12 +281,15 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketOpenError: function(request, status) {
+		//console.log('onEmuSocketOpenError');
+
 		this.emuopenrequest = undefined;
 		this.fireEvent('error', this);
 		this.fireEvent('close', this);
 	},
 
 	onEmuSocketPollDone: function() {
+		//console.log('onEmuSocketPollDone');
 		var response = this.emupollrequest.getResponseJSON();
 		if(response == undefined) {
 			this.close();
@@ -291,19 +307,38 @@ Core.Object.extend('Core.Socket',
 				this.fireEvent('close', this);
 			}
 			else {
-				this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=poll&id='+this.emuid });
-				this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
-				this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
-				this.emupollrequest.send();
+				var now = new Date();
+				var deltaMs = Math.max(0, now.getTime() - this.lastPoll.getTime());
+				this.lastPoll = now;
+				//console.log('onEmuSocketPollDone delta: '+deltaMs+'ms');
+				if(deltaMs >= 2500)
+					this.sendPoll();
+				else
+					this.delayPollTask = new Core.DelayedTask({ delay: (2500 - deltaMs)/1000, scope: this, callback: this.delayPollDone });
 			}
 		}
 	},
 
 	onEmuSocketPollError: function() {
+		//console.log('onEmuSocketPollError');
 		this.emupollrequest = undefined;
 		this.fireEvent('error', this);
 		this.close();
+	},
+	
+	delayPollDone: function() {
+		//console.log('delayPollDone');
+		this.delayPollTask = undefined;
+		this.sendPoll();
+	},
+	
+	sendPoll: function() {
+		this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=poll&id='+this.emuid });
+		this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
+		this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
+		this.emupollrequest.send();
 	}
+	
 	/**#@-*/
 });
 
