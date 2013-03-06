@@ -106,7 +106,7 @@ Ui.LBox.extend('Ui.Pressable',
 		}
 	},
 
-	onFingerDown: function(event) {
+	onFingerDown: function(event) {	
 		if(this.getIsDisabled() || this.isDown || this.lock)
 			return;
 
@@ -122,7 +122,7 @@ Ui.LBox.extend('Ui.Pressable',
 		this.onDown();
 	},
 
-	onFingerMove: function(event) {
+	onFingerMove: function(event) {	
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -131,7 +131,7 @@ Ui.LBox.extend('Ui.Pressable',
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		// if the user move to much, release the touch event
-		if(delta > 10) {
+		if(delta > 20) {
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 			this.onUp();
@@ -139,7 +139,7 @@ Ui.LBox.extend('Ui.Pressable',
 		}
 	},
 	
-	onFingerUp: function(event) {
+	onFingerUp: function(event) {	
 		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 
