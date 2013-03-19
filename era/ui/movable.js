@@ -43,7 +43,7 @@ Ui.LBox.extend('Ui.Movable',
 		this.setFocusable(true);
 
 		this.contentBox = new Ui.LBox();
-		this.appendChild(this.contentBox);
+		this.append(this.contentBox);
 
 		this.contentBox.getDrawing().style.cursor = 'move';
 
@@ -99,11 +99,18 @@ Ui.LBox.extend('Ui.Movable',
 	},
 
 	setPosition: function(x, y) {
-		if((x != undefined) && (this.moveHorizontal))
-			this.posX = x;
-		if((y != undefined) && (this.moveVertical))
-			this.posY = y;
-			
+		if((x !== undefined) && (this.moveHorizontal)) {
+			if(isNaN(x))
+				this.posX = 0;
+			else
+				this.posX = x;
+		}
+		if((y !== undefined) && (this.moveVertical)) {
+			if(isNaN(y))
+				this.posY = 0;
+			else
+				this.posY = y;
+		}			
 		this.contentBox.setTransform(Ui.Matrix.createTranslate(this.posX, this.posY));
 
 		if(!this.isInMoveEvent) {
