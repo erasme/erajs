@@ -488,12 +488,12 @@ Ui.Container.extend('Ui.Scrollable',
 		var deltaY = 0;
 
 		if((event.wheelDeltaX != undefined) && (event.wheelDelaY != undefined)) {
-			deltaX = -event.wheelDeltaX / 12;
-			deltaY = -event.wheelDeltaY / 12;
+			deltaX = -event.wheelDeltaX / 5;
+			deltaY = -event.wheelDeltaY / 5;
 		}
 		// Opera, Chrome, IE
 		else if(event.wheelDelta != undefined)
-			deltaY = -event.wheelDelta / 4;
+			deltaY = -event.wheelDelta / 2;
 		// Firefox
 		else if(event.detail != undefined)
 			deltaY = event.detail * 10;
