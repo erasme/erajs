@@ -32,9 +32,18 @@ Ui.Element.extend('Ui.Html',
 			this.searchElements(tagName, child, res);
 		}
 	},
+	
+	getParentElement: function(tagName, element) {
+		do {
+			if(('tagName' in element) && (element.tagName.toUpperCase() == tagName))
+				return element;
+			if(element.parentNode == undefined)
+				return undefined;
+			element = element.parentNode;
+		} while(true);
+	},
 
 	setHtml: function(html) {
-		//console.log(this+'.setHtml');
 		// remove old callbacks
 		var tab = this.getElements('A');
 		for(var i = 0; i < tab.length; i++) {
@@ -44,6 +53,9 @@ Ui.Element.extend('Ui.Html',
 			// handle touches
 			this.disconnect(tab[i], 'fingerdown', this.onLinkFingerDown);
 		}
+		tab = this.getElements('IMG');
+		for(var i = 0; i < tab.length; i++)
+			this.disconnect(tab[i], 'load', this.onImageLoad);
 		// update HTML content
 		this.htmlDrawing.innerHTML = html;
 		this.html = this.htmlDrawing.innerHTML;
@@ -51,13 +63,15 @@ Ui.Element.extend('Ui.Html',
 		tab = this.getElements('A');
 		for(var i = 0; i < tab.length; i++) {
 			tab[i].htmlHref = tab[i].href;
-//			tab[i].removeAttribute('href');
 			// handle mouse
 			this.connect(tab[i], 'mousedown', this.onLinkMouseDown);
 			this.connect(tab[i], 'click', this.onLinkClick);
 			// handle touches
 			this.connect(tab[i], 'fingerdown', this.onLinkFingerDown);
 		}
+		tab = this.getElements('IMG');
+		for(var i = 0; i < tab.length; i++)
+			this.connect(tab[i], 'load', this.onImageLoad);
 		this.invalidateMeasure();
 	},
 	
@@ -98,13 +112,14 @@ Ui.Element.extend('Ui.Html',
 		if((event.button != 0) || this.getIsDisabled())
 			return;
 
+		var target = this.getParentElement('A', event.target);
+		if(target == undefined)
+			return;
 		event.preventDefault();
 		event.stopPropagation();
-		var target = event.target;
+		
 		this.mouseTarget = target;
-
-//		console.log(this+'.onLinkMouseDown target: '+target);
-
+		
 		target.mouseStartX = event.screenX;
 		target.mouseStartY = event.screenY;
 		target.isDown = true;
@@ -115,12 +130,10 @@ Ui.Element.extend('Ui.Html',
 
 	onLinkMouseMove: function(event) {
 		var target = this.mouseTarget;
-	
+		
 		var deltaX = event.screenX - target.mouseStartX;
 		var deltaY = event.screenY - target.mouseStartY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-//		console.log(this+'.onLinkMouseMove delta: '+delta);
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -164,15 +177,16 @@ Ui.Element.extend('Ui.Html',
 	},
 	
 	onLinkFingerDown: function(event) {
-		var target = event.target;
-
+		var target = this.getParentElement('A', event.target);
+		if(target == undefined)
+			return;
 		if(this.getIsDisabled() || target.isDown)
 			return;
 
 		this.connect(event.finger, 'fingermove', this.onLinkFingerMove);
 		this.connect(event.finger, 'fingerup', this.onLinkFingerUp);
 
-		event.finger.capture(event.target);
+		event.finger.capture(target);
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -215,6 +229,10 @@ Ui.Element.extend('Ui.Html',
 
 		target.isDown = false;
 		this.fireEvent('link', this, target.htmlHref);
+	},
+	
+	onImageLoad: function(event) {
+		this.invalidateMeasure();
 	}
 
 }, {
