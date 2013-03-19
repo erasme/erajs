@@ -356,7 +356,7 @@ Core.Object.extend('Ui.Element',
 	/**
 	 * Update the current element arrangement
 	 */
-	arrange: function(x, y, width, height) {
+	arrange: function(x, y, width, height) {	
 		// no need to arrange if not loaded
 		if(!this.isLoaded)
 			return;
@@ -367,7 +367,7 @@ Core.Object.extend('Ui.Element',
 		if(isNaN(width))
 			width = 0;
 		if(isNaN(height))
-			height = 0;
+			height = 0;			
 		if((!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) || (this.arrangeHeight != height)) {
 			this.arrangeX = x;
 			this.arrangeY = y;
@@ -476,9 +476,11 @@ Core.Object.extend('Ui.Element',
 	 * to be updated
 	 */
 	invalidateDraw: function() {
-		if(this.drawValid) {
-			this.drawValid = false;
-			Ui.App.current.enqueueDraw(this);
+		if(this.getIsVisible() && this.getIsLoaded()) {
+			if(this.drawValid) {
+				this.drawValid = false;
+				Ui.App.current.enqueueDraw(this);
+			}
 		}
 	},
 
@@ -906,8 +908,8 @@ Core.Object.extend('Ui.Element',
 //		console.log(this.classType+'.onInternalVisible');
 		// DEBUG
 //		this.checkVisible();
-		if(navigator.isIE8 || navigator.isIE7)
-			this.invalidateDraw();
+//		if(navigator.isIE8 || navigator.isIE7)
+		this.invalidateDraw();
 		this.onVisible();
 		this.fireEvent('visible', this);
 	},

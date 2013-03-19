@@ -262,7 +262,8 @@ Ui.Container.extend('Ui.CanvasElement',
 	arrangeCore: function(width, height) {
 		this.getDrawing().setAttribute('width', width, null);
 		this.getDrawing().setAttribute('height', height, null);
-		this.update();
+		if(this.getIsVisible() && this.getIsLoaded())
+			this.update();
 	},
 
 	drawCore: function() {
