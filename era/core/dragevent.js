@@ -51,7 +51,7 @@ Core.Object.extend('Core.DragDataTransfer',
 	*	@class
     *   @extends Core.Object
 	*/
-	constructor: function(config) {
+	constructor: function(config) {	
 		this.draggable = config.draggable;
 		delete(config.draggable);
 		this.startX = config.x;
@@ -81,7 +81,6 @@ Core.Object.extend('Core.DragDataTransfer',
 				this.hasStarted = true;
 
 				this.image = this.generateImage(this.draggable);
-//				this.image = this.draggable.cloneNode(true);
 				this.image.style.zIndex = 100000;
 											
 				document.body.appendChild(this.image);
@@ -175,8 +174,7 @@ Core.Object.extend('Core.DragDataTransfer',
 //					this.rootWindow = iframe.ownerDocument.defaultView;
 //					matrix.multiply(Ui.Element.transformToWindow(iframe));
 //				}
-
-				this.image = this.draggable.cloneNode(true);
+				this.image = this.generateImage(this.draggable);
 				this.image.style.zIndex = 100000;
 //				if(navigator.isIE7 || navigator.isIE8)
 //					this.image.innerHTML = this.draggable.innerHTML;
