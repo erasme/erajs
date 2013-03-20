@@ -65,7 +65,7 @@ app.connect(video, 'ended', function() {
 //	console.log('video ended');
 });
 
-app.connect(video, 'timeupdate', function(time) {
+app.connect(video, 'timeupdate', function(v, time) {
 //	console.log('video pos: '+time);
 	progressbar.setValue(time/video.getDuration());
 });
