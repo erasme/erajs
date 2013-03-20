@@ -174,6 +174,7 @@ Ui.Element.extend('Ui.Video',
 	},
 
 	onEnded: function() {
+		this.videoDrawing.pause();
 		this.state = 'initial';
 		this.videoDrawing.currentTime = 0;
 		this.fireEvent('ended', this);
@@ -255,7 +256,7 @@ Ui.Element.extend('Ui.Video',
 }, 
 /**@lends Ui.Video#*/
 {
-	render: function() {
+	renderDrawing: function() {
 		if(Ui.Video.htmlVideo) {
 			this.videoDrawing = document.createElement('video');
 			this.connect(this.videoDrawing, 'canplaythrough', this.onReady);
