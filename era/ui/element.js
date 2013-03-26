@@ -1166,7 +1166,7 @@ Core.Object.extend('Ui.Element',
 		event.preventDefault();
 	},
 
-	onFocus: function(event) {
+	onFocus: function(event) {	
 		if(this.focusable && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
