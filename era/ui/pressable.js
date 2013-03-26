@@ -95,9 +95,10 @@ Ui.LBox.extend('Ui.Pressable',
 		event.preventDefault();
 		event.stopPropagation();
 		if(event.button == 0) {
+			// focus before in case the press event handlers decide to get the focus
+			this.focus();
 			this.onUp();
 			this.fireEvent('press', this);
-			this.focus();
 			// test for activate signal
 			var currentTime = (new Date().getTime())/1000;
 			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
@@ -145,10 +146,12 @@ Ui.LBox.extend('Ui.Pressable',
 
 		event.preventDefault();
 		event.stopPropagation();
-
+		
+		// focus before in case the press event handlers decide to get the focus
+		this.focus();
 		this.onUp();
 		this.fireEvent('press', this);
-		this.focus();
+
 		// test for activate signal
 		var currentTime = (new Date().getTime())/1000;
 		if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
