@@ -249,6 +249,7 @@ Ui.Element.extend('Ui.Entry',
 
 	onTouchEnd: function(event) {
 		event.stopPropagation();
+		event.preventDefault();
 
 		if(this.timer != undefined) {
 			this.timer.abort();
@@ -258,17 +259,13 @@ Ui.Element.extend('Ui.Entry',
 		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
 		this.allowSelect = false;
-//		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.onUp();
 
-		this.fireEvent('press', this);
 		this.entryDrawing.focus();
-
+		this.fireEvent('press', this);
 	},
 
 	onTimer: function(timer) {
-		console.log('onTimer');
-
 		this.allowSelect = true;
 		this.timer = undefined;
 	},
