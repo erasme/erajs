@@ -358,7 +358,7 @@ if(window.JSON == undefined) {
 	window.JSON = json;
 }
 
-// correct Safari iOS6 bug
+/*// correct Safari iOS6 bug
 if(navigator.iOs) {
 (function (window) {
 	// This library re-implements setTimeout, setInterval, clearTimeout, clearInterval for iOS6.
@@ -470,7 +470,7 @@ if(navigator.iOs) {
 		}
 	});
 }(window));
-}
+}*/
 
 if(window.console == undefined) {
 	window.console = {
