@@ -92,7 +92,7 @@ Ui.LBox.extend('Ui.App',
 //		});
 
 		this.connect(window, 'focus', function(event) {
-//			console.log('focus');
+			//console.log('focus '+event.target+' '+event.target.innerHTML);
 //			if(navigator.iOs)
 //				window.scrollTo(0, this.bottomMarker.offsetTop);
 
@@ -121,7 +121,7 @@ Ui.LBox.extend('Ui.App',
 		}, true);
 
 		this.connect(window, 'blur', function(event) {
-//			console.log('blur');
+			//console.log('blur '+event.target);
 			this.focusElement = undefined;
 			this.checkSize();
 //			this.checkWindowSize();
@@ -647,9 +647,9 @@ Ui.LBox.extend('Ui.App',
 		for(var i = 0; i < this.dialogs.getChildren().length - 1; i++)
 			this.dialogs.getChildren()[i].disable();
 		// find the first focusable element in the new dialog
-		var focusElement = this.findFocusableDiv(dialog.getDrawing());
-		if(focusElement != undefined)
-			focusElement.focus();
+//		var focusElement = this.findFocusableDiv(dialog.getDrawing());
+//		if(focusElement != undefined)
+//			focusElement.focus();
 	},
 
 	removeDialog: function(dialog) {
