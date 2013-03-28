@@ -2,6 +2,7 @@ Ui.LBox.extend('Ui.TextAreaField',
 /**@lends Ui.TextAreaField#*/
 {
 	textarea: undefined,
+	graphic: undefined,
 	textholder: undefined,
 
 	/**
@@ -14,14 +15,11 @@ Ui.LBox.extend('Ui.TextAreaField',
 
 		this.setPadding(3);
 
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, marginTop: 1 }));
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4 }), radius: 4, marginBottom: 1 }));
-		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.98, g: 0.98, b: 0.98 }), radius: 4, margin: 1, marginBottom: 2 }));
+		this.graphic = new Ui.TextBgGraphic();
+		this.append(this.graphic);
 
 		this.textholder = new Ui.Label({ opacity: 0.5, horizontalAlign: 'center', color: new Ui.Color({ r: 0.4, g: 0.4, b: 0.4 }), margin: 3 });
 		this.append(this.textholder);
-
-		this.append(new Ui.Shadow({ shadowWidth: 2, inner: true, radius: 4, opacity: 0.2, margin: 1, marginBottom: 2 }));
 
 		this.textarea = new Ui.TextArea({ margin: 4, fontSize: 16 });
 		this.append(this.textarea);

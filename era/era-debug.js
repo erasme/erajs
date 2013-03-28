@@ -150,6 +150,7 @@ include(eraBaseDirectory+'ui/progressbar.js');
 include(eraBaseDirectory+'ui/loading.js');
 include(eraBaseDirectory+'ui/iconlist.js');
 include(eraBaseDirectory+'ui/locator.js');
+include(eraBaseDirectory+'ui/textbggraphic.js');
 include(eraBaseDirectory+'ui/textfield.js');
 include(eraBaseDirectory+'ui/textbuttonfield.js');
 include(eraBaseDirectory+'ui/textareafield.js');
