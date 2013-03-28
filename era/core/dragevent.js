@@ -120,18 +120,29 @@ Core.Object.extend('Core.DragDataTransfer',
 	*/
 	generateImage: function(element) {
 		var res;
-		if(('tagName' in element) && (element.tagName.toUpperCase() == 'CANVAS')) {
-			res = document.createElement('img');
-			// copy styles (position)
-			for(var key in element.style)
-				res.style[key] = element.style[key];
-			res.setAttribute('src', element.toDataURL('image/png'));
+		if(navigator.isIE7 || navigator.isIE8) {
+			var div = document.createElement('div');
+			div.style.position = 'absolute';
+			div.style.left = '-10000px';
+			div.style.top = '-10000px';
+			div.style.outline = '0px';
+			div.innerHTML = element.outerHTML;
+			res = div.childNodes[0];
 		}
 		else {
-			res = element.cloneNode(false);
-			for(var i = 0; i < element.childNodes.length; i++) {
-				var child = element.childNodes[i];
-				res.appendChild(this.generateImage(child));
+			if(('tagName' in element) && (element.tagName.toUpperCase() == 'CANVAS')) {
+				res = document.createElement('img');
+				// copy styles (position)
+				for(var key in element.style)
+					res.style[key] = element.style[key];
+				res.setAttribute('src', element.toDataURL('image/png'));
+			}
+			else {
+				res = element.cloneNode(false);
+				for(var i = 0; i < element.childNodes.length; i++) {
+					var child = element.childNodes[i];
+					res.appendChild(this.generateImage(child));
+				}
 			}
 		}
 		return res;
