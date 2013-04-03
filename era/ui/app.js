@@ -162,9 +162,9 @@ Ui.LBox.extend('Ui.App',
 			event.preventDefault();	return false; });
 		this.connect(window, 'drop', function(event) { event.preventDefault(); return false; });
 
-		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
-		if(('oncontextmenu' in document) && ('attachEvent' in document))
-			document.attachEvent('oncontextmenu', function(event) { return false; });
+//		this.connect(window, 'contextmenu', function(event) { event.preventDefault(); });
+//		if(('oncontextmenu' in document) && ('attachEvent' in document))
+//			document.attachEvent('oncontextmenu', function(event) { return false; });
 
 //		this.connect(window, 'select', function(event) { event.preventDefault(); event.stopPropagation(); });
 //		this.connect(window, 'scroll', function(event) { window.scrollTo(0, 0); event.stopPropagation(); event.preventDefault(); });
