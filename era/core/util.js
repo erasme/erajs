@@ -333,7 +333,7 @@ if(window.JSON == undefined) {
 		for(var prop in object) {
 			try {
 				var propValue = object[prop];
-				if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object'))
+				if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object') && (typeof(propValue) != 'boolean'))
 					continue;
 				if(first)
 					first = false;
@@ -347,6 +347,8 @@ if(window.JSON == undefined) {
 					res += propValue;
 				else if(typeof(propValue) == 'string')
 					res += '"'+propValue.replace('"','\\"')+'"';
+				else if(typeof(propValue) == 'boolean')
+					res += propValue?"true":"false";
 			} catch(err) {}
 		}
 		if(isArray)
