@@ -2,6 +2,7 @@ Ui.Container.extend('Ui.CanvasElement',
 /**@lends Ui.CanvasElement#*/
 {
 	context: undefined,
+	dpiRatio: 1,
 
 	/**
 	 * @constructs
@@ -14,9 +15,11 @@ Ui.Container.extend('Ui.CanvasElement',
 	/**
 	 * Call this method when the canvas need to be redraw
 	 */
-	update: function() {
-		this.context.clearRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight());
+	update: function() {		
 		this.context.save();
+		if(this.dpiRatio != 1)
+			this.context.scale(this.dpiRatio, this.dpiRatio);
+		this.context.clearRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight());
 		this.updateCanvas(this.context);
 		this.context.restore();
 	},
@@ -260,8 +263,16 @@ Ui.Container.extend('Ui.CanvasElement',
 	},
 
 	arrangeCore: function(width, height) {
-		this.getDrawing().setAttribute('width', width, null);
-		this.getDrawing().setAttribute('height', height, null);
+		// handle High DPI
+		var devicePixelRatio = window.devicePixelRatio || 1;
+        var backingStoreRatio = this.context.webkitBackingStorePixelRatio ||
+			this.context.mozBackingStorePixelRatio ||
+			this.context.msBackingStorePixelRatio ||
+			this.context.oBackingStorePixelRatio ||
+			this.context.backingStorePixelRatio || 1;
+		this.dpiRatio = devicePixelRatio / backingStoreRatio;
+		this.getDrawing().setAttribute('width', width * this.dpiRatio, null);
+		this.getDrawing().setAttribute('height', height * this.dpiRatio, null);
 		if(this.getIsVisible() && this.getIsLoaded())
 			this.update();
 	},
