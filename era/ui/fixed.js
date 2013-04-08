@@ -53,8 +53,9 @@ Ui.Container.extend('Ui.Fixed',
 		}
 	},
 
-	onChildInvalidateMeasure: function(child) {
-		child.measure(this.getLayoutWidth(), this.getLayoutHeight());
+	onChildInvalidateMeasure: function(child, remove) {
+		if(!remove)
+			child.measure(this.getLayoutWidth(), this.getLayoutHeight());
 	},
 
 	onChildInvalidateArrange: function(child) {
