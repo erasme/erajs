@@ -1,84 +1,71 @@
 
-Ui.Container.extend('Ui.Carouselable', 
+Ui.MovableBase.extend('Ui.Carouselable', 
 /**@lends Ui.Carouselable#*/
 {
-	movable: undefined,
-	box: undefined,
-	alignClock: undefined,
-	speed: 0,
-	animNext: 0,
-	animStart: 0,
 	ease: undefined,
-	autoPlay: undefined,
-	autoTask: undefined,
+	items: undefined,
 	pos: 0,
-	startTime: undefined,
-	lastTime: undefined,
-
+	activeItems: undefined,
+	alignClock: undefined,
+	animNext: undefined,
+	animStart: undefined,
+	bufferingSize: 1,
 
 	/**
 	 * @constructs
 	 * @class
-	 * @extends Ui.Container
+	 * @extends Ui.MovableBase
 	 */
 	constructor: function(config) {
 		this.addEvents('change', 'press', 'activate');
-
 		this.setClipToBounds(true);
 		this.setFocusable(true);
+		this.items = [];
+		this.activeItems = [];
+		this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' });
+
+		this.connect(this, 'down', this.onCarouselableDown);
+		this.connect(this, 'up', this.onCarouselableUp);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
-
-		this.movable = new Ui.Movable({ inertia: false, moveVertical: false, directionRelease: true });
-		this.movable.setFocusable(false);
-		this.connect(this.movable, 'move', this.onMove);
-		this.connect(this.movable, 'down', this.onDown);
-		this.connect(this.movable, 'up', this.onUp);
-		this.appendChild(this.movable);
-
-		this.box = new Ui.CarouselableBox();
-		this.movable.setContent(this.box);
-
-		this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' });
+		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
+		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
 	},
 
-	setAutoPlay: function(delay) {
-		if(this.autoPlay != delay) {
-			if(this.autoTask != undefined) {
-				this.autoTask.abort();
-				this.autoTask = undefined;
-			}
-			this.autoPlay = delay;
-			if(this.autoPlay != undefined) {
-				this.autoTask = new Core.DelayedTask({ delay: this.autoPlay, scope: this, callback: this.onAutoPlay });
-			}
+	getBufferingSize: function() {
+		return this.bufferingSize;
+	},
+
+	setBufferingSize: function(size) {
+		if(this.bufferingSize != size) {
+			this.bufferingSize = size;
+			this.updateItems();
 		}
 	},
 
-	getLock: function() {
-		return this.movable.getLock();
+	getLogicalChildren: function() {
+		return this.items;
 	},
-
-	setLock: function(lock) {
-		this.movable.setLock(lock);
+	
+	getCurrentPosition: function() {
+		if(this.alignClock === undefined)
+			return this.animNext;
+		else
+			return this.pos;
 	},
 
 	getCurrent: function() {
-		return this.box.getChildren()[this.getCurrentPosition()];
-	},
-
-	getCurrentPosition: function() {
-		return Math.min(this.box.getChildren().length - 1, Math.max(0, Math.round(-this.movable.getPositionX() / this.getLayoutWidth())));
+		return this.items[this.getCurrentPosition()];
 	},
 
 	setCurrentAt: function(position) {
-		position = Math.min(this.box.getChildren().length - 1, Math.max(0, position));
-		this.startAnimation(this.getCurrentPosition()-position, position);
+		position = Math.min(2*(this.items.length - 1), Math.max(0, position));
+		this.startAnimation(2*(this.pos-position), position);
 	},
 
 	setCurrent: function(current) {
-		for(var i = 0; i < this.box.getChildren().length; i++) {
-			if(this.box.getChildren()[i] == current) {
+		for(var i = 0; i < this.items.length; i++) {
+			if(this.items[i] == current) {
 				this.setCurrentAt(i);
 				break;
 			}
@@ -87,31 +74,27 @@ Ui.Container.extend('Ui.Carouselable',
 
 	next: function() {
 		if(this.alignClock === undefined) {
-			var currentPos = this.getCurrentPosition();
-			if(currentPos < this.box.getChildren().length - 1)
-				this.startAnimation(-1, currentPos + 1);
+			if(this.pos < this.items.length-1)
+				this.startAnimation(-2, this.pos + 1);
 		}
 		else {
-			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
-			if(this.animNext > pos)
-				this.startAnimation(-1 * (this.animNext+1-this.getCurrentPosition()), Math.min(this.animNext + 1, this.box.getChildren().length - 1));
+			if(this.animNext > this.pos)
+				this.startAnimation(-2 * (this.animNext+1-Math.floor(this.pos)), Math.min(this.animNext + 1, this.items.length - 1));
 			else
-				this.startAnimation(-1, Math.min(Math.ceil(pos), this.box.getChildren().length - 1));
+				this.startAnimation(-2, Math.min(Math.ceil(this.pos), this.items.length - 1));
 		}
 	},
 
 	previous: function() {
 		if(this.alignClock === undefined) {
-			var currentPos = this.getCurrentPosition();
-			if(currentPos > 0)
-				this.startAnimation(1, this.getCurrentPosition() - 1);
+			if(this.pos > 0)
+				this.startAnimation(2, this.pos - 1);
 		}
 		else {
-			var pos = -this.movable.getPositionX() / this.getLayoutWidth();
-			if(this.animNext < pos)
-				this.startAnimation(1 * (this.getCurrentPosition() - (this.animNext-1)), Math.max(this.animNext - 1, 0));
+			if(this.animNext < this.pos)
+				this.startAnimation(2 * (Math.floor(this.pos) - (this.animNext-1)), Math.max(this.animNext - 1, 0));
 			else
-				this.startAnimation(1, Math.floor(pos));
+				this.startAnimation(2, Math.floor(this.pos));
 		}
 	},
 
@@ -120,24 +103,43 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	append: function(child) {
-		this.box.append(child);
+		this.items.push(Ui.Element.create(child));
+		this.updateItems();
 	},
 
 	remove: function(child) {
-		this.box.remove(child);
-		// TODO: provide animation
+		var i = 0;
+		while((i < this.items.length) && (this.items[i] != child)) { i++ };
+		if(i < this.items.length)
+			this.items.splice(i, 1);
+		this.updateItems();
 	},
 
-	insertAt: function(child, pos) {
-		this.box.insertAt(child, pos);
+	insertAt: function(child, position) {
+		if(position < 0)
+			position = this.items.length + position;
+		if(position < 0)
+			position = 0;
+		if(position >= this.items.length)
+			position = this.items.length;
+		this.items.splice(position, 0, Ui.Element.create(child));
+		this.updateItem(this.pos, this.pos);
 	},
 	
-	moveAt: function(child, pos) {
-		this.box.moveAt(child, pos);
-	},
-
-	getLogicalChildren: function() {
-		return this.box.getChildren();
+	moveAt: function(child, position) {
+		if(position < 0)
+			position = this.items.length + position;
+		if(position < 0)
+			position = 0;
+		if(position >= this.items.length)
+			position = this.items.length;
+		var i = 0;
+		while((i < this.items.length) && (this.items[i] != child)) { i++ };
+		if(i < this.items.length) {
+			this.items.splice(i, 1);
+			this.items.splice(position, 0, child);
+		}
+		this.updateItems();
 	},
 
 	/**#@+
@@ -148,7 +150,6 @@ Ui.Container.extend('Ui.Carouselable',
 		if(this.getIsDisabled())
 			return;
 		var key = event.which;
-
 		if((key == 32) || (key == 37) || (key == 39)) {
 			event.stopPropagation();
 			event.preventDefault();
@@ -172,40 +173,40 @@ Ui.Container.extend('Ui.Carouselable',
 		}
 	},
 
-	onMove: function(movable) {
-		if(this.box.getChildren().length < 2)
-			movable.setPosition(0, 0);
-		else {
-			var x = undefined;
-			if(movable.getPositionX() > 0)
-				x = 0;
-			if(movable.getPositionX() < -(this.getLayoutWidth() * (this.box.getChildren().length - 1)))
-				x = -(this.getLayoutWidth() * (this.box.getChildren().length - 1));
-			movable.setPosition(x, 0);
+	onMouseWheel: function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var deltaX = 0;
+		var deltaY = 0;
+
+		if((event.wheelDeltaX != undefined) && (event.wheelDelaY != undefined)) {
+			deltaX = -event.wheelDeltaX / 5;
+			deltaY = -event.wheelDeltaY / 5;
 		}
-		this.updateShow();
+		// Opera, Chrome, IE
+		else if(event.wheelDelta != undefined)
+			deltaY = -event.wheelDelta / 2;
+		// Firefox
+		else if(event.detail != undefined)
+			deltaY = event.detail * 10;
+
+		var delta = (deltaY != 0)?deltaY:deltaX;
+		if(delta < 0)
+			this.previous();
+		else
+			this.next();
 	},
 
-	onDown: function(movable) {
-		this.startTime = (new Date().getTime())/1000;
+	onCarouselableDown: function() {
 		this.stopAnimation();
 	},
 
-	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
-		// test if it is a press
-		var deltaTime = ((new Date().getTime())/1000) - this.startTime;
-		if(!abort && (deltaTime < 0.25) && (cumulMove < 10)) {
-			this.fireEvent('press', this);
-			this.focus();
-			// test for activate signal
-			var currentTime = (new Date().getTime())/1000;
-			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.25))
-				this.fireEvent('activate', this);
-			this.lastTime = currentTime;
-		}
+	onCarouselableUp: function(el, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
+		this.focus();
 		// if too slow just re-align the content
 		if(Math.abs(speedX) < 100) {
-			var mod = (-this.movable.getPositionX() / this.getLayoutWidth()) % 1;
+			var mod = this.pos % 1;
 			if(mod > 0.5)
 				speedX = -400;
 			else
@@ -223,25 +224,7 @@ Ui.Container.extend('Ui.Carouselable',
 	},
 
 	onChange: function() {
-		var current = this.getCurrentPosition();
-		this.pos = -current;
-		for(var i = 0; i < this.box.getChildren().length; i++) {
-			if(i == current)
-				this.box.getChildren()[i].show();
-			else
-				this.box.getChildren()[i].hide();
-		}
-		this.fireEvent('change', this, this.getCurrentPosition());
-	},
-
-	updateShow: function() {
-		var pos = Math.floor(-this.movable.getPositionX() / this.getLayoutWidth());
-		for(var i = 0; i < this.box.getChildren().length; i++) {
-			if((i == pos - 1) || (i == pos) || (i == pos +1))
-				this.box.getChildren()[i].show();
-			else
-				this.box.getChildren()[i].hide();
-		}
+		this.fireEvent('change', this, this.pos);
 	},
 
 	onAlignTick: function(clock, progress, delta) {
@@ -255,19 +238,16 @@ Ui.Container.extend('Ui.Carouselable',
 			relprogress = 1;
 		}
 		relprogress = this.ease.ease(relprogress);
-		this.pos = -(this.animStart + relprogress * (this.animNext - this.animStart));
-		this.movable.setPosition(this.pos * this.getLayoutWidth(), undefined);
-
+		this.pos = (this.animStart + relprogress * (this.animNext - this.animStart));
+		this.setPosition(-this.pos * this.getLayoutWidth(), undefined);
 		if(this.alignClock == undefined)
 			this.onChange();
-		else
-			this.updateShow();
 	},
 
 	startAnimation: function(speed, next) {
 		this.stopAnimation();
 		this.speed = speed;
-		this.animStart = -this.movable.getPositionX() / this.getLayoutWidth();
+		this.animStart = this.pos;
 		if(next === undefined) {
 			if(this.speed < 0)
 				this.animNext = Math.ceil(this.animStart);
@@ -289,84 +269,64 @@ Ui.Container.extend('Ui.Carouselable',
 		}
 	},
 
-	onAutoPlay: function() {
-		this.autoTask = new Core.DelayedTask({ delay: this.autoPlay, scope: this, callback: this.onAutoPlay });
-		if(this.getCurrentPosition() >= this.getLogicalChildren().length - 1)
-			this.setCurrentAt(0);
-		else
-			this.next();
-	}
+	updateItems: function() {
+		if(!this.getIsLoaded())
+			return;
 
+		var w = this.getLayoutWidth();
+		var h = this.getLayoutHeight();
+
+		//console.log('updateItems w: '+w);
+
+		var current = this.pos;
+		var target = this.pos;
+		if(this.animClock !== undefined)
+			target = this.animNext;
+
+		for(var i = 0; i < this.activeItems.length; i++)
+			this.activeItems[i].carouselableSeen = undefined;
+
+		var newItems = [];
+		for(var i = Math.max(0, Math.floor(target-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(target+1+this.bufferingSize)); i++) {
+			var item = this.items[i];
+			var active = false;
+			for(var i2 = 0; !active && (i2 < this.activeItems.length); i2++) {
+				if(this.activeItems[i2] === item) {
+					active = true;
+					this.activeItems[i2].carouselableSeen = true;
+				}
+			}
+			newItems.push(item);
+			if(!active)
+				this.appendChild(item);
+			// measure & arrange
+			item.measure(w, h);
+			item.arrange((i - current)*w, 0, w, h);
+		}
+
+		// remove unviewable items
+		for(var i = 0; i < this.activeItems.length; i++) {
+			if(!this.activeItems[i].carouselableSeen)
+				this.removeChild(this.activeItems[i]);
+		}
+		this.activeItems = newItems;
+	}
 	/**#@-*/
-}, 
-/**@lends Ui.Carouselable#*/
-{
-	measureCore: function(width, height) {
-		this.movable.measure(width, height);
-		return { width: this.box.getElementWidth(), height: this.box.getElementHeight() };
-	},
-
-	arrangeCore: function(width, height) {
-		var res = this.movable.arrange(0, 0, width * this.box.getChildren().length, height);
-		this.movable.setPosition(this.pos * width, undefined);
-		return res;
-	}
-});
-
-Ui.Container.extend('Ui.CarouselableBox', {
-	elementWidth: 0,
-	elementHeight: 0,
-
-	constructor: function() {
-	},
-
-	append: function(child) {
-		this.appendChild(child);
-	},
-
-	remove: function(child) {
-		this.removeChild(child);
-	},
-	
-	insertAt: function(child, pos) {
-		this.insertChildAt(child, pos);
-	},
-	
-	moveAt: function(child, pos) {
-		this.moveChildAt(child, pos);
-	},
-
-	getElementWidth: function() {
-		return this.elementWidth;
-	},
-
-	getElementHeight: function() {
-		return this.elementHeight;
-	}
-
 }, {
-	measureCore: function(width, height) {
-		var minWidth = 0;
-		var minHeight = 0;
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var size = this.getChildren()[i].measure(width, height);
-			if(size.width > minWidth)
-				minWidth = size.width;
-			if(size.height > minHeight)
-				minHeight = size.height;
+	onMove: function(x, y) {
+		this.pos = -x / this.getLayoutWidth();
+		if((this.pos < 0) || (this.pos > this.items.length-1)) {
+			this.pos = Math.max(0, Math.min(this.pos, this.items.length-1));
+			this.setPosition(-this.pos * this.getLayoutWidth());
 		}
-		this.elementWidth = minWidth;
-		this.elementHeight = minHeight;
-		return { width: minWidth * this.getChildren().length, height: minHeight };
+		//console.log('onMove('+x+','+y+') => '+this.pos);
+		this.updateItems();
 	},
 
-	arrangeCore: function(width, height) {
-		var x = 0;
-		width /= this.getChildren().length;
-		for(var i = 0; i < this.getChildren().length; i++) {
-			this.getChildren()[i].arrange(x, 0, width, height);
-			x += width;
-		}
+	arrangeCore: function(w, h) {
+		this.setPosition(-this.pos * w, undefined);
+	},
+
+	onChildInvalidateMeasure: function(child, remove) {
 	}
 });
-

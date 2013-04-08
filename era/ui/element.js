@@ -346,7 +346,7 @@ Core.Object.extend('Ui.Element',
 //		}
 //	},
 
-	onChildInvalidateMeasure: function(child) {
+	onChildInvalidateMeasure: function(child, remove) {
 		this.invalidateMeasure();
 	},
 

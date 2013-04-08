@@ -20,9 +20,9 @@ Ui.Element.extend('Ui.Container',
 		this.children.push(child);
 		this.getDrawing().appendChild(child.getDrawing());
 		child.getDrawing().style.zIndex = this.children.length;
-		this.invalidateMeasure();
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
+		this.onChildInvalidateMeasure(child);
 	},
 
 	/**
@@ -31,7 +31,6 @@ Ui.Element.extend('Ui.Container',
 	prependChild: function(child) {
 		child.parent = this;
 		this.children.unshift(child);
-		this.invalidateMeasure();
 		if(this.getDrawing().firstChild != undefined)
 			this.getDrawing().insertBefore(child.getDrawing(), this.getDrawing().firstChild);
 		else
@@ -40,6 +39,7 @@ Ui.Element.extend('Ui.Container',
 			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
+		this.onChildInvalidateMeasure(child);
 	},
 
 	/**
@@ -54,9 +54,9 @@ Ui.Element.extend('Ui.Container',
 			this.children.splice(i, 1);
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].getDrawing().style.zIndex = i + 1;
-		this.invalidateMeasure();
 		child.setIsLoaded(false);
 		child.setParentVisible(false);
+		this.onChildInvalidateMeasure(child, true);
 	},
 
 	/**
@@ -88,7 +88,7 @@ Ui.Element.extend('Ui.Container',
 			for(var i = 0; i < this.children.length; i++)
 				this.children[i].getDrawing().style.zIndex = i + 1;
 		}
-		this.invalidateMeasure();
+		this.onChildInvalidateMeasure(child);
 	},
 
 	/**
