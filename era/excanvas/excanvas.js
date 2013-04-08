@@ -118,15 +118,15 @@ if (!document.createElement('canvas').getContext) {
       // Create a dummy element so that IE will allow canvas elements to be
       // recognized.
       doc.createElement('canvas');
-      doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
+//      doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
     },
 
     init_: function(doc) {
       // find all canvas elements
-      var els = doc.getElementsByTagName('canvas');
-      for (var i = 0; i < els.length; i++) {
-        this.initElement(els[i]);
-      }
+//      var els = doc.getElementsByTagName('canvas');
+//      for (var i = 0; i < els.length; i++) {
+//        this.initElement(els[i]);
+//      }
     },
 
     /**
@@ -150,7 +150,7 @@ if (!document.createElement('canvas').getContext) {
         el.innerHTML = '';
 
         // do not use inline function because that will leak memory
-        el.attachEvent('onpropertychange', onPropertyChange);
+//        el.attachEvent('onpropertychange', onPropertyChange);
         el.attachEvent('onresize', onResize);
 
         var attrs = el.attributes;
@@ -174,7 +174,7 @@ if (!document.createElement('canvas').getContext) {
     }
   };
 
-  function onPropertyChange(e) {
+/*  function onPropertyChange(e) {
     var el = e.srcElement;
 
     switch (e.propertyName) {
@@ -190,7 +190,7 @@ if (!document.createElement('canvas').getContext) {
         el.firstChild.style.height = el.clientHeight + 'px';
         break;
     }
-  }
+  }*/
 
   function onResize(e) {
     var el = e.srcElement;
