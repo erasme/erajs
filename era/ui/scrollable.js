@@ -496,7 +496,11 @@ Ui.Container.extend('Ui.Scrollable',
 			deltaY = -event.wheelDelta / 2;
 		// Firefox
 		else if(event.detail != undefined)
-			deltaY = event.detail * 10;
+			deltaY = event.detail * 20;
+			
+		// scroll horizontaly if vertical not possible
+		if(!this.scrollVertical && this.scrollHorizontal && (deltaX === 0))
+			deltaX = deltaY;
 		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);
 	},
 
