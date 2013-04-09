@@ -104,14 +104,21 @@ Ui.MovableBase.extend('Ui.Carouselable',
 
 	append: function(child) {
 		this.items.push(Ui.Element.create(child));
+		this.loadItems();
 		this.updateItems();
 	},
 
 	remove: function(child) {
 		var i = 0;
 		while((i < this.items.length) && (this.items[i] != child)) { i++ };
-		if(i < this.items.length)
+		if(i < this.items.length) {
 			this.items.splice(i, 1);
+			if((this.pos < 0) || (this.pos > this.items.length-1)) {
+				this.pos = Math.max(0, Math.min(this.pos, this.items.length-1));
+				this.setPosition(-this.pos * this.getLayoutWidth());
+			}
+		}
+		this.loadItems();
 		this.updateItems();
 	},
 
@@ -123,6 +130,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		if(position >= this.items.length)
 			position = this.items.length;
 		this.items.splice(position, 0, Ui.Element.create(child));
+		this.loadItems();
 		this.updateItem(this.pos, this.pos);
 	},
 	
@@ -139,6 +147,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 			this.items.splice(i, 1);
 			this.items.splice(position, 0, child);
 		}
+		this.loadItems();
 		this.updateItems();
 	},
 
@@ -224,6 +233,8 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onChange: function() {
+		this.loadItems();
+		this.updateItems();
 		this.fireEvent('change', this, this.pos);
 	},
 
@@ -268,7 +279,92 @@ Ui.MovableBase.extend('Ui.Carouselable',
 			this.alignClock = undefined;
 		}
 	},
+	
+	loadItems: function() {
+		if(!this.getIsLoaded())
+			return;
+	
+		for(var i = 0; i < this.activeItems.length; i++)
+			this.activeItems[i].carouselableSeen = undefined;
 
+		var newItems = [];
+		for(var i = Math.max(0, Math.floor(this.pos-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(this.pos+1+this.bufferingSize)); i++) {
+			var item = this.items[i];
+			var active = false;
+			for(var i2 = 0; !active && (i2 < this.activeItems.length); i2++) {
+				if(this.activeItems[i2] === item) {
+					active = true;
+					this.activeItems[i2].carouselableSeen = true;
+				}
+			}
+			newItems.push(item);
+			if(!active)
+				this.appendChild(item);
+		}
+
+		// remove unviewable items
+		for(var i = 0; i < this.activeItems.length; i++) {
+			if(!this.activeItems[i].carouselableSeen)
+				this.removeChild(this.activeItems[i]);
+		}
+		this.activeItems = newItems;
+	},
+
+	updateItems: function() {
+		if(!this.getIsLoaded())
+			return;
+
+		var w = this.getLayoutWidth();
+		var h = this.getLayoutHeight();
+
+		//console.log('updateItems w: '+w);
+
+//		var current = this.pos;
+//		var target = this.pos;
+		if(this.animClock !== undefined)
+			target = this.animNext;
+
+//		for(var i = 0; i < this.activeItems.length; i++)
+//			this.activeItems[i].carouselableSeen = undefined;
+
+		for(var i = 0; i < this.activeItems.length; i++) {
+			var item = this.activeItems[i];
+			var ipos = -1;
+			for(ipos = 0; (ipos < this.items.length) && (this.items[ipos] !== item); ipos++) {}
+			if(ipos < this.items.length) {
+				// measure & arrange
+				item.measure(w, h);
+				item.arrange((ipos - this.pos)*w, 0, w, h);
+			}
+		}
+
+/*		var newItems = [];
+		for(var i = Math.max(0, Math.floor(target-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(target+1+this.bufferingSize)); i++) {
+			var item = this.items[i];
+			var active = false;
+			for(var i2 = 0; !active && (i2 < this.activeItems.length); i2++) {
+				if(this.activeItems[i2] === item) {
+					active = true;
+					this.activeItems[i2].carouselableSeen = true;
+				}
+			}
+			newItems.push(item);
+			if(!active)
+				this.appendChild(item);
+			// measure & arrange
+			item.measure(w, h);
+			item.arrange((i - current)*w, 0, w, h);
+		}
+
+		// remove unviewable items
+		for(var i = 0; i < this.activeItems.length; i++) {
+			if(!this.activeItems[i].carouselableSeen)
+				this.removeChild(this.activeItems[i]);
+		}
+		this.activeItems = newItems;*/
+	}
+
+/*
 	updateItems: function() {
 		if(!this.getIsLoaded())
 			return;
@@ -310,9 +406,15 @@ Ui.MovableBase.extend('Ui.Carouselable',
 				this.removeChild(this.activeItems[i]);
 		}
 		this.activeItems = newItems;
-	}
+	}*/
 	/**#@-*/
 }, {
+	onLoad: function() {
+		console.log(this+'.onLoad');
+		Ui.Carouselable.base.onLoad.call(this);
+		this.loadItems();
+	},
+
 	onMove: function(x, y) {
 		this.pos = -x / this.getLayoutWidth();
 		if((this.pos < 0) || (this.pos > this.items.length-1)) {
