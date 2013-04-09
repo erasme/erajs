@@ -264,7 +264,7 @@ Core.Object.extend('Ui.Element',
 		// no need to measure if the element is not loaded
 		if(!this.isLoaded)
 			return;
-//		console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
+		//console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
 
 		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
 			return { width: this.measureWidth, height: this.measureHeight };
