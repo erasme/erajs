@@ -8,7 +8,10 @@ Core.Object.extend('Ui.SvgParser', {
 	end: false,
 
 	constructor: function(config) {
-		this.path = config.path;
+		if(navigator.isIE7)
+			this.path = config.path.split('');
+		else
+			this.path = config.path;
 		delete config.path;
 	},
 
@@ -19,12 +22,12 @@ Core.Object.extend('Ui.SvgParser', {
 	next: function() {
 		this.end = this.pos >= this.path.length;
 		if(!this.end) {
-			while((this.pos < this.path.length) && ((this.path.charAt(this.pos) == ' ') || (this.path.charAt(this.pos) == ',') || (this.path.charAt(this.pos) == ';')))
+			while((this.pos < this.path.length) && ((this.path[this.pos] == ' ') || (this.path[this.pos] == ',') || (this.path[this.pos] == ';')))
 				this.pos++;
 			this.current = '';
 			var lastIsText = undefined;
-			while((this.pos < this.path.length) && (this.path.charAt(this.pos) != ' ') && (this.path.charAt(this.pos) != ',') && (this.path.charAt(this.pos) != ';')) {
-				var c = this.path.charAt(this.pos);
+			while((this.pos < this.path.length) && (this.path[this.pos] != ' ') && (this.path[this.pos] != ',') && (this.path[this.pos] != ';')) {
+				var c = this.path[this.pos];
 				var isText = (c != 'e') && ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
 				if((lastIsText === undefined) || (lastIsText == isText)) {
 					lastIsText = isText;
