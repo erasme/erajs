@@ -48,7 +48,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 	
 	getCurrentPosition: function() {
-		if(this.alignClock === undefined)
+		if(this.alignClock !== undefined)
 			return this.animNext;
 		else
 			return this.pos;
@@ -104,8 +104,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 
 	append: function(child) {
 		this.items.push(Ui.Element.create(child));
-		this.loadItems();
-		this.updateItems();
+		this.onChange();
 	},
 
 	remove: function(child) {
@@ -113,13 +112,13 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		while((i < this.items.length) && (this.items[i] != child)) { i++ };
 		if(i < this.items.length) {
 			this.items.splice(i, 1);
-			if((this.pos < 0) || (this.pos > this.items.length-1)) {
+			if((this.pos < 0) || (this.pos > this.items.length-1))
 				this.pos = Math.max(0, Math.min(this.pos, this.items.length-1));
-				this.setPosition(-this.pos * this.getLayoutWidth());
-			}
+			if(this.alignClock !== undefined)
+				this.animNext = Math.max(0, Math.min(this.animNext, this.items.length-1));
+			this.setPosition(-this.pos * this.getLayoutWidth(), undefined, true);
+			this.onChange();
 		}
-		this.loadItems();
-		this.updateItems();
 	},
 
 	insertAt: function(child, position) {
@@ -130,8 +129,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		if(position >= this.items.length)
 			position = this.items.length;
 		this.items.splice(position, 0, Ui.Element.create(child));
-		this.loadItems();
-		this.updateItem(this.pos, this.pos);
+		this.onChange();
 	},
 	
 	moveAt: function(child, position) {
@@ -147,8 +145,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 			this.items.splice(i, 1);
 			this.items.splice(position, 0, child);
 		}
-		this.loadItems();
-		this.updateItems();
+		this.onChange();
 	},
 
 	/**#@+
@@ -235,13 +232,12 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	onChange: function() {
 		this.loadItems();
 		this.updateItems();
-		this.fireEvent('change', this, this.pos);
+		this.fireEvent('change', this, this.getCurrentPosition());
 	},
 
 	onAlignTick: function(clock, progress, delta) {
 		if(delta == 0)
-			return;
-
+			return;	
 		var relprogress = -(clock.getTime() * this.speed) / (this.animNext - this.animStart);
 		if(relprogress >= 1) {
 			this.alignClock.stop();
@@ -410,13 +406,14 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	/**#@-*/
 }, {
 	onLoad: function() {
-		console.log(this+'.onLoad');
 		Ui.Carouselable.base.onLoad.call(this);
 		this.loadItems();
+		this.updateItems();
 	},
 
 	onMove: function(x, y) {
 		this.pos = -x / this.getLayoutWidth();
+//		console.log('onMove pos: '+this.pos);
 		if((this.pos < 0) || (this.pos > this.items.length-1)) {
 			this.pos = Math.max(0, Math.min(this.pos, this.items.length-1));
 			this.setPosition(-this.pos * this.getLayoutWidth());
