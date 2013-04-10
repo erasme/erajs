@@ -22,6 +22,7 @@ Core.Object.extend('Ui.Element',
 	drawing: undefined,
 
 	/** measurement */
+	collapse: false,
 	measureValid: false,
 	measureConstraintWidth: 0,
 	measureConstraintHeight: 0,
@@ -266,6 +267,9 @@ Core.Object.extend('Ui.Element',
 			return;
 		//console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
 
+		if(this.collapse)
+			return { width: 0, height: 0 };
+
 		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
 			return { width: this.measureWidth, height: this.measureHeight };
 
@@ -358,7 +362,7 @@ Core.Object.extend('Ui.Element',
 	 */
 	arrange: function(x, y, width, height) {	
 		// no need to arrange if not loaded
-		if(!this.isLoaded)
+		if(!this.isLoaded || this.collapse)
 			return;
 		if(isNaN(x))
 			x = 0;
@@ -852,16 +856,18 @@ Core.Object.extend('Ui.Element',
 		return this.measureHeight;
 	},
 
-	hide: function() {
+	hide: function(collapse) {
 		if((this.visible === undefined) || this.visible) {
 			var old = this.getIsVisible();
 			this.visible = false;
 			this.drawing.style.display = 'none';
-
+			this.collapse = (collapse === true);
 //			console.log(this.classType+'.hide old: '+old);
 
 			if(old)
 				this.onInternalHidden();
+			if(this.collapse)
+				this.invalidateMeasure();
 		}
 	},
 	
@@ -870,11 +876,14 @@ Core.Object.extend('Ui.Element',
 			var old = this.getIsVisible();
 			this.visible = true;
 			this.drawing.style.display = 'block';
-
 //			console.log(this.classType+'.show old: '+old+', new: '+this.getIsVisible());
 
 			if(this.getIsVisible() && !old)
 				this.onInternalVisible();
+			if(this.collapse) {
+				this.collapse = false;
+				this.invalidateMeasure();
+			}
 		}
 	},
 
