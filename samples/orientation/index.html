@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	label: undefined,
+
+	constructor: function(config) {
+		this.label = new Ui.Label({ horizontalAlign: 'center', verticalAlign: 'center' });
+		this.label.setText('orientation: '+window.orientation);
+		this.setContent(this.label);
+		this.connect(this, 'orientationchange', this.onChange);
+	},
+
+	onChange: function(orientation) {
+		console.log('orientation: '+orientation);
+		this.label.setText('orientation: '+orientation);
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
