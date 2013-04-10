@@ -287,31 +287,14 @@ Ui.Container.extend('Ui.Scrollable',
 		else if(this.viewHeight + offsetY > this.contentHeight)
 			offsetY = this.contentHeight - this.viewHeight;
 
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;
-		this.contentBox.setOffset(offsetX, offsetY);
-
-/*		if(!force) {
-			if(offsetX < 0)
-				offsetX = 0;
-			else if(offsetX > this.contentWidth - this.viewWidth)
-				offsetX = this.contentWidth - this.viewWidth;
-			if(offsetY < 0)
-				offsetY = 0;
-			else if(offsetY > this.contentHeight - this.viewHeight)
-				offsetY = this.contentHeight - this.viewHeight;
+		if((this.offsetX !== offsetX) || (this.offsetY !== offsetY)) {
+			this.offsetX = offsetX;
+			this.offsetY = offsetY;
+			this.contentBox.setOffset(offsetX, offsetY);
+			return true;
 		}
-	
-		if(!this.scrollVertical)
-			offsetY = 0;
-		if(!this.scrollHorizontal)
-			offsetX = 0;
-
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;*/
-
-//		this.updateOffset();
-//		this.offsetLock = false;
+		else
+			return false;
 	},
 
 	getOffsetX: function() {
@@ -476,14 +459,6 @@ Ui.Container.extend('Ui.Scrollable',
 	},
 
 	onMouseWheel: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.stopInertia();
-
-		this.showScrollbars();
-		this.hideTimeoutScrollbars();
-
 		var deltaX = 0;
 		var deltaY = 0;
 
@@ -501,9 +476,16 @@ Ui.Container.extend('Ui.Scrollable',
 		// scroll horizontaly if vertical not possible
 		if(!this.scrollVertical && this.scrollHorizontal && (deltaX === 0))
 			deltaX = deltaY;
-		this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true);
-	},
+			
+		this.stopInertia();
 
+		if(this.setOffset(this.offsetX + deltaX, this.offsetY + deltaY, true)) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.showScrollbars();
+			this.hideTimeoutScrollbars();
+		}
+	},
 
 	onFingerDownCapture: function(event) {
 //		console.log('onFingerDownCapture');
