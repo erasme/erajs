@@ -1291,7 +1291,7 @@ Ui.Container.extend('Ui.Scrollable',
 
 		if(this.scrollbarVerticalNeeded) {
 			this.contentHeight = this.contentBox.getMeasureHeight();
-			this.scrollbarVerticalHeight = Math.max((this.viewHeight / this.contentHeight) * this.viewHeight, this.scrollbarVerticalBox.getMeasureHeight());
+			this.scrollbarVerticalHeight = Math.max((this.viewHeight / this.contentHeight) * this.viewHeight, this.scrollbarVerticalBox.getMeasureHeight());			
 			this.scrollbarVerticalBox.arrange(width - this.scrollbarVerticalBox.getMeasureWidth(), 0,
 				this.scrollbarVerticalBox.getMeasureWidth(), this.scrollbarVerticalHeight);
 		}
@@ -1311,7 +1311,7 @@ Ui.Container.extend('Ui.Scrollable',
 		this.updateOffset();
 	},
 
-	measureCore: function(width, height) {
+	measureCore: function(width, height) {	
 		if(this.contentBox === undefined)
 			return { width: 0, height: 0 };
 
@@ -1321,7 +1321,7 @@ Ui.Container.extend('Ui.Scrollable',
 			return this.measureCoreWithoutScrollbar(width, height);
 	},
 
-	arrangeCore: function(width, height) {
+	arrangeCore: function(width, height) {	
 		if(this.contentBox === undefined)
 			return;
 
