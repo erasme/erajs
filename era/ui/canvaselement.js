@@ -271,8 +271,8 @@ Ui.Container.extend('Ui.CanvasElement',
 			this.context.oBackingStorePixelRatio ||
 			this.context.backingStorePixelRatio || 1;
 		this.dpiRatio = devicePixelRatio / backingStoreRatio;
-		this.getDrawing().setAttribute('width', width * this.dpiRatio, null);
-		this.getDrawing().setAttribute('height', height * this.dpiRatio, null);
+		this.getDrawing().setAttribute('width', Math.ceil(width * this.dpiRatio), null);
+		this.getDrawing().setAttribute('height', Math.ceil(height * this.dpiRatio), null);
 		if(this.getIsVisible() && this.getIsLoaded())
 			this.update();
 	},
