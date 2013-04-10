@@ -2,6 +2,7 @@ Ui.Element.extend('Ui.Video',
 /**@lends Ui.Video#*/
 {
 	src: undefined,
+	poster: undefined,
 	oggSrc: undefined,
 	mp4Src: undefined,
 	webmSrc: undefined,
@@ -43,6 +44,14 @@ Ui.Element.extend('Ui.Video',
 		try {
 			this.videoDrawing.load();
 		} catch(e) {}
+	},
+	
+	/**
+	* Set the file URL for the current video poster (preview)
+	*/
+	setPoster: function(src) {
+		this.poster = src;
+		this.videoDrawing.setAttribute('poster', src);
 	},
 
 	/**
