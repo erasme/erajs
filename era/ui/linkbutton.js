@@ -83,7 +83,7 @@ Ui.Linkable.extend('Ui.LinkButton',
 		iconSize: 24,
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
-		fontWeight: 'normal'
+		fontWeight: 'bold'
 	}
 });
 

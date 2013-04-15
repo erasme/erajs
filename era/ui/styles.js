@@ -7,11 +7,23 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			color: '#000000'
 		},
 		"Ui.Button": {
-			color: '#4fa8ff',
+			spacing: 8,
+			color: '#e4e4e4',
+			focusColor: '#f6caa2'
+		},
+		"Ui.LinkButton": {
+			spacing: 8,
+			color: '#a4f4f4',
 			focusColor: '#f6caa2'
 		},
 		"Ui.DownloadButton": {
-			color: new Ui.Color({ r: 0.21, g: 0.9, b: 0.56 }),
+			spacing: 8,
+			color: '#a4f4a4',
+			focusColor: '#f6caa2'
+		},
+		"Ui.UploadButton": {
+			spacing: 8,
+			color: '#f4a4a4',
 			focusColor: '#f6caa2'
 		},
 		"Ui.Separator": {

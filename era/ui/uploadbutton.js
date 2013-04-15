@@ -79,7 +79,7 @@ Ui.Uploadable.extend('Ui.UploadButton',
 		iconSize: 24,
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
-		fontWeight: 'normal'
+		fontWeight: 'bold'
 	}
 });
 
