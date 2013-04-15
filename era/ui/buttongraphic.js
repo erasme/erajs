@@ -172,7 +172,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		if(this.getIsDown())
 			deltaY = 0.20;
 		if(this.contentColor != undefined) {
-			yuv = this.contentColor.getYuv();
+			var yuv = this.contentColor.getYuv();
 			return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
 		}
 		else {
