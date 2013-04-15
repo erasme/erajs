@@ -1,17 +1,10 @@
+
 Ui.Togglable.extend('Ui.CheckBox', 
 /**Ui.CheckBox#*/
 {
-	check: undefined,
-	checkBox: undefined,
+	graphic: undefined,
 	contentBox: undefined,
 	hbox: undefined,
-
-	lightShadow: undefined,
-	darkShadow: undefined,
-	lightBorder: undefined,
-	background: undefined,
-	shadow: undefined,
-
 	content: undefined,
 	text: undefined,
 
@@ -27,37 +20,17 @@ Ui.Togglable.extend('Ui.CheckBox',
 
 		this.hbox = new Ui.HBox();
 		this.append(this.hbox);
-
-		this.checkBox = new Ui.LBox();
-		this.hbox.append(this.checkBox);
-
-		this.lightShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), radius: 4, margin: 10, marginTop: 11  });
-		this.checkBox.append(this.lightShadow);
-
-		this.darkShadow = new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.4}), radius: 4, margin: 10, marginBottom: 11  });
-		this.checkBox.append(this.darkShadow);
-
-		this.lightBorder = new Ui.Rectangle({ fill: 'lightgray', radius: 4, marginTop: 11, marginBottom: 12, marginLeft: 11, marginRight: 11  });
-		this.checkBox.append(this.lightBorder);
-
-		this.background = new Ui.Rectangle({ radius: 3, marginTop: 12, marginBottom: 12, marginLeft: 11, marginRight: 11 });
-		this.checkBox.append(this.background);
-
-		this.shadow = new Ui.Shadow({ margin: 11, marginBottom: 12, shadowWidth: 2, inner: true, radius: 3, opacity: 0.2 });
-		this.checkBox.append(this.shadow);
-
-		this.check = new Ui.Icon({ icon: 'check', width: 20, height: 20, fill: 'green' });
-		this.check.setMargin(12);
-		this.check.hide();
-		this.checkBox.append(this.check);
+		
+		this.graphic = new Ui.CheckBoxGraphic();
+		this.hbox.append(this.graphic);
 
 		this.connect(this, 'down', this.onCheckBoxDown);
 		this.connect(this, 'up', this.onCheckBoxUp);
 		this.connect(this, 'toggle', this.onCheckBoxToggle);
 		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
 
-		this.connect(this, 'focus', this.updateColors);
-		this.connect(this, 'blur', this.updateColors);
+		this.connect(this, 'focus', this.onCheckFocus);
+		this.connect(this, 'blur', this.onCheckBlur);
 
 	},
 
@@ -105,114 +78,56 @@ Ui.Togglable.extend('Ui.CheckBox',
 	/**
 	 *#@+ @private
 	 */
-
-	updateColors: function() {
-		this.check.setFill(this.getStyleProperty('checkColor'));
-		if(this.getIsDown()) {
-			this.background.setFill(this.getColorDown());
-			this.lightBorder.setFill(this.getLightBorderColorDown());
-		}
-		else {
-			this.background.setFill(this.getColor());
-			this.lightBorder.setFill(this.getLightBorderColor());
-		}
+	onCheckFocus: function() {
+		this.graphic.setColor(this.getStyleProperty('focusColor'));
+	},
+	
+	onCheckBlur: function() {
+		this.graphic.setColor(this.getStyleProperty('color'));
 	},
 
 	onCheckBoxDown: function() {
-		this.background.setFill(this.getColorDown());
-		this.lightBorder.setFill(this.getLightBorderColorDown());
+		this.graphic.setIsDown(true);
 	},
 
 	onCheckBoxUp: function() {
-		this.background.setFill(this.getColor());
-		this.lightBorder.setFill(this.getLightBorderColor());
+		this.graphic.setIsDown(false);
 	},
 
 	onCheckBoxToggle: function() {
-		this.check.show();
+		this.graphic.setIsChecked(true);
+		this.fireEvent('change', this, true);
 	},
 
 	onCheckBoxUntoggle: function() {
-		this.check.hide();
-	},
-
-	getColor: function() {
-		var rgba;
-		if(this.getHasFocus())
-			rgba = Ui.Color.create(this.getStyleProperty('focusColor')).getRgba();
-		else
-			rgba = Ui.Color.create(this.getStyleProperty('color')).getRgba();
-		return new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: 0.25 });
-	},
-
-	getColorDown: function() {
-		var yuva;
-		if(this.getHasFocus())
-			yuva = Ui.Color.create(this.getStyleProperty('focusColor')).getYuva();
-		else
-			yuva = Ui.Color.create(this.getStyleProperty('color')).getYuva();
-		return new Ui.Color({ y: yuva.y - 0.10, u: yuva.u, v: yuva.v, a: 0.25 });
-	},
-
-	getLightBorderColor: function() {
-		var yuv;
-		if(this.getHasFocus())
-			yuv = Ui.Color.create(this.getStyleProperty('focusColor')).getYuv();
-		else
-			yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
-		return new Ui.Color({ y: yuv.y + 0.20, u: yuv.u, v: yuv.v });
-	},
-
-	getLightBorderColorDown: function() {
-		var yuv;
-		if(this.getHasFocus())
-			yuv = Ui.Color.create(this.getStyleProperty('focusColor')).getYuv();
-		else
-			yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
-		else
-			return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
+		this.graphic.setIsChecked(false);
+		this.fireEvent('change', this, false);
 	}
 	/**#@-*/
 }, 
 /**Ui.CheckBox#*/
 {
 	onStyleChange: function() {
-		this.updateColors();
-		var radius = this.getStyleProperty('radius');
-		this.lightShadow.setRadius(radius);
-		this.darkShadow.setRadius(radius);
-		this.lightBorder.setRadius(radius);
-		this.background.setRadius(radius);
-		this.shadow.setRadius(radius);
+		this.graphic.setRadius(this.getStyleProperty('radius'));
+		if(this.getHasFocus())
+			this.graphic.setColor(this.getStyleProperty('focusColor'));
+		else
+			this.graphic.setColor(this.getStyleProperty('color'));
+		this.graphic.setCheckColor(this.getStyleProperty('checkColor'));
 	},
 
 	onDisable: function() {
 		Ui.CheckBox.base.onDisable.call(this);
-		this.contentBox.setOpacity(0.4);
-		this.check.setOpacity(0.4);
+		this.graphic.setIsEnable(false);
 	},
 
 	onEnable: function() {
 		Ui.CheckBox.base.onEnable.call(this);
-		this.contentBox.setOpacity(1);
-		this.check.setOpacity(1);
-	},
-
-	onToggle: function() {
-		Ui.CheckBox.base.onToggle.call(this);
-		this.fireEvent('change', this, true);
-	},
-
-	onUntoggle: function() {
-		Ui.CheckBox.base.onUntoggle.call(this);
-		this.fireEvent('change', this, false);
+		this.graphic.setIsEnable(true);
 	},
 
 	setContent: function(content) {
 		content = Ui.Element.create(content);
-
 		if(content === undefined) {
 			if(this.contentBox != undefined) {
 				this.hbox.remove(this.contentBox);
@@ -241,7 +156,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 {
 	style: {
 		color: new Ui.Color({ r: 1, g: 1, b: 1 }),
-		focusColor: '#f6caa2',
+		focusColor: '#f6ddc8',
 		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
 		radius: 5
 	}
