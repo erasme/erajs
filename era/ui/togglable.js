@@ -13,7 +13,8 @@ Ui.LBox.extend('Ui.Togglable',
 		this.getDrawing().style.cursor = 'pointer';
 
 		this.setFocusable(true);
-		this.setRole('button');
+		this.setRole('checkbox');
+		this.getDrawing().setAttribute('aria-checked', 'false');
 
 		this.addEvents('down', 'up', 'toggle', 'untoggle');
 
@@ -147,8 +148,6 @@ Ui.LBox.extend('Ui.Togglable',
 			this.onUntoggle();
 	},
 
-//////////
-
 	onKeyDown: function(event) {
 		var key = event.which;
 		if((key == 13) && !this.getIsDisabled()) {
@@ -187,6 +186,7 @@ Ui.LBox.extend('Ui.Togglable',
 	onToggle: function() {
 		if(!this.isToggled) {
 			this.isToggled = true;
+			this.getDrawing().setAttribute('aria-checked', 'true');
 			this.fireEvent('toggle', this);
 		}
 	},
@@ -194,6 +194,7 @@ Ui.LBox.extend('Ui.Togglable',
 	onUntoggle: function() {
 		if(this.isToggled) {
 			this.isToggled = false;
+			this.getDrawing().setAttribute('aria-checked', 'false');
 			this.fireEvent('untoggle', this);
 		}
 	},
