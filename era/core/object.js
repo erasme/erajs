@@ -248,6 +248,11 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	/**#nocode+ Avoid Jsdoc warnings...*/
 	if(capture == undefined)
 		capture = false;
+//#if DEBUG
+	if(typeof(method) !== 'function')
+		throw('Invalid method to connect on event \''+eventName+'\'');
+//#end
+		
 	if('addEventListener' in obj) {
 		var wrapper = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
