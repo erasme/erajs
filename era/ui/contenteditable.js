@@ -40,8 +40,21 @@ Ui.Element.extend('Ui.ContentEditable', {
 		this.invalidateMeasure();
 	},
 
+	getTextContent: function(el) {
+		var text = '';		
+		if(el.nodeType === 3)
+			text += el.textContent;
+		else if((el.nodeType === 1) && (el.nodeName == "BR"))
+			text += '\n';
+		if('childNodes' in el) {
+			for(var i = 0; i < el.childNodes.length; i++)
+				text += this.getTextContent(el.childNodes[i]);
+		}
+		return text;
+	},
+
 	getText: function() {
-		return ('innerText' in this.getDrawing())?this.getDrawing().innerText:this.getDrawing().textContent;
+		return ('innerText' in this.getDrawing())?this.getDrawing().innerText:this.getTextContent(this.getDrawing());
 	},
 
 	onKeyUp: function(event) {
@@ -255,6 +268,25 @@ Ui.Element.extend('Ui.ContentEditable', {
 		document.body.removeChild(div);
 
 		return { width: needWidth, height: needHeight };
+	},
+	
+	onStyleChange: function() {
+		var color = Ui.Color.create(this.getStyleProperty('color'));
+		this.getDrawing().style.fontSize = this.getStyleProperty('fontSize')+'px';
+		this.getDrawing().style.fontFamily = this.getStyleProperty('fontFamily');
+		this.getDrawing().style.fontWeight = this.getStyleProperty('fontWeight');
+		if(navigator.supportRgba)
+			this.getDrawing().style.color = color.getCssRgba();
+		else
+			this.getDrawing().style.color = color.getCssHtml();
+		this.invalidateMeasure();
+	}
+}, {
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		fontSize: 18,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
 	}
 });
 
