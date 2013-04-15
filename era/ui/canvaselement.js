@@ -104,8 +104,8 @@ Ui.Container.extend('Ui.CanvasElement',
 				if(shadowWidth == 1)
 					opacity = 1;
 				else {
-					var x = (i + 1) / shadowWidth;
-					opacity = x * x;
+					var tx = (i + 1) / shadowWidth;
+					opacity = tx * tx;
 				}
 			}
 			else
