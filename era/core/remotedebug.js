@@ -7,6 +7,7 @@ Core.Object.extend('Core.RemoteDebug',
 	socketAlive: false,
 	retryTask: undefined,
 	nativeConsole: undefined,
+	buffer: undefined,
 
 	/**
 	*	@constructs
@@ -21,6 +22,7 @@ Core.Object.extend('Core.RemoteDebug',
 		this.port = config.port;
 		delete(config.port);
 
+		this.buffer = [];
 		this.nativeConsole = window.console;
 		window.console = {
 			log: Core.RemoteDebug.onConsoleLog,
@@ -40,6 +42,9 @@ Core.Object.extend('Core.RemoteDebug',
 
 	onSocketOpen: function() {
 		this.socketAlive = true;
+		while(this.buffer.length > 0) {
+			this.socket.send(this.buffer.shift());
+		}
 	},
 
 	onSocketError: function() {
@@ -58,21 +63,29 @@ Core.Object.extend('Core.RemoteDebug',
 	onConsoleLog: function(message) {
 		if(this.socketAlive)
 			this.socket.send({ type: 'log', message: message });
+		else
+			this.buffer.push({ type: 'log', message: message });
 	},
 
 	onConsoleError: function(message) {
 		if(this.socketAlive)
 			this.socket.send({ type: 'error', message: message });
+		else
+			this.buffer.push({ type: 'error', message: message });
 	},
 
 	onConsoleWarn: function(message) {
 		if(this.socketAlive)
 			this.socket.send({ type: 'warn', message: message });
+		else
+			this.buffer.push({ type: 'warn', message: message });
 	},
 
 	onError: function(message, url, line) {
 		if(this.socketAlive)
 			this.socket.send({ type: 'warn', message: message, url: url, line: line });
+		else
+			this.buffer.push({ type: 'warn', message: message, url: url, line: line });
 	}
 }, {}, {
 	current: undefined,

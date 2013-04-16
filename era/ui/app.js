@@ -43,6 +43,38 @@ Ui.LBox.extend('Ui.App',
 
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
+		
+		// check if arguments are available
+		if((window.location.search != undefined) && (window.location.search != '')) {
+			var base64 = undefined;
+			var arguments = {};
+			var tab = window.location.search.substring(1).split('&');
+			for(var i = 0; i < tab.length; i++) {
+				var tab2 = tab[i].split('=');
+				if(tab2.length == 2) {
+					var key = decodeURIComponent(tab2[0]);
+					var val = decodeURIComponent(tab2[1]);
+					if(key == 'base64')
+						base64 = JSON.parse(val.fromBase64());
+					else
+						arguments[key] = val;
+				}
+			}
+			if(base64 != undefined) {
+				this.arguments = base64;
+				for(var prop in arguments)
+					this.arguments[prop] = arguments[prop];
+			}
+			else
+				this.arguments = arguments;
+		}
+		else
+			this.arguments = {};
+		// handle remote debugging
+		if(this.arguments['remotedebug'] != undefined) {
+			var args = this.arguments['remotedebug'].split(':');
+			new Core.RemoteDebug({ host: args[0], port: args[1] });
+		}
 
 		this.contentBox = new Ui.VBox();
 		this.append(this.contentBox);
@@ -175,61 +207,32 @@ Ui.LBox.extend('Ui.App',
 
 		// handle messages
 		this.connect(window, 'message', this.onMessage);
-
-		// check if arguments are available
-		if((window.location.search != undefined) && (window.location.search != '')) {
-			var base64 = undefined;
-			var arguments = {};
-			var tab = window.location.search.substring(1).split('&');
-			for(var i = 0; i < tab.length; i++) {
-				var tab2 = tab[i].split('=');
-				if(tab2.length == 2) {
-					var key = decodeURIComponent(tab2[0]);
-					var val = decodeURIComponent(tab2[1]);
-					if(key == 'base64')
-						base64 = JSON.parse(val.fromBase64());
-					else
-						arguments[key] = val;
-				}
-			}
-			if(base64 != undefined) {
-				this.arguments = base64;
-				for(var prop in arguments)
-					this.arguments[prop] = arguments[prop];
-			}
-			else
-				this.arguments = arguments;
-		}
-		else
-			this.arguments = {};
-
-		if(this.arguments['remotedebug'] != undefined) {
-			var args = this.arguments['remotedebug'].split(':');
-			new Core.RemoteDebug({ host: args[0], port: args[1] });
-		}
 	},
 		
 	forceInvalidateMeasure: function(element) {
 		if(element === undefined)
 			element = this;
-		element.invalidateMeasure();
+		//element.invalidateDraw();
 		if('getChildren' in element) {
 			for(var i = 0; i < element.getChildren().length; i++)
 				this.forceInvalidateMeasure(element.getChildren()[i]);
 		}
+		element.invalidateMeasure();
 	},
 	
 	requireFont: function(fontFamily, fontWeight) {
 		var fontKey = fontFamily+':'+fontWeight;
+		//console.log('requireFont: '+fontKey);
 		if(this.requireFonts === undefined)
 			this.requireFonts = {};
-		
 		if(!this.requireFonts[fontKey]) {
 			var test = false;
 			if(this.getIsReady())
 				test = Ui.Label.isFontAvailable(fontFamily, fontWeight);
 			this.requireFonts[fontKey] = test;
-			if(!test && (this.testFontTask === undefined))
+			if(test)
+				this.forceInvalidateMeasure(this);
+			else if(this.getIsReady() && !test && (this.testFontTask === undefined))
 				this.testFontTask = new Core.DelayedTask({ scope: this, delay: 0.25, callback: this.testRequireFonts });
 		}
 	},
@@ -243,11 +246,13 @@ Ui.LBox.extend('Ui.App',
 				test = Ui.Label.isFontAvailable(fontTab[0], fontTab[1]);
 				if(test) {
 					this.requireFonts[fontKey] = true;
+					var app = this;
 					this.forceInvalidateMeasure(this);
 				}
 				else
 					allDone = false;
 			}
+//			console.log(fontKey+' = '+test);
 		}
 		if(!allDone)
 			this.testFontTask = new Core.DelayedTask({ scope: this, delay: 0.25, callback: this.testRequireFonts });
@@ -700,7 +705,7 @@ Ui.LBox.extend('Ui.App',
 	onReady: function() {
 		if(this.loaded) {
 			this.ready = true;
-
+						
 			if(document.body === undefined) {
 				this.htmlRoot = document.createElement('body');
 				document.body = this.htmlRoot;
@@ -1023,4 +1028,3 @@ Ui.LBox.extend('Ui.App',
 		return rootWindow;
 	}
 });
-
