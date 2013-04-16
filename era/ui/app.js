@@ -3,7 +3,7 @@ Ui.LBox.extend('Ui.App',
 {
 	defs: undefined,
 	styles: undefined,
-	updateTask: undefined,
+	updateTask: false,
 //	style: '../era/style/default/style.css',
 //	styleloaded: false,
 	loaded: false,
@@ -206,13 +206,12 @@ Ui.LBox.extend('Ui.App',
 			this.connect(window, 'orientationchange', this.onOrientationChange);
 
 		// handle messages
-		this.connect(window, 'message', this.onMessage);
+		this.connect(window, 'message', this.onMessage);		
 	},
 		
 	forceInvalidateMeasure: function(element) {
 		if(element === undefined)
 			element = this;
-		//element.invalidateDraw();
 		if('getChildren' in element) {
 			for(var i = 0; i < element.getChildren().length; i++)
 				this.forceInvalidateMeasure(element.getChildren()[i]);
@@ -270,7 +269,6 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	timedCheckSize: function(task) {
-//		console.log('timedCheckSize');
 		this.checkSize();
 		new Core.DelayedTask({ scope: this, callback: this.timedCheckSize, delay: 1 });
 	},
@@ -339,6 +337,7 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	onWindowLoad: function() {
+//		console.log('onWindowLoad updateTask: '+this.updateTask);
 		if(navigator.iPad || navigator.iPhone || navigator.Android) {
 			if(this.webApp) {
 				// support app mode for iPad, iPod and iPhone
@@ -400,8 +399,6 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	onWindowResize: function(event) {
-//		console.log('onWindowResize');
-
 //		console.log('onWindowResize iframe ? '+(window != Ui.App.getRootWindow())+' ('+document.body.clientWidth+' x '+document.body.clientHeight+')');
 //		console.log(this+'.onWindowResize start updateTask: '+this.updateTask+', measureValid: '+this.measureValid);
 
@@ -517,11 +514,17 @@ Ui.LBox.extend('Ui.App',
 */
 
 	update: function() {
+		if(this.updateCounter === undefined)
+			this.updateCounter = 0;	
+		else
+			this.updateCounter++;
+		var localCounter = this.updateCounter;
+//		console.log('update START '+localCounter+' task: '+this.updateTask);
 		// clean the updateTask to allow a new one
 		// important to do it first because iOS with its
 		// bad thread system can trigger code that will ask for an
 		// update without having finish this code
-		this.updateTask = undefined;
+		this.updateTask = false;
 //		console.log('update task: '+this.updateTask);
 
 		// update measure
@@ -630,6 +633,7 @@ Ui.LBox.extend('Ui.App',
 //			document.body.scrollLeft = 0;
 //			document.body.scrollTop = 0;
 //		}
+//		console.log('update STOP '+localCounter);
 	},
 
 	getContent: function() {
@@ -704,8 +708,7 @@ Ui.LBox.extend('Ui.App',
 
 	onReady: function() {
 		if(this.loaded) {
-			this.ready = true;
-						
+		
 			if(document.body === undefined) {
 				this.htmlRoot = document.createElement('body');
 				document.body = this.htmlRoot;
@@ -784,8 +787,18 @@ Ui.LBox.extend('Ui.App',
 
 			this.setIsLoaded(true);
 			this.setParentVisible(true);
-			this.update();
 			this.fireEvent('ready');
+			
+			this.ready = true;
+			if((this.updateTask === false) && this.ready) {
+				var app = this;
+				this.updateTask = true;
+//				console.log('onReady set updateTask == true');
+				requestAnimationFrame(function() { app.update(); });
+				// really a bullshit iOS
+				if(navigator.iOs)
+					new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.update });
+			}
 
 			if(navigator.iOs)
 				this.timedCheckSize();
@@ -824,11 +837,15 @@ Ui.LBox.extend('Ui.App',
 		this.drawList = element;
 //		if((this.updateTask === undefined) && this.ready)
 //			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-			
-		if((this.updateTask === undefined) && this.ready) {
+		
+//		console.log('enqueueDraw('+element+') updateTask: '+this.updateTask+', ready: '+this.ready);
+		
+		
+		if((this.updateTask === false) && this.ready) {
 			var app = this;
 			this.updateTask = true;
-			requestAnimationFrame(function() { app.update() });
+//			console.log('enqueueDraw set updateTask == true');
+			requestAnimationFrame(function() { app.update(); });
 		}
 	}
 
@@ -946,10 +963,11 @@ Ui.LBox.extend('Ui.App',
 //			if((this.updateTask === undefined) && this.ready)
 //				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });				
 				
-			if((this.updateTask === undefined) && this.ready) {
+			if((this.updateTask === false) && this.ready) {
 				var app = this;
 				this.updateTask = true;
-				requestAnimationFrame(function() { app.update() });
+//				console.log('invalidateMeasure set updateTask == true');
+				requestAnimationFrame(function() { app.update(); });
 			}
 //		}
 	},
@@ -963,10 +981,11 @@ Ui.LBox.extend('Ui.App',
 
 //			if((this.updateTask === undefined) && this.ready)
 //				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
-			if((this.updateTask === undefined) && this.ready) {
+			if((this.updateTask === false) && this.ready) {
 				var app = this;
 				this.updateTask = true;
-				requestAnimationFrame(function() { app.update() });
+//				console.log('invalidateArrange set updateTask == true');
+				requestAnimationFrame(function() { app.update(); });
 			}
 				
 //		}
