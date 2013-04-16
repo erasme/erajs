@@ -213,7 +213,7 @@ Ui.Element.extend('Ui.Label',
 	measureTextCanvas: function(text, fontSize, fontFamily, fontWeight) {
 		if(Ui.Label.measureBox === undefined)
 			this.createMeasureCanvas();
-		Ui.Label.measureContext.font = fontWeight+' '+fontSize+'px '+fontFamily;
+		Ui.Label.measureContext.font = 'normal '+fontWeight+' '+fontSize+'px '+fontFamily;
 		return { width: Ui.Label.measureContext.measureText(text).width, height: fontSize };
 	},
 
@@ -238,18 +238,25 @@ Ui.Element.extend('Ui.Label',
 		if(!navigator.supportCanvas)
 			return true;
 		if(Ui.Label.measureBox === undefined)
-			this.createMeasureCanvas();
+			Ui.Label.createMeasureCanvas();	
 		var ctx = Ui.Label.measureContext;
 		ctx.clearRect(0, 0, 10, 10);
-		ctx.font = fontWeight+' 10px '+fontFamily;
 		ctx.fillStyle = '#000000';
 		ctx.textBaseline = 'top';
+		// draw with a local font
+		ctx.font = 'normal '+fontWeight+' 10px Sans-Serif';
 		ctx.fillText('@', 0, 0);
-		// test if the canvas is empty
+		var refImageData = ctx.getImageData(0,0,10,10);
+		// draw with wanted font fallback local font
+		ctx.clearRect(0, 0, 10, 10);
+		ctx.font = 'normal '+fontWeight+' 10px '+fontFamily+',Sans-Serif';
+		ctx.fillText('@', 0, 0);
+		// test if images are differents
   		var imageData = ctx.getImageData(0,0,10,10);
-  		for(var i = 0; i < imageData.data.length; i += 4)
-    		if(imageData.data[i+3] !== 0)
-    			return true;
+  		for(var i = 0; i < imageData.data.length; i += 4) {
+  			if(imageData.data[i+3] !== refImageData.data[i+3])
+  				return true;
+    	}
   		return false;
 	},
 
