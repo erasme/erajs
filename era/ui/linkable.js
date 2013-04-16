@@ -7,7 +7,7 @@ Ui.LBox.extend('Ui.Linkable',
 	mouseStartX: undefined,
 	mouseStartY: undefined,
 	openWindow: true,
-	target: undefined,
+	target: '_blank',
 
 	/**
 	 * @constructs
@@ -105,9 +105,9 @@ Ui.LBox.extend('Ui.Linkable',
 			this.disconnect(window, 'mousemove', this.onMouseMove, true);
 			this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
+			this.focus();
 			this.onUp();
 			this.fireEvent('link', this);
-			this.focus();
 
 			if(this.openWindow)
 				window.open(this.link, this.target);
@@ -162,9 +162,9 @@ Ui.LBox.extend('Ui.Linkable',
 		event.preventDefault();
 		event.stopPropagation();
 
+		this.focus();
 		this.onUp();
 		this.fireEvent('link', this);
-		this.focus();
 
 		if(this.openWindow)
 			window.open(this.link, this.target);
@@ -197,7 +197,6 @@ Ui.LBox.extend('Ui.Linkable',
 
 	onDown: function() {
 		this.isDown = true;
-		this.focus();
 		this.fireEvent('down', this);
 	},
 
