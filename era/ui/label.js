@@ -243,7 +243,19 @@ Ui.Element.extend('Ui.Label',
 		ctx.clearRect(0, 0, 10, 10);
 		ctx.fillStyle = '#000000';
 		ctx.textBaseline = 'top';
+		/*// draw with a local font
+		ctx.font = 'normal '+fontWeight+' 10px Sans-Serif';
+		ctx.fillText('@', 0, 0);
+		var wantedImageData = ctx.getImageData(0,0,10,10);
+		var empty = true;
+  		for(var i = 0; empty && (i < wantedImageData.data.length); i += 4) {
+  			if(wantedImageData.data[i+3] !== 0)
+  				empty = false;
+    	}
+    	if(empty)
+    		return false;*/
 		// draw with a local font
+		//ctx.clearRect(0, 0, 10, 10);
 		ctx.font = 'normal '+fontWeight+' 10px Sans-Serif';
 		ctx.fillText('@', 0, 0);
 		var refImageData = ctx.getImageData(0,0,10,10);
