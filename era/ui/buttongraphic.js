@@ -14,7 +14,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	fontFamily: 'Sans-serif',
 	fontWeight: 'normal',
 	textWidth: 0,
-	textMeasureValid: false,
 
 	constructor: function(config) {
 		this.color = new Ui.Color({ r: 0.31, g: 0.66, b: 1 });
@@ -27,7 +26,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	setText: function(text) {
 		if(this.text != text) {
 			this.text = text;
-			this.textMeasureValid = false;
 			this.invalidateMeasure();
 			this.invalidateDraw();
 		}
@@ -68,7 +66,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.textMeasureValid = false;
 			this.invalidateMeasure();
 			this.invalidateDraw();
 		}
@@ -81,7 +78,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.textMeasureValid = false;
 			this.invalidateMeasure();
 			this.invalidateDraw();
 		}
@@ -94,7 +90,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.textMeasureValid = false;
 			this.invalidateMeasure();
 			this.invalidateDraw();
 		}
@@ -111,6 +106,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	setIsDown: function(isDown) {
 		if(this.isDown != isDown) {
 			this.isDown = isDown;
+//			console.log(this+'.setIsDown = invalidateDraw()');
 			this.invalidateDraw();
 		}
 	},
@@ -196,7 +192,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	}
 
 }, {
-	updateCanvas: function(ctx) {	
+	updateCanvas: function(ctx) {
+//		console.log(this+'.updateCanvas');
+	
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 
@@ -250,7 +248,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		// text only
 		else if((this.icon === undefined) && (this.text !== undefined)) {
 			// text
-			ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
+			ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 			ctx.textBaseline = 'top';
 			ctx.fillStyle = this.getContentColor().getCssRgba();
 			ctx.fillText(this.text, (width-this.textWidth)/2, (height-this.fontSize)/2 -1);
@@ -302,10 +300,8 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 
 	measureCore: function(width, height) {
 		// measure text if needed
-		if((this.text != undefined) &&!this.textMeasureValid) {
+		if(this.text != undefined)
 			this.textWidth = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight).width;
-			this.textMeasureValid = true;
-		}
 
 		var size = { width: 10, height: 10 };
 		// icon only
