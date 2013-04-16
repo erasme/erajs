@@ -259,6 +259,10 @@ Ui.Element.extend('Ui.ContentEditable', {
 		div.style.position = 'absolute';
 		div.style.left = '0px';
 		div.style.top = '0px';
+		div.style.fontSize = this.getStyleProperty('fontSize')+'px';
+		div.style.fontFamily = this.getStyleProperty('fontFamily');
+		div.style.fontWeight = this.getStyleProperty('fontWeight');
+		
 		if(this.getWidth() != undefined)
 			div.style.width = this.getWidth()+'px';
 		div.innerHTML = this.getDrawing().innerHTML;
