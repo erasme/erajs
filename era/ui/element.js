@@ -480,6 +480,9 @@ Core.Object.extend('Ui.Element',
 	 * to be updated
 	 */
 	invalidateDraw: function() {
+//		console.log(this+'.invalidateDraw isVisible: '+this.getIsVisible()+', isLoaded: '+this.getIsLoaded()+', drawValid: '+this.drawValid);
+//		console.log('requestAnimationFrame: '+window.requestAnimationFrame);
+		
 		if(this.getIsVisible() && this.getIsLoaded()) {
 			if(this.drawValid) {
 				this.drawValid = false;
