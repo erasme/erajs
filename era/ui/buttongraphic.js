@@ -106,7 +106,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	setIsDown: function(isDown) {
 		if(this.isDown != isDown) {
 			this.isDown = isDown;
-//			console.log(this+'.setIsDown = invalidateDraw()');
 			this.invalidateDraw();
 		}
 	},
@@ -192,9 +191,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	}
 
 }, {
-	updateCanvas: function(ctx) {
-//		console.log(this+'.updateCanvas');
-	
+	updateCanvas: function(ctx) {	
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 
@@ -290,7 +287,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.fill();
 				ctx.restore();
 				// text
-				ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
+				ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 				ctx.textBaseline = 'top';
 				ctx.fillStyle = this.getContentColor().getCssRgba();
 				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, (height-this.fontSize)/2 -1);
