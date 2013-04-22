@@ -341,7 +341,9 @@ if(window.JSON == undefined) {
 					res += ", ";
 				if(!isArray)
 					res += '"'+prop+'": ';
-				if(typeof(propValue) == 'object')
+				if(propValue === null)
+					res += 'null';
+				else if(typeof(propValue) == 'object')
 					res += JSON.stringify(propValue);
 				else if(typeof(propValue) == 'number')
 					res += propValue;
