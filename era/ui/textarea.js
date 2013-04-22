@@ -124,7 +124,7 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	setValue: function(value) {
-		if(value === undefined)
+		if((value === null) || (value === undefined))
 			this.textareaDrawing.value = '';
 		else
 			this.textareaDrawing.value = value;

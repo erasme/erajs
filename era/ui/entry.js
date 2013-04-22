@@ -138,8 +138,8 @@ Ui.Element.extend('Ui.Entry',
 		return this.value;
 	},
 
-	setValue: function(value) {
-		if(value === undefined)
+	setValue: function(value) {	
+		if((value === null) || (value === undefined))
 			value = '';
 		this.value = value;
 		this.entryDrawing.value = this.value;
