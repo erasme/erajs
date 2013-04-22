@@ -240,11 +240,13 @@ Ui.Element.extend('Ui.Label',
 		if(Ui.Label.measureBox === undefined)
 			Ui.Label.createMeasureCanvas();	
 		var ctx = Ui.Label.measureContext;
+		ctx.fillStyle = 'rgba(0,0,0,0)';
 		ctx.clearRect(0, 0, 10, 10);
-		ctx.fillStyle = '#000000';
 		ctx.textBaseline = 'top';
+		//console.log('isFontAvailable('+fontFamily+','+fontWeight+')');
 		// draw with the wanted font
-		ctx.font = 'normal '+fontWeight+' 10px Sans-Serif';
+		ctx.font = 'normal '+fontWeight+' 10px '+fontFamily;
+		ctx.fillStyle = 'rgba(255,255,255,1)';
 		ctx.fillText('@', 0, 0);
 		var wantedImageData = ctx.getImageData(0,0,10,10);
 		var empty = true;
@@ -252,23 +254,31 @@ Ui.Element.extend('Ui.Label',
   			if(wantedImageData.data[i+3] !== 0)
   				empty = false;
     	}
+    	//console.log(fontFamily+','+fontWeight+' empty: '+empty);
     	if(empty)
     		return false;
 		// draw with a local font
+		ctx.fillStyle = 'rgba(0,0,0,0)';
 		ctx.clearRect(0, 0, 10, 10);
+		ctx.fillStyle = 'rgba(255,255,255,1)';
 		ctx.font = 'normal '+fontWeight+' 10px Sans-Serif';
 		ctx.fillText('@', 0, 0);
 		var refImageData = ctx.getImageData(0,0,10,10);
 		// draw with wanted font fallback local font
+		ctx.fillStyle = 'rgba(0,0,0,0)';
 		ctx.clearRect(0, 0, 10, 10);
+		ctx.fillStyle = 'rgba(255,255,255,1)';
 		ctx.font = 'normal '+fontWeight+' 10px '+fontFamily+',Sans-Serif';
 		ctx.fillText('@', 0, 0);
 		// test if images are differents
   		var imageData = ctx.getImageData(0,0,10,10);
   		for(var i = 0; i < imageData.data.length; i += 4) {
-  			if(imageData.data[i+3] !== refImageData.data[i+3])
+  			if(imageData.data[i+3] !== refImageData.data[i+3]) {
+  				//console.log(fontFamily+','+fontWeight+' img are diff (pos: '+i+', val: '+imageData.data[i+3]+', ref: '+refImageData.data[i+3]+')');
   				return true;
+  			}
     	}
+    	//console.log(fontFamily+','+fontWeight+' BAD img are same');
   		return false;
 	},
 
