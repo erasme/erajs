@@ -58,8 +58,7 @@ Ui.Element.extend('Ui.Entry',
 				else
 					clone.setAttribute('type', 'text');
 				this.getDrawing().parentNode.replaceChild(clone, this.getDrawing());
-				this.getDrawing() = clone;
-				this.drawing = this.getDrawing();
+				this.drawing = clone;
 				this.invalidateArrange();
 			}
 		}
