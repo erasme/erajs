@@ -230,8 +230,9 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.rootWindow.document.body.appendChild(this.image);
 
 			// if SVG, find the first HTML element to avoid
-			// SVG browser bugs
-			while((overElement != undefined) && ('parentNode' in overElement) && ('ownerSVGElement' in overElement)) {
+			// SVG browser bugs. Also avoid VML canvas elements
+			while((overElement != undefined) && ('parentNode' in overElement) &&
+				  (('ownerSVGElement' in overElement) || !('dispatchEvent' in overElement))) {
 				overElement = overElement.parentNode;
 			}
 
