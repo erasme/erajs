@@ -2,7 +2,6 @@
 Ui.Element.extend('Ui.Entry', 
 /**@lends Ui.Entry#*/
 {
-	entryDrawing: undefined,
 	fontSize: undefined,
 	fontFamily: undefined,
 	fontWeight: undefined,
@@ -10,10 +9,9 @@ Ui.Element.extend('Ui.Entry',
 	value: '',
 	passwordMode: false,
 	isDown: false,
-	mouseStartX: undefined,
-	mouseStartY: undefined,
-	touchStartX: undefined,
-	touchStartY: undefined,
+	screenX: undefined,
+	screenY: undefined,
+	startTime: undefined,
 	allowSelect: false,
 	timer: undefined,
 
@@ -31,12 +29,7 @@ Ui.Element.extend('Ui.Entry',
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-//		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-
-		// handle touches
 		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-//		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
-//		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
 
 		// handle change
 		this.connect(this.getDrawing(), 'change', this.onChange);
@@ -54,19 +47,19 @@ Ui.Element.extend('Ui.Entry',
 			this.passwordMode = passwordMode;
 			try {
 				if(this.passwordMode)
-					this.entryDrawing.setAttribute('type', 'password');
+					this.getDrawing().setAttribute('type', 'password');
 				else
-					this.entryDrawing.setAttribute('type', 'text');
+					this.getDrawing().setAttribute('type', 'text');
 			} catch(exception) {
 				// IE < 9 dont support to change type after insert in the DOM
-				var clone = this.entryDrawing.cloneNode(false);
+				var clone = this.getDrawing().cloneNode(false);
 				if(this.passwordMode)
 					clone.setAttribute('type', 'password');
 				else
 					clone.setAttribute('type', 'text');
-				this.entryDrawing.parentNode.replaceChild(clone, this.entryDrawing);
-				this.entryDrawing = clone;
-				this.drawing = this.entryDrawing;
+				this.getDrawing().parentNode.replaceChild(clone, this.getDrawing());
+				this.getDrawing() = clone;
+				this.drawing = this.getDrawing();
 				this.invalidateArrange();
 			}
 		}
@@ -75,7 +68,7 @@ Ui.Element.extend('Ui.Entry',
 	setFontSize: function(fontSize) {
 		if(this.fontSize != fontSize) {
 			this.fontSize = fontSize;
-			this.entryDrawing.style.fontSize = this.getFontSize()+'px';
+			this.getDrawing().style.fontSize = this.getFontSize()+'px';
 			this.invalidateMeasure();
 		}
 	},
@@ -90,7 +83,7 @@ Ui.Element.extend('Ui.Entry',
 	setFontFamily: function(fontFamily) {
 		if(this.fontFamily != fontFamily) {
 			this.fontFamily = fontFamily;
-			this.entryDrawing.style.fontFamily = this.getFontFamily();
+			this.getDrawing().style.fontFamily = this.getFontFamily();
 			this.invalidateMeasure();
 		}
 	},
@@ -105,7 +98,7 @@ Ui.Element.extend('Ui.Entry',
 	setFontWeight: function(fontWeight) {
 		if(this.fontWeight != fontWeight) {
 			this.fontWeight = fontWeight;
-			this.entryDrawing.style.fontWeight = this.getFontWeight();
+			this.getDrawing().style.fontWeight = this.getFontWeight();
 			this.invalidateMeasure();
 		}
 	},
@@ -121,9 +114,9 @@ Ui.Element.extend('Ui.Entry',
 		if(this.color != color) {
 			this.color = Ui.Color.create(color);
 			if(navigator.supportRgba)
-				this.entryDrawing.style.color = this.getColor().getCssRgba();
+				this.getDrawing().style.color = this.getColor().getCssRgba();
 			else
-				this.entryDrawing.style.color = this.getColor().getCssHtml();
+				this.getDrawing().style.color = this.getColor().getCssHtml();
 		}
 	},
 
@@ -142,7 +135,7 @@ Ui.Element.extend('Ui.Entry',
 		if((value === null) || (value === undefined))
 			value = '';
 		this.value = value;
-		this.entryDrawing.value = this.value;
+		this.getDrawing().value = this.value;
 	},
 
 	getIsDown: function() {
@@ -154,71 +147,77 @@ Ui.Element.extend('Ui.Entry',
 	 */
 
 	onMouseDown: function(event) {
-		if(this.getHasFocus()) {
-			event.stopPropagation();
-			return;
-		}
-
-		if((event.button != 0) || this.getIsDisabled())
-			return;
-
-		event.preventDefault();
+		this.setSelectable(true);
 		event.stopPropagation();
 
-		this.mouseStartX = event.screenX;
-		this.mouseStartY = event.screenY;
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
+		}
+		this.allowSelect = false;
+		this.timer = new Core.DelayedTask({	delay: 0.50, scope: this, callback: this.onTimer });
+
+		this.screenX = event.screenX;
+		this.screenY = event.screenY;
+
+		var currentTime = (new Date().getTime())/1000;
+		this.startTime = currentTime;
 
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
-
+		
 		this.onDown();
 	},
 
 	onMouseMove: function(event) {
-		var deltaX = event.screenX - this.mouseStartX;
-		var deltaY = event.screenY - this.mouseStartY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		if(!this.allowSelect) {
+			var deltaX = event.screenX - this.screenX;
+			var deltaY = event.screenY - this.screenY;
+			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-		event.preventDefault();
-		event.stopPropagation();
+			event.stopPropagation();
+			event.preventDefault();
 
-		// if the user move to much, release the touch event
-		if(delta > 10) {
-			this.onUp();
+			// if the user move to much, release the touch event
+			if(delta > 10) {
+				if(this.timer != undefined) {
+					this.timer.abort();
+					this.timer = undefined;
+				}
 
-			if('createEvent' in document) {
-				this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
+				var selection = window.getSelection();
+				selection.removeAllRanges();
+				this.setSelectable(false);
 
+				this.disconnect(window, 'mousemove', this.onMouseMove, true);
+				this.disconnect(window, 'mouseup', this.onMouseUp, true);
+	
 				var mouseDownEvent = document.createEvent('MouseEvents');
 				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
 					event.clientX, event.clientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
-				event.target.dispatchEvent(mouseDownEvent);
-
-				this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
+				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+				
+				this.onUp();
 			}
 		}
+		else
+			event.stopPropagation();
 	},
 
 	onMouseUp: function(event) {
-		if(!this.isDown)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-		if(event.button == 0) {
-			this.onUp();
-			this.fireEvent('press', this);
-			this.entryDrawing.focus();
+		if(this.timer != undefined) {
+			this.timer.abort();
+			this.timer = undefined;
 		}
+		this.disconnect(window, 'mousemove', this.onMouseMove, true);
+		this.disconnect(window, 'mouseup', this.onMouseUp, true);
+		this.onUp();
 	},
 
 	onTouchStart: function(event) {
-		// test for <= 1 because of bugged firefox mobile
-		if(event.targetTouches.length <= 1) {
-//			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
-
+		if(event.targetTouches.length == 1) {
 			event.stopPropagation();
 
 			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
@@ -229,7 +228,6 @@ Ui.Element.extend('Ui.Entry',
 				this.timer = undefined;
 			}
 			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
-
 			this.onDown();
 		}
 	},
@@ -242,14 +240,12 @@ Ui.Element.extend('Ui.Entry',
 			}
 			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-//			this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 			this.onUp();
 		}
 	},
 
 	onTouchEnd: function(event) {
 		event.stopPropagation();
-		event.preventDefault();
 
 		if(this.timer != undefined) {
 			this.timer.abort();
@@ -260,9 +256,6 @@ Ui.Element.extend('Ui.Entry',
 		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
 		this.allowSelect = false;
 		this.onUp();
-
-		this.entryDrawing.focus();
-		this.fireEvent('press', this);
 	},
 
 	onTimer: function(timer) {
@@ -270,83 +263,12 @@ Ui.Element.extend('Ui.Entry',
 		this.timer = undefined;
 	},
 
-//	onTouchStart: function(event) {
-//		if(this.getHasFocus())
-//			event.stopPropagation();
-//	},
-
-//	onTouchMove: function(event) {
-//		if(this.getHasFocus())
-//			event.stopPropagation();
-//	},
-
-//	onTouchEnd: function(event) {
-//		if(this.getHasFocus())
-//			event.stopPropagation();
-//	},
-
-/*	onFingerDown: function(event) {
-		if(this.getHasFocus()) {
-			event.stopPropagation();
-			return;
-		}
-
-		if(this.getIsDisabled() || this.isDown)
-			return;
-
-		this.connect(event.finger, 'fingermove', this.onFingerMove);
-		this.connect(event.finger, 'fingerup', this.onFingerUp);
-
-		event.finger.capture(this.getDrawing());
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.touchStartX = event.finger.getX();
-		this.touchStartY = event.finger.getY();
-		this.onDown();
-	},
-
-	onFingerMove: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var deltaX = event.finger.getX() - this.touchStartX;
-		var deltaY = event.finger.getY() - this.touchStartY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-		// if the user move to much, release the touch event
-		if(delta > 10) {
-			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-			this.onUp();
-
-			this.disconnect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-			event.finger.release();
-			this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-		}
-	},
-	
-	onFingerUp: function(event) {
-		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.onUp();
-		this.fireEvent('press', this);
-		this.entryDrawing.focus();
-	},*/
-
 	onDown: function() {
 		this.isDown = true;
 		this.fireEvent('down', this);
 	},
 
 	onUp: function() {
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
  		this.isDown = false;
 		this.fireEvent('up', this);
 	},
@@ -357,8 +279,8 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onAfterPaste: function() {
-		if(this.entryDrawing.value != this.value) {
-			this.value = this.entryDrawing.value;
+		if(this.getDrawing().value != this.value) {
+			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
 		}
 	},
@@ -366,8 +288,8 @@ Ui.Element.extend('Ui.Entry',
 	onChange: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		if(this.entryDrawing.value != this.value) {
-			this.value = this.entryDrawing.value;
+		if(this.getDrawing().value != this.value) {
+			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
 		}
 	},
@@ -378,8 +300,8 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onKeyUp: function(event) {
-		if(this.entryDrawing.value != this.value) {
-			this.value = this.entryDrawing.value;
+		if(this.getDrawing().value != this.value) {
+			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
 		}
 		if(event.which == 13) {
@@ -393,25 +315,25 @@ Ui.Element.extend('Ui.Entry',
 	/**#@-*/
 }, {
 	renderDrawing: function() {
-		this.entryDrawing = document.createElement('input');
-		this.entryDrawing.setAttribute('type', 'text');
-		this.entryDrawing.style.border = '0px';
-		this.entryDrawing.style.margin = '0px';
-		this.entryDrawing.style.padding = '0px';
-		this.entryDrawing.style.outline = 'none';
+		var drawing = document.createElement('input');
+		drawing.setAttribute('type', 'text');
+		drawing.style.border = '0px';
+		drawing.style.margin = '0px';
+		drawing.style.padding = '0px';
+		drawing.style.outline = 'none';
 		if(navigator.isIE) {
 			if(!navigator.isIE7 && !navigator.isIE8)
-				this.entryDrawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
+				drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
 		}
 		else
-			this.entryDrawing.style.background = 'none';
+			drawing.style.background = 'none';
 		if(navigator.isWebkit)
-			this.entryDrawing.style.webkitAppearance = 'none';
-		this.entryDrawing.style.fontSize = this.getFontSize()+'px';
-		this.entryDrawing.style.fontFamily = this.getFontFamily();
-		this.entryDrawing.style.fontWeight = this.getFontWeight();
-		this.entryDrawing.style.color = this.getColor();
-		return this.entryDrawing;
+			drawing.style.webkitAppearance = 'none';
+		drawing.style.fontSize = this.getFontSize()+'px';
+		drawing.style.fontFamily = this.getFontFamily();
+		drawing.style.fontWeight = this.getFontWeight();
+		drawing.style.color = this.getColor();
+		return drawing;
 	},
 
 	measureCore: function(width, height) {
@@ -419,13 +341,13 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	arrangeCore: function(width, height) {
-		this.entryDrawing.style.width = width+'px';
-		this.entryDrawing.style.height = height+'px';
+		this.getDrawing().style.width = width+'px';
+		this.getDrawing().style.height = height+'px';
 	},
 
 	onDisable: function() {
 		Ui.Entry.base.onDisable.call(this);
-		this.entryDrawing.blur();
+		this.getDrawing().blur();
 	},
 
 	onEnable: function() {
@@ -433,13 +355,13 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onStyleChange: function() {
-		this.entryDrawing.style.fontSize = this.getFontSize()+'px';
-		this.entryDrawing.style.fontFamily = this.getFontFamily();
-		this.entryDrawing.style.fontWeight = this.getFontWeight();
+		this.getDrawing().style.fontSize = this.getFontSize()+'px';
+		this.getDrawing().style.fontFamily = this.getFontFamily();
+		this.getDrawing().style.fontWeight = this.getFontWeight();
 		if(navigator.supportRgba)
-			this.entryDrawing.style.color = this.getColor().getCssRgba();
+			this.getDrawing().style.color = this.getColor().getCssRgba();
 		else
-			this.entryDrawing.style.color = this.getColor().getCssHtml();
+			this.getDrawing().style.color = this.getColor().getCssHtml();
 		this.invalidateMeasure();
 	}
 }, {
