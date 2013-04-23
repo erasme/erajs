@@ -222,9 +222,9 @@ Core.Object.extend('Ui.Element',
 	setFocusable: function(focusable) {
 		this.focusable = focusable;
 		if(focusable && !this.getIsDisabled())
-			this.drawing.setAttribute('tabindex', 0);
+			this.drawing.tabIndex = 0;
 		else
-			this.drawing.setAttribute('tabindex', -1);
+			this.drawing.tabIndex = -1;
 	},
 
 	/**
