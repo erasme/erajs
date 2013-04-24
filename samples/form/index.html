@@ -31,18 +31,16 @@ var panelDesc = {
 };
 
 var panel = new Form.Panel(panelDesc);
-var popup = new Form.Popup({panel:panelDesc});
+var dialog = new Form.Dialog({ panel:panelDesc});
 //By default, all fields are "stack" in a VBox, but it's easy to change the layout
 var f = panel.fields;
-panel.setLayout([
-  {
-    type: Ui.VBox,
-    content: [
-      {type: Ui.HBox, content: [f.firstName, f.lastName]},
-      f.login, f.password
+panel.setLayout({
+	type: Ui.VBox,
+	content: [
+		{ type: Ui.HBox, content: [f.firstName, f.lastName] },
+		f.login, f.password
     ]
-  }
-]);
+});
 
 var app = new Ui.App({
   content: 
@@ -50,10 +48,10 @@ var app = new Ui.App({
     type: Ui.VBox,
     content: [
       panel,
-      {type: Ui.Button, text: "Send", onPress: function(){panel.submit()} },
+      { type: Ui.Button, text: 'Send', onPress: function() { panel.submit() } },
       {
-        type: Ui.Button, text: "Show it in a popup", 
-        onPress: function(){popup.show();}
+        type: Ui.Button, text: 'Show it in a dialog', 
+        onPress: function() { dialog.open(); }
       }
     ]
   }
