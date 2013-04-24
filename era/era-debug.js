@@ -186,5 +186,5 @@ include(eraBaseDirectory+'form/field.js');
 include(eraBaseDirectory+'form/fieldcontainer.js');
 include(eraBaseDirectory+'form/panel.js');
 include(eraBaseDirectory+'form/panelcontainer.js');
-include(eraBaseDirectory+'form/popup.js');
+include(eraBaseDirectory+'form/dialog.js');
 
