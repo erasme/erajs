@@ -11,6 +11,11 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			color: '#e4e4e4',
 			focusColor: '#f6caa2'
 		},
+		"Ui.ScrollingArea": {
+			color: '#9e9e9e',
+			showScrollbar: true,
+			overScroll: true
+		},
 		"Ui.LinkButton": {
 			spacing: 8,
 			color: '#a4f4f4',
