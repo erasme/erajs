@@ -49,6 +49,9 @@ Ui.LBox.extend('Ui.Draggable',
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+		
+		// handle keyboard
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
 	setLock: function(lock) {
@@ -389,6 +392,15 @@ Ui.LBox.extend('Ui.Draggable',
 		this.clock = new Anim.Clock({ duration: 'forever' });
 		this.connect(this.clock, 'timeupdate', this.onAnim);
 		this.clock.begin();
+	},
+
+	onKeyUp: function(event) {
+		var key = event.which;
+		if((key == 13) && !this.getIsDisabled() && !this.lock) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.fireEvent('press', this);
+		}
 	},
 
 	onAnim: function(clock) {
