@@ -46,7 +46,7 @@ Ui.LBox.extend('Form.Field',
 						type: Ui.VBox, name: 'fieldBox',
 						content: [
 							{type: Ui.Text, name: 'description', textAlign: 'left', color: '#444444'},
-							{type: Ui.Text, name: 'error', color: 'red', textAlign: 'left', fontWeight: 'bold'}
+							{type: Ui.Text, name: 'error', color: '#bf1010', textAlign: 'left', fontWeight: 'bold'}
 						]
 					}
 				]
@@ -90,7 +90,7 @@ Ui.LBox.extend('Form.Field',
 	setRequire: function(require){
 		this.require = require;
 		if(this.require){
-			this.requireStar = new Ui.Label({text: '*', color: 'red', fontWeight: 'bold'});
+			this.requireStar = new Ui.Label({text: '*', color: '#bf1010', fontWeight: 'bold'});
 			this.labelBox.append(this.requireStar);
 		}
 		else if(this.requireStar != null && this.labelBox.hasChild(this.requireStar)){
