@@ -13,16 +13,20 @@ Ui.LBox.extend('Form.Panel',
 	submitType: 'ajax',
 
 	constructor: function(config){
-		this.addEvents("change", "submit");
+		this.addEvents('change', 'submit');
 
 		this.setPadding(10);
 
-		this.title = new Ui.Label({fontSize: 18, horizontalAlign: 'left'});
-		this.description = new Ui.Text({textAlign: 'left', marginBottom : 10});
-		this.requireFieldMsg = new Ui.HBox({ spacing: 2, marginBottom : 5,
-				content: [{type: Ui.Label, text: '*', color: 'red', fontWeight: 'bold'},
-									{type: Ui.Label, text: 'Champs indispensables'}]}
-				);
+		this.title = new Ui.Label({ fontSize: 18, horizontalAlign: 'left' });
+		this.description = new Ui.Text({ textAlign: 'left', marginBottom: 10 });
+		this.requireFieldMsg = new Ui.HBox({ 
+			spacing: 2, marginBottom: 5,
+			content: [
+				{ type: Ui.Label, text: '*', color: '#bf1010', fontWeight: 'bold' },
+				{ type: Ui.Label, text: 'Champs indispensables' }
+			]
+		});
+		this.requireFieldMsg.hide(true);
 
 		if('layout' in config){
 			this.defaultLayout = false;
@@ -121,7 +125,7 @@ Ui.LBox.extend('Form.Panel',
 	},
 	
 	onSubmitDone: function(request){
-		this.fireEvent("submit", request);
+		this.fireEvent('submit', request);
 	},
 
 	_buildDefaultLayout: function(someFieldRequire){
@@ -129,18 +133,21 @@ Ui.LBox.extend('Form.Panel',
 		var vbox = new Ui.VBox({
 			content: [
 				this.title,
-				this.description
+				this.description,
+				this.requireFieldMsg
 			]
 		});
-		if(someFieldRequire){
-			vbox.prepend(this.requireFieldMsg);
-		}
+		if(someFieldRequire)
+			this.requireFieldMsg.show();
 		
-		for(var field in this.fields){
+		for(var field in this.fields)
 			vbox.append(this.fields[field]);
-		}
 
 		return vbox;
+	},
+
+	getTitle: function() {
+		return this.title.getText();
 	},
 
 	setTitle: function(title){
@@ -212,12 +219,10 @@ Ui.LBox.extend('Form.Panel',
 
 	setLayout: function(layout){
 		this.layout = layout;
-		if(this.fields === undefined){
+		if(this.fields === undefined)
 			return;
-		}
-		else{
+		else
 			this.setContent(layout);
-		}
 	},
 	
 	setSubmitUrl: function(url){
@@ -245,6 +250,6 @@ Ui.LBox.extend('Form.Panel',
 	},
 
 	onChange: function(field){
-		this.fireEvent("change", field);
+		this.fireEvent('change', field);
 	}
 });
