@@ -276,8 +276,6 @@ Ui.Element.extend('Ui.TextArea',
 	},
 	
 	onChange: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
 		if(this.getDrawing().value != this.value) {
 			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
