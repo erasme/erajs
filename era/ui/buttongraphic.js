@@ -246,9 +246,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		else if((this.icon === undefined) && (this.text !== undefined)) {
 			// text
 			ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
-			ctx.textBaseline = 'top';
+			ctx.textBaseline = 'middle';
 			ctx.fillStyle = this.getContentColor().getCssRgba();
-			ctx.fillText(this.text, (width-this.textWidth)/2, (height-this.fontSize)/2 -1);
+			ctx.fillText(this.text, (width-this.textWidth)/2, height/2+1);
 		}
 		// text + icon
 		else if((this.icon !== undefined) && (this.text !== undefined)) {
@@ -288,9 +288,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.restore();
 				// text
 				ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
-				ctx.textBaseline = 'top';
+				ctx.textBaseline = 'middle';
 				ctx.fillStyle = this.getContentColor().getCssRgba();
-				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, (height-this.fontSize)/2 -1);
+				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, height/2 +1);
 			}
 		}
 	},
