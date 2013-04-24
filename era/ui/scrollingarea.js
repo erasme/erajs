@@ -15,9 +15,9 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
      * @extends Ui.Scrollable
 	 */
 	constructor: function(config) {
-		this.horizontalScrollbar = new Ui.Rectangle({ radius: 4, width: 8, height: 8, margin: 10 });
+		this.horizontalScrollbar = new Ui.Rectangle({ radius: 3, width: 6, height: 6, margin: 10 });
 		this.setScrollbarHorizontal(this.horizontalScrollbar);
-		this.verticalScrollbar = new Ui.Rectangle({ radius: 4, width: 8, height: 8, margin: 10 });
+		this.verticalScrollbar = new Ui.Rectangle({ radius: 3, width: 6, height: 6, margin: 10 });
 		this.setScrollbarVertical(this.verticalScrollbar);
 
 		this.topShadow = new Ui.Rectangle({ height: 5 });
@@ -40,15 +40,15 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 		if(show) {
 			this.horizontalScrollbar.setOpacity(1);
 			this.horizontalScrollbar.setMargin(10);
-			this.horizontalScrollbar.setWidth(8);
-			this.horizontalScrollbar.setHeight(8);
-			this.horizontalScrollbar.setRadius(4);
+			this.horizontalScrollbar.setWidth(6);
+			this.horizontalScrollbar.setHeight(6);
+			this.horizontalScrollbar.setRadius(3);
 
 			this.verticalScrollbar.setOpacity(1);
 			this.verticalScrollbar.setMargin(10);
-			this.verticalScrollbar.setWidth(8);
-			this.verticalScrollbar.setHeight(8);
-			this.verticalScrollbar.setRadius(4);
+			this.verticalScrollbar.setWidth(6);
+			this.verticalScrollbar.setHeight(6);
+			this.verticalScrollbar.setRadius(3);
 		}
 		else {
 			this.horizontalScrollbar.setOpacity(0.6);
