@@ -209,7 +209,7 @@ Ui.Element.extend('Ui.Entry',
 		if(this.timer != undefined) {
 			this.timer.abort();
 			this.timer = undefined;
-		}
+		}		
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 		this.onUp();
@@ -285,20 +285,18 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onChange: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
 		if(this.getDrawing().value != this.value) {
 			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
 		}
 	},
 
-	onKeyDown: function(event) {
+	onKeyDown: function(event) {	
 		if(this.getHasFocus())
 			event.stopPropagation();
 	},
 
-	onKeyUp: function(event) {
+	onKeyUp: function(event) {	
 		if(this.getDrawing().value != this.value) {
 			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
@@ -342,6 +340,7 @@ Ui.Element.extend('Ui.Entry',
 	arrangeCore: function(width, height) {
 		this.getDrawing().style.width = width+'px';
 		this.getDrawing().style.height = height+'px';
+		this.getDrawing().style.lineHeight = height+'px';
 	},
 
 	onDisable: function() {
