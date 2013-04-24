@@ -132,7 +132,7 @@ Core.Object.extend('Ui.Element',
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';
-		this.drawing.style.outline = '0px';
+		this.drawing.style.outline = 'none';
 		var content = this.render();
 		if(content != undefined)
 			this.drawing.appendChild(content);
