@@ -9,13 +9,14 @@ Ui.Container.extend('Ui.CanvasElement',
 	 * @class The base class for all Canvas drawing
 	 * @extends Ui.Element
 	 */
-	constructor: function(config){
+	constructor: function(config) {
+		this.setSelectable(false);
 	},
 
 	/**
 	 * Call this method when the canvas need to be redraw
 	 */
-	update: function() {		
+	update: function() {
 		this.context.save();
 		if(this.dpiRatio != 1)
 			this.context.scale(this.dpiRatio, this.dpiRatio);
@@ -136,10 +137,10 @@ Ui.Container.extend('Ui.CanvasElement',
 		var x = 0;
 		var y = 0;
 
-		ctx.beginPath();
-
 		var parser = new Ui.SvgParser({ path: path });
 		parser.next();
+
+		ctx.beginPath();
 
 		while(!parser.isEnd()) {
 			var cmd = parser.getCmd();
@@ -241,14 +242,14 @@ Ui.Container.extend('Ui.CanvasElement',
 				ctx.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
 			}
-			else if(cmd == 'z') {
+			else if((cmd == 'z') || (cmd == 'Z')) {
+				ctx.closePath();
 			}
 			else {
 				console.log('Invalid SVG path cmd: '+cmd+' ('+path+')');
 				throw('Invalid SVG path');
 			}
 		}
-		ctx.closePath();
 	}
 }, 
 /**@lends Ui.CanvasElement#*/
