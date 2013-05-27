@@ -55,6 +55,28 @@ Core.Object.dump = function(obj, filter) {
 };
 
 /**
+*	Return the difference object between obj1 and obj2
+*	undefined if there is no differences
+*	@param {mixed} obj1 Object
+*	@param {mixed} obj2 Object
+*	@param {string} filter Regex filter of the dump
+*/
+Core.Object.diff = function(obj1, obj2) {
+	var diff = {};
+	var empty = true;
+	for(var prop in obj2) {
+		if((prop in obj1) && (obj2[prop] !== obj1[prop])) {
+			diff[prop] = obj2[prop];
+			empty = false;
+		}
+	}
+	if(empty)
+		return undefined;
+	else
+		return diff;
+};
+
+/**
 *	Serialize a javascript object into a string
 *	to deserialize, just use JSON.parse
 */
@@ -252,7 +274,7 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	if(typeof(method) !== 'function')
 		throw('Invalid method to connect on event \''+eventName+'\'');
 //#end
-		
+	
 	if('addEventListener' in obj) {
 		var wrapper = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
@@ -283,7 +305,15 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 		var signal = { scope: this, method: method, capture: capture };
 		var eventListeners = obj.events[eventName];
 		if(eventListeners != undefined) {
-			eventListeners.push(signal);
+			// insert capture events first
+			if(capture === true) {
+				var pos;
+				for(pos = 0; (pos < eventListeners.length) && (eventListeners[pos].capture === true); pos++) {}
+				pos = (pos === 0)?0:(pos-1);
+				eventListeners.splice(pos, 0, signal);
+			}
+			else
+				eventListeners.push(signal);
 		}
 //#if DEBUG
 		else {
