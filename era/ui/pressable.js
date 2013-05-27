@@ -94,6 +94,7 @@ Ui.LBox.extend('Ui.Pressable',
 
 		event.preventDefault();
 		event.stopPropagation();
+				
 		if(event.button == 0) {
 			// focus before in case the press event handlers decide to get the focus
 			this.focus();
@@ -146,7 +147,7 @@ Ui.LBox.extend('Ui.Pressable',
 
 		event.preventDefault();
 		event.stopPropagation();
-		
+				
 		// focus before in case the press event handlers decide to get the focus
 		this.focus();
 		this.onUp();
