@@ -7,7 +7,7 @@ Ui.Element.extend('Ui.Text',
 	fontWeight: undefined,
 	color: undefined,
 	textAlign: undefined,
-	interLine: 1,
+	interLine: undefined,
 
 	measureDrawing: undefined,
 	textDrawing: undefined,
@@ -260,7 +260,7 @@ Ui.Element.extend('Ui.Text',
 }, 
 /**@lends Ui.Text#*/
 {
-	onStyleChange: function() {
+	onStyleChange: function() {	
 		this.textDrawing.style.fontSize = this.getFontSize()+'px';
 		this.textDrawing.style.fontFamily = this.getFontFamily();
 		this.textDrawing.style.fontWeight = this.getFontWeight();
