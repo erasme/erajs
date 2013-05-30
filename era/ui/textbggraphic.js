@@ -1,5 +1,5 @@
 
-Ui.CanvasElement.extend('Ui.TextBgGraphic', {
+/*Ui.CanvasElement.extend('Ui.TextBgGraphic', {
 }, {
 	updateCanvas: function(ctx) {	
 		var width = this.getLayoutWidth();
@@ -28,5 +28,18 @@ Ui.CanvasElement.extend('Ui.TextBgGraphic', {
 		
 		// inner shadow
 		this.roundRectFilledShadow(1, 1, width-2, height-3, 3, 3, 3, 3, true, 2, new Ui.Color({ a: 0.2 }));
+	}
+});*/
+
+Ui.CanvasElement.extend('Ui.TextBgGraphic', {
+}, {
+	updateCanvas: function(ctx) {	
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
+		
+		ctx.fillStyle = 'rgb(100,100,100)';
+		ctx.fillRect(0, height-2-4, width, 2);
+		ctx.fillRect(0, height-8-4, 2, 8);
+		ctx.fillRect(width-2, height-8-4, 2, 8);		
 	}
 });
