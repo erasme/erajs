@@ -14,6 +14,7 @@ Ui.LBox.extend('Ui.App',
 	ready: false,
 	orientation: 0,
 	webApp: true,
+	lastArrangeHeight: 0,
 
 	drawList: undefined,
 	layoutList: undefined,
@@ -186,6 +187,13 @@ Ui.LBox.extend('Ui.App',
 //				event.stopPropagation();
 //			}
 //		});
+
+		this.connect(window, 'mouseup', function(event) {
+			event.preventDefault();
+//			if((event.target != this.focusElement) && (this.focusElement !== undefined) && ((this.focusElement.tagName === 'INPUT') || (this.focusElement.tagName === 'TEXTAREA')))
+//				this.focusElement.blur();
+		});
+
 
 		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 
@@ -989,6 +997,19 @@ Ui.LBox.extend('Ui.App',
 			}
 				
 //		}
+	},
+
+	arrangeCore: function(w, h) {
+		// on Android, remove focus of text elements when
+		// the virtual keyboard is closed. Else it will re-open at each touch
+		if(navigator.Android && navigator.isWebkit) {
+			if((this.focusElement !== undefined) && ((this.focusElement.tagName === 'INPUT') || (this.focusElement.tagName === 'TEXTAREA') || (this.focusElement.contenteditable))) {
+				if(h - 100 > this.lastArrangeHeight)
+					this.focusElement.blur();
+			}
+		}
+		this.lastArrangeHeight = h;
+		Ui.App.base.arrangeCore.call(this, w, h);
 	},
 
 	setContent: function(content) {
