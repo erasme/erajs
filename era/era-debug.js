@@ -171,6 +171,8 @@ include(eraBaseDirectory+'ui/notebook.js');
 include(eraBaseDirectory+'ui/menu.js');
 include(eraBaseDirectory+'ui/segmentbar.js');
 include(eraBaseDirectory+'ui/paned.js');
+include(eraBaseDirectory+'ui/selection.js');
+include(eraBaseDirectory+'ui/selectionable.js');
 include(eraBaseDirectory+'ui/virtualkeyboard.js');
 include(eraBaseDirectory+'ui/app.js');
 

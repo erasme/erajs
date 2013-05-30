@@ -1,5 +1,102 @@
 
+Ui.CanvasElement.extend('Ui.DialogGraphic', {}, {
+	updateCanvas: function(ctx) {	
+		var w = this.getLayoutWidth();
+		var h = this.getLayoutHeight();
+
+		// shadow
+		this.roundRectFilledShadow(0, 0, w, h, 2, 2, 2, 2, false, 3, new Ui.Color({ a: 0.3 }));
+
+		// content background
+		ctx.fillStyle = '#f8f8f8';
+		ctx.fillRect(3, 3, w-6, h-6);
+	}
+});
+
+Ui.HBox.extend('Ui.DialogContextBar', {
+	selection: undefined,
+	counter: undefined,
+	actionsBox: undefined,
+	
+	constructor: function(config) {
+		this.selection = config.selection;
+		delete(config.selection);
+		
+		this.setSpacing(5);
+		
+		var closeButton = new Ui.Pressable({ margin: 10 });
+		closeButton.setContent(
+			new Ui.Icon({ icon: 'close', width: 30, height: 30, verticalAlign: 'center', fill: '#444444' })
+		);
+		this.append(closeButton);
+		this.connect(closeButton, 'press', this.onClosePress);
+		
+		var lbox = new Ui.LBox({ width: 30 });
+		this.append(lbox);
+		this.counter = new Ui.Label({
+			horizontalAlign: 'center', verticalAlign: 'center', fontSize: 24, color: '#444444'
+		});
+		lbox.setContent(this.counter);
+		
+		var sep = new Ui.Separator({ width: 1 });
+		this.append(sep);
+		
+		this.actionsBox = new Ui.HBox({ uniform: true, spacing: 5, horizontalAlign: 'right' });
+		this.append(this.actionsBox, true);
+		
+		this.connect(this.selection, 'change', this.onSelectionChange);
+	},
+	
+	onClosePress: function() {
+		console.log(this+'.onClosePress '+this.selection);
+		this.selection.clear();
+	},
+	
+	onSelectionChange: function() {
+		this.counter.setText(this.selection.getElements().length);
+		
+		var actions = this.selection.getActions();
+		
+		this.actionsBox.setContent(undefined);
+		var first = true;
+		for(var actionName in actions) {
+			var action = actions[actionName];
+			if(action.hidden === true)
+				continue;
+			var dropbox = new Ui.DropBox();
+			
+			var pressable = new Ui.Pressable({ margin: 10 });
+			dropbox.setContent(pressable);
+			pressable.dialogContextBarAction = action;
+			this.connect(pressable, 'press', this.onActionPress);
+			var hbox = new Ui.HBox({ spacing: 5 });
+			pressable.setContent(hbox);
+			if(first)
+				first = false;
+			else
+				hbox.append(new Ui.Separator({ width: 1 }));
+			var color;
+			if('color' in action)
+				color = Ui.Color.create(action.color);
+			else
+			 	color = Ui.Color.create('#444444');
+			hbox.append(new Ui.Icon({ icon: action.icon, width: 30, height: 30, verticalAlign: 'center', fill: color }));
+			hbox.append(new Ui.Label({ text: action.text, horizontalAlign: 'center', verticalAlign: 'center', fontWeight: 'bold', color: color }));
+			this.actionsBox.append(dropbox);
+		}
+	},
+	
+	onActionPress: function(pressable) {
+		var action = pressable.dialogContextBarAction;
+		var scope = this;
+		if('scope' in action)
+			scope = action.scope;
+		action.callback.call(scope, this.selection);
+	}
+});
+
 Ui.Container.extend('Ui.Dialog', {
+	dialogSelection: undefined,
 	bg: undefined,
 	lbox: undefined,
 	vbox: undefined,
@@ -13,19 +110,21 @@ Ui.Container.extend('Ui.Dialog', {
 	buttonsVisible: false,
 	preferedWidth: 100,
 	preferedHeight: 100,
+	actionBox: undefined,
+	contextBox: undefined,
 
 	constructor: function(config) {
 		this.addEvents('close');
 
-		this.bg = new Ui.Rectangle({ fill: '#ffffff', opacity: 0.5 });
+		this.dialogSelection = new Ui.Selection();
+
+		this.bg = new Ui.Rectangle({ fill: 'rgba(255,255,255,0.5)' });
 		this.appendChild(this.bg);
 
-//		this.lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', margin: 20 });
 		this.lbox = new Ui.LBox();
 		this.appendChild(this.lbox);
 
-		this.lbox.append(new Ui.Shadow({ shadowWidth: 5, radius: 2, inner: false, opacity: 0.3 }));
-		this.lbox.append(new Ui.Rectangle({ fill: '#f8f8f8', margin: 3 }));
+		this.lbox.append(new Ui.DialogGraphic());
 
 		this.vbox = new Ui.VBox({ margin: 3 });
 		this.lbox.append(this.vbox);
@@ -40,26 +139,39 @@ Ui.Container.extend('Ui.Dialog', {
 		
 		this.contentBox = new Ui.LBox({ margin: 8 });
 		this.contentVBox.append(this.contentBox, true);
-//		this.vbox.append(this.contentBox, true);
 
 		this.buttonsBox = new Ui.VBox();
-
 		this.buttonsBox.append(new Ui.Rectangle({ height: 1, fill: '#d8d8d8' }));
 
 		lbox = new Ui.LBox({ height: 32 });
 		this.buttonsBox.append(lbox);
 
-		lbox.append(new Ui.Rectangle({ fill: '#e8e8e8' }));
+		this.actionBg = new Ui.Rectangle({ fill: '#e8e8e8' });
+		lbox.append(this.actionBg);
 
-		var hbox = new Ui.HBox({ margin: 5, spacing: 30 });
-		lbox.append(hbox);
+		this.contextBox = new Ui.DialogContextBar({ selection: this.dialogSelection });
+		this.contextBox.hide();
+		lbox.append(this.contextBox);
+		
+
+		this.actionBox = new Ui.HBox({ margin: 5, spacing: 30 });
+		lbox.append(this.actionBox);
 
 		this.cancelBox = new Ui.LBox();
-		hbox.append(this.cancelBox);
+		this.actionBox.append(this.cancelBox);
 
 		this.actionButtonsBox = new Ui.HBox({ uniform: true, horizontalAlign: 'right' });
-		hbox.append(this.actionButtonsBox, true);
+		this.actionBox.append(this.actionButtonsBox, true);
 		
+		this.connect(this.dialogSelection, 'change', this.onDialogSelectionChange);		
+
+		// handle keyboard		
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+	},
+
+	// implement a selection handler for Selectionable elements
+	getSelectionHandler: function() {
+		return this.dialogSelection;
 	},
 
 	setPreferedWidth: function(width) {
@@ -150,8 +262,34 @@ Ui.Container.extend('Ui.Dialog', {
 
 	onCancelPress: function() {
 		this.close();
+	},
+	
+	onDialogSelectionChange: function(selection) {
+		if(selection.getElements().length === 0) {
+			this.actionBg.setFill('#e8e8e8');
+			this.contextBox.hide();
+			this.actionBox.show();
+		}
+		else {
+			this.actionBg.setFill('#d8d8d8');
+			this.contextBox.show();
+			this.actionBox.hide();
+		}
+	},
+	
+	onKeyDown: function(event) {
+		// delete key
+		if(event.which === 46) {
+		 	// selection is not empty
+			if(this.dialogSelection.getElements().length !== 0) {
+				if(this.dialogSelection.executeDeleteAction()) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}
+		}
 	}
-
+	
 }, {
 	measureCore: function(width, height) {
 		this.bg.measure(width, height);
