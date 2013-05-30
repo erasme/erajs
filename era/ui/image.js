@@ -97,6 +97,12 @@ Ui.Element.extend('Ui.Image',
 		this.disconnect(Ui.App.current, 'ready', this.onAppReady);
 		this.onImageDelayReady();
 	},
+	
+	onIEDragStart: function(event) {
+		event.defaultPrevented = true;
+		event.returnValue = false;
+		return false;
+	},
 
 	onImageDelayReady: function() {	
 		if(!Ui.App.current.getIsReady())
@@ -137,13 +143,8 @@ Ui.Element.extend('Ui.Image',
 		else if(navigator.isIE) {
 			this.connect(this.imageDrawing, 'selectstart', function(event) { event.preventDefault(); });
 			// disable drag & drop for IE < 9
-			if('attachEvent' in this.imageDrawing) {
-				this.imageDrawing.attachEvent('ondragstart', function(event) {
-					event.defaultPrevented = true;
-					event.returnValue = false;
-				 	return false;
-				});
-			}
+			if('attachEvent' in this.imageDrawing)
+				this.imageDrawing.attachEvent('ondragstart', this.onIEDragStart);
 		}
 		else if(navigator.isOpera)
 			this.imageDrawing.onmousedown = function(event) { event.preventDefault(); };
