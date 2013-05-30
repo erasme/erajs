@@ -141,6 +141,7 @@ Core.Object.extend('Core.FingerManager',
 /**@lends Core.FingerManager#*/
 {
 	touches: undefined,
+	lastUpdate: undefined,
 
 	/**
 	*	@constructs
@@ -150,6 +151,18 @@ Core.Object.extend('Core.FingerManager',
 	constructor: function(config) {
 		this.touches = {};
 		this.connect(window, 'load', this.onWindowLoad);
+		this.connect(window, 'mousedown', this.onMouseDown, true);		
+	},
+
+	onMouseDown: function(event) {	
+		var currentTime = (new Date().getTime())/1000;
+		// preventDefault on touch events in Android (at least 4.2.1) internal
+		// WebView dont always prevent mouse event.
+		// So, disable mouse events during 0.5 s after touch events
+		if((this.lastUpdate !== undefined) && (currentTime - this.lastUpdate < 0.5)) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
 	},
 
 	onWindowLoad: function() {
@@ -165,6 +178,8 @@ Core.Object.extend('Core.FingerManager',
 	},
 
 	updateTouches: function(event) {
+		this.lastUpdate = (new Date().getTime())/1000;
+	
 		for(var id in this.touches) {
 			var found = false;
 			for(var i = 0; (i < event.touches.length) && !found; i++) {
@@ -185,7 +200,7 @@ Core.Object.extend('Core.FingerManager',
 			}
 		}
 
-		if(!event.dontPreventDefault)
+		if(event.dontPreventDefault !== true)
 			event.preventDefault();
 		event.stopPropagation();
 
