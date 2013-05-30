@@ -26,6 +26,8 @@ Core.Object.extend('Core.HttpRequest',
 					httprequest.fireEvent('done', httprequest);
 				else
 					httprequest.fireEvent('error', httprequest, httprequest.request.status);
+				httprequest.request.onreadystatechange = null;
+				httprequest.request = undefined;
 			}
 		}
 		wrapper.httprequest = this;
