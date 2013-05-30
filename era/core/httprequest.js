@@ -52,8 +52,8 @@ Core.Object.extend('Core.HttpRequest',
 		this.headers[header] = value;
 	},
 
-	setArguments: function(arguments) {
-		this.arguments = arguments;
+	setArguments: function(args) {
+		this.arguments = args;
 	},
 
 	addArgument: function(argName, argValue) {
