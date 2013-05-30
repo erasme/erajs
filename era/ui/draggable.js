@@ -106,13 +106,13 @@ Ui.LBox.extend('Ui.Draggable',
 		var uri = new Core.Uri({ uri: url });
 		this.downloadUrl = uri.toString();
 		// extract the fileName if not given
-		if(filename === undefined) {
+		//if(filename === undefined) {
 			// TODO
-		}
+		//}
 		// guess the mimetype if not given
-		if(mimetype === undefined) {
+		//if(mimetype === undefined) {
 			// TODO
-		}
+		//}
 	 	this.downloadMimetype = mimetype;
 		this.downloadFilename = filename;
 	},
