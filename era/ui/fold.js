@@ -44,6 +44,22 @@ Ui.Container.extend('Ui.Fold',
 		return this.isFolded;
 	},
 
+	setIsFolded: function(isFolded) {
+		if(this.isFolded != isFolded) {
+			this.isFolded = isFolded;
+			if(this.isFolded) {
+				this.setOffset(0);
+				this.contentBox.hide();
+				this.fireEvent('fold', this);
+			}
+			else {
+				this.setOffset(1);
+				this.contentBox.show();
+				this.fireEvent('unfold', this);
+			}
+		}
+	},
+
 	/**
 	 * Fold the content part
 	 */
