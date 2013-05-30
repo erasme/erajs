@@ -137,6 +137,8 @@ Core.Object.extend('Ui.Element',
 		if(content != undefined)
 			this.drawing.appendChild(content);
 
+//		this.setSelectable(false);
+
 		this.connect(this.drawing, 'focus', this.onFocus);
 		this.connect(this.drawing, 'blur', this.onBlur);
 
@@ -1003,7 +1005,7 @@ Core.Object.extend('Ui.Element',
 
 	onInternalDisable: function() {
 		if(this.focusable) {
-			this.drawing.setAttribute('tabindex', -1);
+			this.drawing.tabIndex = -1;
 			if(this.hasFocus)
 				this.blur();
 		}
@@ -1016,7 +1018,7 @@ Core.Object.extend('Ui.Element',
 
 	onInternalEnable: function() {
 		if(this.focusable)
-			this.drawing.setAttribute('tabindex', 0);
+			this.drawing.tabIndex = 0;
 		this.onEnable();
 		this.fireEvent('enable', this);
 	},
@@ -1315,7 +1317,7 @@ Core.Object.extend('Ui.Element',
 			this.setParentDisabled(this.getIsDisabled());
 			this.setParentVisible(this.getIsVisible());
 		}
-		this.fireEvent('load');
+		this.fireEvent('load', this);
 	},
 
 	onUnload: function() {
@@ -1323,7 +1325,7 @@ Core.Object.extend('Ui.Element',
 			this.animClock.stop();
 			this.animClock = undefined;
 		}
-		this.fireEvent('unload');
+		this.fireEvent('unload', this);
 	}
 	/**#@-*/
 }, {}, {
