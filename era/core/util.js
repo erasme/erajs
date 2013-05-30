@@ -1,4 +1,7 @@
 
+/** @define {boolean} */
+var DEBUG = true;
+
 navigator.isGecko = (navigator.userAgent.match(/Gecko\//i) != null);
 navigator.isWebkit = (navigator.userAgent.match(/WebKit\//i) != null);
 

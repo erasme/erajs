@@ -126,9 +126,8 @@ Core.Object.extend('Ui.Element',
 	constructor: function(config) {
 		// create the drawing container
 		this.drawing = this.renderDrawing();
-//#if DEBUG
-		this.drawing.setAttribute('class', this.classType);
-//#end
+		if(DEBUG)
+			this.drawing.setAttribute('class', this.classType);
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';

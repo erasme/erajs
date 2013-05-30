@@ -84,7 +84,7 @@ Core.Object.extend('Ui.Selection', {
 	getDefaultAction: function() {
 		var actions = this.getActions();
 		for(var actionName in actions) {
-			if(actions[actionName].default === true)
+			if(actions[actionName]['default'] === true)
 				return actions[actionName];
 		}
 		return undefined;
@@ -107,7 +107,7 @@ Core.Object.extend('Ui.Selection', {
 	getDeleteAction: function() {
 		var actions = this.getActions();
 		if('delete' in actions)
-			return actions.delete;
+			return actions['delete'];
 		else
 			return undefined;
 	},

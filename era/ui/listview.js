@@ -77,10 +77,8 @@ Ui.Container.extend('Ui.ListView',
 
 	setMode: function(mode) {
 		if(this.mode !== mode) {
-//#if DEBUG
-			if((mode !== 'manual') && (mode !== 'auto'))
+			if(DEBUG && (mode !== 'manual') && (mode !== 'auto'))
 				throw('Ui.ListView only support mode [auto|manual]');
-//#end
 			this.mode = mode;
 
 			for(var i = 0; i < this.cols.length; i++) {

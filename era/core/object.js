@@ -250,11 +250,8 @@ Core.Object.prototype.fireEvent = function(eventName) {
 				handled = false;
 		}
 	}
-//#if DEBUG
-	else {
+	else if(DEBUG)
 		throw('Event \''+eventName+'\' not found on ' + this);
-	}
-//#end
 	return handled;
 };
 
@@ -270,10 +267,8 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	/**#nocode+ Avoid Jsdoc warnings...*/
 	if(capture == undefined)
 		capture = false;
-//#if DEBUG
-	if(typeof(method) !== 'function')
+	if(DEBUG && (typeof(method) !== 'function'))
 		throw('Invalid method to connect on event \''+eventName+'\'');
-//#end
 	
 	if('addEventListener' in obj) {
 		var wrapper = function() {
@@ -315,11 +310,8 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 			else
 				eventListeners.push(signal);
 		}
-//#if DEBUG
-		else {
+		else if(DEBUG)
 			throw('Event \''+eventName+'\' not found on ' + obj);
-		}
-//#end
 	}
 	/**#nocode-*/ 
 };
@@ -416,30 +408,22 @@ Core.Object.prototype.autoConfig = function(config) {
 				current[func].call(current, this, config[prop]);
 				delete(config[prop]);
 			}
-//#if DEBUG
-			else
+			else if(DEBUG)
 				throw('Attached property \''+prop+'\' not found');
-//#end
 		}
 		else if(prop.indexOf('on') == 0) {
 			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
 			if((this.events != undefined) && (eventName in this.events)) {
-//#if DEBUG
-				if(typeof(config[prop]) != 'function')
+				if(DEBUG && (typeof(config[prop]) != 'function'))
 					throw('function is need to connect to the \''+eventName+'\' on '+this.classType);
-//#end
 				scope.connect(this, eventName, config[prop]);
 				delete(config[prop]);
 			}
-//#if DEBUG
-			else
+			else if(DEBUG)
 				throw('event \''+eventName+'\' not found on '+this.classType);
-//#end
 		}
-//#if DEBUG
-		else if((prop !== 'scope') && (prop !== 'type'))
+		else if(DEBUG && (prop !== 'scope') && (prop !== 'type'))
 			throw('Property \''+prop+'\' not found on '+this.classType);
-//#end
 	}
 	if(pushScope)
 		Core.Object.currentScopes.pop();
@@ -462,14 +446,11 @@ Core.Object.create = function(element, scope) {
 			Core.Object.currentScopes.push(scope);
 
 		var type = element.type;
-//#if DEBUG
-		if('type' in element && type === undefined)
+		if(DEBUG && ('type' in element && type === undefined))
 			throw('Cannot create object of type undefined');
-//#end
 		if(type === undefined)
 			type = this;
-//#if DEBUG
-		else {
+		else if(DEBUG) {
 			var current = type;
 			while((current !== undefined) && (current !== this)) {
 				if(current.base == undefined)
@@ -477,8 +458,6 @@ Core.Object.create = function(element, scope) {
 				current = current.base.constructor;
 			}
 		}
-//#end
-//		delete(element.type);
 		var res = new type(element);
 
 		if(scope !== undefined)
