@@ -48,7 +48,7 @@ Ui.HBox.extend('Ui.DialogContextBar', {
 	},
 	
 	onClosePress: function() {
-		console.log(this+'.onClosePress '+this.selection);
+		//console.log(this+'.onClosePress '+this.selection);
 		this.selection.clear();
 	},
 	
@@ -118,7 +118,7 @@ Ui.Container.extend('Ui.Dialog', {
 
 		this.dialogSelection = new Ui.Selection();
 
-		this.bg = new Ui.Rectangle({ fill: 'rgba(255,255,255,0.5)' });
+		this.bg = new Ui.Rectangle({ fill: 'rgba(255,255,255,0.7)' });
 		this.appendChild(this.bg);
 
 		this.lbox = new Ui.LBox();
@@ -266,12 +266,12 @@ Ui.Container.extend('Ui.Dialog', {
 	
 	onDialogSelectionChange: function(selection) {
 		if(selection.getElements().length === 0) {
-			this.actionBg.setFill('#e8e8e8');
+//			this.actionBg.setFill('#e8e8e8');
 			this.contextBox.hide();
 			this.actionBox.show();
 		}
 		else {
-			this.actionBg.setFill('#d8d8d8');
+//			this.actionBg.setFill('#d8d8d8');
 			this.contextBox.show();
 			this.actionBox.hide();
 		}
