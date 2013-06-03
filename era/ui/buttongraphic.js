@@ -178,16 +178,27 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				return new Ui.Color({ y: yuv.y - (0.60 + deltaY), u: yuv.u, v: yuv.v });
 		}
 	},
+	
+	getDarkColor: function() {
+		var yuv = this.color.getYuv();
+		var deltaY = 0;
+		if(this.getIsDown())
+			deltaY = -0.20;
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y - 0.60 + deltaY, u: yuv.u, v: yuv.v, a: 0.8 });
+		else
+			return new Ui.Color({ y: yuv.y - 0.40 + deltaY, u: yuv.u, v: yuv.v, a: 0.4 });
+	},
 
 	getLightColor: function() {
 		var yuv = this.color.getYuv();
 		var deltaY = 0;
 		if(this.getIsDown())
-			deltaY = -0.30;
+			deltaY = -0.20;
 		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y - 0.20 + deltaY, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y - 0.15 + deltaY, u: yuv.u, v: yuv.v });
 		else
-			return new Ui.Color({ y: yuv.y + 0.20 + deltaY, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y + 0.15 + deltaY, u: yuv.u, v: yuv.v });
 	}
 
 }, {
@@ -196,32 +207,32 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		var height = this.getLayoutHeight();
 
 		// light shadow
-		ctx.fillStyle = 'rgba(255,255,255,0.2)';
-		ctx.beginPath();
-		this.roundRect(3, 4, width-6, height-7, this.radius, this.radius, this.radius, this.radius);
-		ctx.closePath();
-		ctx.fill();
+//		ctx.fillStyle = 'rgba(255,255,255,0.2)';
+//		ctx.beginPath();
+//		this.roundRect(3, 4, width-6, height-7, this.radius, this.radius, this.radius, this.radius);
+//		ctx.closePath();
+//		ctx.fill();
 
 		// dark shadow
-		ctx.fillStyle = 'rgba(0,0,0,0.4)';
+		ctx.fillStyle = this.getDarkColor().getCssRgba();//'rgba(0,0,0,0.3)';
 		ctx.beginPath();
-		this.roundRect(3, 3, width-6, height-7, this.radius, this.radius, this.radius, this.radius);
+		this.roundRect(2, 2, width-6, height-7, this.radius+1, this.radius+1, this.radius+1, this.radius+1);
 		ctx.closePath();
 		ctx.fill();
 
 		// rect2
 		ctx.fillStyle = this.getLightColor().getCssRgba();
 		ctx.beginPath();
-		this.roundRect(4, 4, width-8, height-9, this.radius, this.radius, this.radius, this.radius);
+		this.roundRect(3, 3, width-8, height-9, this.radius, this.radius, this.radius, this.radius);
 		ctx.closePath();
 		ctx.fill();
 
 		// rect1
-		ctx.fillStyle = this.getGradient().getCanvasGradient(ctx, width, height);
-		ctx.beginPath();
-		this.roundRect(4, 5, width-8, height-10, this.radius-1, this.radius-1, this.radius-1, this.radius-1);
-		ctx.closePath();
-		ctx.fill();
+//		ctx.fillStyle = this.getGradient().getCanvasGradient(ctx, width, height);
+//		ctx.beginPath();
+//		this.roundRect(4, 5, width-8, height-10, this.radius-1, this.radius-1, this.radius-1, this.radius-1);
+//		ctx.closePath();
+//		ctx.fill();
 
 		// handle disable
 		if(!this.isEnable)
