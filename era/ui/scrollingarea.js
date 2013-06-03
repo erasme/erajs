@@ -15,9 +15,9 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
      * @extends Ui.Scrollable
 	 */
 	constructor: function(config) {
-		this.horizontalScrollbar = new Ui.Rectangle({ radius: 3, width: 6, height: 6, margin: 10 });
+		this.horizontalScrollbar = new Ui.Rectangle({ width: 6, height: 6, margin: 10 });
 		this.setScrollbarHorizontal(this.horizontalScrollbar);
-		this.verticalScrollbar = new Ui.Rectangle({ radius: 3, width: 6, height: 6, margin: 10 });
+		this.verticalScrollbar = new Ui.Rectangle({ width: 6, height: 6, margin: 10 });
 		this.setScrollbarVertical(this.verticalScrollbar);
 
 		this.topShadow = new Ui.Rectangle({ height: 5 });
@@ -42,31 +42,30 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 			this.horizontalScrollbar.setMargin(10);
 			this.horizontalScrollbar.setWidth(6);
 			this.horizontalScrollbar.setHeight(6);
-			this.horizontalScrollbar.setRadius(3);
 
 			this.verticalScrollbar.setOpacity(1);
 			this.verticalScrollbar.setMargin(10);
 			this.verticalScrollbar.setWidth(6);
 			this.verticalScrollbar.setHeight(6);
-			this.verticalScrollbar.setRadius(3);
 		}
 		else {
 			this.horizontalScrollbar.setOpacity(0.6);
 			this.horizontalScrollbar.setMargin(2);
 			this.horizontalScrollbar.setWidth(4);
 			this.horizontalScrollbar.setHeight(4);
-			this.horizontalScrollbar.setRadius(2);
 
 			this.verticalScrollbar.setOpacity(0.6);
 			this.verticalScrollbar.setMargin(2);
 			this.verticalScrollbar.setWidth(4);
 			this.verticalScrollbar.setHeight(4);
-			this.verticalScrollbar.setRadius(2);
 		}
 	},
 
-
 	onStyleChange: function() {
+		var radius = this.getStyleProperty('radius');
+		this.horizontalScrollbar.setRadius(radius);
+		this.verticalScrollbar.setRadius(radius);
+	
 		var color = this.getStyleProperty('color');
 		this.horizontalScrollbar.setFill(color);
 		this.verticalScrollbar.setFill(color);
@@ -101,6 +100,7 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
 		color: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }),
 		shadowColor: new Ui.Color({ r: 0, g: 0, b: 0 }),
 		showScrollbar: true,
-		overScroll: false
+		overScroll: false,
+		radius: 3
 	}
 });
