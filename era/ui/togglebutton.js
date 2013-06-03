@@ -57,6 +57,10 @@ Ui.Togglable.extend('Ui.ToggleButton',
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
 			this.graphic.setColor(this.getStyleProperty('color'));
+		if(this.getIsToggled())
+			this.graphic.setContentColor(this.getStyleProperty('toggleColor'));
+		else
+			this.graphic.setContentColor(undefined);
 	},
 
 	onDisable: function() {
