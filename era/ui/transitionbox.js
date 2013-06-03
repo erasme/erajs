@@ -60,8 +60,8 @@ Ui.LBox.extend('Ui.TransitionBox',
 
 	setCurrentAt: function(position) {
 		if(this.position != position) {
-			if(this.next != undefined) {
-				if(this.current != undefined) {
+			if(this.next !== undefined) {
+				if(this.current !== undefined) {
 					this.current.hide();
 					this.current = this.next;
 					this.current.show();
@@ -174,10 +174,10 @@ Ui.LBox.extend('Ui.TransitionBox',
 
 	remove: function(child) {
 		for(var i = 0; i < this.getChildren().length; i++) {
-			if(this.getChildren()[i].getChildren()[0] == child) {
+			if(this.getChildren()[i].getFirstChild() == child) {
 				if(i < this.position)
 					this.position--;
-				if(i == this.position)
+				else if(i == this.position)
 					this.position = -1;
 				this.getChildren()[i].remove(child);
 				Ui.TransitionBox.base.remove.call(this, this.getChildren()[i]);
