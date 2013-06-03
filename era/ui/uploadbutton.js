@@ -74,7 +74,7 @@ Ui.Uploadable.extend('Ui.UploadButton',
 	style: {
 		color: '#4fa8ff',
 		focusColor: '#f6caa2',
-		radius: 4,
+		radius: 3,
 		spacing: 3,
 		iconSize: 24,
 		fontSize: 16,
