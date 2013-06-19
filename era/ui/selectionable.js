@@ -6,7 +6,9 @@ Ui.Draggable.extend('Ui.Selectionable', {
 
 	constructor: function(config) {
 		
-		this.bg = new Ui.Rectangle({ fill: '#dddddd', radius: 4, margin: 2 });
+		this.setData(this);
+		
+		this.bg = new Ui.Rectangle({ fill: '#dddddd', radius: 0, margin: 2 });
 		this.bg.hide();
 		this.append(this.bg);
 		

@@ -44,8 +44,12 @@ Ui.LBox.extend('Ui.Draggable',
 		this.setFocusable(true);
 
 		this.getDrawing().setAttribute('draggable', true);
+
 		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
 		this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
+		
+		this.connect(this.getDrawing(), 'localdragstart', this.onDragStart, true);
+		this.connect(this.getDrawing(), 'localdragend', this.onDragEnd, true);
 
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
@@ -77,6 +81,12 @@ Ui.LBox.extend('Ui.Draggable',
 	 */
 	setData: function(data) {
 		this.data = data;
+		if((typeof(this.data) === 'object') && (this.mimetype === undefined)) {		
+			if(this.data.classType !== undefined) 
+				this.mimetype = this.data.classType;
+			else
+				this.mimetype = 'object';
+		}
 	},
 
 	/**
@@ -174,7 +184,7 @@ Ui.LBox.extend('Ui.Draggable',
 		// that works cross browser. Only Firefox support different mimetypes
 		//event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.data);
 		event.dataTransfer.setData(this.mimetype, this.data);
-
+		
 		this.fireEvent('dragstart', this);
 
 		if(this.icon != undefined) {
@@ -217,8 +227,8 @@ Ui.LBox.extend('Ui.Draggable',
 		this.connect(window, 'mouseup', this.onMouseUp, true);
 
 		event.stopPropagation();
-		if(!navigator.supportDrag && (event.button == 0))
-			new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
+		if((!navigator.supportDrag || (typeof(this.data) === 'object')) && (event.button == 0))
+			new Core.DragDataTransfer({ local: (typeof(this.data) === 'object'), draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
 	},
 
 	onMouseMove: function(event) {

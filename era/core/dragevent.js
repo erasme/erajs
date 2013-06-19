@@ -45,6 +45,8 @@ Core.Object.extend('Core.DragDataTransfer',
 	data: undefined,
 	finger: undefined,
 	mouse: false,
+	
+	local: false,
 
 	/**
     *   @constructs
@@ -58,6 +60,12 @@ Core.Object.extend('Core.DragDataTransfer',
 		this.startY = config.y;
 		delete(config.x);
 		delete(config.y);
+		
+		if('local' in config) {
+			this.local = config.local;
+			delete(config.local);
+		}
+		
 		this.data = {};
 		if(config.mouse != undefined) {
 			this.mouse = config.mouse;
@@ -74,7 +82,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			delete(config.finger);
 
 			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('dragstart', false, true, config.event.window, this, this.startX, this.startY, this.startX, this.startY, config.event.ctrlKey, config.event.altKey, config.event.shiftKey, config.event.metaKey);
+			dragEvent.initDragEvent((this.local?'local':'')+'dragstart', false, true, config.event.window, this, this.startX, this.startY, this.startX, this.startY, config.event.ctrlKey, config.event.altKey, config.event.shiftKey, config.event.metaKey);
 			this.draggable.dispatchEvent(dragEvent);
 
 			if(this.hasData()) {
@@ -162,7 +170,7 @@ Core.Object.extend('Core.DragDataTransfer',
 
 		if(!this.hasStarted && (delta > 10)) {
 			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('dragstart', false, true, event.window, this, this.startX, this.startY, this.startX, this.startY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			dragEvent.initDragEvent((this.local?'local':'')+'dragstart', false, true, event.window, this, this.startX, this.startY, this.startX, this.startY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			this.draggable.dispatchEvent(dragEvent);
 
 			if(this.hasData()) {
@@ -244,9 +252,9 @@ Core.Object.extend('Core.DragDataTransfer',
 			if((overElement != undefined) && ('dispatchEvent' in overElement)) {
 				var dragEvent = document.createEvent('DragEvent');
 				if(this.overElement != overElement)
-					dragEvent.initDragEvent('dragenter', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+					dragEvent.initDragEvent((this.local?'local':'')+'dragenter', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 				else
-					dragEvent.initDragEvent('dragover', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+					dragEvent.initDragEvent((this.local?'local':'')+'dragover', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 				overElement.dispatchEvent(dragEvent);
 			}
 			this.overElement = overElement;
@@ -270,12 +278,12 @@ Core.Object.extend('Core.DragDataTransfer',
 			if((this.overElement != undefined) && ('dispatchEvent' in this.overElement)) {
 //				console.log('drag mouseup over: '+this.overElement.className);
 				var dragEvent = document.createEvent('DragEvent');
-				dragEvent.initDragEvent('drop', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				dragEvent.initDragEvent((this.local?'local':'')+'drop', true, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 				this.overElement.dispatchEvent(dragEvent);
 			}
 
 			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('dragend', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			dragEvent.initDragEvent((this.local?'local':'')+'dragend', false, true, event.window, this, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			this.draggable.dispatchEvent(dragEvent);
 		}
 		this.disconnect(this.rootWindow, 'mouseup', this.onMouseUp, true);
@@ -290,8 +298,6 @@ Core.Object.extend('Core.DragDataTransfer',
 		var overElement = document.elementFromPoint(event.finger.getX(), event.finger.getY());
 		document.body.appendChild(this.image);
 
-		console.log('onFingerMove overElement: '+overElement);
-
 		var deltaX = event.finger.getX() - this.startX;
 		var deltaY = event.finger.getY() - this.startY;
 
@@ -301,9 +307,9 @@ Core.Object.extend('Core.DragDataTransfer',
 		if(overElement != undefined) {
 			var dragEvent = document.createEvent('DragEvent');
 			if(this.overElement != overElement)
-				dragEvent.initDragEvent('dragenter', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				dragEvent.initDragEvent((this.local?'local':'')+'dragenter', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			else
-				dragEvent.initDragEvent('dragover', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+				dragEvent.initDragEvent((this.local?'local':'')+'dragover', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			overElement.dispatchEvent(dragEvent);
 		}
 		this.overElement = overElement;
@@ -320,12 +326,12 @@ Core.Object.extend('Core.DragDataTransfer',
 
 		if(this.overElement != undefined) {
 			var dragEvent = document.createEvent('DragEvent');
-			dragEvent.initDragEvent('drop', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+			dragEvent.initDragEvent((this.local?'local':'')+'drop', true, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 			this.overElement.dispatchEvent(dragEvent);
 		}
 
 		var dragEvent = document.createEvent('DragEvent');
-		dragEvent.initDragEvent('dragend', false, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+		dragEvent.initDragEvent((this.local?'local':'')+'dragend', false, true, event.window, this, event.finger.getX(), event.finger.getY(), event.finger.getX(), event.finger.getY(), event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
 		this.draggable.dispatchEvent(dragEvent);
 	}
 	/**#@-*/
@@ -342,40 +348,42 @@ Core.Object.extend('Core.DragManager',
     *   @extends Core.Object
 	*/	
 	constructor: function(config) {
-		this.connect(window, 'mousedown', this.onMouseDown);
-		this.connect(window, 'fingerdown', this.onFingerDown);
-
 		Core.Event.registerEvent('DragEvent', Core.DragEvent);
 		Core.Event.register('dragstart', Core.DragEvent);
 		Core.Event.register('dragend', Core.DragEvent);
 		Core.Event.register('dragenter', Core.DragEvent);
 		Core.Event.register('dragover', Core.DragEvent);
 		Core.Event.register('drop', Core.DragEvent);
-	},
+	}
+});
 
-	onDragDown: function(target, x, y, event, mouse, finger) {
-		var current = target;
-		while((current != undefined) && ('getAttribute' in current) && !((current.getAttribute('draggable') === true) || (current.getAttribute('draggable') === 'true')))
-			current = current.parentNode;
-		if((current != undefined) && ('getAttribute' in current) && ((current.getAttribute('draggable') === true) || (current.getAttribute('draggable') === 'true')))
-			new Core.DragDataTransfer({ draggable: current, x: x, y: y, event: event, mouse: mouse, finger: finger });
-	},
+Core.Object.extend('Core.LocalDragManager', 
+/**@lends Core.LocalDragManager#*/
+{
 
-	onMouseDown: function(event) {
-		if(event.button != 0)
-			return;
-		this.onDragDown(event.target, event.clientX, event.clientY, event, true, undefined);
-	},
-
-	onFingerDown: function(event) {
-		this.onDragDown(event.target, event.finger.getX(), event.finger.getY(), event, false, event.finger);
+	/**
+    *   @constructs
+	*	@class
+    *   @extends Core.Object
+	*/	
+	constructor: function(config) {
+		Core.Event.registerEvent('DragEvent', Core.DragEvent);
+		Core.Event.register('localdragstart', Core.DragEvent);
+		Core.Event.register('localdragend', Core.DragEvent);
+		Core.Event.register('localdragenter', Core.DragEvent);
+		Core.Event.register('localdragover', Core.DragEvent);
+		Core.Event.register('localdrop', Core.DragEvent);
 	}
 });
 
 navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
   !navigator.isIE && !navigator.iPad && !navigator.iPhone && !navigator.Android;
 
+
 if(!navigator.supportDrag)
 	Core.DragManager.current = new Core.DragManager();
 
+// create a drag manager for everybody for
+// in browser object drag & drop
+Core.LocalDragManager.current = new Core.LocalDragManager();
 

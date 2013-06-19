@@ -64,6 +64,10 @@ Ui.HBox.extend('Ui.DialogContextBar', {
 			if(action.hidden === true)
 				continue;
 			var dropbox = new Ui.DropBox();
+			dropbox.dialogContextBarAction = action;
+			dropbox.addMimetype(this.selection.getElements()[0].classType);
+			//console.log('dropbox allow: '+this.selection.getElements()[0].classType);
+			this.connect(dropbox, 'drop', this.onDrop);
 			
 			var pressable = new Ui.Pressable({ margin: 10 });
 			dropbox.setContent(pressable);
@@ -88,6 +92,14 @@ Ui.HBox.extend('Ui.DialogContextBar', {
 	
 	onActionPress: function(pressable) {
 		var action = pressable.dialogContextBarAction;
+		var scope = this;
+		if('scope' in action)
+			scope = action.scope;
+		action.callback.call(scope, this.selection);
+	},
+
+	onDrop: function(dropbox) {	
+		var action = dropbox.dialogContextBarAction;
 		var scope = this;
 		if('scope' in action)
 			scope = action.scope;
@@ -258,6 +270,10 @@ Ui.Container.extend('Ui.Dialog', {
 
 	setContent: function(content) {
 		this.contentBox.setContent(content);
+	},
+
+	getContent: function() {
+		return this.contentBox.getFirstChild();
 	},
 
 	onCancelPress: function() {

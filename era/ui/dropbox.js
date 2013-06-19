@@ -36,6 +36,9 @@ Ui.LBox.extend('Ui.DropBox',
 		this.connect(this.drawing, 'dragenter', this.onDragEnter);
 		this.connect(this.drawing, 'dragover', this.onDragOver);
 		this.connect(this.drawing, 'drop', this.onDrop);
+		this.connect(this.drawing, 'localdragenter', this.onDragEnter);
+		this.connect(this.drawing, 'localdragover', this.onDragOver);
+		this.connect(this.drawing, 'localdrop', this.onDrop);
 	},
 
 	/**
@@ -68,7 +71,7 @@ Ui.LBox.extend('Ui.DropBox',
 			for(var i = 0; (found === undefined) && (i < event.dataTransfer.types.length); i++) {
 				var type = event.dataTransfer.types[i].toLowerCase();
 				for(var i2 = 0; (found === undefined) && (i2 < this.allowedMimetypes.length); i2++) {
-					if(type == this.allowedMimetypes[i2])
+					if(type == this.allowedMimetypes[i2].toLowerCase())
 						found = this.allowedMimetypes[i2];
 				}
 			}
