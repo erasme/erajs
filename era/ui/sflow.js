@@ -44,10 +44,10 @@ Core.Object.extend('Ui.SFlowState', {
 	},
 
 	append: function(el) {
-		var float = Ui.SFlow.getFloat(el);
+		var floatVal = Ui.SFlow.getFloat(el);
 //		console.log(this+'.append('+el+') float: '+float);
 		var	size = el.measure(this.width, 0);
-		if(float === 'none') {
+		if(floatVal === 'none') {
 			while(true) {
 				var zone = this.zones[this.currentZone];
 				var isstart = false;
@@ -71,7 +71,7 @@ Core.Object.extend('Ui.SFlowState', {
 			}
 		}
 		// insert in the nearest free left part of the screen
-		else if(float === 'left') {
+		else if(floatVal === 'left') {
 			while(true) {
 				var zone = this.zones[this.currentZone];
 				var isstartline = false;
@@ -89,7 +89,7 @@ Core.Object.extend('Ui.SFlowState', {
 			}
 		}
 		// insert in the nearest free right part of the screen
-		else if(float === 'right') {
+		else if(floatVal === 'right') {
 			while(true) {
 				var zone = this.zones[this.currentZone];
 				var isendline = false;
@@ -106,7 +106,7 @@ Core.Object.extend('Ui.SFlowState', {
 					this.nextZone();
 			}
 		} else if(DEBUG)
-			throw('Invalid Ui.SFlow float policy ('+float+')');
+			throw('Invalid Ui.SFlow float policy ('+floatVal+')');
 	},
 
 	flushDraw: function() {
@@ -365,28 +365,28 @@ Ui.Container.extend('Ui.SFlow',
 	/**
 	 * Append a child at the end of the flow
 	 */
-	append: function(child, float) {
+	append: function(child, floatVal) {
 		this.appendChild(child);
-		if(float)
-			Ui.SFlow.setFloat(child, float);
+		if(floatVal)
+			Ui.SFlow.setFloat(child, floatVal);
 	},
 
 	/**
 	 * Append a child at the begining of the flow
 	 */
-	prepend: function(child, float) {
+	prepend: function(child, floatVal) {
 		this.prependChild(child);
-		if(float)
-			Ui.SFlow.setFloat(child, float);
+		if(floatVal)
+			Ui.SFlow.setFloat(child, floatVal);
 	},
 
 	/**
 	 * Append a child at the given position
 	 */
-	insertAt: function(child, position, float) {
+	insertAt: function(child, position, floatVal) {
 		this.insertChildAt(child, position);
-		if(float)
-			Ui.SFlow.setFloat(child, float);
+		if(floatVal)
+			Ui.SFlow.setFloat(child, floatVal);
 	},
 
 	/*
@@ -498,9 +498,9 @@ Ui.Container.extend('Ui.SFlow',
 		return child['Ui.SFlow.float']?child['Ui.SFlow.float']:'none';
 	},
 
-	setFloat: function(child, float) {
-		if(Ui.SFlow.getFloat(child) != float) {
-			child['Ui.SFlow.float'] = float;
+	setFloat: function(child, floatVal) {
+		if(Ui.SFlow.getFloat(child) != floatVal) {
+			child['Ui.SFlow.float'] = floatVal;
 			child.invalidateMeasure();
 		}
 	}
