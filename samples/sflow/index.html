@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Flow</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.VBox.extend('Test.TextField', {
+	constructor: function(config) {
+		this.setMargin(5);
+		var title = new Ui.Text({ text: config.title });
+		delete(config.title);
+		this.append(title);
+
+		var field = new Ui.TextField({ marginLeft: 10 });
+		this.append(field);
+
+		if(config.desc) {
+			this.append(new Ui.Text({ text: config.desc, color: '#aaaaaa' }));
+			delete(config.desc);
+		}
+	}
+});
+
+var app = new Ui.App();
+app.setStyle({
+	"Ui.ScrollingArea": {
+		"color": "#999999",
+		"showScrollbar": false,
+		"overScroll": true,
+		"radius": 0
+	}
+});
+
+var scroll = new Ui.ScrollingArea();
+app.setContent(scroll);
+
+var flow = new Ui.SFlow({ spacing: 10, itemAlign: 'stretch' });
+scroll.setContent(flow);
+
+flow.append(new Ui.Rectangle({ width: 100, height: 200, fill: 'red' }), 'right');
+
+flow.append(new Ui.Rectangle({ width: 200, height: 100, fill: 'green' }), 'left');
+
+var field1 = new Test.TextField({ title: 'Prénom', width: 200 });
+flow.append(field1);
+
+var field2 = new Test.TextField({ title: 'Nom', width: 200 });
+flow.append(field2);
+
+var field3 = new Test.TextField({ title: 'Identifiant', width: 200 });
+flow.append(field3);
+
+var field4 = new Test.TextField({ title: 'Mot de passe', width: 200 });
+flow.append(field4);
+
+var field5 = new Test.TextField({
+	title: 'Un champ avec un titre particulièrement long pour voir ce que cela fait.',
+	width: 200,
+	desc: 'Ce champ est très important. Merci de le remplir'
+});
+flow.append(field5);
+
+flow.append(new Ui.Rectangle({ width: 250, height: 150, fill: 'pink' }));
+flow.append(new Ui.Rectangle({ width: 100, height: 50, fill: 'purple', verticalAlign: 'center' }));
+flow.append(new Ui.Rectangle({ width: 150, height: 150, fill: 'brown' }));
+flow.append(new Ui.Rectangle({ width: 200, height: 15, fill: 'orange' }));
+flow.append(new Ui.Rectangle({ width: 150, height: 150, fill: 'lightblue' }));
+
+
+</script>
+  </head>
+</html>

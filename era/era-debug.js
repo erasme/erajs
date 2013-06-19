@@ -77,6 +77,7 @@ include(eraBaseDirectory+'ui/shape.js');
 include(eraBaseDirectory+'ui/lbox.js');
 include(eraBaseDirectory+'ui/box.js');
 include(eraBaseDirectory+'ui/flow.js');
+include(eraBaseDirectory+'ui/sflow.js');
 include(eraBaseDirectory+'ui/grid.js');
 include(eraBaseDirectory+'ui/fixed.js');
 include(eraBaseDirectory+'ui/fold.js');
