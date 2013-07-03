@@ -22,6 +22,7 @@ Core.Object.extend('Core.Socket',
 	sep: '?',
 	lastPoll: undefined,
 	delayPollTask: undefined,
+	pollInterval: 2.5,
 
 	/**
 	*	@constructs
@@ -96,12 +97,18 @@ Core.Object.extend('Core.Socket',
 			this.websocket.send(JSON.stringify(msg));
 		}
 		else {
-			if(this.emusendrequest == undefined) {
+			if(this.emusendrequest === undefined) {
 				var url = (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent((JSON.stringify(msg)).toBase64());
 				this.emusendrequest = new Core.HttpRequest({ url: url });
 				this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 				this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
 				this.emusendrequest.send();
+				//console.log(this+'.send delayPollTask: '+this.delayPollTask);
+				// force a short delay (100ms) poll task if the server has a response to send
+				if(this.delayPollTask !== undefined) {
+					this.delayPollTask.abort();
+					this.delayPollTask = new Core.DelayedTask({ delay: 0.1, scope: this, callback: this.delayPollDone });
+				}
 			}
 			else
 				this.emumessages.push((JSON.stringify(msg)).toBase64());
@@ -266,6 +273,9 @@ Core.Object.extend('Core.Socket',
 		}
 		else {
 			this.emuid = response.id;
+			// get the keep alive interval from the reponse if set
+			if('keepAliveInterval' in response)
+				this.pollInterval = Math.min(response.keepAliveInterval, 2.5);
 			if(response.status != 'open') {
 				this.fireEvent('error', this);
 				this.fireEvent('close', this);
@@ -291,6 +301,7 @@ Core.Object.extend('Core.Socket',
 	onEmuSocketPollDone: function() {
 		//console.log('onEmuSocketPollDone');
 		var response = this.emupollrequest.getResponseJSON();
+		this.emupollrequest = undefined;
 		if(response == undefined) {
 			this.close();
 			this.fireEvent('close', this);
@@ -311,10 +322,10 @@ Core.Object.extend('Core.Socket',
 				var deltaMs = Math.max(0, now.getTime() - this.lastPoll.getTime());
 				this.lastPoll = now;
 				//console.log('onEmuSocketPollDone delta: '+deltaMs+'ms');
-				if(deltaMs >= 2500)
+				if(deltaMs >= this.pollInterval * 1000)
 					this.sendPoll();
 				else
-					this.delayPollTask = new Core.DelayedTask({ delay: (2500 - deltaMs)/1000, scope: this, callback: this.delayPollDone });
+					this.delayPollTask = new Core.DelayedTask({ delay: this.pollInterval, scope: this, callback: this.delayPollDone });
 			}
 		}
 	},
@@ -329,10 +340,13 @@ Core.Object.extend('Core.Socket',
 	delayPollDone: function() {
 		//console.log('delayPollDone');
 		this.delayPollTask = undefined;
-		this.sendPoll();
+		if(this.emupollrequest === undefined)
+			this.sendPoll();
 	},
 	
 	sendPoll: function() {
+		var now = new Date();
+		this.lastPoll = now;
 		this.emupollrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket=poll&command=poll&id='+this.emuid });
 		this.connect(this.emupollrequest, 'done', this.onEmuSocketPollDone);
 		this.connect(this.emupollrequest, 'error', this.onEmuSocketPollError);
