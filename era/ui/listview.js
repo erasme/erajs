@@ -565,16 +565,16 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	getGradient: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
+			{ offset: 0, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.05, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
 	getGradientDown: function() {
 		var yuv = this.getStyleProperty('color').getYuv();
 		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 - 0.20, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 - 0.20, u: yuv.u, v: yuv.v }) }
+			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.05 - 0.10, u: yuv.u, v: yuv.v }) },
+			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.05 - 0.10, u: yuv.u, v: yuv.v }) }
 		] });
 	},
 
@@ -595,17 +595,8 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 /** @lends Ui.ListViewHeader#*/
 {
 	onStyleChange: function() {
-		var gradient;
-		var darkColor;
-		var yuv = this.getStyleProperty('color').getYuv();
-		gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
-		] });
-		darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-		this.background.setFill(gradient);
-		this.border.setFill(darkColor);
-
+		this.background.setFill(this.getGradient());
+		this.border.setFill(this.getDarkColor());
 		var spacing = this.getStyleProperty('spacing');
 		this.uiTitle.setMargin(spacing + 2);
 	}
@@ -687,12 +678,8 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
 	},
 
-	getBackgroundSelectGradient: function() {
-		var yuv = this.getStyleProperty('selectColor').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
-		] });
+	getBackgroundSelectColor: function() {
+		return this.getStyleProperty('selectColor');
 	},
 
 	getBackgroundColor: function() {
@@ -705,7 +692,7 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 	},
 
 	onCellSelect: function() {
-		this.background.setFill(this.getBackgroundSelectGradient());
+		this.background.setFill(this.getBackgroundSelectColor());
 	},
 
 	onCellUnselect: function() {
@@ -730,7 +717,7 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 {
 	style: {
 		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99, a: 0.1 }),
-		selectColor: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+		selectColor: new Ui.Color({ r: 0.88, g: 0.88, b: 0.88 }),
 		spacing: 5
 	}
 });
