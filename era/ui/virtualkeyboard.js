@@ -9,21 +9,15 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 		this.fold = new Ui.Fold({ mode: 'extend', over: false, position: 'bottom' });
 		this.setContent(this.fold);
 
-		var gradient = new Ui.LinearGradient({ orientation: 'vertical', stops: [
-			{ offset: 0, color: new Ui.Color({ r: 0.8, g: 0.8, b: 0.8 }) },
-			{ offset: 0.01, color: new Ui.Color({ r: 0.5, g: 0.5, b: 0.5 }) },
-			{ offset: 0.2, color: new Ui.Color({ r: 0.4, g: 0.4, b: 0.4 }) },
-			{ offset: 1, color: new Ui.Color({ r: 0.2, g: 0.2, b: 0.2 }) }
-		] });
 		var lbox = new Ui.LBox();
 		this.fold.setContent(lbox);
-		this.bg = new Ui.Rectangle({ fill: gradient });
+		this.bg = new Ui.Rectangle({ fill: '#cccccc' });
 		lbox.append(this.bg);
 
 		var vbox = new Ui.VBox({ margin: 10, spacing: 5, horizontalAlign: 'center', uniform: true, height: 200 });
 		lbox.append(vbox);
 
-		var hbox = new Ui.HBox();
+		var hbox = new Ui.HBox({spacing: 5 });
 		vbox.append(hbox, true);
 		var line = 'AZERTYUIOP';
 		for(var i = 0; i < line.length; i++) {
@@ -35,7 +29,7 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 		var button = new Ui.VirtualKeyboardKey({ text: 'backspace', key: '\b', focusable: false, width: 100 });
 		hbox.append(button, true);
 
-		hbox = new Ui.HBox({ marginLeft: 20 });
+		hbox = new Ui.HBox({ marginLeft: 20, spacing: 5 });
 		vbox.append(hbox, true);
 		line = 'QSDFGHJKLM';
 		for(var i = 0; i < line.length; i++) {
@@ -47,7 +41,7 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 		var button = new Ui.VirtualKeyboardKey({ text: 'retour', key: '\n', focusable: false, width: 100 });
 		hbox.append(button, true);
 
-		hbox = new Ui.HBox();
+		hbox = new Ui.HBox({ spacing: 5 });
 		vbox.append(hbox, true);
 		var button = new Ui.VirtualKeyboardKey({ text: 'shift', focusable: false, width: 60 });
 		hbox.append(button, true);
@@ -61,7 +55,7 @@ Ui.LBox.extend('Ui.VirtualKeyboard', {
 		var button = new Ui.VirtualKeyboardKey({ text: 'shift', focusable: false, width: 60 });
 		hbox.append(button, true);
 
-		hbox = new Ui.HBox();
+		hbox = new Ui.HBox({ spacing: 5 });
 		vbox.append(hbox, true);
 		var button = new Ui.VirtualKeyboardKey({ text: '.?123', focusable: false, width: 100 });
 		hbox.append(button, false);
