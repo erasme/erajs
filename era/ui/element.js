@@ -266,7 +266,7 @@ Core.Object.extend('Ui.Element',
 		// no need to measure if the element is not loaded
 		if(!this.isLoaded)
 			return;
-		//console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
+//		console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
 
 		if(this.collapse)
 			return { width: 0, height: 0 };
@@ -337,7 +337,7 @@ Core.Object.extend('Ui.Element',
 
 			this.measureValid = false;
 			if((this.parent != undefined) && (this.parent.measureValid))
-				this.parent.onChildInvalidateMeasure(this);
+				this.parent.onChildInvalidateMeasure(this, 'change');
 		}
 		this.invalidateArrange();
 	},
@@ -351,7 +351,7 @@ Core.Object.extend('Ui.Element',
 //		}
 //	},
 
-	onChildInvalidateMeasure: function(child, remove) {
+	onChildInvalidateMeasure: function(child, event) {
 		this.invalidateMeasure();
 	},
 
