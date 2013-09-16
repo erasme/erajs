@@ -79,12 +79,12 @@ Ui.LBox.extend('Ui.TextField',
 
 	onDisable: function() {
 		Ui.TextField.base.onDisable.call(this);
-		this.entry.setOpacity(0.2);
+		this.graphic.setOpacity(0.2);
 	},
 
 	onEnable: function() {
 		Ui.TextField.base.onEnable.call(this);
-		this.entry.setOpacity(1);
+		this.graphic.setOpacity(1);
 	}
 });
 
