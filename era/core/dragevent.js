@@ -90,6 +90,8 @@ Core.Object.extend('Core.DragDataTransfer',
 
 				this.image = this.generateImage(this.draggable);
 				this.image.style.zIndex = 100000;
+				if(navigator.supportOpacity)
+					this.image.style.opacity = 0.8;
 											
 				document.body.appendChild(this.image);
 
@@ -113,7 +115,11 @@ Core.Object.extend('Core.DragDataTransfer',
 	},
 
 	getData: function(type) {
-		return this.data[type];
+		for(var k in this.data) {
+			var d = this.data[k];
+			if((k === type) || (Core.Object.hasInstance(d) && d.isSubclassOf(type)))
+				return d;
+		}
 	},
 
 	hasData: function() {
@@ -195,6 +201,10 @@ Core.Object.extend('Core.DragDataTransfer',
 //				}
 				this.image = this.generateImage(this.draggable);
 				this.image.style.zIndex = 100000;
+				if(navigator.supportOpacity)
+					this.image.style.opacity = 0.8;
+
+				
 //				if(navigator.isIE7 || navigator.isIE8)
 //					this.image.innerHTML = this.draggable.innerHTML;
 
