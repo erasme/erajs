@@ -97,6 +97,7 @@ Core.Object.extend('Ui.Selection', {
 			if('scope' in action)
 				scope = action.scope;
 			action.callback.call(scope, this);
+			this.clear();
 			return true;
 		}
 		else {
@@ -119,6 +120,7 @@ Core.Object.extend('Ui.Selection', {
 			if('scope' in action)
 				scope = action.scope;
 			action.callback.call(scope, this);
+			this.clear();
 			return true;
 		}
 		else {
