@@ -15,9 +15,10 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		this.contentBox = new Ui.LBox({ margin: 5 });
 		this.append(this.contentBox);
 		
-		this.connect(this, 'press', this.onSelectionablePress);
-		this.connect(this, 'activate', this.onSelectionableActivate);
+		this.connect(this, 'press', this.onPress);
+		this.connect(this, 'activate', this.onActivate);
 		this.connect(this, 'dragstart', this.onSelectionableDragStart);
+		this.connect(this, 'dragend', this.onSelectionableDragEnd);
 	},
 
 	getIsSelected: function() {
@@ -56,29 +57,49 @@ Ui.Draggable.extend('Ui.Selectionable', {
 	},
 	
 	onSelectionableDragStart: function() {
-		 if(!this.getIsSelected())
-			this.onSelectionablePress();
+		this.select();
+	},
+	
+	onSelectionableDragEnd: function() {
+		 if(this.getIsSelected()) {
+			var handler = this.getParentSelectionHandler();
+			if(handler !== undefined)
+				handler.clear();
+		}
 	},
 		
-	onSelectionableActivate: function() {
+	onActivate: function() {
 		if(this.getIsLoaded()) {
-		 	if(!this.getIsSelected())
-				this.onSelectionablePress();
+			this.select();
 			var handler = this.getParentSelectionHandler();
 			if(handler !== undefined)
 				handler.executeDefaultAction();
 		}
 	},
 
-	onSelectionablePress: function() {
+	onPress: function() {
+		if(this.getIsSelected())
+			this.unselect();
+		else
+			this.select();
+	},
+
+	select: function() {
 		if(this.getIsLoaded()) {
 			var handler = this.getParentSelectionHandler();
 			if(handler !== undefined) {
-				if(this.getIsSelected())
-					handler.remove(this);
-				else
-					handler.append(this);
-				this.setIsSelected(!this.getIsSelected());
+				handler.append(this);
+				this.setIsSelected(true);
+			}
+		}
+	},
+	
+	unselect: function() {
+		if(this.getIsLoaded()) {
+			var handler = this.getParentSelectionHandler();
+			if(handler !== undefined) {
+				handler.remove(this);
+				this.setIsSelected(false);
 			}
 		}
 	}
