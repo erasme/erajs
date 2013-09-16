@@ -146,6 +146,11 @@ Ui.Element.extend('Ui.Entry',
 	 */
 
 	onMouseDown: function(event) {
+		if(this.getIsDisabled()) {
+			event.preventDefault();
+			return;
+		}
+	
 		this.setSelectable(true);
 		event.stopPropagation();
 
@@ -216,6 +221,10 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onTouchStart: function(event) {
+		if(this.getIsDisabled()) {
+			event.preventDefault();
+			return;
+		}	
 		if(event.targetTouches.length == 1) {
 			event.stopPropagation();
 
@@ -319,7 +328,9 @@ Ui.Element.extend('Ui.Entry',
 		drawing.style.padding = '0px';
 		drawing.style.outline = 'none';
 		if(navigator.isIE) {
-			if(!navigator.isIE7 && !navigator.isIE8)
+			if(navigator.isIE7 || navigator.isIE8)
+				drawing.style.background = 'transparent';
+			else
 				drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
 		}
 		else
@@ -346,10 +357,12 @@ Ui.Element.extend('Ui.Entry',
 	onDisable: function() {
 		Ui.Entry.base.onDisable.call(this);
 		this.getDrawing().blur();
+		this.getDrawing().style.cursor = 'default';
 	},
 
 	onEnable: function() {
 		Ui.Entry.base.onEnable.call(this);
+		this.getDrawing().style.cursor = 'auto';
 	},
 
 	onStyleChange: function() {
