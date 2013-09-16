@@ -94,11 +94,11 @@ Core.Object.extend('Core.Socket',
 
 	send: function(msg) {
 		if(this.websocket != undefined) {
-			this.websocket.send(JSON.stringify(msg));
+			this.websocket.send(msg);
 		}
 		else {
 			if(this.emusendrequest === undefined) {
-				var url = (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent((JSON.stringify(msg)).toBase64());
+				var url = (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=send&id='+this.emuid+'&messages='+encodeURIComponent(msg.toBase64());
 				this.emusendrequest = new Core.HttpRequest({ url: url });
 				this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
 				this.connect(this.emusendrequest, 'error', this.onEmuSocketSendError);
@@ -111,7 +111,7 @@ Core.Object.extend('Core.Socket',
 				}
 			}
 			else
-				this.emumessages.push((JSON.stringify(msg)).toBase64());
+				this.emumessages.push(msg.toBase64());
 		}
 	},
 
@@ -186,7 +186,7 @@ Core.Object.extend('Core.Socket',
 		if(msg.data == 'PING')
 			this.websocket.send('PONG');
 		else
-			this.fireEvent('message', this, JSON.parse(msg.data));
+			this.fireEvent('message', this, msg.data);
 	},
 
 	onWebSocketClose: function(msg) {
@@ -204,7 +204,7 @@ Core.Object.extend('Core.Socket',
 		}
 		else {
 			if(data != 'keepalive')
-				this.fireEvent('message', this, JSON.parse(data.fromBase64()));
+				this.fireEvent('message', this, data.fromBase64());
 		}
 	},
 
@@ -309,7 +309,7 @@ Core.Object.extend('Core.Socket',
 		else {
 			if(response.messages != undefined) {
 				for(var i = 0; i < response.messages.length; i++) {
-					var msg = JSON.parse(response.messages[i].fromBase64());
+					var msg = response.messages[i].fromBase64();
 					this.fireEvent('message', this, msg);
 				}
 			}
