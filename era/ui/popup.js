@@ -4,9 +4,11 @@ Ui.Container.extend('Ui.Popup',
 	background: undefined,
 	shadow: undefined,
 	contentBox: undefined,
+	ppContent: undefined,
 	posX: undefined,
 	posY: undefined,
 	attachedElement: undefined,
+	attachedBorder: undefined,
 	lbox: undefined,
 	autoHide: true,
 	expandable: false,
@@ -25,10 +27,10 @@ Ui.Container.extend('Ui.Popup',
 		this.shadow = new Ui.Rectangle();
 		this.appendChild(this.shadow);
 
-		this.background = new Ui.PopupBackground({ radius: 8, fill: 'black' });
+		this.background = new Ui.PopupBackground({ radius: 0, fill: '#f8f8f8' });
 		this.appendChild(this.background);
 
-		this.contentBox = new Ui.LBox({ paddingLeft: 15, paddingRight: 15, paddingTop: 11, paddingBottom: 11 });
+		this.contentBox = new Ui.LBox({ padding: 4, paddingLeft: 3 });
 		this.appendChild(this.contentBox);
 
 		this.connect(this.shadow.getDrawing(), 'mousedown', this.onMouseDown);
@@ -56,12 +58,12 @@ Ui.Container.extend('Ui.Popup',
 
 	setContent: function(content) {
 		content = Ui.Element.create(content);
-		if(this.content != content) {
-			if(this.content != undefined)
-				this.contentBox.remove(this.content);
-			this.content = content;
-			if(this.content != undefined)
-				this.contentBox.append(this.content);
+		if(this.ppContent !== content) {
+			if(this.ppContent != undefined)
+				this.contentBox.remove(this.ppContent);
+			this.ppContent = content;
+			if(this.ppContent !== undefined)
+				this.contentBox.append(this.ppContent);
 		}
 	},
 
@@ -125,20 +127,19 @@ Ui.Container.extend('Ui.Popup',
 		if(!oldVisible) {
 			if((typeof(posX) == 'object') && (Ui.Element.hasInstance(posX))) {
 				this.attachedElement = posX;
+				if((posY !== undefined) && (typeof(posY) === 'string'))
+					this.attachedBorder =  posY;
 				var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
 				this.posX = point.x;
 				this.posY = point.y;
-				this.background.setArrowBorder('left');
 			}
 			else if((posX != undefined) && (posY != undefined)) {
 				this.posX = posX;
 				this.posY = posY;
-				this.background.setArrowBorder('left');
 			}
 			else {
 				this.posX = undefined;
 				this.posY = undefined;
-				this.background.setArrowBorder('none');
 			}
 			this.invalidateArrange();
 			Ui.App.current.appendDialog(this);
@@ -189,30 +190,81 @@ Ui.Container.extend('Ui.Popup',
 		}
 		// handle open at an element
 		else if(this.attachedElement != undefined) {
-			var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
-			if(this.contentBox.getMeasureWidth() + point.x + 10 < width)
-				this.setLeft(point.x, point.y, width, height);
-			else {
-				point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
-				if(this.contentBox.getMeasureWidth() + 10 < point.x)
-					this.setRight(point.x, point.y, width, height);
-				else {
-					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: 0 });
-					if(this.contentBox.getMeasureHeight() + 10 < point.y)
-						this.setTop(point.x, point.y, width, height);
-					else {
-						point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: this.attachedElement.getLayoutHeight() });
-						if(this.contentBox.getMeasureHeight() + 10 + point.y < height)
-							this.setBottom(point.x, point.y, width, height);
-						else
-							this.setCenter(width, height);
+			var borders = ['left', 'right', 'top', 'bottom', 'center'];
+			if(this.attachedBorder !== undefined)
+				borders.unshift(this.attachedBorder);
+			for(var i = 0; i < borders.length; i++) {
+				var border = borders[i];
+				if(border === 'left') {
+					var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
+				  	if(this.contentBox.getMeasureWidth() + point.x + 10 < width) {
+						this.setLeft(point.x, point.y, width, height);
+						break;
 					}
+				}
+				else if(border === 'right') {
+					var point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
+					if(this.contentBox.getMeasureWidth() + 10 < point.x) {
+						this.setRight(point.x, point.y, width, height);
+						break;
+					}
+				}
+				else if(border === 'top') {
+					var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: 0 });
+					if(this.contentBox.getMeasureHeight() + 10 < point.y) {
+						this.setTop(point.x, point.y, width, height);
+						break;
+					}
+				}
+				else if(border === 'bottom') {
+					var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: this.attachedElement.getLayoutHeight() });
+					if(this.contentBox.getMeasureHeight() + 10 + point.y < height) {
+						this.setBottom(point.x, point.y, width, height);
+						break;
+					}
+				}
+				else {
+					this.setCenter(width, height);
+					break;
 				}
 			}
 		}
 		// handle open at a position
 		else {
-			this.setLeft(this.posX, this.posY, width, height);
+			var borders = ['left', 'right', 'top', 'bottom', 'center'];
+			if(this.attachedBorder !== undefined)
+				borders.unshift(this.attachedBorder);
+			for(var i = 0; i < borders.length; i++) {
+				var border = borders[i];
+				if(border === 'left') {				
+					if(this.contentBox.getMeasureWidth() + this.posX + 10 < width) {
+						this.setLeft(this.posX, this.posY, width, height);
+						break;
+					}
+				}
+				else if(border === 'right') {
+					if(this.contentBox.getMeasureWidth() + 10 < this.posX) {
+						this.setRight(this.posX, this.posY, width, height);
+						break;
+					}
+				}
+				else if(border === 'top') {
+					if(this.contentBox.getMeasureHeight() + 10 < this.posY) {
+						this.setTop(this.posX, this.posY, width, height);
+						break;
+					}
+				}
+				else if(border === 'bottom') {
+					if(this.contentBox.getMeasureHeight() + 10 + this.posY < height) {
+						this.setBottom(this.posX, this.posY, width, height);
+						break;
+					}
+				}
+				else {
+					this.setCenter(width, height);
+					break;
+				}
+			}
 		}
 	},
 
@@ -272,6 +324,10 @@ Ui.Container.extend('Ui.Popup',
 				offset = this.contentBox.getMeasureWidth() - 18;
 			this.background.setArrowOffset(offset);
 		}
+		else if(px < 2) {
+			this.background.setArrowOffset(x+2);
+			px = 2;
+		}
 		else
 			this.background.setArrowOffset(30);
 		this.shadow.setOpacity(0);
@@ -289,10 +345,13 @@ Ui.Container.extend('Ui.Popup',
 			px = width - this.contentBox.getMeasureWidth();
 
 			var offset = x - px;
-
 			if(offset > this.contentBox.getMeasureWidth() - 18)
 				offset = this.contentBox.getMeasureWidth() - 18;
 			this.background.setArrowOffset(offset);
+		}
+		else if(px < 2) {
+			this.background.setArrowOffset(x+2);
+			px = 2;
 		}
 		else
 			this.background.setArrowOffset(30);
@@ -321,18 +380,14 @@ Ui.Container.extend('Ui.Popup',
 /**@lends Ui.Popup*/
 {
 	style: {
-		color: new Ui.Color({ r: 0.1, g: 0.15, b: 0.2 }),
+		color: Ui.Color.create('#f8f8f8'),
 		shadowColor: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.5 })
 	}
 });
 
-Ui.Fixed.extend('Ui.PopupBackground', 
+Ui.CanvasElement.extend('Ui.PopupBackground', 
 /**@lends Ui.PopupBackground#*/
 {
-	darkShadow: undefined,
-	lightShadow: undefined,
-	background: undefined,
-
 	radius: 8,
 	fill: 'black',
 	// [left|right|top|bottom]
@@ -343,26 +398,9 @@ Ui.Fixed.extend('Ui.PopupBackground',
 	/**
      * @constructs
 	 * @class
-     * @extends Ui.Fixed
+     * @extends Ui.CanvasElement
 	 */
 	constructor: function(config) {
-
-		this.darkShadow = new Ui.Shape({ fill: '#010002', opacity: 0.8 });
-		this.append(this.darkShadow);
-
-		this.lightShadow = new Ui.Shape({ fill: '#5f625b' });
-		this.append(this.lightShadow);
-
-		var yuv = (new Ui.Color({ r: 0.50, g: 0.50, b: 0.50 })).getYuv();
-		var gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: 0.25, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: 0.16, u: yuv.u, v: yuv.v }) }
-		] });
-
-		this.background = new Ui.Shape({ fill: gradient });
-		this.append(this.background);
-
-		this.connect(this, 'resize', this.onResize);
 	},
 
 	setArrowBorder: function(arrowBorder) {
@@ -389,14 +427,6 @@ Ui.Fixed.extend('Ui.PopupBackground',
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = Ui.Color.create(fill);
-			var yuv = this.fill.getYuv();
-			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
-			] });
-			this.background.setFill(gradient);
-			this.darkShadow.setFill(new Ui.Color({ y: yuv.y - 0.9, u: yuv.u, v: yuv.v }));
-			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.3, u: yuv.u, v: yuv.v }));
 		}
 	},
 
@@ -430,69 +460,36 @@ Ui.Fixed.extend('Ui.PopupBackground',
 			var v2 = height - (this.radius + arrowSize);
 			return 'M'+radius+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+(height-arrowSize)+' '+v1+','+(height-arrowSize)+' L '+(arrowOffset+arrowSize)+','+(height-arrowSize)+' L'+arrowOffset+','+height+' L'+(arrowOffset-arrowSize)+','+(height-arrowSize)+' L'+radius+','+(height-arrowSize)+' Q0,'+(height-arrowSize)+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
 		}
-	},
-
-	onResize: function(popup, width, height) {
-		this.darkShadow.setWidth(width);
-		this.darkShadow.setHeight(height);
-		this.darkShadow.setPath(this.genPath(width, height, this.radius, this.arrowBorder, this.arrowSize, this.arrowOffset));
-
-		if(this.arrowBorder == 'none') {
-			this.lightShadow.setWidth(width - 2);
-			this.lightShadow.setHeight(height - 2);
-			this.setPosition(this.lightShadow, 1, 1);
-			this.lightShadow.setPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder));
-
-			this.background.setWidth(width - 4);
-			this.background.setHeight(height - 4);
-			this.setPosition(this.background, 2, 2);
-			this.background.setPath(this.genPath(width-4, height-4, this.radius-1.4, this.arrowBorder));
-		}
-		else if(this.arrowBorder == 'left') {
-			this.lightShadow.setWidth(width - 3);
-			this.lightShadow.setHeight(height - 2);
-			this.setPosition(this.lightShadow, 2, 1);
-			this.lightShadow.setPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
-			
-			this.background.setWidth(width - 4.7);
-			this.background.setHeight(height - 3.7);
-			this.setPosition(this.background, 3.2, 2);
-			this.background.setPath(this.genPath(width-4.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
-		}
-		else if(this.arrowBorder == 'right') {
-			this.lightShadow.setWidth(width - 3);
-			this.lightShadow.setHeight(height - 2);
-			this.setPosition(this.lightShadow, 1, 1);
-			this.lightShadow.setPath(this.genPath(width-3, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
-			
-			this.background.setWidth(width - 5.7);
-			this.background.setHeight(height - 3.7);
-			this.setPosition(this.background, 2.2, 2);
-			this.background.setPath(this.genPath(width-5.7, height-3.7, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
-		}
-		else if(this.arrowBorder == 'top') {
-			this.lightShadow.setWidth(width - 2);
-			this.lightShadow.setHeight(height - 3);
-			this.setPosition(this.lightShadow, 1, 2);
-			this.lightShadow.setPath(this.genPath(width-2, height-3, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
-			
-			this.background.setWidth(width - 4);
-			this.background.setHeight(height - 5);
-			this.setPosition(this.background, 2, 3);
-			this.background.setPath(this.genPath(width-4, height-5, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
-		}
-		else if(this.arrowBorder == 'bottom') {
-			this.lightShadow.setWidth(width - 2);
-			this.lightShadow.setHeight(height - 3);
-			this.setPosition(this.lightShadow, 1, 1);
-			this.lightShadow.setPath(this.genPath(width-2, height-3, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
-			
-			this.background.setWidth(width - 4);
-			this.background.setHeight(height - 5);
-			this.setPosition(this.background, 2, 2);
-			this.background.setPath(this.genPath(width-4, height-5, this.radius-1.4, this.arrowBorder, this.arrowSize-1.3, this.arrowOffset-2));
-		}
 	}
 	/**#@-*/
+}, {
+	updateCanvas: function(ctx) {
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
+		
+		if(this.arrowBorder == 'none') {
+			ctx.fillStyle = 'rgba(0,0,0,0.1)';		
+			ctx.fillRect(0, 0, width, height);
+			ctx.fillStyle = 'rgba(0,0,0,0.5)';
+			ctx.fillRect(1, 1, width-2, height-2);
+			ctx.fillStyle = this.fill.getCssRgba();
+			ctx.fillRect(2, 2, width-4, height-4);
+		}
+		else {
+			ctx.fillStyle = 'rgba(0,0,0,0.1)';		
+			this.svgPath(this.genPath(width, height, this.radius, this.arrowBorder, this.arrowSize, this.arrowOffset));
+			ctx.fill();
+			ctx.save();
+			ctx.fillStyle = 'rgba(0,0,0,0.5)';
+			ctx.translate(1,1);
+			this.svgPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
+			ctx.fill();
+			ctx.restore();
+			ctx.fillStyle = this.fill.getCssRgba();
+			ctx.translate(2,2);
+			this.svgPath(this.genPath(width-4, height-4, this.radius-2, this.arrowBorder, this.arrowSize-1, this.arrowOffset-2));
+			ctx.fill();
+		}
+	}
 });
 
