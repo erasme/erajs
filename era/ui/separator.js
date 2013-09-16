@@ -7,8 +7,9 @@ Ui.Rectangle.extend('Ui.Separator',
 	 * @extends Ui.Rectangle
 	 */
 	constructor: function(config) {
-		this.setMargin(3);
+//		this.setMargin(3);
 		this.setHeight(1);
+		this.setWidth(1);
 	}
 }, 
 /** @lends Ui.Separator# */
