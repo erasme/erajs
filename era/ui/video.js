@@ -40,7 +40,10 @@ Ui.Element.extend('Ui.Video',
 		this.canplaythrough = false;
 		this.state = 'initial';
 		this.src = src;
-		this.videoDrawing.setAttribute('src', src);
+		if(typeof(src) === 'object')
+			this.videoDrawing.src = URL.createObjectURL(src);
+		else
+			this.videoDrawing.setAttribute('src', src);
 		try {
 			this.videoDrawing.load();
 		} catch(e) {}
@@ -52,6 +55,13 @@ Ui.Element.extend('Ui.Video',
 	setPoster: function(src) {
 		this.poster = src;
 		this.videoDrawing.setAttribute('poster', src);
+	},
+
+	/**
+	 * Whether or not to autoplay videos
+	 */
+	setAutoplay: function(autoplay) {
+		this.videoDrawing.autoplay = autoplay;
 	},
 
 	/**
