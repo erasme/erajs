@@ -56,9 +56,9 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		}
 		this.popup = new Ui.Popup();
 		if(this.selectedDate != undefined)
-			this.calendar = new Ui.MonthCalendar({ selectedDate: this.selectedDate, date: this.selectedDate });
+			this.calendar = new Ui.MonthCalendar({ margin: 10, selectedDate: this.selectedDate, date: this.selectedDate });
 		else
-			this.calendar = new Ui.MonthCalendar();
+			this.calendar = new Ui.MonthCalendar({ margin: 10 });
 		if(this.dayFilter != undefined)
 			this.calendar.setDayFilter(this.dayFilter);
 		if(this.dateFilter != undefined)
