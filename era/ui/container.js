@@ -22,7 +22,7 @@ Ui.Element.extend('Ui.Container',
 		child.getDrawing().style.zIndex = this.children.length;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
-		this.onChildInvalidateMeasure(child);
+		this.onChildInvalidateMeasure(child, 'add');
 	},
 
 	/**
@@ -39,7 +39,7 @@ Ui.Element.extend('Ui.Container',
 			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
-		this.onChildInvalidateMeasure(child);
+		this.onChildInvalidateMeasure(child, 'add');
 	},
 
 	/**
@@ -56,7 +56,7 @@ Ui.Element.extend('Ui.Container',
 			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(false);
 		child.setParentVisible(false);
-		this.onChildInvalidateMeasure(child, true);
+		this.onChildInvalidateMeasure(child, 'remove');
 	},
 
 	/**
@@ -88,7 +88,7 @@ Ui.Element.extend('Ui.Container',
 			for(var i = 0; i < this.children.length; i++)
 				this.children[i].getDrawing().style.zIndex = i + 1;
 		}
-		this.onChildInvalidateMeasure(child);
+		this.onChildInvalidateMeasure(child, 'move');
 	},
 
 	/**
