@@ -43,8 +43,6 @@ Ui.LBox.extend('Ui.Draggable',
 
 		this.setFocusable(true);
 
-		this.getDrawing().setAttribute('draggable', true);
-
 		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
 		this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
 		
@@ -81,12 +79,17 @@ Ui.LBox.extend('Ui.Draggable',
 	 */
 	setData: function(data) {
 		this.data = data;
-		if((typeof(this.data) === 'object') && (this.mimetype === undefined)) {		
-			if(this.data.classType !== undefined) 
-				this.mimetype = this.data.classType;
-			else
-				this.mimetype = 'object';
+		if(typeof(this.data) === 'object') {
+			if(this.mimetype === undefined) {
+				if(this.data.classType !== undefined) 
+					this.mimetype = this.data.classType;
+				else
+					this.mimetype = 'object';
+			}
 		}
+		// allow native drag & drop
+		else
+			this.getDrawing().setAttribute('draggable', true);
 	},
 
 	/**
