@@ -17,6 +17,8 @@ Ui.Container.extend('Ui.Paned',
 	*	@extends Ui.Container
 	*/
 	constructor: function(config) {
+		this.addEvents('change');
+	
 		this.content1Box = new Ui.LBox();
 		this.appendChild(this.content1Box);
 
@@ -60,6 +62,15 @@ Ui.Container.extend('Ui.Paned',
 				this.cursor.setContent(new Ui.HPanedCursor());
 			this.invalidateMeasure();
 		}
+	},
+
+	getPos: function() {
+		return this.pos;
+	},
+	
+	setPos: function(pos) {
+		this.pos = pos;
+		this.invalidateMeasure();
 	},
 
 	getContent1: function() {
@@ -123,6 +134,7 @@ Ui.Container.extend('Ui.Paned',
 
 		this.invalidateMeasure();
 		this.connect(this.cursor, 'move', this.onCursorMove);
+		this.fireEvent('change', this, this.pos);
 	}
 }, 
 /**@lends Ui.Paned#*/
