@@ -57,7 +57,7 @@ Ui.LBox.extend('Ui.DropBox',
 	 */
 	addMimetype: function(mimetype) {
 		this.allowedMimetypes.push(mimetype);
-		if(mimetype.toLowerCase() == 'files')
+		if((typeof(mimetype) === 'string') && mimetype.toLowerCase() == 'files')
 			this.allowFiles = true;
 	},
 
@@ -66,12 +66,19 @@ Ui.LBox.extend('Ui.DropBox',
 	 */
 
 	dragMimetype: function(event) {
+		var local = Core.DragDataTransfer.hasInstance(event.dataTransfer);
 		var found = undefined;
 		if(event.dataTransfer.types != undefined) {
 			for(var i = 0; (found === undefined) && (i < event.dataTransfer.types.length); i++) {
-				var type = event.dataTransfer.types[i].toLowerCase();
+				var type = event.dataTransfer.types[i];
+				var data = undefined;
+				var coreObject = false;
+				if(local) {
+					data = event.dataTransfer.getData(event.dataTransfer.types[i]);
+					coreObject = Core.Object.hasInstance(data);
+				}
 				for(var i2 = 0; (found === undefined) && (i2 < this.allowedMimetypes.length); i2++) {
-					if(type == this.allowedMimetypes[i2].toLowerCase())
+					if((coreObject && data.isSubclassOf(this.allowedMimetypes[i2])) || (type.toLowerCase() == this.allowedMimetypes[i2].toLowerCase()))
 						found = this.allowedMimetypes[i2];
 				}
 			}
@@ -79,6 +86,14 @@ Ui.LBox.extend('Ui.DropBox',
 		return found;
 	},
 
+	onLocalDragEnter: function(event) {
+		if(this.dragMimetype(event) !== undefined) {
+			// accept the drag
+			event.preventDefault();
+			event.stopPropagation();
+			return false;
+		}
+	},
 
 	onDragEnter: function(event) {
 //		console.log('onDragEnter allowText: '+this.allowText+', allowFiles: '+this.allowFiles);
@@ -143,6 +158,8 @@ Ui.LBox.extend('Ui.DropBox',
 		}
 		else {
 			var mimetype = this.dragMimetype(event);
+//			console.log(this+'.onDrop mimetype: '+mimetype);
+			
 			if(mimetype !== undefined) {
 				var data = event.dataTransfer.getData(mimetype);
 				// accept the drop
