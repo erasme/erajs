@@ -17,10 +17,10 @@ Ui.LBox.extend('Ui.SegmentBar',
 
 		this.addEvents('change');
 
-		this.border = new Ui.Frame({ frameWidth: 1, fill: '#888888', radius: 8 });
+		this.border = new Ui.Rectangle({ fill: '#888888' });
 		this.append(this.border);
 
-		this.hbox = new Ui.HBox({ uniform: true, margin: 1 });
+		this.hbox = new Ui.HBox({ uniform: true, margin: 1, spacing: 1 });
 		this.append(this.hbox);
 
 		this.connect(this, 'focus', this.updateColors);
@@ -62,7 +62,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 	*/
 	next: function() {
 		for(var i = 0; i < this.hbox.getChildren().length; i++) {
-			if(this.hbox.getChildren()[i] == this.current) {
+			if(this.hbox.getChildren()[i] === this.current) {
 				this.setCurrentPosition(i+1);
 				break;
 			}
@@ -74,7 +74,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 	*/
 	previous: function() {
 		for(var i = 0; i < this.hbox.getChildren().length; i++) {
-			if(this.hbox.getChildren()[i] == this.current) {
+			if(this.hbox.getChildren()[i] === this.current) {
 				this.setCurrentPosition(i-1);
 				break;
 			}
@@ -121,12 +121,21 @@ Ui.LBox.extend('Ui.SegmentBar',
 	/**#@-*/
 }, {
 	onStyleChange: function() {
+		var spacing = this.getStyleProperty('spacing');
+		var radius = this.getStyleProperty('radius');
+		this.border.setRadius(radius);
+		for(var i = 0; i < this.hbox.getChildren().length; i++) {
+			this.hbox.getChildren()[i].setRadius(radius-1);
+			this.hbox.getChildren()[i].setSpacing(spacing);
+		}
 		this.updateColors();
 	}
 }, {
 	style: {
-		color: '#548be3',
-		focusColor: '#ba8f68'
+		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99 }),
+		focusColor: '#fff0c8',
+		radius: 3,
+		spacing: 5
 	}
 });
 
@@ -135,34 +144,18 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 	bg: undefined,
 	shadow: undefined,
 	mode: undefined,
-	sep1: undefined,
-	sep2: undefined,
 	data: undefined,
 	fill: undefined,
-	downGradient: undefined,
+	downFill: undefined,
+	radius: 3,
 
 	constructor: function(config) {
 		this.setFocusable(false);
-
-		var gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: '#fbfbfb' },
-			{ offset: 1, color: '#c8c8c8' }
-		] });
-		this.bg = new Ui.Rectangle({ fill: gradient, radiusTopLeft: 7, radiusBottomLeft: 7 });
+		
+		this.bg = new Ui.Rectangle();
 		this.append(this.bg);
-		this.labelShadow = new Ui.Label({ fontWeight: 'bold', marginTop: 6, marginBottom: 4, marginLeft: 11, marginRight: 9, color: '#ffffff' });
-		this.append(this.labelShadow);
-		this.label = new Ui.Label({ fontWeight: 'bold', margin: 5, marginLeft: 10, marginRight: 10, color: '#656565' });
+		this.label = new Ui.Label({ margin: 7 });
 		this.append(this.label);
-
-		this.sep1 = new Ui.Rectangle({ width: 1, fill: '#ebebeb', horizontalAlign: 'left' });
-		this.append(this.sep1);
-
-		this.sep2 = new Ui.Rectangle({ width: 1, fill: '#aaaaaa', horizontalAlign: 'right' });
-		this.append(this.sep2);
-
-		this.shadow = new Ui.Shadow({ shadowWidth: 3, inner: true, opacity: 0, color: '#041a3d' });
-		this.append(this.shadow);
 
 		this.connect(this, 'select', this.onButtonSelect);
 		this.connect(this, 'unselect', this.onButtonUnselect);
@@ -178,90 +171,60 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 
 	setText: function(text) {
 		this.label.setText(text);
-		this.labelShadow.setText(text);
 	},
 
 	setMode: function(mode) {
 		this.mode = mode;
 		if(mode == 'left') {
-			this.shadow.setRadiusTopLeft(6);
-			this.shadow.setRadiusBottomLeft(6);
-			this.shadow.setRadiusTopRight(0);
-			this.shadow.setRadiusBottomRight(0);
-			this.bg.setRadiusTopLeft(6);
-			this.bg.setRadiusBottomLeft(6);
+			this.bg.setRadiusTopLeft(this.radius);
+			this.bg.setRadiusBottomLeft(this.radius);
 			this.bg.setRadiusTopRight(0);
 			this.bg.setRadiusBottomRight(0);
-			this.sep1.hide();
-			this.sep2.show();
 		}
 		else if(mode == 'right') {
-			this.shadow.setRadiusTopLeft(0);
-			this.shadow.setRadiusBottomLeft(0);
-			this.shadow.setRadiusTopRight(6);
-			this.shadow.setRadiusBottomRight(6);
 			this.bg.setRadiusTopLeft(0);
 			this.bg.setRadiusBottomLeft(0);
-			this.bg.setRadiusTopRight(6);
-			this.bg.setRadiusBottomRight(6);
-			this.sep1.show();
-			this.sep2.hide();
+			this.bg.setRadiusTopRight(this.radius);
+			this.bg.setRadiusBottomRight(this.radius);
 		}
 		else {
-			this.shadow.setRadiusTopLeft(0);
-			this.shadow.setRadiusBottomLeft(0);
-			this.shadow.setRadiusTopRight(0);
-			this.shadow.setRadiusBottomRight(0);
 			this.bg.setRadiusTopLeft(0);
 			this.bg.setRadiusBottomLeft(0);
 			this.bg.setRadiusTopRight(0);
 			this.bg.setRadiusBottomRight(0);
-			this.sep1.show();
-			this.sep2.show();
 		}
 	},
 
 	setFill: function(fill) {
-		if(this.fill != fill) {
+		if(this.fill !== fill) {
 			this.fill = Ui.Color.create(fill);
 			var yuv = this.fill.getYuva();
-			this.downGradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) }
-			] });
+			this.downFill = new Ui.Color({ y: yuv.y - 0.2, u: yuv.u, v: yuv.v });
 			if(this.getIsSelected())
-				this.bg.setFill(this.downGradient);
-			this.shadow.setColor(new Ui.Color({ y: yuv.y - 0.4, u: yuv.u, v: yuv.v }));
+				this.bg.setFill(this.downFill);
+			else
+				this.bg.setFill(this.fill);
 		}
+	},
+	
+	setRadius: function(radius) {
+		this.radius = radius;
+		this.setMode(this.mode);
+	},
+	
+	setSpacing: function(spacing) {
+		this.label.setMargin(spacing);
 	},
 
 	/**#@+ 
 	 * @private 
 	 */
 	onButtonSelect: function() {
-		this.bg.setFill(this.downGradient);
-		this.shadow.setOpacity(0.5);
-		this.sep1.hide();
-		this.sep2.hide();
-		this.label.hide();
+		this.bg.setFill(this.downFill);
 	},
 
 	onButtonUnselect: function() {
-		var gradient = new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: '#fbfbfb' },
-			{ offset: 1, color: '#c8c8c8' }
-		] });
-		this.bg.setFill(gradient);
-		this.shadow.setOpacity(0);
-		if(this.mode == 'left')
-			this.sep2.show();
-		else if(this.mode == 'right')
-			this.sep1.show();
-		else {
-			this.sep1.show();
-			this.sep2.show();
-		}
-		this.label.show();
+		this.bg.setFill(this.fill);
 	}
 	/**#@-*/
 },
