@@ -9,6 +9,8 @@ Ui.Container.extend('Ui.Scrollable',
 	verticalBarHeight: 0,
 	offsetX: 0,
 	offsetY: 0,
+	relativeOffsetX: 0,
+	relativeOffsetY: 0,
 	mouseButton: 0,
 	speedX: 0,
 	speedY: 0,
@@ -286,6 +288,9 @@ Ui.Container.extend('Ui.Scrollable',
 			offsetY = 0;
 		else if(this.viewHeight + offsetY > this.contentHeight)
 			offsetY = this.contentHeight - this.viewHeight;
+			
+		this.relativeOffsetX = offsetX / (this.contentWidth - this.viewWidth);
+		this.relativeOffsetY = offsetY / (this.contentHeight - this.viewHeight);
 
 		if((this.offsetX !== offsetX) || (this.offsetY !== offsetY)) {
 			this.offsetX = offsetX;
@@ -301,8 +306,16 @@ Ui.Container.extend('Ui.Scrollable',
 		return this.contentBox.getOffsetX();
 	},
 
+	getRelativeOffsetX: function() {
+		return this.relativeOffsetX;
+	},
+
 	getOffsetY: function() {
 		return this.contentBox.getOffsetY();
+	},
+	
+	getRelativeOffsetY: function() {
+		return this.relativeOffsetY;
 	},
 
 	/**#@+
@@ -911,6 +924,9 @@ Ui.Container.extend('Ui.Scrollable',
 		if(this.contentBox === undefined)
 			return;
 
+		this.relativeOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
+		this.relativeOffsetY = this.offsetY / (this.contentHeight - this.viewHeight);
+
 		if(this.scrollbarHorizontalNeeded) {
 			var relOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
 			this.scrollbarHorizontalBox.setTransform(Ui.Matrix.createTranslate((this.viewWidth - this.scrollbarHorizontalWidth) * relOffsetX, 0));
@@ -1287,7 +1303,6 @@ Ui.Container.extend('Ui.Scrollable',
 		
 		// update the offset if need due to new sizes
 		this.setOffset(this.offsetX, this.offsetY, true);
-
 
 		this.viewWidth = width;
 		this.viewHeight = height;
