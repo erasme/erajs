@@ -85,7 +85,7 @@ Ui.Pressable.extend('Ui.Button',
 		iconSize: 24,
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
-		fontWeight: 'bold'
+		fontWeight: 'normal'
 	}
 });
 
