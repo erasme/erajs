@@ -183,8 +183,7 @@ Ui.Container.extend('Ui.Box',
 	 */
 	append: function(child, resizable) {
 		child = Ui.Element.create(child);
-		if(resizable)
-			Ui.Box.setResizable(child, true);
+		Ui.Box.setResizable(child, resizable === true);
 		this.appendChild(child);
 	},
 
@@ -193,8 +192,7 @@ Ui.Container.extend('Ui.Box',
 	 */
 	prepend: function(child, resizable) {
 		child = Ui.Element.create(child);
-		if(resizable)
-			Ui.Box.setResizable(child, true);
+		Ui.Box.setResizable(child, resizable === true);
 		this.prependChild(child);
 	},
 
@@ -203,8 +201,7 @@ Ui.Container.extend('Ui.Box',
 	 */
 	insertAt: function(child, position, resizable) {
 		child = Ui.Element.create(child);
-		if(resizable)
-			Ui.Box.setResizable(child, true);
+		Ui.Box.setResizable(child, resizable === true);
 		this.insertChildAt(child, position);
 	},
 	
