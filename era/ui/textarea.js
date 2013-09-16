@@ -137,6 +137,11 @@ Ui.Element.extend('Ui.TextArea',
 	 */
 
 	onMouseDown: function(event) {
+		if(this.getIsDisabled()) {
+			event.preventDefault();
+			return;
+		}
+	
 		this.setSelectable(true);
 		event.stopPropagation();
 
@@ -207,6 +212,11 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	onTouchStart: function(event) {
+		if(this.getIsDisabled()) {
+			event.preventDefault();
+			return;
+		}
+	
 		if(event.targetTouches.length == 1) {
 			event.stopPropagation();
 
@@ -314,7 +324,9 @@ Ui.Element.extend('Ui.TextArea',
 		drawing.style.padding = '0px';
 		drawing.style.outline = 'none';
 		if(navigator.isIE) {
-			if(!navigator.isIE7 && !navigator.isIE8)
+			if(navigator.isIE7 || navigator.isIE8)
+				drawing.style.background = 'transparent';
+			else
 				drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
 		}
 		else
@@ -343,6 +355,17 @@ Ui.Element.extend('Ui.TextArea',
 	arrangeCore: function(width, height) {
 		this.getDrawing().style.width = width+'px';
 		this.getDrawing().style.height = height+'px';
+	},
+	
+	onDisable: function() {
+		Ui.TextArea.base.onDisable.call(this);
+		this.getDrawing().blur();
+		this.getDrawing().style.cursor = 'default';
+	},
+
+	onEnable: function() {
+		Ui.TextArea.base.onEnable.call(this);
+		this.getDrawing().style.cursor = 'auto';
 	},
 
 	onStyleChange: function() {
