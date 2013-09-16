@@ -193,7 +193,7 @@ Ui.Container.extend('Ui.Notebook',
 	},
 
 	updateColors: function() {
-		if(this.currentPage != undefined)
+		if(this.currentPage !== undefined)
 			this.currentPage.getBackground().setFill(this.getCurrentColor());
 	}
 
@@ -271,7 +271,7 @@ Ui.Container.extend('Ui.Notebook',
 	onStyleChange: function() {
 		this.currentColor = Ui.Color.create(this.getStyleProperty('color'));
 		var yuv = this.currentColor.getYuva();
-		this.hiddenColor = new Ui.Color({ y: yuv.y - 0.18, u: yuv.u, v: yuv.v });
+		this.hiddenColor = new Ui.Color({ y: yuv.y - 0.08, u: yuv.u, v: yuv.v });
 		for(var i = 0; i < this.pages.length; i++) {
 			if(i == this.current)
 				this.pages[i].getBackground().setFill(this.currentColor);
@@ -281,8 +281,8 @@ Ui.Container.extend('Ui.Notebook',
 	}
 }, {
 	style: {
-		color: 'white',
-		focusColor: '#f6caa2'
+		color: '#f8f8f8',
+		focusColor: '#f8ead2'
 	}
 });
 
@@ -415,20 +415,19 @@ Core.Object.extend('Ui.NotebookPage',
 });
 
 
-Ui.Fixed.extend('Ui.NotebookBackground', {
+Ui.CanvasElement.extend('Ui.NotebookBackground', {
 	darkShadow: undefined,
 	lightShadow: undefined,
 	background: undefined,
 
-	radius: 8,
+	radius: 0,
 	fill: 'black',
 	tabOffset: 30,
 	tabWidth: 10,
 	tabHeight: 10,
 
 	constructor: function(config) {
-
-		this.darkShadow = new Ui.Shape({ fill: '#010002' });
+/*		this.darkShadow = new Ui.Shape({ fill: '#010002' });
 		this.append(this.darkShadow);
 
 		this.lightShadow = new Ui.Shape({ fill: '#5f625b' });
@@ -443,7 +442,7 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 		this.background = new Ui.Shape({ fill: gradient });
 		this.append(this.background);
 
-		this.connect(this, 'resize', this.onResize);
+		this.connect(this, 'resize', this.onResize);*/
 	},
 
 	setTab: function(offset, width, height) {
@@ -463,14 +462,15 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 	setFill: function(fill) {
 		if(this.fill != fill) {
 			this.fill = Ui.Color.create(fill);
-			var yuv = this.fill.getYuva();
+			this.invalidateDraw();
+/*			var yuv = this.fill.getYuva();
 			var gradient = new Ui.LinearGradient({ stops: [
 				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) },
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
 			] });
 			this.background.setFill(gradient);
 			this.darkShadow.setFill(new Ui.Color({ y: yuv.y - 0.4, u: yuv.u, v: yuv.v }));
-			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }));
+			this.lightShadow.setFill(new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }));*/
 		}
 	},
 
@@ -485,7 +485,7 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 		else
 			str += ' L0,'+(tabHeight+radius)+' Q0,'+tabHeight+' '+radius+','+tabHeight+' z';
 		return str;
-	},
+	}/*,
 
 	onResize: function(notebookBackground, width, height) {
 		this.darkShadow.setWidth(width);
@@ -501,9 +501,22 @@ Ui.Fixed.extend('Ui.NotebookBackground', {
 		this.background.setHeight(height - 4);
 		this.setPosition(this.background, 2, 2);
 		this.background.setPath(this.genPath(width-4, height-4, this.radius - 1.4, this.tabOffset, this.tabWidth-4, this.tabHeight));
-	}
-
+	}*/
 	/**#@-*/
+}, {
+	updateCanvas: function(ctx) {
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
+		
+		ctx.fillStyle = '#cccccc';
+		this.svgPath(this.genPath(width, height, this.radius, this.tabOffset, this.tabWidth, this.tabHeight));
+		ctx.fill();
+		
+		ctx.translate(1, 1);
+		ctx.fillStyle = this.fill.getCssRgba();
+		this.svgPath(this.genPath(width-2, height-2, this.radius, this.tabOffset, this.tabWidth-2, this.tabHeight));
+		ctx.fill();
+	}
 });
 
 
