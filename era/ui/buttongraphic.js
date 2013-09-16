@@ -216,14 +216,14 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		// dark shadow
 		ctx.fillStyle = this.getDarkColor().getCssRgba();//'rgba(0,0,0,0.3)';
 		ctx.beginPath();
-		this.roundRect(2, 2, width-6, height-7, this.radius+1, this.radius+1, this.radius+1, this.radius+1);
+		this.roundRect(0, 0, width, height, this.radius+1, this.radius+1, this.radius+1, this.radius+1);
 		ctx.closePath();
 		ctx.fill();
 
 		// rect2
 		ctx.fillStyle = this.getLightColor().getCssRgba();
 		ctx.beginPath();
-		this.roundRect(3, 3, width-8, height-9, this.radius, this.radius, this.radius, this.radius);
+		this.roundRect(1, 1, width-2, height-2, this.radius, this.radius, this.radius, this.radius);
 		ctx.closePath();
 		ctx.fill();
 
@@ -259,7 +259,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 			ctx.textBaseline = 'middle';
 			ctx.fillStyle = this.getContentColor().getCssRgba();
-			ctx.fillText(this.text, (width-this.textWidth)/2, height/2+1);
+			ctx.fillText(this.text, (width-this.textWidth)/2, height/2+2);
 		}
 		// text + icon
 		else if((this.icon !== undefined) && (this.text !== undefined)) {
@@ -301,7 +301,8 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 				ctx.textBaseline = 'middle';
 				ctx.fillStyle = this.getContentColor().getCssRgba();
-				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, height/2 +1);
+				ctx.fillText(this.text, this.spacing*3+this.iconSize, height/2 +1);
+//				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, height/2 +1);
 			}
 		}
 	},
@@ -314,20 +315,20 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		var size = { width: 10, height: 10 };
 		// icon only
 		if((this.icon !== undefined) && (this.text === undefined)) {
-			size = { width: this.iconSize + this.spacing*2 + 4 + 6, height: this.iconSize + this.spacing*2 + 4 + 6 };
+			size = { width: this.iconSize + this.spacing*2 + 6, height: this.iconSize + this.spacing*2 + 6 };
 		}
 		// text only
 		else if((this.icon === undefined) && (this.text !== undefined)) {
-			size = { width: this.textWidth + this.spacing*2 + 4 + 6, height: this.fontSize + this.spacing*2 + 4 + 6 };
+			size = { width: this.textWidth + this.spacing*2 + 6, height: this.fontSize + this.spacing*2 + 6 };
 		}
 		// text + icon
 		else if((this.icon !== undefined) && (this.text !== undefined)) {
 			// vertical
 			if(this.orientation == 'vertical')
-				size = { width: Math.max(this.textWidth, this.iconSize) + this.spacing*2 + 4 + 6, height: this.iconSize + this.fontSize + this.spacing*3 + 4 + 6 };
+				size = { width: Math.max(this.textWidth, this.iconSize) + this.spacing*2 + 6, height: this.iconSize + this.fontSize + this.spacing*3 + 6 };
 			// horizontal
 			else
-				size = { width: this.textWidth + this.iconSize + this.spacing*3 + 4 + 6, height: Math.max(this.iconSize, this.fontSize) + this.spacing*2 + 4 + 6 };
+				size = { width: this.textWidth + this.iconSize + this.spacing*4 + 6, height: Math.max(this.iconSize, this.fontSize) + this.spacing*2 + 6 };
 		}
 		return size;
 	}
