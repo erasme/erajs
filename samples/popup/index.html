@@ -10,35 +10,46 @@
 
 var app = new Ui.App();
 
-var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 5 });
 app.setContent(vbox);
 
-var selectable = new Ui.Selectable();
+var selectable = new Ui.Pressable();
 vbox.append(selectable);
 
 selectable.append(new Ui.Rectangle({ width: 50, height: 50, radius: 8, fill: 'lightgreen' }));
-selectable.append(new Ui.Label({ text: 'right click' }));
+selectable.append(new Ui.Label({ text: 'click' }));
 
-app.connect(selectable, 'menu', function(item, x, y) {
+app.connect(selectable, 'press', function(item, x, y) {
 	console.log('open the menu: '+x+'x'+y);
 	popup.show(x, y);
+//	popup.show(selectable);
 });
 
 var button = new Ui.Button({ text: 'open popup' });
 vbox.append(button);
+app.connect(button, 'press', function() {
+	popup.show();
+});
 
 var popup;
 popup = new Ui.Popup();
-var vbox2 = new Ui.VBox({ spacing: 5 });
+var vbox2 = new Ui.VBox({ spacing: 5, margin: 10 });
 popup.setContent(vbox2);
 vbox2.append(new Ui.Label({ text: 'bonjour' }));
 vbox2.append(new Ui.Separator());
 vbox2.append(new Ui.Label({ text: 'bonjour2' }));
 vbox2.append(new Ui.Separator());
 vbox2.append(new Ui.Label({ text: 'bonjour3' }));
-
+vbox2.append(new Ui.Separator());
+vbox2.append(new Ui.Button({ text: 'click me' }));
+vbox2.append(new Ui.Separator());
+button = new Ui.Button({ text: 'popup' });
+vbox2.append(button);
 app.connect(button, 'press', function() {
-	popup.show();
+	var newPopup = new Ui.Popup({ autoHide: true });
+	var button = new Ui.Button({ text: 'click' });
+	newPopup.setContent(button);
+	newPopup.show();
 });
 
 button = new Ui.Button({ text: 'close popup' });
@@ -48,15 +59,15 @@ app.connect(button, 'press', function() {
 	popup.hide();
 });
 
-selectable = new Ui.Selectable();
-vbox.append(selectable);
+var selectable2 = new Ui.Pressable();
+vbox.append(selectable2);
 
-selectable.append(new Ui.Rectangle({ width: 50, height: 50, radius: 8, fill: 'lightgreen' }));
-selectable.append(new Ui.Label({ text: 'right click' }));
+selectable2.append(new Ui.Rectangle({ width: 50, height: 50, radius: 8, fill: 'lightgreen' }));
+selectable2.append(new Ui.Label({ text: 'click' }));
 
-app.connect(selectable, 'menu', function(item, x, y) {
+app.connect(selectable2, 'press', function(item, x, y) {
 	console.log('open the menu at element');
-	popup.show(selectable);
+	popup.show(item);
 });
 
 </script>
