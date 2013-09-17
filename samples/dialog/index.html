@@ -8,23 +8,16 @@
 </style>
 <script>
 
-var app = new Ui.App({ style: {
-	"Ui.Dialog": {
-		"Ui.Button": {
-			color: new Ui.Color({ r: 0.8, g: 0.8, b: 0.8 }),
-			spacing: 5
-		}
-	}
-}});
+var app = new Ui.App();
 
 var vbox = new Ui.VBox();
 app.setContent(vbox);
 
-var hbox = new Ui.HBox();
-vbox.append(hbox);
+var tb = new Ui.ToolBar();
+vbox.append(tb);
 
-hbox.append(new Ui.Button({ text: 'test 1' }));
-hbox.append(new Ui.Button({ text: 'test 2' }));
+tb.append(new Ui.Button({ text: 'test 1' }));
+tb.append(new Ui.Button({ text: 'test 2' }));
 
 var button = new Ui.Button({ text: 'open', verticalAlign: 'center', horizontalAlign: 'center' });
 vbox.append(button, true);
