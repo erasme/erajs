@@ -88,8 +88,14 @@ Ui.VBox.extend('Ui.MonthCalendar',
 		this.updateDate();
 	},
 
+	getSelectedDate: function() {
+		return this.selectedDate;
+	},
+
 	onDaySelect: function(button) {
-		this.fireEvent('dayselect', this, button.monthCalendarDate);
+		this.selectedDate = button.monthCalendarDate;
+		this.updateDate();
+		this.fireEvent('dayselect', this, this.selectedDate);
 	},
 
 	updateDate: function() {
@@ -118,11 +124,11 @@ Ui.VBox.extend('Ui.MonthCalendar',
 			var bg;
 			if((current.getFullYear() == now.getFullYear()) && (current.getMonth() == now.getMonth()) && (current.getDate() == now.getDate())) {
 				day.monthCalendarCurrent = true;
-				bg = new Ui.Rectangle({ radius: 2, fill: new Ui.Color({ r: 0.2, g: 0.4, b: 1, a: 0.4 }), margin: 1 });
+				bg = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.4, b: 1, a: 0.4 }), margin: 1 });
 				day.append(bg);
 			}
 			else {
-				bg = new Ui.Rectangle({ radius: 2, fill: new Ui.Color({ r: 0.8, g: 0.8, b: 0.8, a: 0.4 }), margin: 1 });
+				bg = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.8, g: 0.8, b: 0.8, a: 0.4 }), margin: 1 });
 				day.append(bg);
 			}
 
