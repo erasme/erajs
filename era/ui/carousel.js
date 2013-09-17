@@ -83,6 +83,14 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		this.carouselable.setCurrent(current);
 	},
 
+	getBufferingSize: function() {
+		return this.carouselable.getBufferingSize();
+	},
+
+	setBufferingSize: function(size) {
+		this.carouselable.setBufferingSize(size);
+	},
+
 	/**#@+
 	* @private
 	*/
