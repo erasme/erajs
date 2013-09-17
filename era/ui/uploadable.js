@@ -102,7 +102,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		}
 	},
 
-	/*#@+
+	/**#@+
 	 * @private
 	 */
 	createInput: function() {
@@ -227,7 +227,7 @@ Ui.Element.extend('Ui.UploadableWrapper',
 	setDirectoryMode: function(active) {
 	},
 
-	/*#@+
+	/**#@+
 	 * @private
 	 */
 	createInput: function() {
