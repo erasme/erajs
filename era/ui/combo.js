@@ -9,6 +9,7 @@ Ui.Pressable.extend('Ui.Combo',
 	graphic: undefined,
 	current: undefined,
 	placeHolder: undefined,
+	sep: undefined,
 
 	/**
 	 * @constructs
@@ -26,23 +27,25 @@ Ui.Pressable.extend('Ui.Combo',
 		this.graphic = new Ui.ButtonGraphic();
 		this.append(this.graphic);
 
-		var content = new Ui.HBox({ margin: 5, spacing: 4 });
-		this.graphic.setContent(content);
+		var content = new Ui.HBox({ spacing: 4 });
+//		this.graphic.setContent(content);
+		this.append(content);
 	
 		this.transitionbox = new Ui.TransitionBox({ duration: 0.25 });
 		content.append(this.transitionbox);
 
-		this.placeHolder = new Ui.Label({ horizontalAlign: 'left' });
+		this.placeHolder = new Ui.Label({ horizontalAlign: 'left', margin: 11, marginRight: 0 });
 		this.transitionbox.append(this.placeHolder);
 		this.transitionbox.setCurrent(this.placeHolder);
 
-		content.append(new Ui.Rectangle({ margin: 2, width: 1, fill: 'black' }));
+		this.sep = new Ui.Rectangle({ margin: 1, width: 1, fill: '#aaaaaa' });
+		content.append(this.sep);
 
-		var vbox = new Ui.VBox();
+		var vbox = new Ui.VBox({ verticalAlign: 'center', marginRight: 5 });
 		content.append(vbox);
 
-		vbox.append(new Ui.Icon({ icon: 'arrowtop', width: 10, height: 10, fill: 'black' }));
-		vbox.append(new Ui.Icon({ icon: 'arrowbottom', width: 10, height: 10, fill: 'black' }));
+		vbox.append(new Ui.Icon({ icon: 'arrowtop', width: 10, height: 10, fill: '#aaaaaa' }));
+		vbox.append(new Ui.Icon({ icon: 'arrowbottom', width: 10, height: 10, fill: '#aaaaaa' }));
 
 		this.dialog = new Ui.ComboDialog();
 		this.connect(this.dialog, 'item', this.onItemPress);
@@ -71,7 +74,7 @@ Ui.Pressable.extend('Ui.Combo',
 			return;
 		for(var i = 0; i < data.length; i++) {
 			this.dialog.appendItem(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left' }));
-			this.transitionbox.append(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left' }));
+			this.transitionbox.append(new Ui.Label({ text: data[i][this.field], horizontalAlign: 'left', margin: 11, marginRight: 0 }));
 		}
 	},
 	
@@ -174,7 +177,7 @@ Ui.Popup.extend('Ui.ComboDialog', {
 		this.setExpandable(true);
 		this.setAutoHide(true);
 
-		this.scroll = new Ui.ScrollingArea({ margin: 0, scrollHorizontal: true });
+		this.scroll = new Ui.ScrollingArea({ scrollHorizontal: true });
 		this.list = new Ui.VBox();
 		this.scroll.setContent(this.list);
 
@@ -211,10 +214,10 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 	constructor: function() {
 		this.addEvents('press');
 
-		this.background = new Ui.Rectangle({ fill: '#1c8ef2', opacity: 0, radius: 4 });
+		this.background = new Ui.Rectangle({ fill: '#cecece', opacity: 0 });
 		this.append(this.background);
 
-		this.pressable = new Ui.Pressable({ padding: 5, paddingLeft: 10, paddingRight: 10 });
+		this.pressable = new Ui.Pressable({ padding: 10, paddingLeft: 10, paddingRight: 10 });
 		this.append(this.pressable);
 		this.connect(this.pressable, 'press', function() {
 			this.fireEvent('press', this);
