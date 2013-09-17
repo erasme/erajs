@@ -17,6 +17,11 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			focusColor: '#f6caa2',
 			toggleColor: '#dc6c36'
 		},
+		"Ui.Combo": {
+			spacing: 8,
+			color: '#e4e4e4',
+			focusColor: '#f6caa2'
+		},
 		"Ui.SegmentBar": {
 			spacing: 8
 		},
