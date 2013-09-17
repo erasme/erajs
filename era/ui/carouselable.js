@@ -231,7 +231,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 
 	onChange: function() {
 		this.loadItems();
-		this.updateItems();
+		this.updateItems();		
 		this.fireEvent('change', this, this.getCurrentPosition());
 	},
 
@@ -426,6 +426,6 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		this.setPosition(-this.pos * w, undefined);
 	},
 
-	onChildInvalidateMeasure: function(child, remove) {
+	onChildInvalidateMeasure: function(child, event) {
 	}
 });
