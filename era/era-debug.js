@@ -41,6 +41,8 @@ include(eraBaseDirectory+'core/httprequest.js');
 include(eraBaseDirectory+'core/socket.js');
 include(eraBaseDirectory+'core/file.js');
 include(eraBaseDirectory+'core/filepostuploader.js');
+include(eraBaseDirectory+'core/media.js');
+include(eraBaseDirectory+'core/rtc.js');
 include(eraBaseDirectory+'core/remotedebug.js');
 
 //
@@ -132,6 +134,7 @@ include(eraBaseDirectory+'ui/carouselable.js');
 // Ui high level element (= drawing + logic + style)
 //
 include(eraBaseDirectory+'ui/separator.js');
+include(eraBaseDirectory+'ui/contextbar.js');
 include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/dialog.js');
 include(eraBaseDirectory+'ui/entry.js');
@@ -175,6 +178,7 @@ include(eraBaseDirectory+'ui/paned.js');
 include(eraBaseDirectory+'ui/selection.js');
 include(eraBaseDirectory+'ui/selectionable.js');
 include(eraBaseDirectory+'ui/virtualkeyboard.js');
+include(eraBaseDirectory+'ui/menutoolbar.js');
 include(eraBaseDirectory+'ui/app.js');
 
 //
