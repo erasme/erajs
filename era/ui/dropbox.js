@@ -154,7 +154,7 @@ Ui.LBox.extend('Ui.DropBox',
 
 //			console.log('drop files');
 			for(var i = 0; i < event.dataTransfer.files.length; i++)
-				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }));
+				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y);
 		}
 		else {
 			var mimetype = this.dragMimetype(event);
