@@ -39,8 +39,6 @@ Ui.Container.extend('Ui.Popup',
 		this.connect(this.shadow.getDrawing(), 'touchstart', this.onTouchStart);
 //		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onContentTouchStart);
 
-		this.connect(window, 'resize', this.onWindowResize);
-
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
@@ -143,11 +141,13 @@ Ui.Container.extend('Ui.Popup',
 			}
 			this.invalidateArrange();
 			Ui.App.current.appendDialog(this);
+			this.connect(window, 'resize', this.onWindowResize);
 		}
 	},
 
 	onHidden: function() {
 		Ui.App.current.removeDialog(this);
+		this.disconnect(window, 'resize', this.onWindowResize);
 	},
 
 	measureCore: function(width, height) {
