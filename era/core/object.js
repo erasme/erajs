@@ -149,10 +149,10 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	}
 
 	for(var prop in classDefine) {
-		if(prop == 'constructor')
+		if(prop === 'constructor')
 			func.prototype['__constructor'] = classDefine[prop];
 		else {
-			if((typeof(classDefine[prop]) == 'object') && (classDefine[prop] != null))
+			if((typeof(classDefine[prop]) === 'object') && (classDefine[prop] !== null))
 				throw('object are not allowed in classDefine ('+prop+'). Create object in the constructor');
 
 			if(prop in func.prototype)
@@ -279,7 +279,7 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 		wrapper.eventName = eventName;
 		wrapper.capture = capture;
 		obj.addEventListener(eventName, wrapper, capture);
-		if(obj.events == undefined)
+		if(obj.events === undefined)
 			obj.events = [];
 		obj.events.push(wrapper);
 	}
@@ -292,14 +292,14 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 		wrapper.eventName = eventName;
 		wrapper.capture = capture;
 		obj.attachEvent(eventName, wrapper);
-		if(obj.events == undefined)
+		if(obj.events === undefined)
 			obj.events = [];
 		obj.events.push(wrapper);
 	}
 	else {
 		var signal = { scope: this, method: method, capture: capture };
 		var eventListeners = obj.events[eventName];
-		if(eventListeners != undefined) {
+		if(eventListeners !== undefined) {
 			// insert capture events first
 			if(capture === true) {
 				var pos;
@@ -325,7 +325,7 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 */
 Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	if('removeEventListener' in obj) {
-		for(var i = 0; (obj.events != undefined) && (i < obj.events.length); i++) {
+		for(var i = 0; (obj.events !== undefined) && (i < obj.events.length); i++) {
 			var wrapper = obj.events[i];
 			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
 				if((method != undefined) && (wrapper.callback != method))
@@ -349,7 +349,7 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 		}
 	}
 	else {
-		for(var i = 0; (obj.events != undefined) && (i < obj.events[eventName].length); i++) {
+		for(var i = 0; (obj.events !== undefined) && (i < obj.events[eventName].length); i++) {
 			var signal = obj.events[eventName][i];
 			if(signal.scope == this) {
 				if((method != undefined) && (signal.method != method))
