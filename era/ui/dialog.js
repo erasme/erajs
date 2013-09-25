@@ -61,7 +61,7 @@ Ui.Container.extend('Ui.Dialog', {
 		this.buttonsBox = new Ui.VBox();
 		this.buttonsBox.append(new Ui.Rectangle({ height: 1, fill: '#d8d8d8' }));
 
-		lbox = new Ui.LBox({ height: 32 });
+		var lbox = new Ui.LBox({ height: 32 });
 		this.buttonsBox.append(lbox);
 
 		this.actionBg = new Ui.Rectangle({ fill: '#e8e8e8' });
@@ -71,7 +71,6 @@ Ui.Container.extend('Ui.Dialog', {
 		this.contextBox.hide();
 		lbox.append(this.contextBox);
 		
-
 		this.actionBox = new Ui.HBox({ margin: 5, spacing: 30 });
 		lbox.append(this.actionBox);
 
