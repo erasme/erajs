@@ -159,7 +159,7 @@ Ui.Element.extend('Ui.Container',
 			for(var i = 0; i < this.children.length; i++) {
 				var child = this.children[i];
 				var res = child.get(name);
-				if(res != undefined)
+				if(res !== undefined)
 					return res;
 			}
 		}
