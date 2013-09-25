@@ -37,6 +37,7 @@ var htmlNS = "http://www.w3.org/1999/xhtml";
 //	document.getElementsByTagName("head")[0].insertBefore(meta,document.getElementsByTagName("head")[0].firstChild);
 //}
 
+(function() {
 navigator.supportSVG = false;
 try {
 	var test = document.createElementNS(svgNS, 'g');
@@ -60,7 +61,7 @@ try {
 } catch(e) {
 	navigator.supportRgb = false;
 }
-test = undefined;
+})();
 
 /**
 *	@namespace Regroup all the non Ui related classes : event, object, httprequest etc. 
