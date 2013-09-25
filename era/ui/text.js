@@ -212,7 +212,7 @@ Ui.Element.extend('Ui.Text',
 		this.line = '';
 		var startPos = 0;
 		var word = '';
-		var i = 0;
+		var i;
 		for(i = 0; i < this.words.length; i++) {
 			var word = this.words[i];
 			if(word.type == 'word')
@@ -225,7 +225,7 @@ Ui.Element.extend('Ui.Text',
 	splitText: function() {
 		var word = '';
 		var words = [];
-		for(i = 0; i < this.text.length; i++) {
+		for(var i = 0; i < this.text.length; i++) {
 			if((this.text.charAt(i) == ' ') || (this.text.charAt(i) == '\n')) {
 				if(word != '') {
 					words.push({ type: 'word', word: word });
