@@ -23,7 +23,6 @@ Core.Object.extend('Core.FilePostUploader',
 	 */
 
 	file: undefined,
-	destination: undefined,
 	service: undefined,
 	reader: undefined,
 	request: undefined,
@@ -32,6 +31,7 @@ Core.Object.extend('Core.FilePostUploader',
 	fileReader: undefined,
 	boundary: undefined,
 	method: 'POST',
+	fields: undefined,
 
 	loadedOctets: undefined,
 	totalOctets: undefined,
@@ -44,6 +44,7 @@ Core.Object.extend('Core.FilePostUploader',
 	*/
 	constructor: function(config) {
 		this.addEvents('progress', 'complete', 'error');
+		this.fields = {};
 	},
 
 	setMethod: function(method) {
@@ -62,8 +63,12 @@ Core.Object.extend('Core.FilePostUploader',
 		this.service = service;
 	},
 
+	setField: function(name, value) {
+		this.fields[name] = value;
+	},
+
 	setDestination: function(destination) {
-		this.destination = destination;
+		this.setField('destination', destination);
 	},
 
 	/**Send the file*/
@@ -74,7 +79,9 @@ Core.Object.extend('Core.FilePostUploader',
 				var formData = new FormData();
 				if(this.destination == undefined)
 					this.destination = this.file.getFileName();
-				formData.append("destination", this.destination);
+				for(var field in this.fields) {
+					formData.append(field, this.fields[field]);
+				}
 				formData.append("file", this.file.fileApi);
 	
 				this.request = new XMLHttpRequest();
@@ -133,12 +140,13 @@ Core.Object.extend('Core.FilePostUploader',
 		else {
 			this.file.form.action = this.service;
 
-			var destDrawing = document.createElement('input');
-			destDrawing.type = 'hidden';
-			destDrawing.setAttribute('name', 'destination');
-			destDrawing.setAttribute('value', this.destination);
-			this.file.form.insertBefore(destDrawing, this.file.form.firstChild);
-
+			for(var field in this.fields) {
+				var fieldDrawing = document.createElement('input');
+				fieldDrawing.type = 'hidden';
+				fieldDrawing.setAttribute('name', field);
+				destDrawing.setAttribute('value', this.fields[field]);
+				this.file.form.insertBefore(fieldDrawing, this.file.form.firstChild);
+			}
 			this.connect(this.file.iframe, 'load', this.onIFrameLoad);
 			var errorCount = 0;
 			var done = false;
