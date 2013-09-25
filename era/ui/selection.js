@@ -23,7 +23,7 @@ Core.Object.extend('Ui.Selection', {
 			found = (this.elements[i] === element);
 		if(!found) {
 			var hasMultiple = false;
-			for(var actionName in element.getSelectionActions()) {
+			for(var actionName in element.getSelectionActions()) {			
 				if(element.getSelectionActions()[actionName].multiple === true)
 					hasMultiple = true;
 			}
@@ -66,15 +66,33 @@ Core.Object.extend('Ui.Selection', {
 		if(this.elements.length === 0)
 			return undefined;
 		else {
-			if(this.elements.length === 1)
-				return this.elements[0].getSelectionActions();
+			if(this.elements.length === 1) {
+				var actions = {};
+				var allActions = this.elements[0].getSelectionActions();
+				for(var actionName in allActions) {
+					var action = allActions[actionName];
+					if(!('testRight' in action) || action.testRight.call(this.elements[0]))
+						actions[actionName] = allActions[actionName];
+				}
+				return actions;
+			}
 			// return only actions that support multiple element
 			else {
 				var actions = {};
 				var allActions = this.elements[0].getSelectionActions();
 				for(var actionName in allActions) {
-					if(allActions[actionName].multiple === true)
-						actions[actionName] = allActions[actionName];
+					var action = allActions[actionName];
+					if(action.multiple === true) {
+						var allowed = true;
+						// test rights for all elements
+						if('testRight' in action) {
+							for(var i = 0; allowed && (i < this.elements.length); i++) {
+								allow &= action.testRight.call(this.elements[i]);
+							}
+						}
+						if(allowed)
+							actions[actionName] = allActions[actionName];
+					}
 				}
 				return actions;
 			}
