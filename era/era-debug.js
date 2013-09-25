@@ -1,4 +1,5 @@
 
+(function() {
 // find era-debug.js base directory
 var eraBaseDirectory;
 
@@ -195,3 +196,4 @@ include(eraBaseDirectory+'form/panel.js');
 include(eraBaseDirectory+'form/panelcontainer.js');
 include(eraBaseDirectory+'form/dialog.js');
 
+})();
