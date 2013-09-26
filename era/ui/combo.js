@@ -160,7 +160,7 @@ Ui.Pressable.extend('Ui.Combo',
 /** @lends Ui.Combo */
 {
 	style: {
-		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+		color: '#eeeeee',
 		focusColor: '#f6caa2',
 		radius: 4,
 		spacing: 3
