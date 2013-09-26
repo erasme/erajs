@@ -26,24 +26,20 @@ Ui.LBox.extend('Ui.Switch',
 
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 
-		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.25 }), frameWidth: 1, radius: 4, marginTop: 1 }));
-
 		this.fixed = new Ui.Fixed();
 		this.append(this.fixed);
 
-		this.bg1 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.9, b: 0.6 }), radius: 4, margin: 1, marginBottom: 2 });
+		this.bg1 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.9, b: 0.6 }), radius: 3 });
 		this.fixed.append(this.bg1);
 
-		this.bg2 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.9, g: 0.2, b: 0.2 }), radius: 4, margin: 1, marginBottom: 2 });
+		this.bg2 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.9, g: 0.2, b: 0.2 }), radius: 3 });
 		this.fixed.append(this.bg2);
 
-		this.append(new Ui.Shadow({ radius: 4, inner: true, margin: 1, marginBottom: 2, shadowWidth: 2, opacity: 0.5 }));
-
-		this.append(new Ui.Frame({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.2 }), frameWidth: 1, radius: 5, marginBottom: 1  }));
+		this.append(new Ui.Frame({ fill: '#aaaaaa', frameWidth: 1, radius: 3 }));
 
 		this.setClipToBounds(true);
 
-		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, marginBottom: 2, directionRelease: true });
+		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, directionRelease: true });
 		this.movable.setFocusable(false);
 		this.append(this.movable);
 
@@ -165,11 +161,11 @@ Ui.LBox.extend('Ui.Switch',
 
 		var buttonWidth = this.getLayoutWidth() - contentWidth;
 
-		this.bg1.setHeight(this.getLayoutHeight() - 3);
+		this.bg1.setHeight(this.getLayoutHeight() - 1);
 		this.bg1.setWidth(contentWidth + posX + buttonWidth/2);
 
-		this.bg2.setHeight(this.getLayoutHeight() - 3);
-		this.bg2.setWidth(-posX + buttonWidth/2 - 2);
+		this.bg2.setHeight(this.getLayoutHeight() - 1);
+		this.bg2.setWidth(-posX + buttonWidth/2);
 		this.fixed.setPosition(this.bg2, this.getLayoutWidth() + posX - buttonWidth/2, 0);
 	},
 
@@ -265,8 +261,8 @@ Ui.LBox.extend('Ui.Switch',
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
 		focusColor: '#f6caa2',
-		trueColor: '#91f5c5',
-		falseColor: '#ff9797'
+		trueColor: '#b1f5c1',
+		falseColor: '#f5b1b1'
 	}
 });
 
@@ -284,10 +280,10 @@ Ui.LBox.extend('Ui.SwitchButton',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.shadow = new Ui.Rectangle({ radius: 4 });
+		this.shadow = new Ui.Rectangle({ radius: 3 });
 		this.append(this.shadow);
 
-		this.background = new Ui.Rectangle({ radius: 3, margin: 1 });
+		this.background = new Ui.Rectangle({ radius: 2, margin: 1 });
 		this.append(this.background);
 
 		if('radius' in config)
@@ -309,7 +305,7 @@ Ui.LBox.extend('Ui.SwitchButton',
 			this.fill = Ui.Color.create(fill);
 			var yuv = this.fill.getYuv();
 			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.2, u: yuv.u, v: yuv.v }) },
+				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) },
 				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
 			] });
 			this.background.setFill(gradient);
