@@ -1,13 +1,14 @@
 
-all: compact jsdoc
+all: compact
 
 compact:
-	grep '^include(eraBaseDirectory' era/era-debug.js | \
-	sed "s/include(eraBaseDirectory+'\(.*\)');/era\/\1/" | \
-	xargs closure-compiler --define DEBUG=false --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file era/era.js --js 
+	make -f Makefile --directory=era/
+
+clean:
+	make -f Makefile --directory=era/ clean
 
 jsdoc:
 	jsdoc -c=doc/jsdoc/conf/era.conf -d=doc/jsdoc/
 
 changelog:
-	git log --pretty="* %s" > changelog
+	git log --pretty="* %s" > Changelog
