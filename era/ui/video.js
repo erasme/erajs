@@ -317,5 +317,5 @@ if(Ui.Video.videoTest.play != undefined) {
 	Ui.Video.supportOgg = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/ogg; codecs="theora, vorbis"');
 	Ui.Video.supportWebm = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/webm; codecs="vp8, vorbis"');
 }
-Ui.Video.videoTest = undefined;
+delete(Ui.Video.videoTest);
 
