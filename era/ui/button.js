@@ -78,7 +78,7 @@ Ui.Pressable.extend('Ui.Button',
 /** @lends Ui.Button */
 {
 	style: {
-		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+		color: '#eeeeee',
 		focusColor: '#f6caa2',
 		radius: 3,
 		spacing: 5,
