@@ -163,9 +163,7 @@ Ui.Container.extend('Ui.Locator',
 		var lightColor = this.getLightColor();		
 		this.border.setFill(this.getDarkColor());
 		for(var i = 0; i < this.backgrounds.length; i++) {
-			var bg = this.backgrounds[i];
-			console.log(bg);
-			bg.setFill(lightColor);
+			this.backgrounds[i].setFill(lightColor);
 		}
 	}
 }, 
@@ -272,7 +270,6 @@ Ui.Shape.extend('Ui.LocatorRightArrow',
 /**@lends Ui.LocatorRightArrow#*/
 {
 	arrangeCore: function(width, height) {
-		console.log(this+'.arrangeCore length: '+this.length);
 		Ui.LocatorRightArrow.base.arrangeCore.call(this, width, height);
 		var v1 = width - this.length;
 		var v2 = height/2;
