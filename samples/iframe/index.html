@@ -28,10 +28,10 @@ app.connect(button, 'press', function() {
 	iframe.setSrc('iframe.html');
 });
 
-button = new Ui.Button({ text: 'google' });
+button = new Ui.Button({ text: 'gnome' });
 toolbar.append(button);
 app.connect(button, 'press', function() {
-	iframe.setSrc('http://www.google.fr/');
+	iframe.setSrc('http://www.gnome.org/');
 });
 
 var iframe = new Ui.IFrame();

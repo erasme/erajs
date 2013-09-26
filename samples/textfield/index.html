@@ -6,16 +6,15 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-Ui.VBox.extend('Test.Logs', {
+Ui.ScrollingArea.extend('Test.Logs', {
 	logs: undefined,
-	scrolling: undefined,
 
 	constructor: function() {
-		this.append(new Ui.Label({ text: 'Logs:', horizontalAlign: 'left', fontWeight: 'bold' }));
-		this.scrolling = new Ui.ScrollingArea();
-		this.append(this.scrolling, true);
+		var vbox = new Ui.VBox({ spacing: 10 });
+		this.setContent(vbox);
+		vbox.append(new Ui.Label({ text: 'Logs:', horizontalAlign: 'left', fontWeight: 'bold' }));
 		this.logs = new Ui.VBox();
-		this.scrolling.setContent(this.logs);
+		vbox.append(this.logs);
 	},
 
 	log: function(text, color) {
@@ -27,7 +26,7 @@ Ui.VBox.extend('Test.Logs', {
 
 var app = new Ui.App();
 
-var vbox = new Ui.VBox({ padding: 50, spacing: 10 });
+var vbox = new Ui.VBox({ spacing: 10, margin: 5 });
 app.setContent(vbox);
 
 var hbox = new Ui.HBox({ spacing: 10 });

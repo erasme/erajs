@@ -10,7 +10,7 @@ Ui.App.extend('Infos.App', {
 		var scroll = new Ui.ScrollingArea();
 		this.setContent(scroll);
 
-		var text = new Ui.Text({ margin: 10 });
+		var text = new Ui.Text({ margin: 10, interLine: 1.2 });
 		scroll.setContent(text);
 
 		var msg = '';
@@ -38,7 +38,7 @@ Ui.App.extend('Infos.App', {
 	}
 });
 
-new Infos.App({ style: { "Ui.ScrollingArea": { "overScroll": true } } });
+new Infos.App();
 
 </script>
   </head>

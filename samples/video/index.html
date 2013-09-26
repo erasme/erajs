@@ -25,12 +25,6 @@ app.connect(pauseButton, 'press', function() {
 	video.pause();
 });
 
-var resumeButton = new Ui.Button({ text: 'resume' });
-toolbar.append(resumeButton);
-app.connect(resumeButton, 'press', function() {
-	video.resume();
-});
-
 var stopButton = new Ui.Button({ text: 'stop' });
 toolbar.append(stopButton);
 app.connect(stopButton, 'press', function() {

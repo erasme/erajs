@@ -7,9 +7,9 @@
 
 var count = 0;
 
-var app = new Ui.App({ });
+var app = new Ui.App();
 
-var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 10 });
 app.setContent(vbox);
 
 var label = new Ui.Label({ text: 'toggle count: 0' });

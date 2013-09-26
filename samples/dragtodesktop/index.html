@@ -21,11 +21,15 @@ var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spa
 scroll.setContent(vbox);
 
 var item1 = new Ui.Draggable({ margin: 10 });
+item1.setMimetype('application/x-file');
+item1.setData('');
 item1.setDownloadUrl('check-icon.png', 'image/png', 'check-icon.png');
 item1.append(new Ui.Rectangle({ fill: 'lightgreen', width: 48, height: 48 }));
 vbox.append(item1);
 
 var item2 = new Ui.Draggable({ margin: 10 });
+item2.setMimetype('application/x-file');
+item2.setData('');
 item2.setDownloadUrl('folder-icon.png', 'image/png', 'folder-icon.png');
 item2.append(new Ui.Rectangle({ fill: 'lightblue', width: 48, height: 48 }));
 vbox.append(item2);

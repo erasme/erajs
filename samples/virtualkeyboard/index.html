@@ -5,12 +5,16 @@
 		<script src='../../era/era-debug.js'></script>
 <script>
 
+//
+// The ERAjs virtual keyboard is not ready for production.
+// This is just a test.
+//
+
 var app = new Ui.App({ virtualKeyboard: true });
 
 var vbox = new Ui.VBox();
 app.setContent(vbox);
 
-/*
 var toolbar = new Ui.ToolBar();
 vbox.append(toolbar);
 
@@ -24,7 +28,7 @@ button = new Ui.Button({ text: 'close' });
 app.connect(button, 'press', function() {
 	app.closeVirtualKeyboard();
 });
-toolbar.append(button);*/
+toolbar.append(button);
 
 var textfield = new Ui.TextField({ width: 200, horizontalAlign: 'center', verticalAlign: 'center' });
 vbox.append(textfield, true);

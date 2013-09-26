@@ -37,10 +37,16 @@ Core.Object.extend('Sample.MyObject',
                 console.log('init Sample.MyObject');
                 // check if myvar is present in config.
                 // in this case, init with its value
-                if('myvar' in config)
+                if('myvar' in config) {
                         // use "this" to access all method and field
                         // of the current instance of the class
                         this.myvar = config.myvar;
+						// remove myvar from config to let the system
+						// know that we handled this property.
+						// Else, the "autoconfig" system will try to find
+						// a setMyvar() method.
+						delete(config.myvar);
+				}
         },
 
         //
