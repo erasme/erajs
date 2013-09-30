@@ -22,6 +22,7 @@ Ui.Element.extend('Ui.Container',
 		child.getDrawing().style.zIndex = this.children.length;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
+		child.setParentDisabled(this.getIsDisabled());
 		this.onChildInvalidateMeasure(child, 'add');
 	},
 
@@ -39,6 +40,7 @@ Ui.Element.extend('Ui.Container',
 			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
+		child.setParentDisabled(this.getIsDisabled());
 		this.onChildInvalidateMeasure(child, 'add');
 	},
 

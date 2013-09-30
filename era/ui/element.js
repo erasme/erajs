@@ -290,9 +290,9 @@ Core.Object.extend('Ui.Element',
 		if(this.verticalAlign != 'stretch')
 			constraintHeight = 0;
 
-		if(this.width != undefined)
+		if(this.width !== undefined)
 			constraintWidth = Math.max(this.width, constraintWidth);
-		if(this.height != undefined)
+		if(this.height !== undefined)
 			constraintHeight = Math.max(this.height, constraintHeight);
 
 		var size = this.measureCore(constraintWidth, constraintHeight);
@@ -966,35 +966,30 @@ Core.Object.extend('Ui.Element',
 		if((this.disabled === undefined) || this.disabled) {
 			var old = this.getIsDisabled();
 			this.disabled = false;
-			if(old)
+			if(old && !this.getIsDisabled())
 				this.onInternalEnable();
 		}
 	},
 	
 	setEnable: function(enable){
-		if(enable){
+		if(enable)
 			this.enable();
-		}
-		else{
+		else
 			this.disable();
-		}
 	},
 
 	getIsDisabled: function() {
-		if(this.disabled != undefined)
-			return this.disabled;
-		else {
-			if(this.parentDisabled != undefined)
-				return this.parentDisabled;
-			else
-				return false;
-		}
+		if((this.disabled !== undefined) && (this.disabled === true))
+			return true;
+		if((this.parentDisabled !== undefined) && (this.parentDisabled === true))
+			return true;
+		return false;
 	},
 
-	setParentDisabled: function(disabled) {
+	setParentDisabled: function(disabled) {	
 		var old = this.getIsDisabled();
 		this.parentDisabled = disabled;
-		if(old != this.getIsDisabled()) {
+		if(old !== this.getIsDisabled()) {
 			if(this.getIsDisabled())
 				this.onInternalDisable();
 			else
