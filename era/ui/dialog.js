@@ -77,7 +77,7 @@ Ui.Container.extend('Ui.Dialog', {
 		this.cancelBox = new Ui.LBox();
 		this.actionBox.append(this.cancelBox);
 
-		this.actionButtonsBox = new Ui.HBox({ spacing: 5, uniform: true, horizontalAlign: 'right' });
+		this.actionButtonsBox = new Ui.MenuToolBar({ spacing: 5, itemsAlign: 'right', menuPosition: 'left', uniform: true });
 		this.actionBox.append(this.actionButtonsBox, true);
 		
 		this.connect(this.dialogSelection, 'change', this.onDialogSelectionChange);		
