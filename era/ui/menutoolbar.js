@@ -2,6 +2,12 @@
 Ui.Popup.extend('Ui.MenuToolBarPopup', {
 });
 
+Ui.Button.extend('Ui.MenuToolBarButton', {
+	constructor: function() {
+		this.setIcon('arrowbottom');
+	}
+});
+
 Ui.Container.extend('Ui.MenuToolBar', 
 {
 	paddingTop: 0,
@@ -11,22 +17,55 @@ Ui.Container.extend('Ui.MenuToolBar',
 	star: 0,
 	measureLock: undefined,
 	items: undefined,
-	hbox: undefined,
 	menuButton: undefined,
-	menuPopup: undefined,
-	menuVBox: undefined,
+	itemsAlign: 'left',
+	menuPosition: 'right',
+	uniform: false,
+	uniformSize: 0,
+	spacing: 0,
+	itemsWidth: 0,
+	keepItems: undefined,
+	menuNeeded: false,
 
 	constructor: function(config) {
 		this.items = [];
-		this.hbox = new Ui.HBox();
-		this.appendChild(this.hbox);
-		this.menuButton = new Ui.Button({ icon: 'arrowbottom' });
+		
+		this.menuButton = new Ui.MenuToolBarButton();
 		this.connect(this.menuButton, 'press', this.onMenuButtonPress);
-		this.menuPopup = new Ui.MenuToolBarPopup({ expandable: true });
-		var scroll = new Ui.ScrollingArea();
-		this.menuPopup.setContent(scroll);
-		this.menuVBox = new Ui.VBox({ spacing: 10, margin: 10 });
-		scroll.setContent(this.menuVBox);
+		this.appendChild(this.menuButton);		
+	},
+	
+	getUniform: function() {
+		return this.uniform;
+	},
+	
+	setUniform: function(uniform) {
+		if(this.uniform !== uniform) {
+			this.uniform = uniform;
+			this.invalidateMeasure();
+		}
+	},
+	
+	getMenuPosition: function() {
+		return this.menuPosition;
+	},
+
+	setMenuPosition: function(menuPosition) {
+		if(this.menuPosition !== menuPosition) {
+			this.menuPosition = menuPosition;
+			this.invalidateArrange();
+		}
+	},
+
+	getItemsAlign: function() {
+		return this.itemsAlign;
+	},
+
+	setItemsAlign: function(align) {
+		if(this.itemsAlign !== align) {
+			this.itemsAlign = align;
+			this.invalidateArrange();
+		}
 	},
 
 	getLogicalChildren: function() {
@@ -116,15 +155,17 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * child
 	 */
 	getSpacing: function() {
-		return this.hbox.getSpacing();
+		return this.spacing;
 	},
 
 	/**
 	 * Set the space value inserted between each child
 	 */
 	setSpacing: function(spacing) {
-		this.hbox.setSpacing(spacing);
-		this.menuVBox.setSpacing(spacing);
+		if(this.spacing !== spacing) {
+			this.spacing = spacing;
+			this.invalidateMeasure();
+		}
 	},
 
 	/**
@@ -154,6 +195,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 		while((i < this.items.length) && (this.items[i] != child)) { i++ };
 		if(i < this.items.length) {
 			this.items.splice(i, 1);
+			if(child.getParent() === this)
+				child.getParent().removeChild(child);
 			this.invalidateMeasure();
 		}
 	},
@@ -179,16 +222,42 @@ Ui.Container.extend('Ui.MenuToolBar',
 		this.moveAt(child, position);
 	},
 
+	setContent: function(content) {
+		this.clear();
+		if((content !== undefined) && (typeof(content) === 'object')) {
+			if(content.constructor === Array) {
+				for(var i = 0; i < content.length; i++)
+					this.append(content[i]);
+			}
+			else
+				this.append(content);
+		}
+	},
+
 	/**#@+
 	* @private
 	*/
 	onMenuButtonPress: function() {
-		this.menuPopup.show(this.menuButton, 'bottom');
+		var dialog = new Ui.MenuToolBarPopup({ expandable: true });
+		var scroll = new Ui.ScrollingArea();
+		dialog.setContent(scroll);
+		var vbox = new Ui.VBox({ spacing: this.spacing, margin: 10 });
+		scroll.setContent(vbox);
+		for(var i = 0; i < this.items.length; i++) {
+			var item = this.items[i];
+			if(item.getParent() !== this)
+				vbox.append(item);
+		}
+		dialog.show(this.menuButton, 'bottom');
 	}
 	/**#@-*/
 }, 
 {
 	clear: function() {
+		for(var i = 0; i < this.items.length; i++) {
+			if(this.items[i].getParent() === this)
+				this.items[i].getParent().removeChild(this.items[i]);
+		}
 		this.items = [];
 		this.invalidateMeasure();
 	},
@@ -204,47 +273,130 @@ Ui.Container.extend('Ui.MenuToolBar',
 
 		this.measureLock = true;
 		
-		this.menuVBox.clear();
-		this.hbox.clear();
-				
+		// measure the menu button
+		var buttonSize = this.menuButton.measure(0, 0);
+		
 		var minSizes = [];
-		var totalWidth = 0;
 
+		// set all item as graphical childs and get their min sizes
 		for(var i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
-			this.hbox.append(item, Ui.MenuToolBar.getResizable(item));
-			var minSize = item.measure(0, 0);
-			minSizes.push(minSize);
-			totalWidth += minSize.width;
+			if(item.getParent() !== this) {
+				if(item.getParent() !== undefined)
+					item.getParent().removeChild(item);
+				this.appendChild(item);
+			}
+			minSizes.push(item.measure(0, 0));
 		}
-		totalWidth += this.getSpacing() * (minSizes.length-1);
+		
+		// decide which items will be directly displayed (not in the menu)
+		this.keepItems = [];
+		var totalWidth = 0;
+		var countResizable = 0;
+		var maxItemWidth = 0;
+		var maxItemHeight = buttonSize.height;
+		var minItemsSize = 0;
 
-		// everything fit in the hbox
-		if(totalWidth <= constraintWidth) {
-			size = this.hbox.measure(constraintWidth, constraintHeight);
+		var i = (this.menuPosition === 'left')?(i = this.items.length-1):0;
+		while((i>= 0) && (i< this.items.length)) {
+			var minSize = minSizes[i];
+			if(totalWidth + minSize.width + this.spacing > constraintWidth)
+				break;
+			totalWidth += minSize.width + this.spacing;
+			if(totalWidth + buttonSize.width > constraintWidth)
+				break;
+			if(this.menuPosition === 'left')
+				this.keepItems.unshift(this.items[i]);
+			else
+				this.keepItems.push(this.items[i]);
+			if(Ui.MenuToolBar.getResizable(this.items[i]))
+				countResizable++;
+			else
+				minItemsSize += minSize.width;
+			if(minSize.width > maxItemWidth)
+				maxItemWidth = minSize.width;
+			if(minSize.height > maxItemHeight)
+				maxItemHeight = minSize.height;
+			if(this.menuPosition === 'left')
+				i--;
+			else
+				i++;
 		}
-		// we need a menu button
-		else {
-			this.hbox.append(this.menuButton);		
-			var buttonSize = this.menuButton.measure(0, 0);
+		this.menuNeeded = this.keepItems.length !== this.items.length;
 
-			this.hbox.clear();
-			var totalWidth = 0;
-			var i;
-			for(i = 0; i < this.items.length; i++) {
-				totalWidth += minSizes[i].width + this.getSpacing();
-				if(totalWidth + buttonSize.width <= constraintWidth)
-					this.hbox.append(this.items[i], Ui.MenuToolBar.getResizable(this.items[i]));
+		var constraintSize = constraintWidth;
+		if(this.menuNeeded) {
+			constraintSize -= buttonSize.width + this.spacing;
+			// remove graphical childs that dont fit
+			while((i>= 0) && (i< this.items.length)) {
+				this.removeChild(this.items[i]);
+				if(this.menuPosition === 'left')
+					i--;
 				else
-					break;
-			}
-			this.hbox.append(this.menuButton);
-			size = this.hbox.measure(constraintWidth, constraintHeight);
-			// put the overflow in the menu popup
-			for(; i < this.items.length; i++) {
-				this.menuVBox.append(this.items[i], false);
+					i++;
 			}
 		}
+
+		// measure using items we keept
+		if(this.uniform) {
+			// we can respect the uniform constraint
+			if((this.keepItems.length * (maxItemWidth + this.spacing)) - this.spacing <= constraintWidth) {
+				for(var i = 0; i < this.keepItems.length; i++)
+					this.keepItems[i].measure(maxItemWidth, maxItemHeight);
+				this.uniformSize = maxItemWidth;
+				size = { width: ((this.keepItems.length * (maxItemWidth + this.spacing)) - this.spacing), height: maxItemHeight };
+			}
+			// we cant respect, do our best, dont care
+			else {
+				this.uniformSize = undefined;
+				size = { width: totalWidth, height: maxItemHeight };
+			}
+		}
+		// measure is not uniform
+		else {
+			if(countResizable > 0) {
+				var remainWidth = constraintSize - minItemsSize - ((this.keepItems.length - 1) * this.spacing);
+				var starFound = true;
+				var star = remainWidth / countResizable;
+				do {
+					starFound = true;
+					for(var i = 0; i < this.keepItems.length; i++) {
+						var child = this.getChildren()[i];
+						if(Ui.MenuToolBar.getResizable(child)) {
+							if(!child.menutoolbarStarDone) {
+								var size = child.measure(star, constraintHeight);
+								if(size.height > maxItemHeight)
+									maxItemHeight = size.height;
+								if(size.width > star) {
+									child.menutoolbarStarDone = true;
+									starFound = false;
+									remainWidth -= size.width;
+									minItemsSize += size.width;
+									countResizable--;
+									star = remainWidth / countResizable;
+									break;
+								}
+							}
+						}
+					}
+				} while(!starFound);
+				
+				minItemsSize += this.spacing * (this.keepItems.length - 1);
+				if(countResizable > 0) {
+					minItemsSize += star * countResizable;
+					this.star = star;
+				}
+				else
+					this.star = 0;
+				size = { width: minItemsSize, height: maxItemHeight };
+			}
+			else
+				size = { width: totalWidth, height: maxItemHeight };
+		}
+
+		if(this.menuNeeded)
+			size.width += buttonSize.width + this.spacing;
+		
 		size.width += left + right;
 		size.height += top + bottom;
 		this.measureLock = undefined;
@@ -258,7 +410,46 @@ Ui.Container.extend('Ui.MenuToolBar',
 		var bottom = this.paddingBottom;
 		width -= left + right;
 		height -= top + bottom;
-		this.hbox.arrange(left, top, width, height);
+				
+		var x = 0;
+		var first = true;
+		if(this.itemsAlign !== 'left')
+			x = width - this.getMeasureWidth();
+		
+		if(this.menuNeeded && (this.menuPosition === 'left')) {
+			first = false;
+			this.menuButton.arrange(x, 0, this.menuButton.getMeasureWidth(), height);
+			x += this.menuButton.getMeasureWidth();
+		}
+		
+		for(var i = 0; i < this.keepItems.length; i++) {
+			var item = this.keepItems[i];
+			if(first)
+				first = false;
+			else 				
+				x += this.spacing;
+			var itemWidth;
+			if(this.uniform && (this.uniformSize !== undefined))
+				itemWidth = this.uniformSize;
+			else {
+				itemWidth = item.getMeasureWidth();
+				if(Ui.MenuToolBar.getResizable(item) && (itemWidth < this.star))
+					itemWidth = this.star;
+			}
+			item.arrange(x, 0, itemWidth, height);
+			x += itemWidth;
+		}
+		
+		if(this.menuNeeded && (this.menuPosition !== 'left')) {
+			if(first)
+				first = false;
+			else 				
+				x += this.spacing;
+			this.menuButton.arrange(x, 0, this.menuButton.getMeasureWidth(), height);
+		}
+		
+		if(!this.menuNeeded)
+			this.menuButton.arrange(0, 0, 0, 0);
 	},
 	
 	onChildInvalidateMeasure: function(child, event) {
