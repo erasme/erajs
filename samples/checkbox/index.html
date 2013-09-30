@@ -5,13 +5,48 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-var app = new Ui.App({ });
+Ui.App.extend('Test.App', {
+	constructor: function() {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
 
-var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
-app.setContent(vbox);
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
 
-var checkbox = new Ui.CheckBox({ text: 'check me' });
-vbox.append(checkbox);
+		var checkbox = new Ui.CheckBox({
+			text: 'check me', width: 200,
+			verticalAlign: 'center',
+			horizontalAlign: 'center' 
+		});
+		vbox.append(checkbox, true);
+
+		var button = new Ui.Button({ text: 'check' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			checkbox.setValue(true);
+		});
+
+		var button = new Ui.Button({ text: 'uncheck' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			checkbox.setValue(false);
+		});
+
+		var button = new Ui.Button({ text: 'enable' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			checkbox.enable();
+		});
+
+		var button = new Ui.Button({ text: 'disable' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			checkbox.disable();
+		});
+	}
+});
+
+new Test.App();
 
 </script>
   </head>
