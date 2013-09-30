@@ -27,7 +27,7 @@ Ui.HBox.extend('Ui.ContextBar', {
 		var sep = new Ui.Separator();
 		this.append(sep);
 		
-		this.actionsBox = new Ui.MenuToolBar({ spacing: 5 });
+		this.actionsBox = new Ui.MenuToolBar({ spacing: 5, menuPosition: 'left', itemsAlign: 'right' });
 		this.append(this.actionsBox, true);
 		
 		this.connect(this.selection, 'change', this.onSelectionChange);
