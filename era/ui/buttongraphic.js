@@ -4,7 +4,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	icon: undefined,
 	iconSize: 24,
 	orientation: 'vertical',
-	isEnable: true,
 	isDown: false,
 	radius: 4,
 	spacing: 3,
@@ -110,17 +109,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		}
 	},
 
-	getIsEnable: function() {
-		return this.isEnable;
-	},
-
-	setIsEnable: function(isEnable) {
-		if(this.isEnable != isEnable) {
-			this.isEnable = isEnable;
-			this.invalidateDraw();
-		}
-	},
-
 	setRadius: function(radius) {
 		if(this.radius != radius) {
 			this.radius = radius;
@@ -206,13 +194,6 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 
-		// light shadow
-//		ctx.fillStyle = 'rgba(255,255,255,0.2)';
-//		ctx.beginPath();
-//		this.roundRect(3, 4, width-6, height-7, this.radius, this.radius, this.radius, this.radius);
-//		ctx.closePath();
-//		ctx.fill();
-
 		// dark shadow
 		ctx.fillStyle = this.getDarkColor().getCssRgba();//'rgba(0,0,0,0.3)';
 		ctx.beginPath();
@@ -227,15 +208,8 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		ctx.closePath();
 		ctx.fill();
 
-		// rect1
-//		ctx.fillStyle = this.getGradient().getCanvasGradient(ctx, width, height);
-//		ctx.beginPath();
-//		this.roundRect(4, 5, width-8, height-10, this.radius-1, this.radius-1, this.radius-1, this.radius-1);
-//		ctx.closePath();
-//		ctx.fill();
-
 		// handle disable
-		if(!this.isEnable)
+		if(this.getIsDisabled())
 			ctx.globalAlpha = 0.2;
 
 		// icon only
@@ -331,5 +305,13 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				size = { width: this.textWidth + this.iconSize + this.spacing*4 + 6, height: Math.max(this.iconSize, this.fontSize) + this.spacing*2 + 6 };
 		}
 		return size;
+	},
+	
+	onDisable: function() {
+		this.invalidateDraw();
+	},
+
+	onEnable: function() {
+		this.invalidateDraw();
 	}
 });

@@ -116,16 +116,6 @@ Ui.Togglable.extend('Ui.CheckBox',
 		this.graphic.setCheckColor(this.getStyleProperty('checkColor'));
 	},
 
-	onDisable: function() {
-		Ui.CheckBox.base.onDisable.call(this);
-		this.graphic.setIsEnable(false);
-	},
-
-	onEnable: function() {
-		Ui.CheckBox.base.onEnable.call(this);
-		this.graphic.setIsEnable(true);
-	},
-
 	setContent: function(content) {
 		content = Ui.Element.create(content);
 		if(content === undefined) {

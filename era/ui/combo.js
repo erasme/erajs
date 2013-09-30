@@ -145,16 +145,6 @@ Ui.Pressable.extend('Ui.Combo',
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
 			this.graphic.setColor(this.getStyleProperty('color'));
-	},
-
-	onDisable: function() {
-		Ui.Combo.base.onDisable.call(this);
-		this.graphic.setIsEnable(false);
-	},
-
-	onEnable: function() {
-		Ui.Combo.base.onEnable.call(this);
-		this.graphic.setIsEnable(true);
 	}
 }, 
 /** @lends Ui.Combo */

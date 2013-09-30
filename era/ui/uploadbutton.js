@@ -57,16 +57,6 @@ Ui.Uploadable.extend('Ui.UploadButton',
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
 			this.graphic.setColor(this.getStyleProperty('color'));
-	},
-
-	onDisable: function() {
-		Ui.UploadButton.base.onDisable.call(this);
-		this.graphic.setIsEnable(false);
-	},
-
-	onEnable: function() {
-		Ui.UploadButton.base.onEnable.call(this);
-		this.graphic.setIsEnable(true);
 	}
 }, 
 /**@lends Ui.UploadButton*/

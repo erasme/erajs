@@ -75,16 +75,6 @@ Ui.LBox.extend('Ui.TextField',
 /**@lends Ui.TextField#*/
 {
 	onStyleChange: function() {
-	},
-
-	onDisable: function() {
-		Ui.TextField.base.onDisable.call(this);
-		this.graphic.setOpacity(0.2);
-	},
-
-	onEnable: function() {
-		Ui.TextField.base.onEnable.call(this);
-		this.graphic.setOpacity(1);
 	}
 });
 

@@ -61,16 +61,6 @@ Ui.Togglable.extend('Ui.ToggleButton',
 			this.graphic.setContentColor(this.getStyleProperty('toggleColor'));
 		else
 			this.graphic.setContentColor(undefined);
-	},
-
-	onDisable: function() {
-		Ui.Button.base.onDisable.call(this);
-		this.graphic.setIsEnable(false);
-	},
-
-	onEnable: function() {
-		Ui.Button.base.onEnable.call(this);
-		this.graphic.setIsEnable(true);
 	}
 }, 
 /**@lends Ui.ToggleButton*/
