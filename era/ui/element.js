@@ -298,7 +298,7 @@ Core.Object.extend('Ui.Element',
 		var size = this.measureCore(constraintWidth, constraintHeight);
 
 		// if width and height are set they are taken as a minimum
-		if((this.width != undefined) && (size.width < this.width))
+		if((this.width !== undefined) && (size.width < this.width))
 			this.measureWidth = this.width + marginLeft + marginRight;
 		else
 			this.measureWidth = size.width + marginLeft + marginRight;
@@ -953,7 +953,7 @@ Core.Object.extend('Ui.Element',
 	onVisible: function() {
 	},
 
-	disable: function() {
+	disable: function() {	
 		if((this.disabled === undefined) || !this.disabled) {
 			var old = this.getIsDisabled();
 			this.disabled = true;
@@ -962,7 +962,7 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 	
-	enable: function() {
+	enable: function() {	
 		if((this.disabled === undefined) || this.disabled) {
 			var old = this.getIsDisabled();
 			this.disabled = false;
@@ -986,7 +986,10 @@ Core.Object.extend('Ui.Element',
 		return false;
 	},
 
-	setParentDisabled: function(disabled) {	
+	setParentDisabled: function(disabled) {
+//		console.log(this+'.setParentDisabled('+disabled+')');
+//		if((this.toString() == '[object Wn.MediaProgressBar]') && disabled)
+//			throw('STOP HERE');
 		var old = this.getIsDisabled();
 		this.parentDisabled = disabled;
 		if(old !== this.getIsDisabled()) {
@@ -1306,10 +1309,10 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onLoad: function() {	
-		if(this.parent != undefined) {
+		if(this.parent !== undefined) {
 			this.setParentStyle(this.parent.mergeStyle);
-			this.setParentDisabled(this.getIsDisabled());
-			this.setParentVisible(this.getIsVisible());
+			this.setParentDisabled(this.parent.getIsDisabled());
+			this.setParentVisible(this.parent.getIsVisible());
 		}
 		this.fireEvent('load', this);
 	},
