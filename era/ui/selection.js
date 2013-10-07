@@ -87,7 +87,7 @@ Core.Object.extend('Ui.Selection', {
 						// test rights for all elements
 						if('testRight' in action) {
 							for(var i = 0; allowed && (i < this.elements.length); i++) {
-								allow &= action.testRight.call(this.elements[i]);
+								allowed &= action.testRight.call(this.elements[i]);
 							}
 						}
 						if(allowed)
