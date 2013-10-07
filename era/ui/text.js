@@ -282,9 +282,11 @@ Ui.Element.extend('Ui.Text',
 	},
 
 	measureCore: function(width, height) {
+		if(this.getWidth() !== undefined)
+			width = this.getWidth()
 		this.updateMeasure();
 		this.updateFlow(width, false);
-		if(this.getWidth() == undefined)
+		if(this.getWidth() === undefined)
 			return { width: this.maxLineWidth, height: this.offsetY };
 		else
 			return { width: this.maxWidth, height: this.offsetY };
