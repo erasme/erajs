@@ -437,5 +437,13 @@ Ui.LBox.extend('Ui.Movable',
 
 	setContent: function(content) {
 		this.contentBox.setContent(content);
+	},
+	
+	onDisable: function() {
+		this.contentBox.getDrawing().style.cursor = 'inherit';
+	},
+	
+	onEnable: function() {
+		this.contentBox.getDrawing().style.cursor = 'move';
 	}
 });
