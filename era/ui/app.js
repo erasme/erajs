@@ -358,6 +358,11 @@ Ui.LBox.extend('Ui.App',
 				meta.name = 'apple-mobile-web-app-status-bar-style';
 				meta.content = 'black';
 				document.getElementsByTagName("head")[0].appendChild(meta);
+				// support for Chrome
+				meta = document.createElement('meta');
+				meta.name = 'mobile-web-app-capable';
+				meta.content = 'yes';
+				document.getElementsByTagName("head")[0].appendChild(meta);
 			}
 			// stop the scaling of the page
 			meta = document.createElement('meta');
