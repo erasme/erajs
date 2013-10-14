@@ -327,14 +327,7 @@ Core.Object.extend('Ui.Element',
 	 * updated
 	 */
 	invalidateMeasure: function() {
-//		if(Ui.Paned.hasInstance(this))
-//			console.log('Paned.invalidateMeasure '+this.measureValid);
-
-//		console.log(this+'.invalidateMeasure start');
-
 		if(this.measureValid) {
-//			console.log(this+'.invalidateMeasure');
-
 			this.measureValid = false;
 			if((this.parent != undefined) && (this.parent.measureValid))
 				this.parent.onChildInvalidateMeasure(this, 'change');
@@ -484,11 +477,9 @@ Core.Object.extend('Ui.Element',
 //		console.log(this+'.invalidateDraw isVisible: '+this.getIsVisible()+', isLoaded: '+this.getIsLoaded()+', drawValid: '+this.drawValid);
 //		console.log('requestAnimationFrame: '+window.requestAnimationFrame);
 		
-		if(this.getIsVisible() && this.getIsLoaded()) {
-			if(this.drawValid) {
-				this.drawValid = false;
-				Ui.App.current.enqueueDraw(this);
-			}
+		if(this.drawValid) {
+			this.drawValid = false;
+			Ui.App.current.enqueueDraw(this);
 		}
 	},
 
@@ -922,7 +913,7 @@ Core.Object.extend('Ui.Element',
 		// DEBUG
 //		this.checkVisible();
 //		if(navigator.isIE8 || navigator.isIE7)
-		this.invalidateDraw();
+//		this.invalidateDraw();
 		this.onVisible();
 		this.fireEvent('visible', this);
 	},
