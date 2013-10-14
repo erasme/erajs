@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test MenuToolBar</title>
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	constructor: function() {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		var toolbar = new Ui.MenuToolBar({ spacing: 5, margin: 5 });
+		vbox.append(toolbar);
+
+		toolbar.append(new Ui.Button({ text: 'Button1' }));
+		toolbar.append(new Ui.Button({ text: 'Button2' }));
+		toolbar.append(new Ui.Button({ text: 'Button3' }));
+		toolbar.append(new Ui.CompactLabel({ text: 'Test Title resizable', width: 150, fontSize: 22, maxLine: 2, verticalAlign: 'center' }), true);
+		toolbar.append(new Ui.Button({ icon: 'plus' }));
+		toolbar.append(new Ui.Button({ icon: 'trash' }));
+		var editButton = new Ui.Button({ icon: 'edit' });
+		toolbar.append(editButton);
+		this.connect(editButton, 'press', function() {
+			var dialog = new Ui.Dialog({ title: 'Edit dialog', preferedWidth: 300, content: { type: Ui.Text, text: 'Hello World !' } });
+			dialog.setCancelButton(new Ui.Button({ text: 'Close' }));
+			dialog.open();
+		});
+
+		toolbar.append(new Ui.Button({ icon: 'exit' }));
+
+		var addButton = new Ui.Button({text: 'Prepend button', verticalAlign: 'center', horizontalAlign: 'center' });
+		vbox.append(addButton, true);
+		this.connect(addButton, 'press', function() {
+			toolbar.prepend(new Ui.Button({ text: 'ButtonX' }));
+		});
+	}
+});
+new Test.App();
+
+</script>
+  </head>
+</html>
