@@ -18,9 +18,9 @@ Ui.Container.extend('Ui.CanvasElement',
 	 */
 	update: function() {
 		this.context.save();
+		this.context.clearRect(0, 0, Math.ceil(this.getLayoutWidth() * this.dpiRatio), Math.ceil(this.getLayoutHeight() * this.dpiRatio));
 		if(this.dpiRatio != 1)
 			this.context.scale(this.dpiRatio, this.dpiRatio);
-		this.context.clearRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight());
 		this.updateCanvas(this.context);
 		this.context.restore();
 	},
@@ -278,8 +278,15 @@ Ui.Container.extend('Ui.CanvasElement',
 			this.update();
 	},
 
-	drawCore: function() {
-		this.update();
+	drawCore: function() {	
+		// update only if the layout was done
+		if((this.getLayoutWidth() !== 0) && (this.getLayoutHeight() !== 0))
+			this.update();
+	},
+	
+	onInternalVisible: function() {
+		Ui.CanvasElement.base.onInternalVisible.call(this);
+		this.invalidateDraw();
 	}
 });
 
