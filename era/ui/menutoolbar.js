@@ -223,14 +223,23 @@ Ui.Container.extend('Ui.MenuToolBar',
 	},
 
 	setContent: function(content) {
-		this.clear();
-		if((content !== undefined) && (typeof(content) === 'object')) {
-			if(content.constructor === Array) {
-				for(var i = 0; i < content.length; i++)
-					this.append(content[i]);
+		if(content === undefined)
+			this.clear();
+		else if(typeof(content) === 'object') {
+			if(content.constructor !== Array) {
+				content = [ content ];
 			}
-			else
-				this.append(content);
+			// removed items that disapears
+			for(var i = 0; i < this.items.length; i++) {
+				var found = false;
+				for(var i2 = 0; (found === false) && (i2 < content.length); i2++) {
+					found = (this.items[i] === content[i2]);
+				}
+				if((found === false) && (this.items[i].getParent() === this))
+					this.removeChild(this.items[i]);
+			}
+			this.items = content;
+			this.invalidateMeasure();
 		}
 	},
 
@@ -270,6 +279,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 		var constraintWidth = Math.max(0, width - (left + right));
 		var constraintHeight = Math.max(0, height - (top + bottom));
 		var size;
+
+//		console.log(this+'.measureCore('+width+','+height+') START');
 
 		this.measureLock = true;
 		
@@ -400,6 +411,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 		size.width += left + right;
 		size.height += top + bottom;
 		this.measureLock = undefined;
+		
+//		console.log(this+'.measureCore('+width+','+height+') STOP');
 		return size;
 	},
 
@@ -449,10 +462,13 @@ Ui.Container.extend('Ui.MenuToolBar',
 		}
 		
 		if(!this.menuNeeded)
-			this.menuButton.arrange(0, 0, 0, 0);
+			this.menuButton.getDrawing().style.visibility = 'hidden';
+		else
+			this.menuButton.getDrawing().style.visibility = '';
 	},
 	
 	onChildInvalidateMeasure: function(child, event) {
+//		console.log('onChildInvalidateMeasure lock ? '+this.measureLock+', isValid ? '+this.measureValid);
 		if(this.measureLock !== true)
 			Ui.MenuToolBar.base.onChildInvalidateMeasure.call(this, child, event);
 	}
