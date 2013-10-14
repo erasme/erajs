@@ -150,7 +150,8 @@ Ui.LBox.extend('Ui.Togglable',
 
 	onKeyDown: function(event) {
 		var key = event.which;
-		if((key == 13) && !this.getIsDisabled()) {
+		// toggle with enter or space keys
+		if(((key == 13) || (key == 32)) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.onDown();
@@ -159,7 +160,8 @@ Ui.LBox.extend('Ui.Togglable',
 
 	onKeyUp: function(event) {
 		var key = event.which;
-		if((key == 13) && !this.getIsDisabled()) {
+		// toggle with enter or space keys
+		if(((key == 13) || (key == 32)) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.onUp();
