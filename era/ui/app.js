@@ -537,7 +537,7 @@ Ui.LBox.extend('Ui.App',
 		// important to do it first because iOS with its
 		// bad thread system can trigger code that will ask for an
 		// update without having finish this code
-		this.updateTask = false;
+//		this.updateTask = false;
 //		console.log('update task: '+this.updateTask);
 
 		// update measure
@@ -608,11 +608,15 @@ Ui.LBox.extend('Ui.App',
 		else {
 			this.windowScale = 1;
 			size = this.measure(innerWidth, innerHeight);
+//			console.log('update M1 '+localCounter+', task: '+this.updateTask);
+
 		}
 //		console.log(this+'.update size: '+this.windowWidth+' x '+this.windowHeight+', child: '+size.width+' x '+size.height);
 
 //		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
 		this.arrange(0, 0, innerWidth * this.windowScale, innerHeight * this.windowScale);
+
+//		console.log('update A1 '+localCounter+', task: '+this.updateTask);
 
 		// update arrange
 //		while(this.layoutList != undefined) {
@@ -630,6 +634,8 @@ Ui.LBox.extend('Ui.App',
 			this.drawList = next;
 		}
 
+//		console.log('update D1 '+localCounter+', task: '+this.updateTask);
+
 		if((this.windowWidth != innerWidth) || (this.windowHeight != innerHeight)) {
 			this.windowWidth = innerWidth;
 			this.windowHeight = innerHeight;
@@ -646,7 +652,8 @@ Ui.LBox.extend('Ui.App',
 //			document.body.scrollLeft = 0;
 //			document.body.scrollTop = 0;
 //		}
-//		console.log('update STOP '+localCounter);
+//		console.log('update STOP '+localCounter+', task: '+this.updateTask);
+		this.updateTask = false;
 	},
 
 	getContent: function() {
@@ -851,7 +858,7 @@ Ui.LBox.extend('Ui.App',
 //		if((this.updateTask === undefined) && this.ready)
 //			this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });
 		
-//		console.log('enqueueDraw('+element+') updateTask: '+this.updateTask+', ready: '+this.ready);
+//		console.log('App.enqueueDraw('+element+') new Task ? '+((this.updateTask === false) && this.ready));
 		
 		
 		if((this.updateTask === false) && this.ready) {
@@ -969,13 +976,13 @@ Ui.LBox.extend('Ui.App',
 //	}
 }, {
 	invalidateMeasure: function() {
-//		console.log('App.invalidateMeasure new task ? '+(((this.updateTask === undefined) && this.ready)));
 //		if(this.measureValid) {
 			this.invalidateArrange();
 			this.measureValid = false;
 //			if((this.updateTask === undefined) && this.ready)
 //				this.updateTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.update });				
-				
+//			console.log('App.invalidateMeasure new task ? '+(((this.updateTask === false) && this.ready)));
+		
 			if((this.updateTask === false) && this.ready) {
 				var app = this;
 				this.updateTask = true;
@@ -987,7 +994,7 @@ Ui.LBox.extend('Ui.App',
 
 	invalidateArrange: function() {
 //		if(this.arrangeValid) {
-//			console.log('invalidate Arrange');
+//			console.log('App.invalidateArrange new task ? '+((this.updateTask === false) && this.ready));
 			this.arrangeValid = false;
 
 //			this.enqueueArrange(this);
