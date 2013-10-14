@@ -228,6 +228,10 @@ Ui.Element.extend('Ui.Label',
 		}
 		Ui.Label.measureBox = measureWindow.document.createElement('canvas');
 		Ui.Label.measureBox.style.visibility = 'hidden';
+		Ui.Label.measureBox.style.position = 'absolute';
+		Ui.Label.measureBox.style.left = '0px';
+		Ui.Label.measureBox.style.top = '0px';
+		Ui.Label.measureBox.style.outline = 'none';
 		Ui.Label.measureBox.setAttribute('width', 10, null);
 		Ui.Label.measureBox.setAttribute('height', 10, null);
 		measureWindow.document.body.appendChild(Ui.Label.measureBox);
