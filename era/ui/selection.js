@@ -127,6 +127,8 @@ Core.Object.extend('Ui.Selection', {
 		var actions = this.getActions();
 		if('delete' in actions)
 			return actions['delete'];
+		else if('suppress' in actions)
+			return actions['suppress'];
 		else
 			return undefined;
 	},
