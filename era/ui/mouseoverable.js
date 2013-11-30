@@ -38,11 +38,13 @@ Ui.LBox.extend('Ui.MouseOverable',
 	},
 
 	onMouseOut: function(event) {
-		this.task = new Core.DelayedTask({ delay: 0, scope: this, callback: function() {
-			this.isOver = false;
-			this.fireEvent('leave', this);
-			this.task = undefined;
-		} });
+		this.task = new Core.DelayedTask({ delay: 0, scope: this, callback: this.onDelayedMouseOut });
+	},
+	
+	onDelayedMouseOut: function(event) {
+		this.isOver = false;
+		this.fireEvent('leave', this);
+		this.task = undefined;
 	},
 
 	onMouseMove: function(event) {		
