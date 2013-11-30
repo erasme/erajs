@@ -150,7 +150,7 @@ Ui.Element.extend('Ui.TextArea',
 			this.timer = undefined;
 		}
 		this.allowSelect = false;
-		this.timer = new Core.DelayedTask({	delay: 0.50, scope: this, callback: this.onTimer });
+		this.timer = new Core.DelayedTask({ delay: 0.50, scope: this, callback: this.onTimer });
 
 		this.screenX = event.screenX;
 		this.screenY = event.screenY;
@@ -227,7 +227,7 @@ Ui.Element.extend('Ui.TextArea',
 				this.timer.abort();
 				this.timer = undefined;
 			}
-			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
+			this.timer = new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.onTimer });
 			this.onDown();
 		}
 	},
