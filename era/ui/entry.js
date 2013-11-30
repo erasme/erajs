@@ -235,7 +235,7 @@ Ui.Element.extend('Ui.Entry',
 				this.timer.abort();
 				this.timer = undefined;
 			}
-			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
+			this.timer = new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.onTimer });
 			this.onDown();
 		}
 	},
