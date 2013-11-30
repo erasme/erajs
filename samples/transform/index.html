@@ -43,18 +43,18 @@ vbox.append(rect, true);
 
 var clock = new Anim.ClockGroup({ duration: 4, target: rect });
 
-var clock1 = new Anim.Clock({ duration: 4.0, scope: rect,
+var clock1 = new Anim.Clock({ duration: 4.0,
 	ease: new Anim.ElasticEase({ mode: 'out' }),
 	onTimeupdate: function(clock, progress) {
-		this.setTransform(Ui.Matrix.createRotate(progress * 360));
+		rect.setTransform(Ui.Matrix.createRotate(progress * 360));
 	}
 });
 clock.appendChild(clock1);
 
 
-var clock2 = new Anim.Clock({ duration: 2.0, scope: rect,
+var clock2 = new Anim.Clock({ duration: 2.0,
 	onTimeupdate: function(clock, progress) {
-		this.setOpacity(progress);
+		rect.setOpacity(progress);
 	}
 });
 clock.appendChild(clock2);
