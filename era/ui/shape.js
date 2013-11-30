@@ -12,7 +12,6 @@ Ui.CanvasElement.extend('Ui.Shape',
 	 * @extends Ui.Element
 	*/
 	constructor: function(config) {
-		this.fill = new Ui.Color({ r: 0, g: 0, b: 0 });
 	},
 
 	setScale: function(scale) {
@@ -23,11 +22,14 @@ Ui.CanvasElement.extend('Ui.Shape',
 	},
 
 	getFill: function() {
-		return this.fill;
+		if(this.fill === undefined)
+			return Ui.Color.create(this.getStyleProperty('color'));
+		else
+			return this.fill;
 	},
 
 	setFill: function(fill) {
-		if(this.fill != fill) {
+		if(this.fill !== fill) {
 			if(typeof(fill) === 'string')
 				fill = Ui.Color.create(fill);
 			else
@@ -44,6 +46,10 @@ Ui.CanvasElement.extend('Ui.Shape',
 		}
 	}
 }, {
+	onStyleChange: function() {
+		this.invalidateDraw();
+	},
+
 	updateCanvas: function(ctx) {
 		if(this.path === undefined)
 			return;
@@ -53,11 +59,16 @@ Ui.CanvasElement.extend('Ui.Shape',
 
 		this.svgPath(this.path);
 
-		if(Ui.Color.hasInstance(this.fill))
-			ctx.fillStyle = this.fill.getCssRgba();
-		else if(Ui.LinearGradient.hasInstance(this.fill))
-			ctx.fillStyle = this.fill.getCanvasGradient(ctx, this.getLayoutWidth(), this.getLayoutHeight());
+		var fill = this.getFill();		
+		if(Ui.Color.hasInstance(fill))
+			ctx.fillStyle = fill.getCssRgba();
+		else if(Ui.LinearGradient.hasInstance(fill))
+			ctx.fillStyle = fill.getCanvasGradient(ctx, this.getLayoutWidth(), this.getLayoutHeight());
 		ctx.fill();
+	}
+}, {
+	style: {
+		color: new Ui.Color({ r: 0, g: 0, b: 0 })
 	}
 });
 
