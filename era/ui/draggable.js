@@ -74,6 +74,10 @@ Ui.LBox.extend('Ui.Draggable',
 			this.mimetype = mimetype;
 	},
 
+	getMimetype: function() {
+		return this.mimetype;
+	},
+
 	/**
 	 * Set the data that we drag & drop
 	 */
@@ -143,11 +147,11 @@ Ui.LBox.extend('Ui.Draggable',
 			return;
 		if(!this.dragAllowed) {
 			this.setTransform(new Ui.Matrix());
-			if(this.clock != undefined) {
+			if(this.clock !== undefined) {
 				this.clock.stop();
 				this.clock = undefined;
 			}
-			if(this.timer != undefined) {
+			if(this.timer !== undefined) {
 				this.timer.abort();
 				this.timer = undefined;
 			}
@@ -156,12 +160,12 @@ Ui.LBox.extend('Ui.Draggable',
 			return;
 		}
 
-		if(this.clock != undefined) {
+		if(this.clock !== undefined) {
 			this.clock.stop();
 			this.clock = undefined;
 			this.setTransform(new Ui.Matrix());
 		}
-		if(this.timer != undefined) {
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}
@@ -177,7 +181,7 @@ Ui.LBox.extend('Ui.Draggable',
 
 		// if the element if downloadable to the destkop,
 		// try to provide the link
-		if(this.downloadUrl != undefined) {
+		if(this.downloadUrl !== undefined) {
 			try {
 				event.dataTransfer.setData('DownloadURL', this.downloadMimetype+':'+this.downloadFilename+':'+this.downloadUrl);
 			} catch(e) {}
@@ -190,9 +194,9 @@ Ui.LBox.extend('Ui.Draggable',
 		
 		this.fireEvent('dragstart', this);
 
-		if(this.icon != undefined) {
+		if(this.icon !== undefined) {
 			// TODO: improve this
-			if(event.dataTransfer.setDragImage != undefined)
+			if(event.dataTransfer.setDragImage !== undefined)
 				event.dataTransfer.setDragImage(this.icon.drawing.childNodes[0], 0, 0);
 		}
 		return false;
@@ -207,21 +211,21 @@ Ui.LBox.extend('Ui.Draggable',
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
 	},
 
-	onMouseDown: function(event) {
+	onMouseDown: function(event) {	
 		if(this.lock || this.isDown || (event.button != 0) || this.getIsDisabled())
 			return;
 		this.isDown = true;
 		this.dragAllowed = false;
 		this.setTransform(new Ui.Matrix());
-		if(this.clock != undefined) {
+		if(this.clock !== undefined) {
 			this.clock.stop();
 			this.clock = undefined;
 		}
-		if(this.timer != undefined) {
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}
-		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+		this.timer = new Core.DelayedTask({ scope: this, delay: 0.5, callback: this.onTimer });
 
 		this.screenX = event.screenX;
 		this.screenY = event.screenY;
@@ -234,7 +238,7 @@ Ui.LBox.extend('Ui.Draggable',
 			new Core.DragDataTransfer({ local: (typeof(this.data) === 'object'), draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
 	},
 
-	onMouseMove: function(event) {
+	onMouseMove: function(event) {	
 		var deltaX = event.screenX - this.screenX;
 		var deltaY = event.screenY - this.screenY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -251,11 +255,11 @@ Ui.LBox.extend('Ui.Draggable',
 			this.isDown = false;
 			this.dragAllowed = false;
 			this.setTransform(new Ui.Matrix());
-			if(this.clock != undefined) {
+			if(this.clock !== undefined) {
 				this.clock.stop();
 				this.clock = undefined;
 			}
-			if(this.timer != undefined) {
+			if(this.timer !== undefined) {
 				this.timer.abort();
 				this.timer = undefined;
 			}
@@ -269,29 +273,30 @@ Ui.LBox.extend('Ui.Draggable',
 		}
 	},
 
-	onMouseUp: function(event) {
+	onMouseUp: function(event) {	
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
 		this.isDown = false;
 		this.dragAllowed = false;
 		this.setTransform(new Ui.Matrix());
-		if(this.clock != undefined) {
+		if(this.clock !== undefined) {
 			this.clock.stop();
 			this.clock = undefined;
 		}
-		if(this.timer != undefined) {
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}
 
 		if(!this.isDrag) {
 			this.isDrag = false;
-			this.fireEvent('press', this);
-
 			var currentTime = (new Date().getTime())/1000;
-			if((this.lastPress != undefined) && ((currentTime - this.lastPress) < 0.25)) {
+			if((this.lastPress !== undefined) && ((currentTime - this.lastPress) < 0.5)) {
 				this.fireEvent('activate', this);
+			}
+			else {
+				this.fireEvent('press', this);
 			}
 			this.lastPress = currentTime;
 			this.focus();
@@ -299,7 +304,7 @@ Ui.LBox.extend('Ui.Draggable',
 		this.isDrag = false;
 	},
 
-	onFingerDown: function(event) {	
+	onFingerDown: function(event) {		
 		if(this.lock || this.isDown || this.getIsDisabled())
 			return;
 		this.connect(event.finger, 'fingermove', this.onFingerMove);
@@ -315,18 +320,18 @@ Ui.LBox.extend('Ui.Draggable',
 		this.isDown = true;
 		this.dragAllowed = false;
 		this.setTransform(new Ui.Matrix());
-		if(this.clock != undefined) {
+		if(this.clock !== undefined) {
 			this.clock.stop();
 			this.clock = undefined;
 		}
-		if(this.timer != undefined) {
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}
-		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+		this.timer = new Core.DelayedTask({ scope: this, delay: 0.5, callback: this.onTimer });
 	},
 
-	onFingerMove: function(event) {
+	onFingerMove: function(event) {	
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -337,11 +342,11 @@ Ui.LBox.extend('Ui.Draggable',
 		// if the user move to much, release the touch event
 		if(delta > 20) {
 			this.setTransform(new Ui.Matrix());
-			if(this.clock != undefined) {
+			if(this.clock !== undefined) {
 				this.clock.stop();
 				this.clock = undefined;
 			}
-			if(this.timer != undefined) {
+			if(this.timer !== undefined) {
 				this.timer.abort();
 				this.timer = undefined;
 			}
@@ -373,21 +378,23 @@ Ui.LBox.extend('Ui.Draggable',
 		this.dragAllowed = false;
 		this.isDown = false;
 		this.setTransform(new Ui.Matrix());
-		if(this.clock != undefined) {
+		if(this.clock !== undefined) {
 			this.clock.stop();
 			this.clock = undefined;
 		}
-		if(this.timer != undefined) {
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}
 
 		if(!this.isDrag) {
 			this.isDrag = false;
-			this.fireEvent('press', this);
-			var currentTime = (new Date().getTime())/1000;
-			if((this.lastPress != undefined) && ((currentTime - this.lastPress) < 0.25)) {
+			var currentTime = (new Date().getTime())/1000;			
+			if((this.lastPress !== undefined) && ((currentTime - this.lastPress) < 0.5)) {
 				this.fireEvent('activate', this);
+			}
+			else {
+				this.fireEvent('press', this);
 			}
 			this.lastPress = currentTime;
 			this.focus();
