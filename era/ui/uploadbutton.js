@@ -12,10 +12,10 @@ Ui.Uploadable.extend('Ui.UploadButton',
 		this.graphic = new Ui.ButtonGraphic();
 		Ui.UploadButton.base.setContent.call(this, this.graphic);
 
-		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
-		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
-		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
-		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
+		this.connect(this, 'down', this.onUploadButtonDown);
+		this.connect(this, 'up', this.onUploadButtonUp);
+		this.connect(this, 'focus', this.onUploadButtonFocus);
+		this.connect(this, 'blur', this.onUploadButtonBlur);
 	},
 
 	getText: function() {
@@ -42,6 +42,22 @@ Ui.Uploadable.extend('Ui.UploadButton',
     /** @param {String} orientation can be 'vertical' or 'horizontal' */
 	setOrientation: function(orientation) {
 		this.graphic.setOrientation(orientation);
+	},
+	
+	onUploadButtonDown: function() {
+		this.graphic.setIsDown(true);
+	},
+		
+	onUploadButtonUp: function() {
+		this.graphic.setIsDown(false);
+	},
+		
+	onUploadButtonFocus: function() {
+		this.graphic.setColor(this.getStyleProperty('focusColor'));
+	},
+		
+	onUploadButtonBlur: function() {
+		this.graphic.setColor(this.getStyleProperty('color'));
 	}
 }, 
 /**@lends Ui.UploadButton#*/
@@ -65,11 +81,11 @@ Ui.Uploadable.extend('Ui.UploadButton',
 		color: '#4fa8ff',
 		focusColor: '#f6caa2',
 		radius: 3,
-		spacing: 3,
+		spacing: 5,
 		iconSize: 24,
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
-		fontWeight: 'bold'
+		fontWeight: 'normal'
 	}
 });
 
