@@ -3,12 +3,13 @@ Ui.Draggable.extend('Ui.Selectionable', {
 	isSelected: false,
 	bg: undefined,
 	contentBox: undefined,
+	handler: undefined,
 
 	constructor: function(config) {
 		
 		this.setData(this);
 		
-		this.bg = new Ui.Rectangle({ fill: '#dddddd', radius: 0, margin: 2 });
+		this.bg = new Ui.Rectangle({ fill: '#dddddd', margin: 2 });
 		this.bg.hide();
 		this.append(this.bg);
 		
@@ -35,7 +36,7 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		
 	// ex:
 	// {
-	//   delete: { text: 'Delete', icon: 'trash', scope: this, callback: this.onDelete, multiple: true },
+	//   delete: { text: 'Delete', icon: 'trash', callback: this.onDelete, multiple: true },
 	//   edit: ...
 	// }
 	getSelectionActions: function() {
@@ -86,25 +87,28 @@ Ui.Draggable.extend('Ui.Selectionable', {
 
 	select: function() {
 		if(this.getIsLoaded()) {
-			var handler = this.getParentSelectionHandler();
-			if(handler !== undefined) {
-				handler.append(this);
+			this.handler = this.getParentSelectionHandler();
+			if(this.handler !== undefined) {
+				this.handler.append(this);
 				this.setIsSelected(true);
 			}
 		}
 	},
 	
 	unselect: function() {
-		if(this.getIsLoaded()) {
-			var handler = this.getParentSelectionHandler();
-			if(handler !== undefined) {
-				handler.remove(this);
-				this.setIsSelected(false);
-			}
+		if(this.handler !== undefined) {
+			this.handler.remove(this);
+			this.setIsSelected(false);
 		}
 	}
 }, {
 	setContent: function(content) {
 		this.contentBox.setContent(content);	
+	},
+	
+	onUnload: function() {
+		if(this.getIsSelected())
+			this.unselect();
+		Ui.Selectionable.base.onUnload.call(this);
 	}
 });
