@@ -26,9 +26,7 @@ Ui.Pressable.extend('Ui.Menu',
 		vbox.append(new Ui.Rectangle({ height: 1, width: 1, fill: '#aaaaaa', marginLeft: 5, marginRight: 5 }));
 
 		this.dialog = new Ui.MenuDialog({ element: this.headerLabel });
-		this.connect(this.dialog, 'item', function(dialog, item) {
-			this.fireEvent('item', this, item);
-		});
+		this.connect(this.dialog, 'item', this.onItemPress);
 		this.connect(this, 'press', this.onTitlePress);
 	},
 
@@ -82,6 +80,10 @@ Ui.Pressable.extend('Ui.Menu',
 
 	close: function() {
 		this.dialog.hide();
+	},
+
+	onItemPress: function(dialog, item) {
+		this.fireEvent('item', this, item);
 	},
 
 	onTitlePress: function() {
@@ -218,9 +220,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 
 		this.pressable = new Ui.Pressable({ padding: 10 });
 		this.append(this.pressable);
-		this.connect(this.pressable, 'press', function() {
-			this.fireEvent('press', this);
-		});
+		this.connect(this.pressable, 'press', this.onItemPress);
 
 		this.connect(this, 'enter', this.onEnter);
 		this.connect(this, 'leave', this.onLeave);
@@ -229,7 +229,6 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 
 		this.connect(this.pressable, 'focus', this.onItemFocus);
 		this.connect(this.pressable, 'blur', this.onItemBlur);
-
 	},
 
 	getIsCurrent: function() {
@@ -265,6 +264,10 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 
 	onItemBlur: function() {
 		this.background.setOpacity(0);
+	},
+	
+	onItemPress: function() {
+		this.fireEvent('press', this);
 	}
 }, {
 	setContent: function(content) {
