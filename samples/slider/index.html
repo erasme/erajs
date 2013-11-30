@@ -32,22 +32,35 @@ app.connect(disableButton, 'press', function() {
 	slider.disable();
 });
 
+var horizontalButton = new Ui.Button({ text: 'horizontal' });
+toolbar.append(horizontalButton);
+app.connect(horizontalButton, 'press', function() {
+	slider.setOrientation('horizontal');
+});
+
+var verticalButton = new Ui.Button({ text: 'vertical' });
+toolbar.append(verticalButton);
+app.connect(verticalButton, 'press', function() {
+	slider.setOrientation('vertical');
+});
+
+
 var vbox2 = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 vbox.append(vbox2, true);
 
 var label = new Ui.Label({ horizontalAlign: 'center', text: 'Value: 0.00' });
 vbox2.append(label);
 
-var slider = new Ui.Slider({ verticalAlign: 'center', horizontalAlign: 'center', width: 200, height: 50 });
+var slider = new Ui.Slider({ verticalAlign: 'center', horizontalAlign: 'center', width: 200, height: 200 });
 vbox2.append(slider);
 
 app.connect(slider, 'change', function() {
 	label.setText('Value: '+slider.getValue().toFixed(2));
 });
 
-var clock = new Anim.Clock({ duration: 4.0, scope: slider,
+var clock = new Anim.Clock({ duration: 4.0,
 	onTimeupdate: function(clock, progress) {
-		this.setValue(progress);
+		slider.setValue(progress);
 	}
 });
 
