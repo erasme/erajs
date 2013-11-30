@@ -153,8 +153,8 @@ Ui.Container.extend('Ui.Popup',
 	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
 
-		var constraintWidth = Math.max(width - 80, 0);
-		var constraintHeight = Math.max(height - 80, 0);
+		var constraintWidth = Math.max(width - 40, 0);
+		var constraintHeight = Math.max(height - 40, 0);
 
 //		if((this.posX != undefined) || (this.attachedElement != undefined)) {
 //			constraintWidth = 0;
@@ -173,7 +173,7 @@ Ui.Container.extend('Ui.Popup',
 		if((this.posX != undefined) || (this.attachedElement != undefined))
 			return { width: size.width, height: size.height };
 		else
-			return { width: Math.max(width, size.width + 80), height: Math.max(height, size.height + 80) };
+			return { width: Math.max(width, size.width + 40), height: Math.max(height, size.height + 40) };
 	},
 
 	arrangeCore: function(width, height) {
@@ -185,11 +185,11 @@ Ui.Container.extend('Ui.Popup',
 		this.shadow.arrange(0, 0, width, height);
 
 		// handle open center screen
-		if((this.posX === undefined) && (this.attachedElement === undefined)) {
+		if(((this.posX === undefined) && (this.attachedElement === undefined)) || (width < 150) || (height < 150)) {
 			this.setCenter(width, height);
 		}
 		// handle open at an element
-		else if(this.attachedElement != undefined) {
+		else if(this.attachedElement !== undefined) {
 			var borders = ['left', 'right', 'top', 'bottom', 'center'];
 			if(this.attachedBorder !== undefined)
 				borders.unshift(this.attachedBorder);
@@ -364,13 +364,13 @@ Ui.Container.extend('Ui.Popup',
 		this.background.setArrowBorder('none');
 
 		if(this.expandable) {
-			this.background.arrange(40, 40, width-80, height-80);
+			this.background.arrange(20, 20, width-40, height-40);
 			this.shadow.setOpacity(1);
-			this.contentBox.arrange(40, 40, width-80, height-80);
+			this.contentBox.arrange(20, 20, width-40, height-40);
 		}
 		else {
 			x = (width - this.contentBox.getMeasureWidth())/2;
-			y = (height - this.contentBox.getMeasureHeight())/2;
+			y = (height - this.contentBox.getMeasureHeight())/2;			
 			this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 			this.shadow.setOpacity(1);
 			this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
