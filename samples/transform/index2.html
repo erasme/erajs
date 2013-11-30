@@ -34,17 +34,17 @@ var app = new Ui.App({
 });
 
 var clock = new Anim.ClockGroup({
-	scope: app.rect, speed: 2, repeat: 2,
+	speed: 2, repeat: 2,
 	content: [{
 		type: Anim.Clock, duration: 4,
 		ease: { type: Anim.ElasticEase, mode: 'out' },
 		onTimeupdate: function(clock, progress) {
-			this.setTransform(Ui.Matrix.createRotate(progress * 360));
+			app.rect.setTransform(Ui.Matrix.createRotate(progress * 360));
 		}
 	}, {
 		type: Anim.Clock, beginTime: 1, duration: 2, autoReverse: true,
 		onTimeupdate: function(clock, progress) {
-			this.setOpacity(1 - progress/2);
+			app.rect.setOpacity(1 - progress/2);
 		}
 	}]
 });
