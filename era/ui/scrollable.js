@@ -649,43 +649,35 @@ Ui.Container.extend('Ui.Scrollable',
 //			var startOffsetX = this.offsetX;
 //			var startOffsetY = this.offsetY;
 		
-			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
-				onTimeupdate: function(clock, progress, delta) {
-//					console.log('onTimeupdate delta: '+delta+', clock: '+clock.getTime());
-					///
-/*					var t = clock.getTime();
-					var x = startOffsetX + (this.speedX * t);
-					var y = startOffsetY + (this.speedY * t);
-					this.setOffset(x, y, true);
-					this.updateOffset();*/
-					///					
-					if(delta === 0)
-						return;
-
-					var oldOffsetX = this.offsetX;
-					var oldOffsetY = this.offsetY;
-
-					var offsetX = this.offsetX + (this.speedX * delta);
-					var offsetY = this.offsetY + (this.speedY * delta);
-					this.setOffset(offsetX, offsetY, true);
-					this.updateOffset();
-
-					this.speedX -= this.speedX * delta * 3;
-					this.speedY -= this.speedY * delta * 3;
-					
-//					console.log('speed: '+this.speedY);
-					
-					if(Math.abs(this.speedX) < 1)
-						this.speedX = 0;
-					if(Math.abs(this.speedY) < 1)
-						this.speedY = 0;
-					
-					if((this.speedX == 0) && (this.speedY == 0))
-						this.stopInertia();
-				}
+			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this,
+				scope: this, onTimeupdate: this.onInertiaTimeupdate
 			});
 			this.inertiaClock.begin();
 		}
+	},
+
+	onInertiaTimeupdate: function(clock, progress, delta) {
+		if(delta === 0)
+			return;
+
+		var oldOffsetX = this.offsetX;
+		var oldOffsetY = this.offsetY;
+
+		var offsetX = this.offsetX + (this.speedX * delta);
+		var offsetY = this.offsetY + (this.speedY * delta);
+		this.setOffset(offsetX, offsetY, true);
+		this.updateOffset();
+
+		this.speedX -= this.speedX * delta * 3;
+		this.speedY -= this.speedY * delta * 3;
+					
+		if(Math.abs(this.speedX) < 1)
+			this.speedX = 0;
+		if(Math.abs(this.speedY) < 1)
+			this.speedY = 0;
+					
+		if((this.speedX == 0) && (this.speedY == 0))
+			this.stopInertia();
 	},
 
 	stopInertia: function() {
