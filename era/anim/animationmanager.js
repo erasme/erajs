@@ -3,6 +3,7 @@ Core.Object.extend('Anim.AnimationManager',
 {
 	clocks: undefined,
 	start: 0,
+	onTickBind: undefined,
 
 	/**
     *   @constructs
@@ -11,15 +12,15 @@ Core.Object.extend('Anim.AnimationManager',
 	*/
 	constructor: function(config) {
 		this.addEvents('tick');
-		this.onTick.scope = this;
 		this.clocks = [];
 		this.start = new Date().getTime();
+		this.onTickBind = this.onTick.bind(this);
 	},
 
 	add: function(clock) {	
 		this.clocks.push(clock);
 		if(this.clocks.length == 1)
-			requestAnimationFrame(this.onTick);
+			requestAnimationFrame(this.onTickBind);
 	},
 
 	remove: function(clock) {
@@ -31,22 +32,21 @@ Core.Object.extend('Anim.AnimationManager',
 
 	forceTick: function() {
 		if(this.clocks.length > 0)
-			this.onTick();
+			this.onTickBind();
 	},
 	
-	/**	@Private*/
-	onTick: function() {
-		var scope = arguments.callee.scope;
+	/**	@private*/
+	onTick: function() {	
 		var startTime = (new Date().getTime())/1000;
 
-		var current = (new Date().getTime()) - scope.start;
+		var current = (new Date().getTime()) - this.start;
 		current /= 1000;
-		for(var i = 0; i < scope.clocks.length; i++)
-			scope.clocks[i].update(current);
-		scope.fireEvent('tick');
+		for(var i = 0; i < this.clocks.length; i++)
+			this.clocks[i].update(current);
+		this.fireEvent('tick');
 
-		if(scope.clocks.length > 0)
-			requestAnimationFrame(scope.onTick);
+		if(this.clocks.length > 0)
+			requestAnimationFrame(this.onTickBind);
 	}
 });
 
@@ -62,3 +62,4 @@ if(!('requestAnimationFrame' in window)) {
 }
 
 Anim.AnimationManager.current = new Anim.AnimationManager();
+
