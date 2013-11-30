@@ -42,10 +42,12 @@ Ui.Pressable.extend('Ui.Uploadable',
 	onPress: function() {
 		if(Ui.UploadableFileWrapper.hasInstance(this.input)) {
 			// delay the task because of the iOS thread problem
-			var task = new Core.DelayedTask({ scope: this, delay: 0, callback: function() {
-				this.input.select();
-			} });
+			new Core.DelayedTask({ delay: 0, scope: this, callback: this.onPressDelayed });
 		}
+	},
+	
+	onPressDelayed: function() {
+		this.input.select();
 	},
 
 	onFile: function(fileWrapper, file) {
