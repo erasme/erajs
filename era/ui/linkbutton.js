@@ -16,10 +16,10 @@ Ui.Linkable.extend('Ui.LinkButton',
 		this.graphic = new Ui.ButtonGraphic();
 		this.setContent(this.graphic);
 
-		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
-		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
-		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
-		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
+		this.connect(this, 'down', this.onLinkButtonDown);
+		this.connect(this, 'up', this.onLinkButtonUp);
+		this.connect(this, 'focus', this.onLinkButtonFocus);
+		this.connect(this, 'blur', this.onLinkButtonBlur);
 	},
 
 	getText: function() {
@@ -46,6 +46,22 @@ Ui.Linkable.extend('Ui.LinkButton',
     /** @param {String} orientation can be 'vertical' or 'horizontal' */
 	setOrientation: function(orientation) {
 		this.graphic.setOrientation(orientation);
+	},
+
+	onLinkButtonDown: function() {	
+		this.graphic.setIsDown(true);
+	},
+	
+	onLinkButtonUp: function() {	
+		this.graphic.setIsDown(false);
+	},
+		
+	onLinkButtonFocus: function() {	
+		this.graphic.setColor(this.getStyleProperty('focusColor'));
+	},
+		
+	onLinkButtonBlur: function() {	
+		this.graphic.setColor(this.getStyleProperty('color'));
 	}
 }, 
 /** @lends Ui.LinkButton# */
