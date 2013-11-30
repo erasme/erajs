@@ -32,7 +32,7 @@ Ui.Pressable.extend('Ui.Combo',
 		this.append(content);
 	
 		this.transitionbox = new Ui.TransitionBox({ duration: 0.25 });
-		content.append(this.transitionbox);
+		content.append(this.transitionbox, true);
 
 		this.placeHolder = new Ui.Label({ horizontalAlign: 'left', margin: 11, marginRight: 0 });
 		this.transitionbox.append(this.placeHolder);
@@ -52,10 +52,10 @@ Ui.Pressable.extend('Ui.Combo',
 
 		this.connect(this, 'press', this.onPress);
 
-		this.connect(this, 'down', function() { this.graphic.setIsDown(true); });
-		this.connect(this, 'up', function() { this.graphic.setIsDown(false); });
-		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
-		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
+		this.connect(this, 'down', this.onComboDown);
+		this.connect(this, 'up', this.onComboUp);
+		this.connect(this, 'focus', this.onComboFocus);
+		this.connect(this, 'blur', this.onComboBlur);
 	},
 
 	setPlaceHolder: function(placeHolder) {
@@ -134,10 +134,34 @@ Ui.Pressable.extend('Ui.Combo',
 
 	onItemPress: function(dialog, item, position) {
 		this.setCurrentAt(position);
+	},
+		
+	onComboDown: function() {
+		this.graphic.setIsDown(true);
+	},
+	
+	onComboUp: function() {
+		this.graphic.setIsDown(false);
+	},
+	
+	onComboFocus: function() {
+		this.graphic.setColor(this.getStyleProperty('focusColor'));
+	},
+	
+	onComboBlur: function() {
+		this.graphic.setColor(this.getStyleProperty('color'));
 	}
 }, 
 /** @lends Ui.Combo# */
 {
+	onDisable: function() {
+		this.transitionbox.setOpacity(0.2);
+	},
+	
+	onEnable: function() {
+		this.transitionbox.setOpacity(1);
+	},
+
 	onStyleChange: function() {
 		this.graphic.setRadius(this.getStyleProperty('radius'));
 		this.graphic.setSpacing(this.getStyleProperty('spacing'));
@@ -209,9 +233,7 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 
 		this.pressable = new Ui.Pressable({ padding: 10, paddingLeft: 10, paddingRight: 10 });
 		this.append(this.pressable);
-		this.connect(this.pressable, 'press', function() {
-			this.fireEvent('press', this);
-		});
+		this.connect(this.pressable, 'press', this.onPressablePress);
 
 		this.connect(this, 'enter', this.onEnter);
 		this.connect(this, 'leave', this.onLeave);
@@ -237,6 +259,10 @@ Ui.MouseOverable.extend('Ui.ComboItem', {
 
 	onUp: function() {
 		this.background.setOpacity(0);
+	},
+	
+	onPressablePress: function() {
+		this.fireEvent('press', this);
 	}
 }, {
 	setContent: function(content) {
