@@ -74,7 +74,7 @@ Ui.LBox.extend('Ui.Pressable',
 		event.stopPropagation();
 
 		// if the user move to much, release the touch event
-		if(delta > 10) {
+		if(delta > 20) {
 			this.onUp();
 
 			if('createEvent' in document) {
@@ -133,7 +133,7 @@ Ui.LBox.extend('Ui.Pressable',
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		// if the user move to much, release the touch event
-		if(delta > 20) {
+		if(delta > 40) {
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 			this.onUp();
