@@ -1,5 +1,5 @@
 
-Ui.HBox.extend('Ui.ContextBar', {
+Ui.LBox.extend('Ui.ContextBar', {
 	selection: undefined,
 	counter: undefined,
 	actionsBox: undefined,
@@ -8,27 +8,25 @@ Ui.HBox.extend('Ui.ContextBar', {
 		this.selection = config.selection;
 		delete(config.selection);
 		
-		this.setSpacing(5);
+		this.append(new Ui.Rectangle({ fill: '#1070FF', opacity: 0.2 }));
+		
+		var hbox = new Ui.HBox({ spacing: 5 });
+		this.append(hbox);
 		
 		var closeButton = new Ui.Pressable({ margin: 5 });
 		closeButton.setContent(
 			new Ui.Icon({ icon: 'close', width: 30, height: 30, verticalAlign: 'center', fill: '#444444' })
 		);
-		this.append(closeButton);
+		hbox.append(closeButton);
 		this.connect(closeButton, 'press', this.onClosePress);
 		
-		var lbox = new Ui.LBox({ width: 30 });
-		this.append(lbox);
 		this.counter = new Ui.Label({
 			horizontalAlign: 'center', verticalAlign: 'center', fontSize: 24, color: '#444444'
 		});
-		lbox.setContent(this.counter);
+		hbox.append(this.counter);
 		
-		var sep = new Ui.Separator();
-		this.append(sep);
-		
-		this.actionsBox = new Ui.MenuToolBar({ spacing: 5, menuPosition: 'left', itemsAlign: 'right' });
-		this.append(this.actionsBox, true);
+		this.actionsBox = new Ui.MenuToolBar({ spacing: 5, menuPosition: 'left', itemsAlign: 'right', uniform: true });
+		hbox.append(this.actionsBox, true);
 		
 		this.connect(this.selection, 'change', this.onSelectionChange);
 	},
@@ -44,14 +42,14 @@ Ui.HBox.extend('Ui.ContextBar', {
 		var actions = this.selection.getActions();
 		
 		this.actionsBox.clear();
-		var first = true;
 		for(var actionName in actions) {
 			var action = actions[actionName];
 			if(action.hidden === true)
 				continue;
 			var dropbox = new Ui.DropBox();
 			dropbox.dialogContextBarAction = action;
-			dropbox.addMimetype(this.selection.getElements()[0].classType);
+			dropbox.addMimetype(this.selection.getElements()[0].getMimetype());
+			//dropbox.addMimetype(this.selection.getElements()[0].classType);
 			//console.log('dropbox allow: '+this.selection.getElements()[0].classType);
 			this.connect(dropbox, 'drop', this.onDrop);
 			
@@ -61,10 +59,6 @@ Ui.HBox.extend('Ui.ContextBar', {
 			this.connect(pressable, 'press', this.onActionPress);
 			var hbox = new Ui.HBox({ spacing: 5 });
 			pressable.setContent(hbox);
-			if(first)
-				first = false;
-			else
-				this.actionsBox.append(new Ui.Separator({ width: 1 }));
 			var color;
 			if('color' in action)
 				color = Ui.Color.create(action.color);
