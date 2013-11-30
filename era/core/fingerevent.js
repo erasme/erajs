@@ -199,7 +199,6 @@ Core.Object.extend('Core.FingerManager',
 				this.touches[event.touches[i].identifier] = finger;
 			}
 		}
-
 		if(event.dontPreventDefault !== true)
 			event.preventDefault();
 		event.stopPropagation();
