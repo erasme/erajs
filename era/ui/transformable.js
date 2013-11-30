@@ -296,7 +296,7 @@ Ui.LBox.extend('Ui.Transformable',
 		this.speedY = 0;
 		this.speedAngle = 0;
 		this.speedComputed = false;
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, scope: this, onTimeupdate: this.measureSpeed });
+		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, onTimeupdate: this.measureSpeed });
 	},
 
 	stopComputeInertia: function() {
@@ -319,41 +319,44 @@ Ui.LBox.extend('Ui.Transformable',
 
 	startInertia: function() {
 		if(this.inertiaClock === undefined) {
-			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
-				onTimeupdate: function(clock, progress, delta) {
-					if(delta == 0)
-						return;
-
-					var oldTranslateX = this.translateX;
-					var oldTranslateY = this.translateY;
-
-					var translateX = this.translateX + (this.speedX * delta);
-					var translateY = this.translateY + (this.speedY * delta);
-
-					var angle = this.angle + (this.speedAngle * delta);
-
-					this.setContentTransform(translateX, translateY, undefined, angle);
-
-					if((this.translateX == oldTranslateX) && (this.translateY == oldTranslateY)) {
-						this.stopInertia();
-						return;
-					}
-					this.speedX -= this.speedX * delta * 3;
-					this.speedY -= this.speedY * delta * 3;
-
-					this.speedAngle -= this.speedAngle * delta * 3;
-
-					if(Math.abs(this.speedX) < 0.1)
-						this.speedX = 0;
-					if(Math.abs(this.speedY) < 0.1)
-						this.speedY = 0;
-					if((this.speedX == 0) && (this.speedY == 0))
-						this.stopInertia();
-				}
+			this.inertiaClock = new Anim.Clock({
+				duration: 'forever', scope: this, target: this, onTimeupdate: this.onTimeupdate
 			});
 			this.inertiaClock.begin();
 		}
 	},
+
+	onTimeupdate: function(clock, progress, delta) {
+		if(delta == 0)
+			return;
+
+		var oldTranslateX = this.translateX;
+		var oldTranslateY = this.translateY;
+
+		var translateX = this.translateX + (this.speedX * delta);
+		var translateY = this.translateY + (this.speedY * delta);
+
+		var angle = this.angle + (this.speedAngle * delta);
+
+		this.setContentTransform(translateX, translateY, undefined, angle);
+
+		if((this.translateX == oldTranslateX) && (this.translateY == oldTranslateY)) {
+			this.stopInertia();
+			return;
+		}
+		this.speedX -= this.speedX * delta * 3;
+		this.speedY -= this.speedY * delta * 3;
+
+		this.speedAngle -= this.speedAngle * delta * 3;
+
+		if(Math.abs(this.speedX) < 0.1)
+			this.speedX = 0;
+		if(Math.abs(this.speedY) < 0.1)
+			this.speedY = 0;
+		if((this.speedX == 0) && (this.speedY == 0))
+			this.stopInertia();
+	},
+
 
 	stopInertia: function() {
 		if(this.inertiaClock != undefined) {
