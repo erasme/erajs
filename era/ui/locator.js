@@ -19,23 +19,24 @@ Ui.Container.extend('Ui.Locator',
 	},
 
 	setPath: function(path) {
+		var spacing = this.getStyleProperty('spacing');
+		var radius = this.getStyleProperty('radius');
+	
 		this.path = path;
 		// remove all children
 		while(this.getChildren().length > 0)
 			this.removeChild(this.getChildren()[0]);
 
-		this.border = new Ui.Rectangle({ fill: '#888888' });
+		this.border = new Ui.Rectangle({ fill: '#888888', radius: radius });
 		this.appendChild(this.border);
 
 		this.backgrounds = [];
 		this.foregrounds = [];
 
 		var button;
-		var spacing = this.getStyleProperty('spacing');
-		var fillColor = this.getColor();
 
 		if(path == '/') {
-			var bg = new Ui.Rectangle();
+			var bg = new Ui.Rectangle({ radius: radius-1 });
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
@@ -65,14 +66,14 @@ Ui.Container.extend('Ui.Locator',
 			paths = cleanPaths;
 			
 			// create all bgs
-			var bg = new Ui.LocatorRightArrow({ arrowLength: spacing });
+			var bg = new Ui.LocatorRightArrow({ arrowLength: spacing, radius: radius-1 });
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
 			for(var i = 0; i < paths.length; i++) {
 				var bg;
 				if(i == paths.length -1)
-					bg = new Ui.LocatorLeftArrow({ arrowLength: spacing });
+					bg = new Ui.LocatorLeftArrow({ arrowLength: spacing, radius: radius-1 });
 				else
 					bg = new Ui.LocatorLeftRightArrow({ arrowLength: spacing });
 				this.backgrounds.push(bg);
@@ -91,6 +92,8 @@ Ui.Container.extend('Ui.Locator',
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);
+			fg.locatorPos = 0;
+			fg.locatorPath = '/';
 			fg.appendChild(home);
 
 			this.foregrounds.push(fg);
@@ -104,12 +107,13 @@ Ui.Container.extend('Ui.Locator',
 				this.connect(fg, 'down', this.onPathDown);
 				this.connect(fg, 'up', this.onPathUp);
 				fg.locatorPath = currentPath;
-				fg.appendChild(new Ui.Label({ text: paths[i], margin: 7 }));
+				fg.appendChild(new Ui.Label({ text: paths[i], margin: 5, verticalAlign: 'center' }));
 				this.foregrounds.push(fg);
 				this.appendChild(fg);
 				currentPath += '/';
 			}
 		}
+		this.updateColors();
 	},
 
 	getPath: function() {
@@ -148,7 +152,7 @@ Ui.Container.extend('Ui.Locator',
 	},
 
 	onPathPress: function(pathItem) {
-		this.fireEvent('change', this, pathItem.locatorPath);
+		this.fireEvent('change', this, pathItem.locatorPath, pathItem.locatorPos);
 	},
 
 	onPathDown: function(pathItem) {
@@ -181,7 +185,7 @@ Ui.Container.extend('Ui.Locator',
 		this.border.measure(0, 0);
 
 		if(this.foregrounds.length == 1)
-			return { width: this.foregrounds[0].getMeasureWidth()+6, height: this.foregrounds[0].getMeasureHeight()+6 };
+			return { width: this.foregrounds[0].getMeasureWidth()+2, height: this.foregrounds[0].getMeasureHeight()+2 };
 		else {
 			var minWidth = 0;
 			var minHeight = 0;
@@ -222,7 +226,7 @@ Ui.Container.extend('Ui.Locator',
 		this.border.arrange(0, 0, width, height);
 	},
 	
-	onStyleChange: function() {
+	onStyleChange: function() {	
 		var spacing = this.getStyleProperty('spacing');
 		var radius = this.getStyleProperty('radius');
 		for(var i = 0; i < this.backgrounds.length; i++) {
@@ -243,11 +247,12 @@ Ui.Container.extend('Ui.Locator',
 	}
 });
 
-Ui.Shape.extend('Ui.LocatorRightArrow', 
+Ui.CanvasElement.extend('Ui.LocatorRightArrow', 
 /**@lends Ui.LocatorRightArrow#*/
 {
 	radius: 8,
 	length: 10,
+	fill: undefined,
 	
 	/**
 	 * @constructs
@@ -255,6 +260,7 @@ Ui.Shape.extend('Ui.LocatorRightArrow',
 	 * @extends Ui.Shape
 	 */
 	constructor: function(config) {
+		this.fill = new Ui.Color();
 	},
 
 	setRadius: function(radius) {
@@ -265,16 +271,24 @@ Ui.Shape.extend('Ui.LocatorRightArrow',
 	setArrowLength: function(length) {
 		this.length = length;
 		this.invalidateArrange();
+	},
+	
+	setFill: function(color) {
+		this.fill = Ui.Color.create(color);
+		this.invalidateDraw();
 	}
 }, 
 /**@lends Ui.LocatorRightArrow#*/
 {
-	arrangeCore: function(width, height) {
-		Ui.LocatorRightArrow.base.arrangeCore.call(this, width, height);
+	updateCanvas: function(ctx) {
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
 		var v1 = width - this.length;
 		var v2 = height/2;
 		var v3 = height-this.radius;
-		this.setPath('M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' Q0,'+height+' 0,'+v3+' L0,'+this.radius+' Q0,0 '+this.radius+',0 z');
+		this.svgPath('M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' Q0,'+height+' 0,'+v3+' L0,'+this.radius+' Q0,0 '+this.radius+',0 z');
+		ctx.fillStyle = this.fill.getCssRgba();
+		ctx.fill();
 	}
 });
 
