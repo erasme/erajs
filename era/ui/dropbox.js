@@ -165,7 +165,7 @@ Ui.LBox.extend('Ui.DropBox',
 				// accept the drop
 				event.preventDefault();
 				event.stopPropagation();
-				this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y);
+				this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
 			}
 /*
 			// handle "text encoded" mimetypes
