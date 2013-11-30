@@ -223,14 +223,19 @@ Ui.LBox.extend('Ui.HPanedCursor',
 	*	@extends Ui.LBox
 	*/
 	constructor: function(config) {
-		var hbox = new Ui.HBox({ verticalAlign: 'center', height: 30 });
-		this.append(hbox);
+		this.append(new Ui.Frame({ frameWidth: 1, radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }) }));
+		this.append(new Ui.Rectangle({ radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.05 }) }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), width: 1, margin: 5, marginRight: 10, height: 30, verticalAlign: 'center' }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), width: 1, margin: 5, marginLeft: 10, height: 30, verticalAlign: 'center' }));
+		
+//		var hbox = new Ui.HBox({ verticalAlign: 'center', height: 30 });
+//		this.append(hbox);
 
-		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), width: 1, marginLeft: 10 }));
-		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), width: 1 }));
+//		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), width: 1, marginLeft: 10 }));
+//		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), width: 1 }));
 
-		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), width: 1, marginLeft: 5 }));
-		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), width: 1, marginRight: 10 }));
+//		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), width: 1, marginLeft: 5 }));
+//		hbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), width: 1, marginRight: 10 }));
 	}
 });
 
@@ -243,13 +248,18 @@ Ui.LBox.extend('Ui.VPanedCursor',
 	*	@extends Ui.LBox
 	*/
 	constructor: function(config) {
-		var vbox = new Ui.VBox({ horizontalAlign: 'center', width: 30 });
-		this.append(vbox);
+		this.append(new Ui.Frame({ frameWidth: 1, radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }) }));
+		this.append(new Ui.Rectangle({ radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.05 }) }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), height: 1, margin: 5, marginTop: 10, width: 30, horizontalAlign: 'center' }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), height: 1, margin: 5, marginBottom: 10, width: 30, horizontalAlign: 'center' }));
+	
+//		var vbox = new Ui.VBox({ horizontalAlign: 'center', width: 30 });
+//		this.append(vbox);
 
-		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), height: 1, marginTop: 10 }));
-		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), height: 1 }));
+//		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), height: 1, marginTop: 10 }));
+//		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), height: 1 }));
 
-		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), height: 1, marginTop: 5 }));
-		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), height: 1, marginBottom: 10 }));
+//		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.6 }), height: 1, marginTop: 5 }));
+//		vbox.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0.31, g: 0.66, b: 1, a: 0.6 }), height: 1, marginBottom: 10 }));
 	}
 });
