@@ -12,12 +12,12 @@ Ui.Togglable.extend('Ui.ToggleButton',
 		this.graphic = new Ui.ButtonGraphic();
 		this.append(this.graphic);
 
-		this.connect(this, 'down', function() {	this.graphic.setIsDown(true); });
-		this.connect(this, 'up', function() { this.graphic.setIsDown(this.getIsDown() || this.getIsToggled()); });
-		this.connect(this, 'toggle', function() { this.graphic.setContentColor(this.getStyleProperty('toggleColor')); });
-		this.connect(this, 'untoggle', function() { this.graphic.setContentColor(undefined);  this.graphic.setIsDown(this.getIsDown()); });
-		this.connect(this, 'focus', function() { this.graphic.setColor(this.getStyleProperty('focusColor')); });
-		this.connect(this, 'blur', function() { this.graphic.setColor(this.getStyleProperty('color')); });
+		this.connect(this, 'down', this.onToggleButtonDown);
+		this.connect(this, 'up', this.onToggleButtonUp);
+		this.connect(this, 'toggle', this.onToggleButtonToggle);
+		this.connect(this, 'untoggle', this.onToggleButtonUntoggle);
+		this.connect(this, 'focus', this.onToggleButtonFocus);
+		this.connect(this, 'blur', this.onToggleButtonBlur);
 	},
 
 	getText: function() {
@@ -42,6 +42,30 @@ Ui.Togglable.extend('Ui.ToggleButton',
 
 	setOrientation: function(orientation) {
 		this.graphic.setOrientation(orientation);
+	},
+	
+	onToggleButtonDown: function() {
+		this.graphic.setIsDown(true);
+	},
+	
+	onToggleButtonUp: function() {
+		this.graphic.setIsDown(this.getIsDown() || this.getIsToggled());
+	},
+	
+	onToggleButtonToggle: function() {
+		this.graphic.setContentColor(this.getStyleProperty('toggleColor'));
+	},
+	
+	onToggleButtonUntoggle: function() {
+		this.graphic.setContentColor(undefined);  this.graphic.setIsDown(this.getIsDown());
+	},
+	
+	onToggleButtonFocus: function() {
+		this.graphic.setColor(this.getStyleProperty('focusColor'));
+	},
+	
+	onToggleButtonBlur: function() {
+		this.graphic.setColor(this.getStyleProperty('color'));
 	}
 }, 
 /**@lends Ui.ToggleButton#*/
