@@ -250,12 +250,13 @@ Ui.Container.extend('Ui.MenuToolBar',
 		var dialog = new Ui.MenuToolBarPopup({ expandable: true });
 		var scroll = new Ui.ScrollingArea();
 		dialog.setContent(scroll);
-		var vbox = new Ui.VBox({ spacing: this.spacing, margin: 10 });
-		scroll.setContent(vbox);
+		//var vbox = new Ui.VBox({ spacing: this.spacing, margin: 10 });
+		var flow = new Ui.Flow({ spacing: this.spacing, margin: 10 });
+		scroll.setContent(flow);
 		for(var i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
 			if(item.getParent() !== this)
-				vbox.append(item);
+				flow.append(item);
 		}
 		dialog.show(this.menuButton, 'bottom');
 	}
