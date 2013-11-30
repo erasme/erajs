@@ -541,11 +541,11 @@ Ui.LBox.extend('Ui.App',
 //		console.log('update task: '+this.updateTask);
 
 		// update measure
-//		var innerWidth = window.innerWidth;
-//		var innerHeight = window.innerHeight;
+		var innerWidth = window.innerWidth;
+		var innerHeight = window.innerHeight;
 
-		var innerWidth = document.body.clientWidth;
-		var innerHeight = document.body.clientHeight;
+//		var innerWidth = document.body.clientWidth;
+//		var innerHeight = document.body.clientHeight;
 		if(navigator.iOs)
 			innerHeight = this.bottomMarker.offsetTop - document.body.scrollTop;
 
