@@ -34,7 +34,7 @@ app.connect(stopButton, 'press', function() {
 var delayplayButton = new Ui.Button({ text: 'delay play 1s' });
 toolbar.append(delayplayButton);
 app.connect(delayplayButton, 'press', function() {
-	new Core.DelayedTask({ delay: 1, scope: this, callback: function() {
+	new Core.DelayedTask({ delay: 1, callback: function() {
 		video.play();
 	}});
 });
