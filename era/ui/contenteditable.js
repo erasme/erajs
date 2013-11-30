@@ -72,9 +72,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onTouchEndCapture: function() {
-		new Core.DelayedTask({ scope: this, delay: 0, callback: function() {
-			this.testAnchorChange();
-		}});
+		new Core.DelayedTask({ delay: 0, scope: this, callback: this.testAnchorChange });
 	},
 
 	onTouchStart: function(event) {
@@ -88,7 +86,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 				this.timer.abort();
 				this.timer = undefined;
 			}
-			this.timer = new Core.DelayedTask({	delay: 0.5, scope: this, callback: this.onTimer });
+			this.timer = new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.onTimer });
 		}
 	},
 
@@ -138,7 +136,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.timer.abort();
 			this.timer = undefined;
 		}
-		this.timer = new Core.DelayedTask({	delay: 0.25, scope: this, callback: this.onTimer });
+		this.timer = new Core.DelayedTask({ delay: 0.25, scope: this, callback: this.onTimer });
 	},
 
 	onHtmlBlur: function(event) {
@@ -165,7 +163,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.timer = undefined;
 		}
 		this.allowSelect = false;
-		this.timer = new Core.DelayedTask({	delay: 0.50, scope: this, callback: this.onTimer });
+		this.timer = new Core.DelayedTask({ delay: 0.50, scope: this, callback: this.onTimer });
 
 		this.screenX = event.screenX;
 		this.screenY = event.screenY;
