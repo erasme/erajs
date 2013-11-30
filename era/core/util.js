@@ -219,12 +219,27 @@ String.prototype.fromBase64 = function() {
 	return res.utf8Decode();
 };
 
-//Implement trim if it's not natively available
-//Code from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String/Trim#Compatibility
+// Implement trim if it's not natively available
+// Code from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String/Trim#Compatibility
 if(!String.prototype.trim) {
-  String.prototype.trim = function () {
-    return this.replace(/^\s+|\s+$/g,'');
-  };
+	String.prototype.trim = function () {
+		return this.replace(/^\s+|\s+$/g,'');
+	};
+}
+
+// Implement bind function if not supported
+if(!Function.prototype.bind) {
+	Function.prototype.bind = function(obj) {
+    	if(typeof(obj) !== 'function')
+      		throw('bind first argument need to be a function');
+      	var scope = obj;
+      	var callback = this;
+      	var args = arguments.slice(1);
+ 		var wrapper = function() {
+ 			return callback.apply(scope, args.concat(arguments));
+		};
+		return wrapper;
+  	};
 }
 
 navigator.supportVML = false;
