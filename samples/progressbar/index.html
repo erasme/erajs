@@ -24,9 +24,9 @@ var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', horizontalAlign:
 
 vbox.append(progressbar, true);
 
-var clock = new Anim.Clock({ scope: progressbar, duration: 4.0,
+var clock = new Anim.Clock({ duration: 4.0,
 	onTimeupdate: function(clock, progress) {
-		this.setValue(progress);
+		progressbar.setValue(progress);
 	}
 });
 
