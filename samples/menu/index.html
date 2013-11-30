@@ -5,45 +5,62 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-var app = new Ui.App();
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
 
-var vbox = new Ui.VBox();
-app.setContent(vbox);
+		var menubar = new Ui.MenuBar();
+		vbox.append(menubar);
 
-var menubar = new Ui.MenuBar();
-vbox.append(menubar);
+		var menu = new Ui.Menu({ header: 'File' });
+		menu.appendItem('Item 1', this.onItem1Selected);
+		menu.appendItem('Item 2');
+		menu.appendItem('Item 3');
+		menu.appendSeparator();
+		menu.appendItem('Exit');
+		menubar.append(menu);
 
-var menu = new Ui.Menu({ header: 'File' });
-menu.appendItem('Item 1', function() {
-	console.log('select Item 1 '+this);
+		var menu2 = new Ui.Menu({ header: 'Edition', items: [
+			{ item: 'Funny 1', callback: this.onFunny1Selected },
+			{ item: 'Funny 2', callback: this.onFunny2Selected },
+			{ item: 'Funny 3' }
+		] });
+		menubar.append(menu2);
+
+		var menu3 = new Ui.Menu({ header: 'Preferences' });
+		menu3.appendItem(new Ui.Label({ text: 'Pref 1', horizontalAlign: 'left' }));
+		menu3.appendItem(new Ui.Label({ text: 'Pref 2', horizontalAlign: 'left' }));
+		menu3.appendItem(new Ui.Label({ text: 'Pref 3', horizontalAlign: 'left' }));
+		menubar.append(menu3);
+
+		var menu4 = new Ui.Menu({ header: 'Long menu' });
+		for(var i = 0; i < 35; i++) {
+			menu4.appendItem(new Ui.Label({ text: 'Long long item '+i, horizontalAlign: 'left' }));
+		}
+		menubar.append(menu4);
+		this.connect(menu4, 'item', this.onMenu4Selected);
+	},
+
+	onItem1Selected: function(menu, item) {
+		console.log('Item 1 '+this);
+	},
+
+	onFunny1Selected: function(menu, item) {
+		console.log('Funny 1 '+this);
+	},
+
+	onFunny2Selected: function(menu, item) {
+		console.log('Funny 2 '+this);
+	},
+
+	onMenu4Selected: function(menu, item) {
+		console.log('Menu item: '+item.getText());
+	}
 });
-menu.appendItem('Item 2');
-menu.appendItem('Item 3');
-menu.appendSeparator();
-menu.appendItem('Exit');
-menubar.append(menu);
 
-var menu2 = new Ui.Menu({ header: 'Edition', scope: app, items: [
-	{ item: 'Funny 1', callback: function() { console.log('Funny 1 '+this); } },
-	{ item: 'Funny 2', callback: function() { console.log('Funny 2 '+this); }, scope: menubar },
-	{ item: 'Funny 3' }
-] });
-menubar.append(menu2);
+new Test.App();
 
-var menu3 = new Ui.Menu({ header: 'Preferences' });
-menu3.appendItem(new Ui.Label({ text: 'Pref 1', horizontalAlign: 'left' }));
-menu3.appendItem(new Ui.Label({ text: 'Pref 2', horizontalAlign: 'left' }));
-menu3.appendItem(new Ui.Label({ text: 'Pref 3', horizontalAlign: 'left' }));
-menubar.append(menu3);
-
-var menu4 = new Ui.Menu({ header: 'Long menu' });
-for(var i = 0; i < 35; i++) {
-	menu4.appendItem(new Ui.Label({ text: 'Long long item '+i, horizontalAlign: 'left' }));
-}
-menubar.append(menu4);
-app.connect(menu4, 'item', function(menu, item) {
-	console.log('Menu item: '+item.getText());
-});
 
 </script>
   </head>
