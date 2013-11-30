@@ -413,7 +413,7 @@ Core.Object.extend('Ui.Element',
 
 			this.drawing.style.left = Math.round(this.layoutX)+'px';
 			this.drawing.style.top = Math.round(this.layoutY)+'px';
-			if(this.transform != undefined)
+			if(this.transform !== undefined)
 				this.updateTransform();
 			this.drawing.style.width = Math.round(this.layoutWidth)+'px';
 			this.drawing.style.height = Math.round(this.layoutHeight)+'px';
@@ -474,6 +474,8 @@ Core.Object.extend('Ui.Element',
 	 * to be updated
 	 */
 	invalidateDraw: function() {
+		if(Ui.App.current === undefined)
+			return;
 //		console.log(this+'.invalidateDraw isVisible: '+this.getIsVisible()+', isLoaded: '+this.getIsLoaded()+', drawValid: '+this.drawValid);
 //		console.log('requestAnimationFrame: '+window.requestAnimationFrame);
 		
@@ -1295,8 +1297,12 @@ Core.Object.extend('Ui.Element',
 		if(this.animClock != undefined)
 			this.animClock.stop();
 		this.animClock = clock;
-		if(clock != undefined)
-			this.connect(clock, 'complete', function() { this.animClock = undefined; });
+		if(clock !== undefined)
+			this.connect(clock, 'complete', this.onAnimClockComplete);
+	},
+
+	onAnimClockComplete: function() {
+		this.animClock = undefined;
 	},
 
 	onLoad: function() {	
