@@ -21,7 +21,6 @@ Ui.Element.extend('Ui.CompactLabel',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.setColor('black');
 	},
 
 	getSuperCompact: function() {
@@ -64,7 +63,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	setText: function(text) {
-		if(this.text != text) {
+		if(this.text !== text) {
 			this.text = text;
 			this.isMeasureValid = false;
 			this.invalidateMeasure();
@@ -130,7 +129,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	getColor: function() {
-		if(this.color != undefined)
+		if(this.color !== undefined)
 			return this.color;
 		else
 			return Ui.Color.create(this.getStyleProperty('color'));
@@ -345,7 +344,7 @@ Ui.Element.extend('Ui.CompactLabel',
 		return this.textDrawing;
 	},
 
-	onStyleChange: function() {
+	onStyleChange: function() {	
 		this.textDrawing.style.fontSize = this.getFontSize()+'px';
 		this.textDrawing.style.fontFamily = this.getFontFamily();
 		this.textDrawing.style.fontWeight = this.getFontWeight();
