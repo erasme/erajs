@@ -98,22 +98,18 @@ Core.Object.extend('Core.HttpRequest',
 			for(var header in this.headers)
 				this.request.setRequestHeader(header, this.headers[header]);
 		}
-		if((this.method == 'POST') || (this.method == 'PUT')) {
-			if(this.content == undefined) {
-				if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
-					this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-				this.request.send(args);
-			}
-			else {
-				if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
-					this.request.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
-				this.request.send(this.content);
-			}
+		if(this.content !== undefined) {
+			if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
+				this.request.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
+			this.request.send(this.content);
 		}
-		// GET, DELETE... method
-		else {
-			this.request.send();
+		else if((args !== '') && ((this.method == 'POST') || (this.method == 'PUT'))) {
+			if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
+				this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			this.request.send(args);
 		}
+		else
+			this.request.send();		
 	},
 
 	getResponseHeader: function(header) {
