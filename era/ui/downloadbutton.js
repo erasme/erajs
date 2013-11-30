@@ -12,7 +12,11 @@ Ui.LinkButton.extend('Ui.DownloadButton',
      */ 
 	constructor: function(config) {
 		this.addEvents('download');
-		this.connect(this, 'link', function() { this.fireEvent('download', this); });
+		this.connect(this, 'link', this.onLinkPress);
+	},
+	
+	onLinkPress: function() {
+		this.fireEvent('download', this);
 	}
 });
 
