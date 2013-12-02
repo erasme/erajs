@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Upload File</title>
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+//
+// WARNING: the current file directory MUST be writable by your web server
+// and PHP support is needed for this sample to work
+//
+//
+// WARNING: the drag and drop of a file from the desktop only work if
+// your browser support it. Known browser to work:
+//
+// - Firefox 4.0
+// - Chrome 12
+//
+
+var app = new Ui.App();
+
+var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 20 });
+app.setContent(vbox);
+
+//
+// Define a DropBox. The DropBox is a possible target for a file drag.
+//
+var dropbox = new Ui.DropBox({ width: 200, height: 200 });
+// allow drop of files
+dropbox.addMimetype('files');
+
+// fill with content to see something
+dropbox.append(new Ui.Rectangle({ fill: 'lightgreen', radius: 8 }));
+var content = new Ui.VBox({ margin: 10, verticalAlign: 'center', spacing: 10 });
+dropbox.append(content);
+var droplabel = new Ui.Label({ text: 'drop directory here' });
+content.append(droplabel);
+var progressbar = new Ui.ProgressBar();
+progressbar.hide();
+content.append(progressbar);
+vbox.append(dropbox);
+
+function onProgress(element, current, total) {
+	progressbar.setValue(current/total);
+}
+
+function onComplete(element) {
+	progressbar.hide();
+	droplabel.setText('drop directory here');
+}
+
+function onUploadFile(element, file) {
+	console.log('onUploadFile');
+	console.log(file);
+
+	var uploader = new Core.FilePostUploader({ file: file, service: 'upload.php' });
+	droplabel.setText(file.getFileName());
+	progressbar.show();
+	app.connect(uploader, 'progress', onProgress);
+	app.connect(uploader, 'complete', onComplete);
+	uploader.send();
+}
+
+//
+// Connect to the dropfiles event called when files are
+// dropped in the box.
+//
+app.connect(dropbox, 'dropfile', onUploadFile);
+
+//
+// For browser that dont support drag and drop, add and upload button
+//
+var uploadButton = new Ui.UploadButton({ directoryMode: true, icon: 'upload', text: 'Upload', orientation: 'horizontal' });
+vbox.append(uploadButton);
+
+app.connect(uploadButton, 'file', onUploadFile);
+
+</script>
+  </head>
+</html>
