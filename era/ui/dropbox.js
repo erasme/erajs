@@ -114,7 +114,7 @@ Ui.LBox.extend('Ui.DropBox',
 				effectAllowed = event.dataTransfer.effectAllowed;
 			if(effectAllowed == 'uninitialized')
 				effectAllowed = 'all';
-
+			
 			var dropEffect = 'copy';
 			if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
 			   ((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
@@ -127,9 +127,7 @@ Ui.LBox.extend('Ui.DropBox',
 				dropEffect = 'link';
 			else
 				dropEffect = 'none';
-
-//			console.log('effectAllowed: '+effectAllowed+', dropEffect: '+dropEffect);
-
+			
 			event.dataTransfer.dropEffect = dropEffect;
 			event.preventDefault();
 			event.stopPropagation();
@@ -154,7 +152,7 @@ Ui.LBox.extend('Ui.DropBox',
 
 //			console.log('drop files');
 			for(var i = 0; i < event.dataTransfer.files.length; i++)
-				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y);
+				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
 		}
 		else {
 			var mimetype = this.dragMimetype(event);
