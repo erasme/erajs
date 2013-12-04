@@ -113,6 +113,10 @@ Ui.Pressable.extend('Ui.Combo',
 	getCurrent: function() {
 		return this.current;
 	},
+	
+	getValue: function() {
+		return this.current;
+	},
 
 	setCurrent: function(current) {
 		if(current === undefined)
