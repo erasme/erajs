@@ -30,6 +30,7 @@ Ui.LBox.extend('Ui.Draggable',
 	screenX: undefined,
 	screenY: undefined,
 	lock: false,
+	directionDrag: undefined,
 
 	/**
 	 * @constructs
@@ -54,6 +55,15 @@ Ui.LBox.extend('Ui.Draggable',
 		
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
+	},
+
+	/**
+	 * If direction drag is set, allow a drag before the long press
+	 * but only in the given direction. Possible values are:
+	 * horizontal, vertical
+	 */
+	setDirectionDrag: function(direction) {
+		this.directionDrag = direction;
 	},
 
 	setLock: function(lock) {
@@ -250,7 +260,7 @@ Ui.LBox.extend('Ui.Draggable',
 		if(delta > 10) {
 			this.disconnect(window, 'mousemove', this.onMouseMove, true);
 			this.disconnect(window, 'mouseup', this.onMouseUp, true);
-
+		
 			this.isDrag = false;
 			this.isDown = false;
 			this.dragAllowed = false;
@@ -264,12 +274,20 @@ Ui.LBox.extend('Ui.Draggable',
 				this.timer = undefined;
 			}
 
-			var mouseDownEvent = document.createEvent('MouseEvents');
-			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-				event.clientX, event.clientY,
-				event.ctrlKey, event.altKey, event.shiftKey,
-				event.metaKey, 0, event.target);
-			this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+			// allow fast drag when directionDrag is set
+			if((this.directionDrag !== undefined) && (((this.directionDrag === 'horizontal') && (Math.abs(deltaX) > Math.abs(deltaY))) ||
+			   ((this.directionDrag === 'vertical') && (Math.abs(deltaY) > Math.abs(deltaX))))) {
+				this.isDrag = true;
+				this.dragAllowed = true;
+			}
+			else {
+				var mouseDownEvent = document.createEvent('MouseEvents');
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
+					event.clientX, event.clientY,
+					event.ctrlKey, event.altKey, event.shiftKey,
+					event.metaKey, 0, event.target);
+				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
+			}
 		}
 	},
 
@@ -332,12 +350,12 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onFingerMove: function(event) {	
-		event.preventDefault();
-		event.stopPropagation();
-
 		var deltaX = event.finger.getX() - this.screenX;
 		var deltaY = event.finger.getY() - this.screenY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		
+		event.preventDefault();
+		event.stopPropagation();
 		
 		// if the user move to much, release the touch event
 		if(delta > 20) {
@@ -353,6 +371,13 @@ Ui.LBox.extend('Ui.Draggable',
 
 			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
+
+			// allow fast drag when directionDrag is set
+			if((this.directionDrag !== undefined) && (((this.directionDrag === 'horizontal') && (Math.abs(deltaX) > Math.abs(deltaY))) ||
+			   	((this.directionDrag === 'vertical') && (Math.abs(deltaY) > Math.abs(deltaX))))) {
+				this.isDrag = true;
+				this.dragAllowed = true;
+			}
 
 			if(this.dragAllowed) {
 				if(navigator.supportDrag)
