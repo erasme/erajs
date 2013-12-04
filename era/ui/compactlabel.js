@@ -355,7 +355,7 @@ Ui.Element.extend('Ui.CompactLabel',
 		this.invalidateMeasure();
 	},
 
-	measureCore: function(width, height) {
+	measureCore: function(width, height) {	
 		if(!this.isMeasureValid || (this.lastMeasureWidth != width)) {
 			this.lastMeasureWidth = width;
 			var size;
