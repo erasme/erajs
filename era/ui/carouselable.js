@@ -20,6 +20,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		this.addEvents('change', 'press', 'activate');
 		this.setClipToBounds(true);
 		this.setFocusable(true);
+		this.setMoveVertical(false);
 		this.items = [];
 		this.activeItems = [];
 		this.ease = Anim.EasingFunction.create({ type: Anim.PowerEase, mode: 'out' });

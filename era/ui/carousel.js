@@ -51,6 +51,10 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		this.connect(this.buttonNext, 'press', this.onNextPress);
 	},
 
+	setDirectionRelease: function(release) {
+		this.carouselable.setDirectionRelease(release);
+	},
+
 	setAutoPlay: function(delay) {
 		this.carouselable.setAutoPlay(delay);
 	},
