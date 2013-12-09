@@ -3,12 +3,14 @@ Ui.LBox.extend('Ui.ContextBar', {
 	selection: undefined,
 	counter: undefined,
 	actionsBox: undefined,
+	bg: undefined,
 	
 	constructor: function(config) {
 		this.selection = config.selection;
 		delete(config.selection);
-		
-		this.append(new Ui.Rectangle({ fill: '#1070FF', opacity: 0.2 }));
+
+		this.bg = new Ui.Rectangle();
+		this.append(this.bg);
 		
 		var hbox = new Ui.HBox({ spacing: 5 });
 		this.append(hbox);
@@ -86,5 +88,14 @@ Ui.LBox.extend('Ui.ContextBar', {
 		if('scope' in action)
 			scope = action.scope;
 		action.callback.call(scope, this.selection);
+	}
+}, {
+	onStyleChange: function() {
+		console.log(this+".onStyleChange");
+		this.bg.setFill(this.getStyleProperty('background'));
+	}
+}, {
+	style: {
+		background: '#90C0FF'
 	}
 });
