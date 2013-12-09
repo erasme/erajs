@@ -26,13 +26,17 @@ Ui.Container.extend('Ui.MenuToolBar',
 	itemsWidth: 0,
 	keepItems: undefined,
 	menuNeeded: false,
+	bg: undefined,
 
 	constructor: function(config) {
 		this.items = [];
 		
 		this.menuButton = new Ui.MenuToolBarButton();
 		this.connect(this.menuButton, 'press', this.onMenuButtonPress);
-		this.appendChild(this.menuButton);		
+		this.appendChild(this.menuButton);
+
+		this.bg = new Ui.Rectangle();
+		this.appendChild(this.bg);
 	},
 	
 	getUniform: function() {
@@ -284,7 +288,9 @@ Ui.Container.extend('Ui.MenuToolBar',
 //		console.log(this+'.measureCore('+width+','+height+') START');
 
 		this.measureLock = true;
-		
+
+		this.bg.measure(width, height);
+
 		// measure the menu button
 		var buttonSize = this.menuButton.measure(0, 0);
 		
@@ -418,21 +424,24 @@ Ui.Container.extend('Ui.MenuToolBar',
 	},
 
 	arrangeCore: function(width, height) {
+		this.bg.arrange(0, 0, width, height);
+
 		var left = this.paddingLeft;
 		var right = this.paddingRight;
 		var top = this.paddingTop;
 		var bottom = this.paddingBottom;
 		width -= left + right;
 		height -= top + bottom;
-				
-		var x = 0;
+
+		var x = left;
+		var y = top;
 		var first = true;
 		if(this.itemsAlign !== 'left')
 			x = width - this.getMeasureWidth();
 		
 		if(this.menuNeeded && (this.menuPosition === 'left')) {
 			first = false;
-			this.menuButton.arrange(x, 0, this.menuButton.getMeasureWidth(), height);
+			this.menuButton.arrange(x, y, this.menuButton.getMeasureWidth(), height);
 			x += this.menuButton.getMeasureWidth();
 		}
 		
@@ -450,7 +459,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 				if(Ui.MenuToolBar.getResizable(item) && (itemWidth < this.star))
 					itemWidth = this.star;
 			}
-			item.arrange(x, 0, itemWidth, height);
+			item.arrange(x, y, itemWidth, height);
 			x += itemWidth;
 		}
 		
@@ -459,7 +468,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 				first = false;
 			else 				
 				x += this.spacing;
-			this.menuButton.arrange(x, 0, this.menuButton.getMeasureWidth(), height);
+			this.menuButton.arrange(x, y, this.menuButton.getMeasureWidth(), height);
 		}
 		
 		if(!this.menuNeeded)
@@ -472,8 +481,14 @@ Ui.Container.extend('Ui.MenuToolBar',
 //		console.log('onChildInvalidateMeasure lock ? '+this.measureLock+', isValid ? '+this.measureValid);
 		if(this.measureLock !== true)
 			Ui.MenuToolBar.base.onChildInvalidateMeasure.call(this, child, event);
+	},
+	
+	onStyleChange: function() {
+		this.bg.setFill(this.getStyleProperty('background'));
 	}
+	
 }, {
+
 	getResizable: function(child) {
 		return child['Ui.MenuToolBar.resizable']?true:false;
 	},
@@ -483,5 +498,9 @@ Ui.Container.extend('Ui.MenuToolBar',
 			child['Ui.MenuToolBar.resizable'] = resizable;
 			child.invalidateMeasure();
 		}
+	},
+
+	style: {
+		background: 'rgba(255,255,255,0)'
 	}
 });
