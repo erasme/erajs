@@ -110,7 +110,7 @@ Ui.Container.extend('Ui.Popup',
 	visible: false,
 
 	onStyleChange: function() {
-		this.background.setFill(this.getStyleProperty('color'));
+		this.background.setFill(this.getStyleProperty('background'));
 		this.shadow.setFill(this.getStyleProperty('shadowColor'));
 	},
 
@@ -380,7 +380,7 @@ Ui.Container.extend('Ui.Popup',
 /**@lends Ui.Popup*/
 {
 	style: {
-		color: Ui.Color.create('#f8f8f8'),
+		background: Ui.Color.create('#f8f8f8'),
 		shadowColor: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.5 })
 	}
 });
