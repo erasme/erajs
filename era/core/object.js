@@ -143,29 +143,32 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 		}
 	}
 
-	if(classStatic != undefined) {
+	if(classStatic !== undefined) {
 		for(var prop in classStatic)
 			func[prop] = classStatic[prop];
 	}
 
-	for(var prop in classDefine) {
-		if(prop === 'constructor')
-			func.prototype['__constructor'] = classDefine[prop];
-		else {
-			if((typeof(classDefine[prop]) === 'object') && (classDefine[prop] !== null))
-				throw('object are not allowed in classDefine ('+prop+'). Create object in the constructor');
+	if(classDefine !== undefined) {
+		for(var prop in classDefine) {
+			if(prop === 'constructor')
+				func.prototype['__constructor'] = classDefine[prop];
+			else {
+				if((typeof(classDefine[prop]) === 'object') && (classDefine[prop] !== null))
+					throw('object are not allowed in classDefine ('+prop+'). Create object in the constructor');
 
-			if(prop in func.prototype)
-				throw('Try to override '+prop+' on class '+classType+'. Use classOverride you want to do it');
+				if(prop in func.prototype)
+					throw('Try to override '+prop+' on class '+classType+'. Use classOverride you want to do it');
 
-			func.prototype[prop] = classDefine[prop];
+				func.prototype[prop] = classDefine[prop];
+			}
 		}
+		if(classDefine['constructor'] === Object.prototype.constructor)
+			 func.prototype['__constructor'] = undefined;
+		if((navigator.isIE) && (classDefine.constructor !== Object.prototype.constructor))
+				func.prototype['__constructor'] = classDefine.constructor;
 	}
-	if(classDefine['constructor'] === Object.prototype.constructor)
-		 func.prototype['__constructor'] = undefined;
-	if((navigator.isIE) && (classDefine.constructor !== Object.prototype.constructor))
-			func.prototype['__constructor'] = classDefine.constructor;
-	if(classOverride != undefined) {
+
+	if(classOverride !== undefined) {
 		for(var prop in classOverride) {
 			if((typeof(classOverride[prop]) == 'object') && (classOverride[prop] != null))
 				throw('object are not allowed in classOverride ('+prop+'). Create object in the constructor');
@@ -174,7 +177,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 	}
 	func.prototype.classType = classType;
 
-	if((classStatic != undefined) && ('constructor' in classStatic))
+	if((classStatic !== undefined) && ('constructor' in classStatic))
 		classStatic.constructor.call(func);
 
 	return func;
