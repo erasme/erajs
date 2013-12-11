@@ -76,61 +76,104 @@ app.connect(defaultButton, 'press', function() {
 });
 
 var blueButton = new Ui.Button({ text: 'blue' });
-blueButton.setStyle({ "Ui.Button": { color: new Ui.Color({ h: 225, s: 0.76, l: 1 }) } });
+blueButton.setStyle({ "Ui.ButtonGraphic": {
+	background: new Ui.Color({ h: 225, s: 0.76, l: 1 }),
+	foreground: new Ui.Color({ h: 225, s: 0.76, l: 3 })
+}});
 toolbar2.append(blueButton);
 app.connect(blueButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ h: 225, s: 0.76, l: 1 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": {
+		background: new Ui.Color({ h: 225, s: 0.76, l: 1 }),
+		foreground: new Ui.Color({ h: 225, s: 0.76, l: 3 })
+	}});
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ h: 225, s: 0.76, l: 1 }) } });
 });
 
 var greenButton = new Ui.Button({ text: 'green' });
-greenButton.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }) } });
+greenButton.setStyle({ "Ui.ButtonGraphic": {
+	background: new Ui.Color({ h: 109, s: 0.76, l: 1 }),
+	foreground: new Ui.Color({ h: 109, s: 0.76, l: 0.4 })
+}});
 toolbar2.append(greenButton);
 app.connect(greenButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": {
+		background: new Ui.Color({ h: 109, s: 0.76, l: 1 }),
+		foreground: new Ui.Color({ h: 109, s: 0.76, l: 0.4 })
+	}});
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ r: 0.68, g: 1, b: 0.18 }) } });
 });
 
 var redButton = new Ui.Button({ text: 'red' });
-redButton.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0.70, g: 0.13, b: 0.13 }) } });
+redButton.setStyle({ "Ui.ButtonGraphic": {
+	background: new Ui.Color({ h: 2, s: 0.76, l: 0.8 }),
+	foreground: new Ui.Color({ h: 2, s: 0.76, l: 0.2 })
+}});
 toolbar2.append(redButton);
 app.connect(redButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0.70, g: 0.13, b: 0.13 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": {
+		background: new Ui.Color({ h: 2, s: 0.76, l: 0.8 }),
+		foreground: new Ui.Color({ h: 2, s: 0.76, l: 0.2 })
+	}});
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ r: 0.70, g: 0.13, b: 0.13 }) } });
 });
 
 var whiteButton = new Ui.Button({ text: 'white' });
-whiteButton.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 1, g: 1, b: 1 }) } });
+whiteButton.setStyle({ "Ui.ButtonGraphic": { background: new Ui.Color({ r: 1, g: 1, b: 1 }) } });
 toolbar2.append(whiteButton);
 app.connect(whiteButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 1, g: 1, b: 1 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": { background: new Ui.Color({ r: 1, g: 1, b: 1 }) } });
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ r: 1, g: 1, b: 1 }) } });
 });
 
 var blackButton = new Ui.Button({ text: 'dark' });
-blackButton.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0.3, g: 0.3, b: 0.3 }) } });
+blackButton.setStyle({ "Ui.ButtonGraphic": {
+	background: new Ui.Color({ h: 0, s: 0, l: 0.5 }),
+	foreground: new Ui.Color({ h: 0, s: 0, l: 0.9 })
+}});
 toolbar2.append(blackButton);
 app.connect(blackButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0.3, g: 0.3, b: 0.3 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": {
+		background: new Ui.Color({ h: 0, s: 0, l: 0.5 }),
+		foreground: new Ui.Color({ h: 0, s: 0, l: 0.9 })
+	}});
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ r: 0.3, g: 0.3, b: 0.3 }) } });
 });
 
 var laclasseButton = new Ui.Button({ text: 'laclasse' });
-laclasseButton.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) } });
+laclasseButton.setStyle({ "Ui.ButtonGraphic": { background: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) } });
 toolbar2.append(laclasseButton);
 app.connect(laclasseButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": { background: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) } });
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ r: 0, g: 0.62, b: 0.87 }) } });
 });
 
 var darkBlueButton = new Ui.Button({ text: 'dark blue' });
-darkBlueButton.setStyle({ "Ui.Button": { color: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) } });
+darkBlueButton.setStyle({ "Ui.ButtonGraphic": {
+	background: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }),
+	foreground: new Ui.Color({ h: 225, s: 0.4, l: 0.9 })
+}});
 toolbar2.append(darkBlueButton);
 app.connect(darkBlueButton, 'press', function() {
-	button.setStyle({ "Ui.Button": { color: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) } });
+	button.setStyle({ "Ui.ButtonGraphic": {
+		background: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }),
+		foreground: new Ui.Color({ h: 225, s: 0.4, l: 0.9 })
+	}});
 	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) } });
 });
 
+var transparentButton = new Ui.Button({ text: 'transparent' });
+transparentButton.setStyle({ "Ui.ButtonGraphic": {
+	background: new Ui.Color({ h: 0, s: 0, l: 1, a: 0 }),
+	foreground: new Ui.Color({ h: 0, s: 0, l: 0.4 })
+}});
+toolbar2.append(transparentButton);
+app.connect(transparentButton, 'press', function() {
+	button.setStyle({ "Ui.ButtonGraphic": {
+		background: new Ui.Color({ h: 0, s: 0, l: 1, a: 0 }),
+		foreground: new Ui.Color({ h: 0, s: 0, l: 0.4 })
+	}});
+	toolbar2.setStyle({ "Ui.ToolBar": { color: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }) } });
+});
 
 var button = new Ui.Button({ icon: 'exit', text: 'click me', orientation: 'horizontal', verticalAlign: 'center', horizontalAlign: 'center' });
 vbox.append(button, true);
