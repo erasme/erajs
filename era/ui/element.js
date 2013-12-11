@@ -266,10 +266,13 @@ Core.Object.extend('Ui.Element',
 		// no need to measure if the element is not loaded
 		if(!this.isLoaded)
 			return;
-//		console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
+		
+		//console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
 
-		if(this.collapse)
+		if(this.collapse) {
+			this.measureValid = true;
 			return { width: 0, height: 0 };
+		}
 
 		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
 			return { width: this.measureWidth, height: this.measureHeight };
@@ -329,7 +332,7 @@ Core.Object.extend('Ui.Element',
 	invalidateMeasure: function() {
 		if(this.measureValid) {
 			this.measureValid = false;
-			if((this.parent != undefined) && (this.parent.measureValid))
+			if((this.parent !== undefined) && (this.parent.measureValid))
 				this.parent.onChildInvalidateMeasure(this, 'change');
 		}
 		this.invalidateArrange();
@@ -1018,7 +1021,7 @@ Core.Object.extend('Ui.Element',
 
 	containSubStyle: function(style) {
 		for(var prop in style) {
-			if((prop.indexOf('.') != -1) && (typeof(style[prop]) == 'object'))
+			if((prop.indexOf('.') !== -1) && (typeof(style[prop]) === 'object'))
 				return true; 
 		}
 		return false;
@@ -1026,10 +1029,10 @@ Core.Object.extend('Ui.Element',
 
 	fusionStyle: function(dst, src) {
 		for(var prop in src) {
-			if((prop.indexOf('.') == -1) || (typeof(src[prop]) != 'object'))
+			if((prop.indexOf('.') === -1) || (typeof(src[prop]) !== 'object'))
 				continue;
 
-			if(dst[prop] != undefined) {
+			if(dst[prop] !== undefined) {
 				var old = dst[prop];
 				dst[prop] = {};
 				for(var prop2 in old)
@@ -1043,49 +1046,33 @@ Core.Object.extend('Ui.Element',
 	},
 
 	mergeStyles: function() {
+//		console.log(this+'.mergeStyles parent: '+this.parentStyle+', style: '+this.style);
+//		console.log(this.parentStyle);
 		this.mergeStyle = undefined;
-		if(this.parentStyle != undefined) {
-			if(this.mergeStyle != undefined) {
-				var old = this.mergeStyle;
-				this.mergeStyle = {};
-				this.fusionStyle(this.mergeStyle, old);
-				this.fusionStyle(this.mergeStyle, this.parentStyle);
-
-				var current = this;
-				while(current != undefined) {
-					if((this.parentStyle[current.classType] != undefined) && (this.containSubStyle(this.parentStyle[current.classType]))) {
-						this.fusionStyle(this.mergeStyle, this.parentStyle[current.classType]);
-						break;
-					}
-					current = current.__baseclass__;
+		if(this.parentStyle !== undefined) {
+			var current = this;
+			var found = false;
+			while(current !== undefined) {
+				if((this.parentStyle[current.classType] !== undefined) && (this.containSubStyle(this.parentStyle[current.classType]))) {
+					if(this.mergeStyle === undefined)
+						this.mergeStyle = Core.Util.clone(this.parentStyle);
+					this.fusionStyle(this.mergeStyle, this.parentStyle[current.classType]);
+					found = true;
+					break;
 				}
+				current = current.__baseclass__;
 			}
-			else {
-				var current = this;
-				var found = false;
-				while(current != undefined) {
-					if((this.parentStyle[current.classType] != undefined) && (this.containSubStyle(this.parentStyle[current.classType]))) {
-						this.mergeStyle = {};
-						this.fusionStyle(this.mergeStyle, this.parentStyle[current.classType]);
-						found = true;
-						break;
-					}
-					current = current.__baseclass__;
-				}
-				if(!found)
-					this.mergeStyle = this.parentStyle;
-			}
+			if(!found)
+				this.mergeStyle = this.parentStyle;
 		}
-		if(this.style != undefined) {
-			if(this.mergeStyle != undefined) {
-				var old = this.mergeStyle;
-				this.mergeStyle = {};
-				this.fusionStyle(this.mergeStyle, old);
+		if(this.style !== undefined) {
+			if(this.mergeStyle !== undefined) {
+				this.mergeStyle = Core.Util.clone(this.mergeStyle);
 				this.fusionStyle(this.mergeStyle, this.style);
 
 				var current = this;
-				while(current != undefined) {
-					if((this.style[current.classType] != undefined) && (this.containSubStyle(this.style[current.classType]))) {
+				while(current !== undefined) {
+					if((this.style[current.classType] !== undefined) && (this.containSubStyle(this.style[current.classType]))) {
 						this.fusionStyle(this.mergeStyle, this.style[current.classType]);
 						break;
 					}
@@ -1095,9 +1082,10 @@ Core.Object.extend('Ui.Element',
 			else {
 				var current = this;
 				var found = false;
-				while(current != undefined) {
-					if((this.style[current.classType] != undefined) && (this.containSubStyle(this.style[current.classType]))) {
-						this.mergeStyle = {};
+				while(current !== undefined) {
+					if((this.style[current.classType] !== undefined) && (this.containSubStyle(this.style[current.classType]))) {
+						if(this.mergeStyle === undefined)
+							this.mergeStyle = Core.Util.clone(this.style);
 						this.fusionStyle(this.mergeStyle, this.style[current.classType]);
 						found = true;
 						break;
@@ -1115,7 +1103,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	setParentStyle: function(parentStyle) {
-		if(this.parentStyle != parentStyle)
+		if(this.parentStyle !== parentStyle)
 			this.parentStyle = parentStyle;
 		this.mergeStyles();
 		this.onInternalStyleChange();
@@ -1128,10 +1116,10 @@ Core.Object.extend('Ui.Element',
 	},
 
 	getStyleProperty: function(property) {
-		if(this.mergeStyle != undefined) {
+		if(this.mergeStyle !== undefined) {
 			var current = this;
 			while(current != undefined) {
-				if((this.mergeStyle[current.classType] != undefined) && (this.mergeStyle[current.classType][property] != undefined))
+				if((this.mergeStyle[current.classType] !== undefined) && (this.mergeStyle[current.classType][property] !== undefined))
 					return this.mergeStyle[current.classType][property];
 				current = current.__baseclass__;
 			}
