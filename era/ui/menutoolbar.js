@@ -30,13 +30,13 @@ Ui.Container.extend('Ui.MenuToolBar',
 
 	constructor: function(config) {
 		this.items = [];
-		
-		this.menuButton = new Ui.MenuToolBarButton();
-		this.connect(this.menuButton, 'press', this.onMenuButtonPress);
-		this.appendChild(this.menuButton);
 
 		this.bg = new Ui.Rectangle();
 		this.appendChild(this.bg);
+
+		this.menuButton = new Ui.MenuToolBarButton();
+		this.connect(this.menuButton, 'press', this.onMenuButtonPress);
+		this.appendChild(this.menuButton);
 	},
 	
 	getUniform: function() {
