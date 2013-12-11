@@ -149,11 +149,11 @@ Ui.Pressable.extend('Ui.Combo',
 	},
 	
 	onComboFocus: function() {
-		this.graphic.setColor(this.getStyleProperty('focusColor'));
+		this.graphic.setHasFocus(true);
 	},
 	
 	onComboBlur: function() {
-		this.graphic.setColor(this.getStyleProperty('color'));
+		this.graphic.setHasFocus(false);
 	}
 }, 
 /** @lends Ui.Combo# */
@@ -164,24 +164,6 @@ Ui.Pressable.extend('Ui.Combo',
 	
 	onEnable: function() {
 		this.transitionbox.setOpacity(1);
-	},
-
-	onStyleChange: function() {
-		this.graphic.setRadius(this.getStyleProperty('radius'));
-		this.graphic.setSpacing(this.getStyleProperty('spacing'));
-		if(this.getHasFocus())
-			this.graphic.setColor(this.getStyleProperty('focusColor'));
-		else
-			this.graphic.setColor(this.getStyleProperty('color'));
-	}
-}, 
-/** @lends Ui.Combo */
-{
-	style: {
-		color: '#eeeeee',
-		focusColor: '#f6caa2',
-		radius: 4,
-		spacing: 3
 	}
 });
 

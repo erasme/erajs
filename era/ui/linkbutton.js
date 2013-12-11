@@ -57,39 +57,11 @@ Ui.Linkable.extend('Ui.LinkButton',
 	},
 		
 	onLinkButtonFocus: function() {	
-		this.graphic.setColor(this.getStyleProperty('focusColor'));
+		this.graphic.setHasFocus(true);
 	},
 		
 	onLinkButtonBlur: function() {	
-		this.graphic.setColor(this.getStyleProperty('color'));
-	}
-}, 
-/** @lends Ui.LinkButton# */
-{
-	onStyleChange: function() {
-		this.graphic.setRadius(this.getStyleProperty('radius'));
-		this.graphic.setSpacing(this.getStyleProperty('spacing'));
-		this.graphic.setIconSize(this.getStyleProperty('iconSize'));
-		this.graphic.setFontFamily(this.getStyleProperty('fontFamily'));
-		this.graphic.setFontSize(this.getStyleProperty('fontSize'));
-		this.graphic.setFontWeight(this.getStyleProperty('fontWeight'));
-		if(this.getHasFocus())
-			this.graphic.setColor(this.getStyleProperty('focusColor'));
-		else
-			this.graphic.setColor(this.getStyleProperty('color'));
-	}
-}, 
-/** @lends Ui.LinkButton */
-{
-	style: {
-		color: '#4fa8ff',
-		focusColor: '#f6caa2',
-		radius: 4,
-		spacing: 3,
-		iconSize: 24,
-		fontSize: 16,
-		fontFamily: 'Sans-serif',
-		fontWeight: 'bold'
+		this.graphic.setHasFocus(false);
 	}
 });
 

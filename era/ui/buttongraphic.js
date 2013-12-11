@@ -3,16 +3,14 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	text: undefined,
 	icon: undefined,
 	iconSize: 24,
-	orientation: 'vertical',
+	orientation: undefined,
 	isDown: false,
-	radius: 4,
-	spacing: 3,
-	color: undefined,
-	contentColor: undefined,
+	buttonHasFocus: false,
 	fontSize: 16,
 	fontFamily: 'Sans-serif',
 	fontWeight: 'normal',
 	textWidth: 0,
+	spacing: 3,
 
 	constructor: function(config) {
 		this.color = new Ui.Color({ r: 0.31, g: 0.66, b: 1 });
@@ -41,63 +39,22 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			this.invalidateDraw();
 		}
 	},
-
-	setIconSize: function(size) {
-		if(this.iconSize != size) {
-			this.iconSize = size;
-			this.invalidateMeasure();
-			this.invalidateDraw();
-		}
-	},
-
+	
 	getOrientation: function() {
-		return this.orientation;
+		var orientation = this.orientation;
+		if(orientation === undefined)
+			orientation = this.getStyleProperty('orientation');
+		return (orientation === 'vertical')?'vertical':'horizontal';
 	},
 
 	setOrientation: function(orientation) {
-		if(this.orientation != orientation) {
+		if(this.orientation !== orientation) {
 			this.orientation = orientation;
 			this.invalidateMeasure();
 			this.invalidateDraw();
 		}
 	},
-
-	setFontSize: function(fontSize) {
-		if(this.fontSize != fontSize) {
-			this.fontSize = fontSize;
-			this.invalidateMeasure();
-			this.invalidateDraw();
-		}
-	},
-
-	getFontSize: function() {
-		return this.fontSize;
-	},
-
-	setFontFamily: function(fontFamily) {
-		if(this.fontFamily != fontFamily) {
-			this.fontFamily = fontFamily;
-			this.invalidateMeasure();
-			this.invalidateDraw();
-		}
-	},
-
-	getFontFamily: function() {
-		return this.fontFamily;
-	},
-
-	setFontWeight: function(fontWeight) {
-		if(this.fontWeight != fontWeight) {
-			this.fontWeight = fontWeight;
-			this.invalidateMeasure();
-			this.invalidateDraw();
-		}
-	},
-
-	getFontWeight: function() {
-		return this.fontWeight;
-	},
-
+	
 	getIsDown: function() {
 		return this.isDown;
 	},
@@ -109,108 +66,86 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		}
 	},
 
-	setRadius: function(radius) {
-		if(this.radius != radius) {
-			this.radius = radius;
-			this.invalidateMeasure();
+	setHasFocus: function(hasFocus) {
+		if(this.buttonHasFocus !== hasFocus) {
+			this.buttonHasFocus = hasFocus;
 			this.invalidateDraw();
 		}
 	},
 
-	setSpacing: function(spacing) {
-		if(this.spacing != spacing) {
-			this.spacing = spacing;
-			this.invalidateMeasure();
-			this.invalidateDraw();
-		}
-	},
-
-	setColor: function(color) {
-		if(this.color != color) {
-			this.color = Ui.Color.create(color);
-			this.invalidateDraw();
-		}
-	},
-
-	setContentColor: function(color) {
-		if(this.contentColor != color) {
-			this.contentColor = Ui.Color.create(color);
-			this.invalidateDraw();
-		}
-	},
-
-	getGradient: function() {
-		var yuv = this.color.getYuv();
+	getBackground: function() {
+	 	var color;
+	 	if(this.buttonHasFocus)
+	 		color = Ui.Color.create(this.getStyleProperty('focusBackground'));
+	 	else
+			color = Ui.Color.create(this.getStyleProperty('background'));
+		var yuv = color.getYuva();
 		var deltaY = 0;
 		if(this.getIsDown())
 			deltaY = -0.20;
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10 + deltaY, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10 + deltaY, u: yuv.u, v: yuv.v }) }
-		] });
+		if(yuv.y < 0.4)
+			return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
+		else
+			return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
 	},
 
-	getContentColor: function() {
+	getBackgroundDark: function() {
+		var color;
+	 	if(this.buttonHasFocus)
+	 		color = Ui.Color.create(this.getStyleProperty('focusBackground'));
+	 	else
+			color = Ui.Color.create(this.getStyleProperty('background'));
+		var yuv = color.getYuva();
+		var deltaY = 0;
+		if(this.getIsDown())
+			deltaY = -0.20;
+		if(yuv.y < 0.5)
+			return new Ui.Color({ y: yuv.y - 0.30 + deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
+		else
+			return new Ui.Color({ y: yuv.y - 0.20 + deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
+	},
+
+	getForeground: function() {
+		var color;
+		if(this.buttonHasFocus)
+			color = Ui.Color.create(this.getStyleProperty('focusForeground'));
+		else
+			color = Ui.Color.create(this.getStyleProperty('foreground'));
 		var deltaY = 0;
 		if(this.getIsDown())
 			deltaY = 0.20;
-		if(this.contentColor != undefined) {
-			var yuv = this.contentColor.getYuv();
-			return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
-		}
-		else {
-			var yuv = this.color.getYuv();
-			if(yuv.y < 0.4)
-				return new Ui.Color({ y: yuv.y + (0.60 + deltaY), u: yuv.u, v: yuv.v });
-			else
-				return new Ui.Color({ y: yuv.y - (0.60 + deltaY), u: yuv.u, v: yuv.v });
-		}
-	},
-	
-	getDarkColor: function() {
-		var yuv = this.color.getYuv();
-		var deltaY = 0;
-		if(this.getIsDown())
-			deltaY = -0.20;
+		var yuv = color.getYuva();
 		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y - 0.60 + deltaY, u: yuv.u, v: yuv.v, a: 0.8 });
+			return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
 		else
-			return new Ui.Color({ y: yuv.y - 0.40 + deltaY, u: yuv.u, v: yuv.v, a: 0.4 });
-	},
-
-	getLightColor: function() {
-		var yuv = this.color.getYuv();
-		var deltaY = 0;
-		if(this.getIsDown())
-			deltaY = -0.20;
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y - 0.15 + deltaY, u: yuv.u, v: yuv.v });
-		else
-			return new Ui.Color({ y: yuv.y + 0.15 + deltaY, u: yuv.u, v: yuv.v });
+			return new Ui.Color({ y: yuv.y - deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
 	}
-
 }, {
 	updateCanvas: function(ctx) {	
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 
-		// dark shadow
-		ctx.fillStyle = this.getDarkColor().getCssRgba();//'rgba(0,0,0,0.3)';
+		var radius = Math.min(this.getStyleProperty('radius'), (Math.min(width, height)/2));
+		var orientation = this.getOrientation();
+
+		// rect
+		ctx.fillStyle = this.getBackground().getCssRgba();
 		ctx.beginPath();
-		this.roundRect(0, 0, width, height, this.radius+1, this.radius+1, this.radius+1, this.radius+1);
+		this.roundRect(0, 0, width, height, radius, radius, radius, radius);
 		ctx.closePath();
 		ctx.fill();
 
-		// rect2
-		ctx.fillStyle = this.getLightColor().getCssRgba();
+		// border
+		ctx.fillStyle = this.getBackgroundDark().getCssRgba();//'rgba(0,0,0,0.3)';
 		ctx.beginPath();
-		this.roundRect(1, 1, width-2, height-2, this.radius, this.radius, this.radius, this.radius);
+		this.roundRect(0, 0, width, height, radius, radius, radius, radius);
+		this.roundRectAntiClockwise(1, 1, width-2, height-2, radius-1, radius-1, radius-1, radius-1);
 		ctx.closePath();
 		ctx.fill();
 
 		// handle disable
 		if(this.getIsDisabled())
-			ctx.globalAlpha = 0.2;
+			ctx.globalAlpha = 0.4;
 
 		// icon only
 		if((this.icon !== undefined) && (this.text === undefined)) {
@@ -220,7 +155,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			ctx.save();
 			ctx.translate((width-this.iconSize)/2, (height-this.iconSize)/2);
 			ctx.scale(scale, scale);
-			ctx.fillStyle = this.getContentColor().getCssRgba();
+			ctx.fillStyle = this.getForeground().getCssRgba();
 			ctx.beginPath();
 			this.svgPath(path);
 			ctx.closePath();
@@ -232,20 +167,20 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			// text
 			ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 			ctx.textBaseline = 'middle';
-			ctx.fillStyle = this.getContentColor().getCssRgba();
+			ctx.fillStyle = this.getForeground().getCssRgba();
 			ctx.fillText(this.text, (width-this.textWidth)/2, height/2+2);
 		}
 		// text + icon
 		else if((this.icon !== undefined) && (this.text !== undefined)) {
 			// vertical
-			if(this.orientation == 'vertical') {
+			if(orientation == 'vertical') {
 				var path = Ui.Icon.getPath(this.icon);
 				var scale = this.iconSize/48;
 				// icon
 				ctx.save();
 				ctx.translate((width-this.iconSize)/2, (height-this.fontSize-this.iconSize-this.spacing)/2);
 				ctx.scale(scale, scale);
-				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.fillStyle = this.getForeground().getCssRgba();
 				ctx.beginPath();
 				this.svgPath(path);
 				ctx.closePath();
@@ -254,7 +189,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				// text
 				ctx.font = this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 				ctx.textBaseline = 'top';
-				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.fillStyle = this.getForeground().getCssRgba();
 				ctx.fillText(this.text, (width-this.textWidth)/2, height-this.fontSize-4-this.spacing-1);
 			}
 			// horizontal
@@ -265,7 +200,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.save();
 				ctx.translate(this.spacing+4, (height-this.iconSize)/2 -1);
 				ctx.scale(scale, scale);
-				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.fillStyle = this.getForeground().getCssRgba();
 				ctx.beginPath();
 				this.svgPath(path);
 				ctx.closePath();
@@ -274,7 +209,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				// text
 				ctx.font = 'normal '+this.fontWeight+' '+this.fontSize+'px '+this.fontFamily;
 				ctx.textBaseline = 'middle';
-				ctx.fillStyle = this.getContentColor().getCssRgba();
+				ctx.fillStyle = this.getForeground().getCssRgba();
 				ctx.fillText(this.text, this.spacing*3+this.iconSize, height/2 +1);
 //				ctx.fillText(this.text, (this.spacing+this.iconSize+width-this.textWidth)/2, height/2 +1);
 			}
@@ -298,7 +233,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		// text + icon
 		else if((this.icon !== undefined) && (this.text !== undefined)) {
 			// vertical
-			if(this.orientation == 'vertical')
+			if(this.getOrientation() === 'vertical')
 				size = { width: Math.max(this.textWidth, this.iconSize) + this.spacing*2 + 6, height: this.iconSize + this.fontSize + this.spacing*3 + 6 };
 			// horizontal
 			else
@@ -313,5 +248,29 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 
 	onEnable: function() {
 		this.invalidateDraw();
+	},
+
+	onStyleChange: function() {
+		this.spacing = Math.max(0, this.getStyleProperty('spacing'));
+		this.iconSize = Math.max(0, this.getStyleProperty('iconSize'));
+		this.fontFamily = this.getStyleProperty('fontFamily');
+		this.fontSize = Math.max(0, this.getStyleProperty('fontSize'));
+		this.fontWeight = this.getStyleProperty('fontWeight');
+		this.invalidateMeasure();
+		this.invalidateDraw();
+	}
+}, {
+	style: {
+		orientation: 'horizontal',
+		background: '#eeeeee',
+		foreground: '#444444',
+		focusBackground: '#f6caa2',
+		focusForeground: '#444444',
+		radius: 3,
+		spacing: 5,
+		iconSize: 24,
+		fontSize: 16,
+		fontFamily: 'Sans-serif',
+		fontWeight: 'normal'
 	}
 });
