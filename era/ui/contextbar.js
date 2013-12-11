@@ -17,13 +17,13 @@ Ui.LBox.extend('Ui.ContextBar', {
 		
 		var closeButton = new Ui.Pressable({ margin: 5 });
 		closeButton.setContent(
-			new Ui.Icon({ icon: 'close', width: 30, height: 30, verticalAlign: 'center', fill: '#444444' })
+			new Ui.Icon({ icon: 'close', width: 30, height: 30, verticalAlign: 'center' })
 		);
 		hbox.append(closeButton);
 		this.connect(closeButton, 'press', this.onClosePress);
 		
 		this.counter = new Ui.Label({
-			horizontalAlign: 'center', verticalAlign: 'center', fontSize: 24, color: '#444444'
+			horizontalAlign: 'center', verticalAlign: 'center', fontSize: 24
 		});
 		hbox.append(this.counter);
 		
@@ -34,7 +34,6 @@ Ui.LBox.extend('Ui.ContextBar', {
 	},
 	
 	onClosePress: function() {
-		//console.log(this+'.onClosePress '+this.selection);
 		this.selection.clear();
 	},
 	
@@ -48,38 +47,10 @@ Ui.LBox.extend('Ui.ContextBar', {
 			var action = actions[actionName];
 			if(action.hidden === true)
 				continue;
-			var dropbox = new Ui.DropBox();
-			dropbox.dialogContextBarAction = action;
-			dropbox.addMimetype(this.selection.getElements()[0].getMimetype());
-			//dropbox.addMimetype(this.selection.getElements()[0].classType);
-			//console.log('dropbox allow: '+this.selection.getElements()[0].classType);
-			this.connect(dropbox, 'drop', this.onDrop);
-			
-			var pressable = new Ui.Pressable({ margin: 5 });
-			dropbox.setContent(pressable);
-			pressable.dialogContextBarAction = action;
-			this.connect(pressable, 'press', this.onActionPress);
-			var hbox = new Ui.HBox({ spacing: 5 });
-			pressable.setContent(hbox);
-			var color;
-			if('color' in action)
-				color = Ui.Color.create(action.color);
-			else
-			 	color = Ui.Color.create('#444444');
-			hbox.append(new Ui.Icon({ icon: action.icon, width: 30, height: 30, verticalAlign: 'center', fill: color }));
-			hbox.append(new Ui.Label({ text: action.text, horizontalAlign: 'center', verticalAlign: 'center', color: color }));
-			this.actionsBox.append(dropbox);
+			var button = new Ui.ActionButton({ icon: action.icon, text: action.text, action: action, selection: this.selection });
+			button.addMimetype(this.selection.getElements()[0].getMimetype());
+			this.actionsBox.append(button);
 		}
-	},
-	
-	onActionPress: function(pressable) {
-		var action = pressable.dialogContextBarAction;
-		var scope = this;
-		if('scope' in action)
-			scope = action.scope;
-		action.callback.call(scope, this.selection);
-		// clear the selection after the action done
-		this.selection.clear();
 	},
 
 	onDrop: function(dropbox) {	
@@ -91,7 +62,6 @@ Ui.LBox.extend('Ui.ContextBar', {
 	}
 }, {
 	onStyleChange: function() {
-		console.log(this+".onStyleChange");
 		this.bg.setFill(this.getStyleProperty('background'));
 	}
 }, {

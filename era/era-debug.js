@@ -146,6 +146,7 @@ include(eraBaseDirectory+'ui/togglebutton.js');
 include(eraBaseDirectory+'ui/uploadbutton.js');
 include(eraBaseDirectory+'ui/linkbutton.js');
 include(eraBaseDirectory+'ui/downloadbutton.js');
+include(eraBaseDirectory+'ui/actionbutton.js');
 include(eraBaseDirectory+'ui/checkboxgraphic.js');
 include(eraBaseDirectory+'ui/checkbox.js');
 include(eraBaseDirectory+'ui/toolbar.js');
