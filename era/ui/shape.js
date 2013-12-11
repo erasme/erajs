@@ -32,7 +32,7 @@ Ui.CanvasElement.extend('Ui.Shape',
 		if(this.fill !== fill) {
 			if(typeof(fill) === 'string')
 				fill = Ui.Color.create(fill);
-			else
+			else if(fill !== undefined)
 				fill = Ui.Element.create(fill);
 			this.fill = fill;
 			this.invalidateDraw();
