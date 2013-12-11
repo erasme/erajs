@@ -9,7 +9,7 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		
 		this.setData(this);
 		
-		this.bg = new Ui.Rectangle({ fill: '#dddddd', margin: 2 });
+		this.bg = new Ui.Rectangle({ margin: 2 });
 		this.bg.hide();
 		this.append(this.bg);
 		
@@ -102,6 +102,10 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		}
 	}
 }, {
+	onStyleChange: function() {
+		this.bg.setFill(this.getStyleProperty('shadow'));
+	},
+
 	setContent: function(content) {
 		this.contentBox.setContent(content);	
 	},
@@ -110,5 +114,9 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		if(this.getIsSelected())
 			this.unselect();
 		Ui.Selectionable.base.onUnload.call(this);
+	}
+}, {
+	style: {
+		shadow: '#dddddd'
 	}
 });
