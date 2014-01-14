@@ -20,6 +20,8 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		this.connect(this, 'activate', this.onActivate);
 		this.connect(this, 'dragstart', this.onSelectionableDragStart);
 		this.connect(this, 'dragend', this.onSelectionableDragEnd);
+		this.connect(this, 'focus', this.onSelectionableFocus);
+		this.connect(this, 'blur', this.onSelectionableBlur);
 	},
 
 	getIsSelected: function() {
@@ -28,10 +30,17 @@ Ui.Draggable.extend('Ui.Selectionable', {
 	
 	setIsSelected: function(isSelected) {
 		this.isSelected = isSelected;
-		if(this.isSelected)
+		if(this.isSelected || this.getHasFocus())
 			this.bg.show();
 		else
 			this.bg.hide();
+		
+		if(this.isSelected && this.getHasFocus())
+			this.bg.setOpacity(1);
+		else if(this.isSelected)
+			this.bg.setOpacity(0.5);
+		else if(this.getHasFocus())
+			this.bg.setOpacity(0.25);
 	},
 		
 	// ex:
@@ -100,7 +109,23 @@ Ui.Draggable.extend('Ui.Selectionable', {
 			this.handler.remove(this);
 			this.setIsSelected(false);
 		}
+	},
+
+	onSelectionableFocus: function() {
+		if(this.isSelected)
+			this.bg.setOpacity(1);
+		else
+			this.bg.setOpacity(0.25);
+		this.bg.show();
+	},
+	
+	onSelectionableBlur: function() {
+		if(!this.isSelected)
+			this.bg.hide();
+		else
+			this.bg.setOpacity(0.5);
 	}
+
 }, {
 	onStyleChange: function() {
 		this.bg.setFill(this.getStyleProperty('shadow'));
@@ -114,6 +139,16 @@ Ui.Draggable.extend('Ui.Selectionable', {
 		if(this.getIsSelected())
 			this.unselect();
 		Ui.Selectionable.base.onUnload.call(this);
+	},
+
+	onDisable: function() {
+		Ui.Selectionable.base.onDisable.apply(this, arguments);
+		this.contentBox.setOpacity(0.4);
+	},
+
+	onEnable: function() {
+		Ui.Selectionable.base.onEnable.apply(this, arguments);
+		this.contentBox.setOpacity(1);
 	}
 }, {
 	style: {
