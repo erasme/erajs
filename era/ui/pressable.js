@@ -4,6 +4,12 @@ Ui.LBox.extend('Ui.Pressable',
 	isDown: false,
 	lock: false,
 	lastTime: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	touchStartX: undefined,
+	touchStartY: undefined,
 
     /**
      * @constructs   
@@ -56,8 +62,10 @@ Ui.LBox.extend('Ui.Pressable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.mouseStartX = event.screenX;
-		this.mouseStartY = event.screenY;
+		this.mouseStartClientX = event.clientX;
+		this.mouseStartClientY = event.clientY;
+		this.mouseStartScreenX = event.screenX;
+		this.mouseStartScreenY = event.screenY;
 
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
@@ -66,8 +74,8 @@ Ui.LBox.extend('Ui.Pressable',
 	},
 
 	onMouseMove: function(event) {
-		var deltaX = event.screenX - this.mouseStartX;
-		var deltaY = event.screenY - this.mouseStartY;
+		var deltaX = event.clientX - this.mouseStartClientX;
+		var deltaY = event.clientY - this.mouseStartClientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		event.preventDefault();
@@ -79,8 +87,8 @@ Ui.LBox.extend('Ui.Pressable',
 
 			if('createEvent' in document) {
 				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-					event.clientX, event.clientY,
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.mouseStartScreenX, this.mouseStartScreenY,
+					this.mouseStartClientX, this.mouseStartClientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
 				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
@@ -124,7 +132,7 @@ Ui.LBox.extend('Ui.Pressable',
 		this.onDown();
 	},
 
-	onFingerMove: function(event) {	
+	onFingerMove: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -141,7 +149,7 @@ Ui.LBox.extend('Ui.Pressable',
 		}
 	},
 	
-	onFingerUp: function(event) {	
+	onFingerUp: function(event) {
 		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
 		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
 

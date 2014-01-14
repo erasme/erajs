@@ -4,8 +4,12 @@ Ui.LBox.extend('Ui.Linkable',
 {
 	link: undefined,
 	isDown: false,
-	mouseStartX: undefined,
-	mouseStartY: undefined,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
+	touchStartX: undefined,
+	touchStartY: undefined,
 	openWindow: true,
 	target: '_blank',
 
@@ -55,8 +59,10 @@ Ui.LBox.extend('Ui.Linkable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.mouseStartX = event.screenX;
-		this.mouseStartY = event.screenY;
+		this.mouseStartClientX = event.clientX;
+		this.mouseStartClientY = event.clientY;
+		this.mouseStartScreenX = event.screenX;
+		this.mouseStartScreenY = event.screenY;
 
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
@@ -65,8 +71,8 @@ Ui.LBox.extend('Ui.Linkable',
 	},
 
 	onMouseMove: function(event) {
-		var deltaX = event.screenX - this.mouseStartX;
-		var deltaY = event.screenY - this.mouseStartY;
+		var deltaX = event.clientX - this.mouseStartClientX;
+		var deltaY = event.clientY - this.mouseStartClientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		event.preventDefault();
@@ -83,8 +89,9 @@ Ui.LBox.extend('Ui.Linkable',
 				this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-					event.clientX, event.clientY,
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1,
+					this.mouseStartScreenX, this.mouseStartScreenY,
+					this.mouseStartClientX, this.mouseStartClientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
 				event.target.dispatchEvent(mouseDownEvent);

@@ -29,6 +29,8 @@ Ui.LBox.extend('Ui.Draggable',
 	clock: undefined,
 	screenX: undefined,
 	screenY: undefined,
+	clientX: undefined,
+	clientY: undefined,
 	lock: false,
 	directionDrag: undefined,
 
@@ -239,6 +241,8 @@ Ui.LBox.extend('Ui.Draggable',
 
 		this.screenX = event.screenX;
 		this.screenY = event.screenY;
+		this.clientX = event.clientX;
+		this.clientY = event.clientY;
 
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
@@ -249,8 +253,8 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onMouseMove: function(event) {	
-		var deltaX = event.screenX - this.screenX;
-		var deltaY = event.screenY - this.screenY;
+		var deltaX = event.clientX - this.clientX;
+		var deltaY = event.clientY - this.clientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		event.preventDefault();
@@ -282,8 +286,8 @@ Ui.LBox.extend('Ui.Draggable',
 			}
 			else {
 				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-					event.clientX, event.clientY,
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.screenX, this.screenY,
+					this.clientX, this.clientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
 				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
@@ -332,8 +336,8 @@ Ui.LBox.extend('Ui.Draggable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.screenX = event.finger.getX();
-		this.screenY = event.finger.getY();
+		this.clientX = event.finger.getX();
+		this.clientY = event.finger.getY();
 
 		this.isDown = true;
 		this.dragAllowed = false;
@@ -350,8 +354,8 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onFingerMove: function(event) {	
-		var deltaX = event.finger.getX() - this.screenX;
-		var deltaY = event.finger.getY() - this.screenY;
+		var deltaX = event.finger.getX() - this.clientX;
+		var deltaY = event.finger.getY() - this.clientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 		
 		event.preventDefault();

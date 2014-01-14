@@ -3,6 +3,8 @@ Ui.Element.extend('Ui.ContentEditable', {
 	html: undefined,
 	screenX: 0,
 	screenY: 0,
+	clientX: 0,
+	clientY: 0,
 	startTime: undefined,
 	allowSelect: false,
 	timer: undefined,
@@ -167,6 +169,8 @@ Ui.Element.extend('Ui.ContentEditable', {
 
 		this.screenX = event.screenX;
 		this.screenY = event.screenY;
+		this.clientX = event.clientX;
+		this.clientY = event.clientY;
 
 		var currentTime = (new Date().getTime())/1000;
 		this.startTime = currentTime;
@@ -177,8 +181,8 @@ Ui.Element.extend('Ui.ContentEditable', {
 
 	onMouseMove: function(event) {
 		if(!this.allowSelect) {
-			var deltaX = event.screenX - this.screenX;
-			var deltaY = event.screenY - this.screenY;
+			var deltaX = event.clientX - this.clientX;
+			var deltaY = event.clientY - this.clientY;
 			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 			event.stopPropagation();
@@ -199,8 +203,8 @@ Ui.Element.extend('Ui.ContentEditable', {
 				this.disconnect(window, 'mouseup', this.onMouseUp, true);
 	
 				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-					event.clientX, event.clientY,
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.screenX, this.screenY,
+					this.clientX, this.clientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
 				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);

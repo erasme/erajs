@@ -16,6 +16,10 @@ Ui.Container.extend('Ui.Scrollable',
 	speedY: 0,
 	isMoving: false,
 	mouseStart: undefined,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
 	touchStart: undefined,
 	verticalFingerStart: undefined,
 	horizontalFingerStart: undefined,
@@ -384,6 +388,11 @@ Ui.Container.extend('Ui.Scrollable',
 		this.catcher.style.zIndex = 1000;
 		this.window.document.body.appendChild(this.catcher);
 
+		this.mouseStartClientX = event.clientX;
+		this.mouseStartClientY = event.clientY;
+		this.mouseStartScreenX = event.screenX;
+		this.mouseStartScreenY = event.screenY;
+
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.startOffsetX = this.offsetX;
 		this.startOffsetY = this.offsetY;
@@ -419,8 +428,9 @@ Ui.Container.extend('Ui.Scrollable',
 						this.isMoving = false;
 
 						var mouseDownEvent = document.createEvent('MouseEvents');
-						mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-							event.clientX, event.clientY,
+						mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1,
+							this.mouseStartScreenX, this.mouseStartScreenY,
+							this.mouseStartClientX, this.mouseStartClientY,
 							event.ctrlKey, event.altKey, event.shiftKey,
 							event.metaKey, 0, event.target);
 						this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);

@@ -8,6 +8,12 @@ Ui.LBox.extend('Ui.Selectable',
 	menuTimer: undefined,
 	menuPosX: undefined,
 	menuPosY: undefined,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
+	touchStartX: undefined,
+	touchStartY: undefined,
 
 	/**
 	 * @constructs
@@ -35,7 +41,6 @@ Ui.LBox.extend('Ui.Selectable',
 	 */
 
 	onKeyDown: function(event) {
-		console.log(this+'.onKeyDown key: '+event.which);
 		if(((event.which == 13) || (event.which == 32)) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -75,8 +80,8 @@ Ui.LBox.extend('Ui.Selectable',
 	},
 
 	onMouseMove: function(event) {
-		var deltaX = event.screenX - this.mouseStartX;
-		var deltaY = event.screenY - this.mouseStartY;
+		var deltaX = event.clientX - this.mouseStartClientX;
+		var deltaY = event.clientY - this.mouseStartClientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		// if the user move to much, release the touch event
@@ -88,8 +93,9 @@ Ui.LBox.extend('Ui.Selectable',
 			this.onUp();
 
 			var mouseDownEvent = document.createEvent('MouseEvents');
-			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-				event.clientX, event.clientY,
+			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1,
+				this.mouseStartScreenX, this.mouseStartScreenY,
+				this.mouseStartClientX, this.mouseStartClientY,
 				event.ctrlKey, event.altKey, event.shiftKey,
 				event.metaKey, 0, event.target);
 			event.target.dispatchEvent(mouseDownEvent);

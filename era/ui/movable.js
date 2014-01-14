@@ -5,6 +5,10 @@ Ui.LBox.extend('Ui.Movable',
 	moveVertical: true,
 	mouseStart: undefined,
 	mouseLast: undefined,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
 	contentBox: undefined,
 	posX: 0,
 	posY: 0,
@@ -178,7 +182,7 @@ Ui.LBox.extend('Ui.Movable',
 
 		if(event.button != 0)
 			return;
-
+		
 		this.directionLock = false;
 
 		event.preventDefault();
@@ -207,6 +211,11 @@ Ui.LBox.extend('Ui.Movable',
 		this.catcher.style.bottom = '0px';
 		this.catcher.style.zIndex = 1000;
 		this.window.document.body.appendChild(this.catcher);
+
+		this.mouseStartClientX = event.clientX;
+		this.mouseStartClientY = event.clientY;
+		this.mouseStartScreenX = event.screenX;
+		this.mouseStartScreenY = event.screenY;
 
 		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.mouseLast = this.mouseStart;
@@ -241,8 +250,9 @@ Ui.LBox.extend('Ui.Movable',
 						this.stopComputeInertia();
 
 						var mouseDownEvent = document.createEvent('MouseEvents');
-						mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-							event.clientX, event.clientY,
+						mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1,
+							this.mouseStartScreenX, this.mouseStartScreenY,
+							this.mouseStartClientX, this.mouseStartClientY,
 							event.ctrlKey, event.altKey, event.shiftKey,
 							event.metaKey, 0, event.target);
 						this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
@@ -270,7 +280,7 @@ Ui.LBox.extend('Ui.Movable',
 
 		if(event.button != 0)
 			return;
-
+		
 		this.window.document.body.removeChild(this.catcher);
 
 		this.disconnect(this.window, 'mousemove', this.onMouseMove, true);
