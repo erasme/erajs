@@ -20,6 +20,10 @@ Core.Object.extend('Ui.Matrix',
 		return((this.a == 1) && (this.b == 0) && (this.c == 0) && (this.d == 1));
 	},
 
+	isIdentity: function() {
+		return((this.a == 1) && (this.b == 0) && (this.c == 0) && (this.d == 1) && (this.e == 0) && (this.f == 0));
+	},
+
 	translate: function(x, y) {
 		this.multiply(Ui.Matrix.createTranslate(x, y));
 	},
@@ -103,7 +107,7 @@ Core.Object.extend('Ui.Matrix',
 /**@lends Ui.Matrix#*/
 {
 	toString: function() {
-		return 'matrix('+this.a.toFixed(4)+', '+this.b.toFixed(4)+', '+this.c.toFixed(4)+', '+this.d.toFixed(4)+', '+this.e.toFixed(4)+', '+this.f.toFixed(4)+')';
+		return 'matrix('+this.a.toFixed(4)+','+this.b.toFixed(4)+','+this.c.toFixed(4)+','+this.d.toFixed(4)+','+this.e.toFixed(4)+','+this.f.toFixed(4)+')';
 	}
 }, 
 /**@lends Ui.Matrix*/
@@ -123,6 +127,8 @@ Core.Object.extend('Ui.Matrix',
 	},
 
 	createScale: function(scaleX, scaleY) {
+		if(scaleY === undefined)
+			scaleY = scaleX;
 		return Ui.Matrix.createScaleAt(scaleX, scaleY, 0, 0);
 	},
 
@@ -138,6 +144,28 @@ Core.Object.extend('Ui.Matrix',
 
 	createRotate: function(angle) {
 		return Ui.Matrix.createRotateAt(angle, 0, 0);
+	},
+
+	parse: function(stringMatrix) {
+		var matrix;
+		if(typeof(stringMatrix) === 'string') {
+			// parse the matrix
+			var res;
+			if((res = stringMatrix.match(/^matrix\((-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)\)$/)) != null) {
+				var a = parseFloat(res[1]);
+				var b = parseFloat(res[2]);
+				var c = parseFloat(res[3]);
+				var d = parseFloat(res[4]);
+				var e = parseFloat(res[5]);
+				var f = parseFloat(res[6]);
+				matrix = new Ui.Matrix();
+				matrix.setMatrix(a, b, c, d, e, f);
+			}
+		}
+		if(matrix === undefined)
+			throw('Unknown matrix format ('+stringMatrix+')');
+		return matrix;
 	}
 });
 
+		
