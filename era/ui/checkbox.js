@@ -108,7 +108,6 @@ Ui.Togglable.extend('Ui.CheckBox',
 /**Ui.CheckBox#*/
 {
 	onStyleChange: function() {
-		this.graphic.setRadius(this.getStyleProperty('radius'));
 		if(this.getHasFocus())
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
 		else
@@ -145,10 +144,9 @@ Ui.Togglable.extend('Ui.CheckBox',
 /**Ui.CheckBox*/
 {
 	style: {
-		color: new Ui.Color({ r: 1, g: 1, b: 1 }),
-		focusColor: '#f6ddc8',
-		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 }),
-		radius: 5
+		color: '#444444',
+		focusColor: '#f6caa2',
+		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 })
 	}
 });
 
