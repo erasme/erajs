@@ -2,7 +2,6 @@
 Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 	isDown: false,
 	isChecked: false,
-	radius: 4,
 	color: undefined,
 	checkColor: undefined,
 
@@ -32,15 +31,7 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 			this.invalidateDraw();
 		}
 	},
-
-	setRadius: function(radius) {
-		if(this.radius != radius) {
-			this.radius = radius;
-			this.invalidateMeasure();
-			this.invalidateDraw();
-		}
-	},
-
+	
 	getColor: function() {
 		return this.color;
 	},
@@ -76,18 +67,13 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 		// background
 		if(this.getIsDown())
 			ctx.globalAlpha = 0.8;
-		ctx.fillStyle = this.getColor().getCssRgba();
-		ctx.beginPath();
-		ctx.fillRect(cx-10, cy-10, 20, 20);
-		ctx.closePath();
-		ctx.fill();
 		
 		// handle disable
 		if(this.getIsDisabled())
 			ctx.globalAlpha = 0.2;
 			
 		// border
-		ctx.strokeStyle = 'rgb(100,100,100)';
+		ctx.strokeStyle = this.getColor().getCssRgba();
 		ctx.lineWidth = 2;
 		ctx.strokeRect(cx-10, cy-10, 20, 20);
 
@@ -102,7 +88,7 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 			ctx.scale(scale, scale);
 			ctx.fillStyle = this.getCheckColor().getCssRgba();
 			ctx.beginPath();
-			this.svgPath(path);
+			ctx.svgPath(path);
 			ctx.closePath();
 			ctx.fill();
 			ctx.restore();
