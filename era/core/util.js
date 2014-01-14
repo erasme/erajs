@@ -230,11 +230,13 @@ if(!String.prototype.trim) {
 // Implement bind function if not supported
 if(!Function.prototype.bind) {
 	Function.prototype.bind = function(obj) {
-    	if(typeof(obj) !== 'function')
-      		throw('bind first argument need to be a function');
       	var scope = obj;
       	var callback = this;
-      	var args = arguments.slice(1);
+		var args;
+		if(arguments.length > 1)
+      		args = arguments.slice(1, arguments.length-1);
+      	else
+			args = [];
  		var wrapper = function() {
  			return callback.apply(scope, args.concat(arguments));
 		};
@@ -319,25 +321,6 @@ if(navigator.isIE) {
 			}
 		};
 	}
-}
-
-// correct bug with high density screen on Chrome mobile
-if(('devicePixelRatio' in window) && (devicePixelRatio != 1)) {
-	var element = document.elementFromPoint(window.innerWidth+10, window.innerHeight+10);
-	if(element != undefined) {
-		document.__elementFromPoint = document.elementFromPoint;
-		document.elementFromPoint = function(x,y) {
-			return document.__elementFromPoint(x*devicePixelRatio, y*devicePixelRatio);
-		};
-	}
-}
-
-// correct Opera specific bugs
-if(navigator.isOpera) {
-	CanvasRenderingContext2D.prototype.arcTo = function(x1, y1, x2, y2, r) {
-		// TODO: improve this with a correct interpolation
-		this.quadraticCurveTo(x1, y1, x2, y2);
-	};
 }
 
 if(window.JSON == undefined) {
