@@ -1320,8 +1320,9 @@ if (!document.createElement('canvas').getContext) {
     // TODO: Implement
   };
 
-  contextPrototype.arcTo = function() {
+  contextPrototype.arcTo = function(x1, y1, x2, y2, radiusX, radiusY, angle) {
     // TODO: Implement
+	this.quadraticCurveTo(x1, y1, x2, y2);
   };
 
   contextPrototype.createPattern = function(image, repetition) {
