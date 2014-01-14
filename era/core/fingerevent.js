@@ -56,7 +56,7 @@ Core.Object.extend('Core.Finger',
 		delete(config.y);
 
 		var target = Core.Event.cleanTarget(document.elementFromPoint(this.x, this.y));
-		if(target != undefined) {
+		if(target !== undefined) {
 			var fingerEvent = document.createEvent('FingerEvent');
 			fingerEvent.initFingerEvent('fingerdown', true, true, window, this);
 			target.dispatchEvent(fingerEvent);
@@ -76,7 +76,7 @@ Core.Object.extend('Core.Finger',
 			x = this.x;
 		if(y == undefined)
 			y = this.y;
-
+		
 		if((this.x != x) || (this.y != y)) {
 			this.x = x;
 			this.y = y;
@@ -179,7 +179,6 @@ Core.Object.extend('Core.FingerManager',
 
 	updateTouches: function(event) {
 		this.lastUpdate = (new Date().getTime())/1000;
-	
 		for(var id in this.touches) {
 			var found = false;
 			for(var i = 0; (i < event.touches.length) && !found; i++) {
@@ -199,6 +198,7 @@ Core.Object.extend('Core.FingerManager',
 				this.touches[event.touches[i].identifier] = finger;
 			}
 		}
+
 		if(event.dontPreventDefault !== true)
 			event.preventDefault();
 		event.stopPropagation();
