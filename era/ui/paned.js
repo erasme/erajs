@@ -101,6 +101,20 @@ Ui.Container.extend('Ui.Paned',
 		}
 	},
 
+	invert: function() {
+		var tmp;
+		tmp = this.content1Box;
+		this.content1Box = this.content2Box;
+		this.content2Box = tmp;
+
+		tmp = this.content1;
+		this.content1 = this.content2;
+		this.content2 = tmp;
+
+		this.pos = 1 - this.pos;
+		this.invalidateArrange();
+	},
+
 	onCursorMove: function() {
 		this.disconnect(this.cursor, 'move', this.onCursorMove);
 		var p;
