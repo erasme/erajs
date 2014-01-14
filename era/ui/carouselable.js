@@ -5,6 +5,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	ease: undefined,
 	items: undefined,
 	pos: 0,
+	lastPosition: undefined,
 	activeItems: undefined,
 	alignClock: undefined,
 	animNext: undefined,
@@ -181,9 +182,6 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onMouseWheel: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
 		var deltaX = 0;
 		var deltaY = 0;
 
@@ -197,12 +195,15 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		// Firefox
 		else if(event.detail != undefined)
 			deltaY = event.detail * 10;
-
-		var delta = (deltaY != 0)?deltaY:deltaX;
-		if(delta < 0)
-			this.previous();
-		else
-			this.next();
+		
+		if(deltaX !== 0) {
+			event.preventDefault();
+			event.stopPropagation();
+			if(deltaX < 0)
+				this.previous();
+			else
+				this.next();
+		}
 	},
 
 	onCarouselableDown: function() {
@@ -232,8 +233,12 @@ Ui.MovableBase.extend('Ui.Carouselable',
 
 	onChange: function() {
 		this.loadItems();
-		this.updateItems();		
-		this.fireEvent('change', this, this.getCurrentPosition());
+		this.updateItems();
+		var currentPosition = this.getCurrentPosition();
+		if((this.lastPosition === undefined) || (this.lastPosition !== currentPosition)) {
+			this.lastPosition = currentPosition;
+			this.fireEvent('change', this, currentPosition);
+		}
 	},
 
 	onAlignTick: function(clock, progress, delta) {
@@ -248,7 +253,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		relprogress = this.ease.ease(relprogress);
 		this.pos = (this.animStart + relprogress * (this.animNext - this.animStart));
 		this.setPosition(-this.pos * this.getLayoutWidth(), undefined);
-		if(this.alignClock == undefined)
+		if(this.alignClock === undefined)
 			this.onChange();
 	},
 
