@@ -237,6 +237,18 @@ Ui.Container.extend('Ui.Locator',
 		}
 		this.border.setRadius(radius);
 		this.updateColors();
+	},
+
+	onDisable: function() {
+		Ui.Locator.base.onDisable.apply(this, arguments);
+		for(var i = 0; i < this.foregrounds.length; i++)
+			this.foregrounds[i].setOpacity(0.4);
+	},
+
+	onEnable: function() {
+		Ui.Locator.base.onEnable.apply(this, arguments);
+		for(var i = 0; i < this.foregrounds.length; i++)
+			this.foregrounds[i].setOpacity(1);
 	}
 }, {
 	style: {
@@ -286,7 +298,7 @@ Ui.CanvasElement.extend('Ui.LocatorRightArrow',
 		var v1 = width - this.length;
 		var v2 = height/2;
 		var v3 = height-this.radius;
-		this.svgPath('M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' Q0,'+height+' 0,'+v3+' L0,'+this.radius+' Q0,0 '+this.radius+',0 z');
+		ctx.svgPath('M'+this.radius+',0 L'+v1+',0 L'+width+','+v2+' L'+v1+','+height+' L'+this.radius+','+height+' Q0,'+height+' 0,'+v3+' L0,'+this.radius+' Q0,0 '+this.radius+',0 z');
 		ctx.fillStyle = this.fill.getCssRgba();
 		ctx.fill();
 	}
