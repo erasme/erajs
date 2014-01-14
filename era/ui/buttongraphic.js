@@ -131,15 +131,15 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		// rect
 		ctx.fillStyle = this.getBackground().getCssRgba();
 		ctx.beginPath();
-		this.roundRect(0, 0, width, height, radius, radius, radius, radius);
+		ctx.roundRect(0, 0, width, height, radius, radius, radius, radius);
 		ctx.closePath();
 		ctx.fill();
 
 		// border
 		ctx.fillStyle = this.getBackgroundDark().getCssRgba();//'rgba(0,0,0,0.3)';
 		ctx.beginPath();
-		this.roundRect(0, 0, width, height, radius, radius, radius, radius);
-		this.roundRectAntiClockwise(1, 1, width-2, height-2, radius-1, radius-1, radius-1, radius-1);
+		ctx.roundRect(0, 0, width, height, radius, radius, radius, radius);
+		ctx.roundRect(1, 1, width-2, height-2, radius-1, radius-1, radius-1, radius-1, true);
 		ctx.closePath();
 		ctx.fill();
 
@@ -157,7 +157,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			ctx.scale(scale, scale);
 			ctx.fillStyle = this.getForeground().getCssRgba();
 			ctx.beginPath();
-			this.svgPath(path);
+			ctx.svgPath(path);
 			ctx.closePath();
 			ctx.fill();
 			ctx.restore();
@@ -182,7 +182,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.scale(scale, scale);
 				ctx.fillStyle = this.getForeground().getCssRgba();
 				ctx.beginPath();
-				this.svgPath(path);
+				ctx.svgPath(path);
 				ctx.closePath();
 				ctx.fill();
 				ctx.restore();
@@ -202,7 +202,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 				ctx.scale(scale, scale);
 				ctx.fillStyle = this.getForeground().getCssRgba();
 				ctx.beginPath();
-				this.svgPath(path);
+				ctx.svgPath(path);
 				ctx.closePath();
 				ctx.fill();
 				ctx.restore();

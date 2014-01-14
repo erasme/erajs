@@ -16,7 +16,7 @@ Ui.CanvasElement.extend('Ui.DialogGraphic', {
 		var h = this.getLayoutHeight();
 
 		// shadow
-		this.roundRectFilledShadow(0, 0, w, h, 2, 2, 2, 2, false, 3, new Ui.Color({ a: 0.3 }));
+		ctx.roundRectFilledShadow(0, 0, w, h, 2, 2, 2, 2, false, 3, new Ui.Color({ a: 0.3 }));
 
 		// content background
 		ctx.fillStyle = this.background.getCssRgba();

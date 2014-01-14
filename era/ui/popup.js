@@ -477,17 +477,17 @@ Ui.CanvasElement.extend('Ui.PopupBackground',
 		}
 		else {
 			ctx.fillStyle = 'rgba(0,0,0,0.1)';		
-			this.svgPath(this.genPath(width, height, this.radius, this.arrowBorder, this.arrowSize, this.arrowOffset));
+			ctx.svgPath(this.genPath(width, height, this.radius, this.arrowBorder, this.arrowSize, this.arrowOffset));
 			ctx.fill();
 			ctx.save();
 			ctx.fillStyle = 'rgba(0,0,0,0.5)';
 			ctx.translate(1,1);
-			this.svgPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
+			ctx.svgPath(this.genPath(width-2, height-2, this.radius-1, this.arrowBorder, this.arrowSize-1, this.arrowOffset-1));
 			ctx.fill();
 			ctx.restore();
 			ctx.fillStyle = this.fill.getCssRgba();
 			ctx.translate(2,2);
-			this.svgPath(this.genPath(width-4, height-4, this.radius-2, this.arrowBorder, this.arrowSize-1, this.arrowOffset-2));
+			ctx.svgPath(this.genPath(width-4, height-4, this.radius-2, this.arrowBorder, this.arrowSize-1, this.arrowOffset-2));
 			ctx.fill();
 		}
 	}

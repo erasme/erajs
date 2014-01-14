@@ -86,7 +86,7 @@ Ui.CanvasElement.extend('Ui.Rectangle',
 {
 	updateCanvas: function(ctx) {
 		ctx.beginPath();
-		this.roundRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight(),
+		ctx.roundRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight(),
 			this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight,
 			this.radiusBottomLeft);
 		ctx.closePath();

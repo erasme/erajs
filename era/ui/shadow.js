@@ -128,14 +128,14 @@ Ui.CanvasElement.extend('Ui.Shadow',
 
 			if(this.inner) {
 				ctx.beginPath();
-				this.roundRect(0, 0, width, height, this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft);
-				this.roundRect(this.shadowWidth-i, this.shadowWidth-i, width-((this.shadowWidth-i)*2), height-((this.shadowWidth-i)*2), this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft, true);
+				ctx.roundRect(0, 0, width, height, this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft);
+				ctx.roundRect(this.shadowWidth-i, this.shadowWidth-i, width-((this.shadowWidth-i)*2), height-((this.shadowWidth-i)*2), this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft, true);
 				ctx.closePath();
 				ctx.fill();			
 			}
 			else {
 				ctx.beginPath();
-				this.roundRect(i, i, width-i*2, height-i*2, this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft);
+				ctx.roundRect(i, i, width-i*2, height-i*2, this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight, this.radiusBottomLeft);
 				ctx.closePath();
 				ctx.fill();
 			}

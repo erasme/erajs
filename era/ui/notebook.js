@@ -509,12 +509,12 @@ Ui.CanvasElement.extend('Ui.NotebookBackground', {
 		var height = this.getLayoutHeight();
 		
 		ctx.fillStyle = '#cccccc';
-		this.svgPath(this.genPath(width, height, this.radius, this.tabOffset, this.tabWidth, this.tabHeight));
+		ctx.svgPath(this.genPath(width, height, this.radius, this.tabOffset, this.tabWidth, this.tabHeight));
 		ctx.fill();
 		
 		ctx.translate(1, 1);
 		ctx.fillStyle = this.fill.getCssRgba();
-		this.svgPath(this.genPath(width-2, height-2, this.radius, this.tabOffset, this.tabWidth-2, this.tabHeight));
+		ctx.svgPath(this.genPath(width-2, height-2, this.radius, this.tabOffset, this.tabWidth-2, this.tabHeight));
 		ctx.fill();
 	}
 });

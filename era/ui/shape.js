@@ -57,7 +57,7 @@ Ui.CanvasElement.extend('Ui.Shape',
 		if(this.scale != 1)
 			ctx.scale(this.scale, this.scale);
 
-		this.svgPath(this.path);
+		ctx.svgPath(this.path);
 
 		var fill = this.getFill();		
 		if(Ui.Color.hasInstance(fill))
