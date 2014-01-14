@@ -125,12 +125,12 @@ Ui.Container.extend('Ui.Slider',
 	},
 
 	getColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
 		return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
 	},
 
 	getButtonColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
+		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
 
 		var deltaY = 0;
 		if(this.button.getIsDown())
@@ -298,7 +298,7 @@ Ui.LBox.extend('Ui.SliderVerticalContentDrawing',
 
 	/**@private*/
 	genPath: function(width, height, radius) {
-		return 'M'+radius+',0 L'+(width*0.66)+',0 L'+width+','+(height/2)+' L'+(width*0.66)+','+height+' L'+radius+','+height+' Q0,'+height+' L0,'+radius+' Q0,0 z';
+		return 'M'+radius+',0 L'+(width*0.66)+',0 L'+width+','+(height/2)+' L'+(width*0.66)+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+(height-radius)+' L0,'+radius+' z';
 	}
 }, 
 /**@lends Ui.SliderVerticalContentDrawing#*/
