@@ -528,7 +528,6 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	title: undefined,
 	uiTitle: undefined,
 	background: undefined,
-	border: undefined,
 
 	/**
 	 * @constructs
@@ -536,12 +535,9 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	 * @extends Ui.Pressable
 	 */
 	constructor: function(config) {
-		this.border = new Ui.Rectangle();
-		this.append(this.border);
-
-		this.background = new Ui.Rectangle({ marginTop: 1, marginBottom: 1, marginRight: 1 });
+		this.background = new Ui.Rectangle({ verticalAlign: 'bottom', height: 4 });
 		this.append(this.background);
-		this.uiTitle = new Ui.Label({ margin: 8 });
+		this.uiTitle = new Ui.Label({ margin: 8, fontWeight: 'bold' });
 		this.append(this.uiTitle);
 
 		this.connect(this, 'down', this.onListViewHeaderDown);
@@ -562,41 +558,28 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	/**#@+ 
 	 * @private 
 	 */
-	getGradient: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.05, u: yuv.u, v: yuv.v }) }
-		] });
+	getColor: function() {
+		return Ui.Color.create(this.getStyleProperty('color'));
 	},
 
-	getGradientDown: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.05 - 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.05 - 0.10, u: yuv.u, v: yuv.v }) }
-		] });
+	getColorDown: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
+		return new Ui.Color({ y: yuv.y + 0.40, u: yuv.u, v: yuv.v });
 	},
-
-	getDarkColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-	},
-
+	
 	onListViewHeaderDown: function() {
-		this.background.setFill(this.getGradientDown());
+		this.background.setFill(this.getColorDown());
 	},
 
 	onListViewHeaderUp: function() {
-		this.background.setFill(this.getGradient());
+		this.background.setFill(this.getColor());
 	}
 	/**#@-*/
 }, 
 /** @lends Ui.ListViewHeader#*/
 {
 	onStyleChange: function() {
-		this.background.setFill(this.getGradient());
-		this.border.setFill(this.getDarkColor());
+		this.background.setFill(this.getStyleProperty('color'));
 		var spacing = this.getStyleProperty('spacing');
 		this.uiTitle.setMargin(spacing + 2);
 	}
@@ -604,7 +587,7 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 /** @lends Ui.ListViewHeader*/
 {
 	style: {
-		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
+		color: '#444444',
 		spacing: 5
 	}
 });
@@ -737,9 +720,7 @@ Ui.Container.extend('Ui.ListViewColBar', {
 
 		var lbox = new Ui.LBox();
 		this.grip.setContent(lbox);
-		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'white', marginLeft: 3, marginRight: 9+2, marginTop: 6, marginBottom: 6 }));
 		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 4, marginRight: 8+2, marginTop: 6, marginBottom: 6 }));
-		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'white', marginLeft: 8, marginRight: 4+2, marginTop: 6, marginBottom: 6 }));
 		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 9, marginRight: 3+2, marginTop: 6, marginBottom: 6 }));
 
 		this.separator = new Ui.Rectangle({ width: 1, fill: 'black', opacity: 0.3 });
