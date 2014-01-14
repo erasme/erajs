@@ -49,11 +49,13 @@ Ui.LBox.extend('Ui.TextAreaField',
 
 	onTextAreaFocus: function() {
 		this.textholder.hide();
+		this.graphic.setHasFocus(true);
 	},
 
 	onTextAreaBlur: function() {
 		if(this.getValue() == '')
-			this.textholder.show();			
+			this.textholder.show();	
+		this.graphic.setHasFocus(false);
 	},
 
 	onTextAreaChange: function(entry, value) {
