@@ -304,11 +304,7 @@ Ui.LBox.extend('Ui.SwitchButton',
 		if(this.fill != fill) {
 			this.fill = Ui.Color.create(fill);
 			var yuv = this.fill.getYuv();
-			var gradient = new Ui.LinearGradient({ stops: [
-				{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.1, u: yuv.u, v: yuv.v }) },
-				{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.1, u: yuv.u, v: yuv.v }) }
-			] });
-			this.background.setFill(gradient);
+			this.background.setFill(this.fill);
 			this.shadow.setFill((new Ui.Color({ y: yuv.y - 0.6, u: yuv.u, v: yuv.v })).getCssHtml());
 		}
 	}
