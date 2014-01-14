@@ -4,6 +4,12 @@ Ui.Element.extend('Ui.Html',
 	htmlDrawing: undefined,
 	html: undefined,
 	mouseTarget: undefined,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
+	touchStartX: undefined,
+	touchStartY: undefined,
 
 	/**
 	 * @constructs
@@ -120,8 +126,10 @@ Ui.Element.extend('Ui.Html',
 		
 		this.mouseTarget = target;
 		
-		target.mouseStartX = event.screenX;
-		target.mouseStartY = event.screenY;
+		target.mouseStartClientX = event.clientX;
+		target.mouseStartClientY = event.clientY;
+		target.mouseStartScreenX = event.screenX;
+		target.mouseStartScreenY = event.screenY;
 		target.isDown = true;
 
 		this.connect(window, 'mousemove', this.onLinkMouseMove, true);
@@ -131,8 +139,8 @@ Ui.Element.extend('Ui.Html',
 	onLinkMouseMove: function(event) {
 		var target = this.mouseTarget;
 		
-		var deltaX = event.screenX - target.mouseStartX;
-		var deltaY = event.screenY - target.mouseStartY;
+		var deltaX = event.clientX - target.mouseStartClientX;
+		var deltaY = event.clientY - target.mouseStartClientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		event.preventDefault();
@@ -149,8 +157,8 @@ Ui.Element.extend('Ui.Html',
 				this.disconnect(target, 'mousedown', this.onLinkMouseDown);
 
 				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-					event.clientX, event.clientY,
+				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.mouseStartScreenX, this.mouseStartScreenY,
+					this.mouseStartClientX, this.mouseStartClientY,
 					event.ctrlKey, event.altKey, event.shiftKey,
 					event.metaKey, 0, event.target);
 				event.target.dispatchEvent(mouseDownEvent);
