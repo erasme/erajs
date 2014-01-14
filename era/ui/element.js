@@ -24,6 +24,7 @@ Core.Object.extend('Ui.Element',
 	/** measurement */
 	collapse: false,
 	measureValid: false,
+	measureConstraintPixelRatio: 1,
 	measureConstraintWidth: 0,
 	measureConstraintHeight: 0,
 	measureWidth: 0,
@@ -35,6 +36,7 @@ Core.Object.extend('Ui.Element',
 	arrangeY: 0,
 	arrangeWidth: 0,
 	arrangeHeight: 0,
+	arrangePixelRatio: 1,
 
 	/** render */
 	drawValid: true,
@@ -125,15 +127,15 @@ Core.Object.extend('Ui.Element',
 	 */
 	constructor: function(config) {
 		// create the drawing container
-		this.drawing = this.renderDrawing();
+		this.drawing = this.renderDrawing(config);
 		if(DEBUG)
 			this.drawing.setAttribute('class', this.classType);
 		this.drawing.style.position = 'absolute';
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';
 		this.drawing.style.outline = 'none';
-		var content = this.render();
-		if(content != undefined)
+		var content = this.render(config);
+		if(content !== undefined)
 			this.drawing.appendChild(content);
 
 //		this.setSelectable(false);
@@ -267,16 +269,18 @@ Core.Object.extend('Ui.Element',
 		if(!this.isLoaded)
 			return;
 		
-		//console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
+//		console.log(this+'.measure ('+width+','+height+'), valid: '+this.measureValid+', constraint: ('+this.measureConstraintWidth+' x '+this.measureConstraintHeight+')');
 
 		if(this.collapse) {
 			this.measureValid = true;
 			return { width: 0, height: 0 };
 		}
 
-		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height))
+		if((this.measureValid) && (this.measureConstraintWidth == width) && (this.measureConstraintHeight == height) &&
+			(this.measureConstraintPixelRatio == (window.devicePixelRatio || 1)))
 			return { width: this.measureWidth, height: this.measureHeight };
-
+		
+		this.measureConstraintPixelRatio = (window.devicePixelRatio || 1);
 		this.measureConstraintWidth = width;
 		this.measureConstraintHeight = height;
 
@@ -369,11 +373,13 @@ Core.Object.extend('Ui.Element',
 			width = 0;
 		if(isNaN(height))
 			height = 0;			
-		if((!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) || (this.arrangeHeight != height)) {
+		if((!this.arrangeValid) || (this.arrangeX != x) || (this.arrangeY != y) || (this.arrangeWidth != width) ||
+			(this.arrangeHeight != height) || (this.arrangePixelRatio != (window.devicePixelRatio || 1))) {
 			this.arrangeX = x;
 			this.arrangeY = y;
 			this.arrangeWidth = width;
 			this.arrangeHeight = height;
+			this.arrangePixelRatio = (window.devicePixelRatio || 1);
 
 			// handle alignment
 			if(this.verticalAlign == 'top') {
@@ -1115,6 +1121,14 @@ Core.Object.extend('Ui.Element',
 		this.onInternalStyleChange();
 	},
 
+	setStyleProperty: function(property, value) {
+		if(this.style === undefined)
+			this.style = {};
+		if(this.style[this.classType] === undefined)
+			this.style[this.classType] = {};
+		this.style[this.classType][property] = value;
+	},
+
 	getStyleProperty: function(property) {
 		if(this.mergeStyle !== undefined) {
 			var current = this;
@@ -1470,29 +1484,15 @@ Core.Object.extend('Ui.Element',
 	* coordinate system to the page coordinate system
 	*/
 	pointToWindow: function(element, point, win) {
-		if(navigator.isWebkit) {
-			if(win === undefined)
-				win = window;
-			return win.webkitConvertPointFromNodeToPage(element, new WebKitPoint(point.x, point.y));
-		}
-		else {
-			point = new Ui.Point({point: point });
-			point.matrixTransform(Ui.Element.transformToWindow(element, win));
-			return point;
-		}
+		point = new Ui.Point({ point: point });
+		point.matrixTransform(Ui.Element.transformToWindow(element, win));
+		return point;
 	},
 
 	pointFromWindow: function(element, point, win) {
-		if(navigator.isWebkit) {
-			if(win === undefined)
-				win = window;
-			return win.webkitConvertPointFromPageToNode(element, new WebKitPoint(point.x, point.y));
-		}
-		else {
-			point = new Ui.Point({ point: point });
-			point.matrixTransform(Ui.Element.transformFromWindow(element, win));
-			return point;
-		}
+		point = new Ui.Point({ point: point });
+		point.matrixTransform(Ui.Element.transformFromWindow(element, win));
+		return point;
 	}
 });
 
