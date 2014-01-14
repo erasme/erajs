@@ -17,7 +17,7 @@ Ui.LBox.extend('Ui.ContextBar', {
 		
 		var closeButton = new Ui.Pressable({ margin: 5 });
 		closeButton.setContent(
-			new Ui.Icon({ icon: 'close', width: 30, height: 30, verticalAlign: 'center' })
+			new Ui.Icon({ icon: 'close', width: 25, height: 25, verticalAlign: 'center' })
 		);
 		hbox.append(closeButton);
 		this.connect(closeButton, 'press', this.onClosePress);
