@@ -3,6 +3,12 @@ Ui.LBox.extend('Ui.Togglable',
 {
 	isDown: false,
 	isToggled: false,
+	mouseStartClientX: undefined,
+	mouseStartClientY: undefined,
+	mouseStartScreenX: undefined,
+	mouseStartScreenY: undefined,
+	touchStartX: undefined,
+	touchStartY: undefined,
 
 	/**
 	 * @constructs
@@ -40,8 +46,10 @@ Ui.LBox.extend('Ui.Togglable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.mouseStartX = event.screenX;
-		this.mouseStartY = event.screenY;
+		this.mouseStartClientX = event.clientX;
+		this.mouseStartClientY = event.clientY;
+		this.mouseStartScreenX = event.screenX;
+		this.mouseStartScreenY = event.screenY;
 
 		this.connect(window, 'mousemove', this.onMouseMove, true);
 		this.connect(window, 'mouseup', this.onMouseUp, true);
@@ -49,8 +57,8 @@ Ui.LBox.extend('Ui.Togglable',
 	},
 
 	onMouseMove: function(event) {
-		var deltaX = event.screenX - this.mouseStartX;
-		var deltaY = event.screenY - this.mouseStartY;
+		var deltaX = event.clientX - this.mouseStartClientX;
+		var deltaY = event.clientY - this.mouseStartClientY;
 		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
 		event.preventDefault();
@@ -63,8 +71,8 @@ Ui.LBox.extend('Ui.Togglable',
 			this.disconnect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 			var mouseDownEvent = document.createEvent('MouseEvents');
-			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, event.screenX, event.screenY,
-				event.clientX, event.clientY,
+			mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.mouseStartScreenX, this.mouseStartScreenY,
+				this.mouseStartClientX, this.mouseStartClientY,
 				event.ctrlKey, event.altKey, event.shiftKey,
 				event.metaKey, 0, event.target);
 			event.target.dispatchEvent(mouseDownEvent);
@@ -89,12 +97,12 @@ Ui.LBox.extend('Ui.Togglable',
 		event.preventDefault();
 		event.stopPropagation();
 		if(event.button == 0) {
-			this.onUp();
 			this.focus();
 			if(!this.isToggled)
 				this.onToggle();
 			else
 				this.onUntoggle();
+			this.onUp();
 		}
 	},
 
@@ -140,12 +148,12 @@ Ui.LBox.extend('Ui.Togglable',
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.onUp();
 		this.focus();
 		if(!this.isToggled)
 			this.onToggle();
 		else
 			this.onUntoggle();
+		this.onUp();
 	},
 
 	onKeyDown: function(event) {
@@ -164,11 +172,11 @@ Ui.LBox.extend('Ui.Togglable',
 		if(((key == 13) || (key == 32)) && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
-			this.onUp();
 			if(!this.isToggled)
 				this.onToggle();
 			else
 				this.onUntoggle();
+			this.onUp();
 		}
 	},
 
