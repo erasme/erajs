@@ -133,7 +133,7 @@ Ui.VBox.extend('Ui.MonthCalendar',
 			}
 
 			if((this.selectedDate != undefined) && (current.getFullYear() == this.selectedDate.getFullYear()) && (current.getMonth() == this.selectedDate.getMonth()) && (current.getDate() == this.selectedDate.getDate()))
-				day.append(new Ui.Frame({ frameWidth: 3, fill: 'red', radius: 2 }));
+				day.append(new Ui.Frame({ frameWidth: 3, fill: 'red', radius: 0 }));
 
 			var disable = false;
 			if(this.dayFilter != undefined) {
