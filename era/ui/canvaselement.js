@@ -185,6 +185,33 @@ Core.Object.extend('Core.SVG2DPath', {
 		this.lineTo(x, y+h);
 	},
 
+	arc: function(x, y, radius, startAngle, endAngle, anticlockwise) {
+		this.ellipse(x, y, radius, radius, 0, startAngle, endAngle, anticlockwise);
+	},
+
+	ellipse: function(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
+		// TODO
+//		console.log('ellipse('+x+', '+y+', '+radiusX+', '+radiusY+', '+rotation+', '+startAngle+', '+endAngle+', '+anticlockwise+')');
+
+		// special case, full ellipse
+		if((rotation === 0) && (startAngle === 0) && (endAngle === Math.PI*2)) {
+			this.moveTo(x, y+radiusY);
+			this.arcTo(x+radiusX, y+radiusY, x+radiusX, y, radiusX, radiusY, Math.PI/2);
+			this.arcTo(x+radiusX, y-radiusY, x, y-radiusY, radiusX, radiusY, Math.PI/2);
+			this.arcTo(x-radiusX, y-radiusY, x-radiusX, y, radiusX, radiusY, Math.PI/2);
+			this.arcTo(x-radiusX, y+radiusY, x, y+radiusY, radiusX, radiusY, Math.PI/2);
+		}
+		else {
+			// TODO
+			this.moveTo(x, y);
+			this.lineTo(x, y+radiusY);
+//			this.arcTo(x+radiusX, y+radiusY, x+radiusX, y, radiusX, radiusY, Math.PI*2);
+
+//			this.path.pathSegList.appendItem(this.path.createSVGPathSegArcAbs(x, y, radiusX, radiusY, (endAngle-startAngle)*Math.PI/180, 1, 1));
+//			this.x = x; this.y = y;
+		}
+	},
+	
 	roundRect: function(x, y, w, h, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, antiClockwise) {
 		if(antiClockwise === true) {
 			this.moveTo(x+radiusTopLeft, y);
@@ -269,6 +296,7 @@ Core.Object.extend('Core.SVG2DContext', {
 	textAlign: 'start',
 	textBaseLine: 'alphabetic',
 	direction: 'inherit',
+	clipId: undefined,
 	
 	document: undefined,
 	currentPath: undefined,
@@ -312,6 +340,14 @@ Core.Object.extend('Core.SVG2DContext', {
 		this.currentPath.rect(x, y, w, h);
 	},
 
+	arc: function(x, y, radius, startAngle, endAngle, anticlockwise) {
+		this.currentPath.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+	},
+
+	ellipse: function(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
+		this.currentPath.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+	},
+
 	roundRect: function(x, y, w, h, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, antiClockwise) {
 		this.currentPath.roundRect(x, y, w, h, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, antiClockwise);
 	},
@@ -329,6 +365,8 @@ Core.Object.extend('Core.SVG2DContext', {
 		}
 		else
 			svg.style.fill = this.fillStyle;
+		if(this.clipId !== undefined)
+			svg.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
 		svg.style.opacity = this.globalAlpha;
 		// very important, SVG elements cant take pointers events
 		// because touch* events are captured by the initial element they
@@ -345,46 +383,94 @@ Core.Object.extend('Core.SVG2DContext', {
 		svg.style.fill = 'none';
 		svg.style.opacity = this.globalAlpha;
 		svg.style.strokeWidth = this.lineWidth;
+		if(this.clipId !== undefined)
+			svg.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
 		svg.setAttributeNS(null, 'pointer-events', 'none');
 		svg.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
 		this.g.appendChild(svg);
 	},
 
+	clip: function() {
+		var clip = document.createElementNS(svgNS, 'clipPath');
+		this.clipId = '_clip'+(++Core.SVG2DContext.counter);
+		clip.setAttributeNS(null, 'id', this.clipId);
+		clip.appendChild(this.currentPath.getSVG());
+		this.defs.appendChild(clip);
+	},
+
+	resetClip: function() {
+		this.clipId = undefined;
+	},
+
+  	// drawing images
+  	drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
+  		var img = document.createElementNS(svgNS, 'image');
+		if(this.clipId !== undefined)
+			img.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
+		img.style.opacity = this.globalAlpha;
+		// very important, SVG elements cant take pointers events
+		// because touch* events are captured by the initial element they
+		// are raised over. If this element is remove from the DOM (like canvas redraw)
+		// the following events (like touchmove, touchend) will never raised
+		img.setAttributeNS(null, 'pointer-events', 'none');
+		img.href.baseVal = image.src;
+		img.setAttributeNS(null, 'x', dx);
+		img.setAttributeNS(null, 'y', dy);
+		img.setAttributeNS(null, 'width', dw);
+		img.setAttributeNS(null, 'height', dh);
+		img.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
+		this.g.appendChild(img);
+  	},
+
 	fillText: function(text, x, y, maxWidth) {
 		var t = document.createElementNS(svgNS, 'text');
+		var textNode = document.createTextNode(text);
+		t.appendChild(textNode);
+
 		t.style.fill = this.fillStyle;
 		t.style.opacity = this.globalAlpha;
 		t.setAttributeNS(null, 'pointer-events', 'none');
 		t.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
-		t.setAttributeNS(null, 'x', x);
-		t.setAttributeNS(null, 'y', y);
 		if(this.textAlign == 'center')
 			t.style.textAnchor = 'middle';
 		else if(this.textAlign == 'end')
 			t.style.textAnchor = 'end';
+		else if(this.textAlign == 'right')
+			t.style.textAnchor = 'end';
 		
-		if(this.textBaseline === 'top')
-			t.style.alignmentBaseline = 'text-before-edge';
-		else if(this.textBaseline === 'hanging')
-			t.style.alignmentBaseline = 'hanging';
-		else if(this.textBaseline === 'middle')
-			t.style.alignmentBaseline = 'middle';
-		else if(this.textBaseline === 'alphabetic')
-			t.style.alignmentBaseline = 'alphabetic';
-		else if(this.textBaseline === 'ideographic')
-			t.style.alignmentBaseline = 'ideographic';
-		else if(this.textBaseline === 'bottom')
-			t.style.alignmentBaseline = 'text-after-edge';
-
-		t.style.alignmentBaseline = this.textBaseline;
-
 		var font = this.parseFont(this.font);
 		t.style.fontFamily = font.family;
 		t.style.fontSize = font.size;
 		t.style.fontStyle = font.style;
 
-		var textNode = document.createTextNode(text);
-		t.appendChild(textNode);
+		if(navigator.isFirefox) {
+			var fontSize = parseInt(font.size);
+			if(this.textBaseline === 'top')
+				y += fontSize*0.8;
+			else if(this.textBaseline === 'hanging')
+				y += fontSize*0.8;
+			else if(this.textBaseline === 'middle')
+				y += (fontSize*0.8)/2;
+			else if(this.textBaseline === 'bottom')
+				y += fontSize*-0.2;
+		}
+		else {
+			if(this.textBaseline === 'top')
+				t.style.alignmentBaseline = 'text-before-edge';
+			else if(this.textBaseline === 'hanging')
+				t.style.alignmentBaseline = 'text-before-edge';
+			else if(this.textBaseline === 'middle')
+				t.style.alignmentBaseline = 'central';
+			else if(this.textBaseline === 'alphabetic')
+				t.style.alignmentBaseline = 'alphabetic';
+			else if(this.textBaseline === 'ideographic')
+				t.style.alignmentBaseline = 'ideographic';
+			else if(this.textBaseline === 'bottom')
+				t.style.alignmentBaseline = 'text-after-edge';
+		}
+		
+		t.setAttributeNS(null, 'x', x);
+		t.setAttributeNS(null, 'y', y);
 
 		this.g.appendChild(t);
 	},
@@ -405,7 +491,8 @@ Core.Object.extend('Core.SVG2DContext', {
 			font: this.font,
 			textAlign: this.textAlign,
 			textBaseLine: this.textBaseLine,
-			direction: this.direction
+			direction: this.direction,
+			clipId: this.clipId
 		}
 		this.states.push(state);
 	},
@@ -428,6 +515,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			this.textAlign = state.textAlign;
 			this.textBaseLine = state.textBaseLine;
 			this.direction = state.direction;
+			this.clipId = state.clipId;
 		}
 	},
 
@@ -658,6 +746,8 @@ Core.Object.extend('Core.SVG2DContext', {
 	getSVG: function() {
 		return this.g;
 	}
+}, {}, {
+	counter: 0
 });
 
 if(navigator.supportCanvas) {
