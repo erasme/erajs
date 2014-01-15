@@ -214,7 +214,9 @@ Ui.Element.extend('Ui.Label',
 		if(Ui.Label.measureBox === undefined)
 			this.createMeasureCanvas();
 		Ui.Label.measureContext.font = 'normal '+fontWeight+' '+fontSize+'px '+fontFamily;
-		return { width: Ui.Label.measureContext.measureText(text).width, height: fontSize };
+		var res = Ui.Label.measureContext.measureText(text);
+		res.height = fontSize;
+		return res;
 	},
 
 	createMeasureCanvas: function() {
