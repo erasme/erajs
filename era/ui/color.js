@@ -179,14 +179,14 @@ Core.Object.extend('Ui.Color',
 				color = Ui.Color.knownColor[color];
 			// parse the color
 			var res;
-			if((res = color.match(/^rgba\((\d+),(\d+),(\d+),(\d+\.?\d*)\)$/)) != null) {
+			if((res = color.match(/^\s*rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+\.?\d*)\s*\)\s*$/)) != null) {
 				var r = parseInt(res[1]) / 255;
 				var g = parseInt(res[2]) / 255;
 				var b = parseInt(res[3]) / 255;
 				var a = parseFloat(res[4]);
 				return new Ui.Color({ r: r, g: g, b: b, a: a });
 			}
-			else if((res = color.match(/^rgb\((\d+),(\d+),(\d+)\)$/)) != null) {
+			else if((res = color.match(/^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/)) != null) {
 				var r = parseInt(res[1]) / 255;
 				var g = parseInt(res[2]) / 255;
 				var b = parseInt(res[3]) / 255;
