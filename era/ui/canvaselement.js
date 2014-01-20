@@ -404,22 +404,73 @@ Core.Object.extend('Core.SVG2DContext', {
 
   	// drawing images
   	drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
-  		var img = document.createElementNS(svgNS, 'image');
-		if(this.clipId !== undefined)
-			img.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
-		img.style.opacity = this.globalAlpha;
-		// very important, SVG elements cant take pointers events
-		// because touch* events are captured by the initial element they
-		// are raised over. If this element is remove from the DOM (like canvas redraw)
-		// the following events (like touchmove, touchend) will never raised
-		img.setAttributeNS(null, 'pointer-events', 'none');
-		img.href.baseVal = image.src;
-		img.setAttributeNS(null, 'x', dx);
-		img.setAttributeNS(null, 'y', dy);
-		img.setAttributeNS(null, 'width', dw);
-		img.setAttributeNS(null, 'height', dh);
-		img.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
-		this.g.appendChild(img);
+  		var nw = image.naturalWidth;
+  		var nh = image.naturalHeight;
+
+  		if(sw === undefined) {
+  			dx = sx; dy = sy;
+  			sx = 0; sy = 0;
+  			sw = nw; sh = nh;
+  			dw = nw; dh = nh;
+  		}
+  		else if(dx === undefined) {
+  			dx = sx; dy = sy;
+  			dw = sw; dh = sh;
+  			sx = 0; sy = 0;
+  			sw = nw; sh = nh;
+  		}
+
+  		if((sx === 0) && (sy === 0) && (sw === nw) && (sh == nh)) {
+  			var img = document.createElementNS(svgNS, 'image');
+			if(this.clipId !== undefined)
+				img.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
+			img.style.opacity = this.globalAlpha;
+			// very important, SVG elements cant take pointers events
+			// because touch* events are captured by the initial element they
+			// are raised over. If this element is remove from the DOM (like canvas redraw)
+			// the following events (like touchmove, touchend) will never raised
+			img.setAttributeNS(null, 'pointer-events', 'none');
+			img.href.baseVal = image.src;
+			img.setAttributeNS(null, 'x', dx);
+			img.setAttributeNS(null, 'y', dy);
+			img.setAttributeNS(null, 'width', dw);
+			img.setAttributeNS(null, 'height', dh);
+			img.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
+			this.g.appendChild(img);
+		}
+		else {
+			var pattern = document.createElementNS(svgNS, 'pattern');
+			var id = '_pat'+(++Core.SVG2DContext.counter);
+			pattern.setAttributeNS(null, 'id', id);
+			pattern.setAttributeNS(null, 'patternUnits' ,'userSpaceOnUse');
+			pattern.setAttributeNS(null, 'x', dx);
+			pattern.setAttributeNS(null, 'y', dy);
+			pattern.setAttributeNS(null, 'width', dw);
+			pattern.setAttributeNS(null, 'height', dh);
+
+			var img = document.createElementNS(svgNS, 'image');
+			img.href.baseVal = image.src;
+			img.setAttributeNS(null, 'x', -sx*dw/sw);
+			img.setAttributeNS(null, 'y', -sy*dh/sh);
+			img.setAttributeNS(null, 'width', nw*dw/sw);
+			img.setAttributeNS(null, 'height', nh*dh/sh);
+			pattern.appendChild(img);
+			this.defs.appendChild(pattern);
+
+			var path = document.createElementNS(svgNS, 'path');
+			path.setAttributeNS(null, 'pointer-events', 'none');
+			path.pathSegList.appendItem(path.createSVGPathSegMovetoAbs(dx, dy));
+			path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(dx+dw, dy));
+			path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(dx+dw, dy+dh));
+			path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(dx, dy+dh));
+			path.pathSegList.appendItem(path.createSVGPathSegClosePath());
+			path.style.fill = 'url(#'+id+')';
+			if(this.clipId !== undefined)
+				path.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
+			path.style.opacity = this.globalAlpha;
+			path.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
+			this.g.appendChild(path);
+		}
   	},
 
 	fillText: function(text, x, y, maxWidth) {
