@@ -1,0 +1,20 @@
+Source: erajs
+Section: web
+Priority: optional
+Maintainer: Daniel Lacroix <dlacroix@erasme.org>
+Build-Depends: debhelper (>= 7), closure-compiler
+Standards-Version: 3.9.3
+Homepage: http://erajs.com/
+Vcs-Git: https://github.com/erasme/erajs.git
+
+Package: libjs-erajs
+Architecture: all
+Multi-Arch: foreign
+Conflicts: erajs
+Replaces: erajs
+Suggests: javascript-common
+Description: The JavaScript library for applications developpers
+ ERAjs is a JavaScript Application Library which main target is to
+ act like native application toolkit and is build the ground up with
+ multi-touch devices ergonomy in mind.
+
