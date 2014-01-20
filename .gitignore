@@ -9,6 +9,8 @@ vrac/
 site/
 release/
 debian/libjs-erajs/*
+debian/libjs-erajs.debhelper.log
+debian/libjs-erajs.substvars
 
 # Emacs
 *~
