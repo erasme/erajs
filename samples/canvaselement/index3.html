@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test CanvasElement</title>
+	<script src='../../era/era-debug.js'></script>
+	<!--script src='../../era/era.js'></script-->
+<script>
+
+Ui.CanvasElement.extend('Test.CanvasTextAlign', {
+	constructor: function() {
+	}
+}, {
+	canvasEngine: 'svg',
+
+	updateCanvas: function(ctx) {
+		ctx.font = 'normal 16px sans-serif';
+		var y = 20;
+		var aligns = ["start", "end", "left", "right", "center"];
+		for(var i = 0; i < aligns.length; i++) {
+			var align = aligns[i];
+			ctx.textAlign = align;
+			ctx.fillStyle = '#444444';
+			ctx.fillText('Hello World!', 100, y);
+			ctx.fillStyle = 'red';
+			ctx.fillRect(100, y, 4, 4);
+
+			y += 40;
+		}
+	}
+});
+
+Ui.CanvasElement.extend('Test.CanvasTextBaseline', {
+	constructor: function() {
+	}
+}, {
+	canvasEngine: 'svg',
+
+	updateCanvas: function(ctx) {
+		ctx.font = 'normal 16px sans-serif';
+		var y = 20;
+		var baselines = ["top", "hanging", "middle", "alphabetic", "ideographic", "bottom"];
+		for(var i = 0; i < baselines.length; i++) {
+			var baseline = baselines[i];
+			ctx.textBaseline = baseline;
+			ctx.fillStyle = '#444444';
+			ctx.fillText('Hello World!', 100, y);
+			ctx.fillStyle = 'red';
+			ctx.fillRect(100, y, 4, 4);
+
+			y += 40;
+		}
+	}
+});
+
+var app = new Ui.App();
+var scroll = new Ui.ScrollingArea();
+app.setContent(scroll);
+
+var vbox = new Ui.VBox({
+	spacing: 10,
+	verticalAlign: 'center', horizontalAlign: 'center'
+});
+scroll.setContent(vbox);
+
+var hbox = new Ui.HBox({ spacing: 10 });
+vbox.append(hbox);
+hbox.append(new Ui.Label({ text: 'SVG', width: 200 }));
+hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
+hbox.append(new Ui.Label({ text: 'CANVAS', width: 200 }));
+vbox.append(new Ui.Rectangle({ height: 2, fill: 'black' }));
+
+// test textAlign
+var hbox = new Ui.HBox({ spacing: 10 });
+vbox.append(hbox);
+hbox.append(new Test.CanvasTextAlign({
+	width: 200, height: 200, canvasEngine: 'svg'
+}));
+hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
+hbox.append(new Test.CanvasTextAlign({
+	width: 200, height: 200, canvasEngine: 'canvas'
+}));
+vbox.append(new Ui.Rectangle({ height: 2, fill: 'black' }));
+
+// test textBaseline
+var hbox = new Ui.HBox({ spacing: 10 });
+vbox.append(hbox);
+hbox.append(new Test.CanvasTextBaseline({
+	width: 200, height: 240, canvasEngine: 'svg'
+}));
+hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
+hbox.append(new Test.CanvasTextBaseline({
+	width: 200, height: 240, canvasEngine: 'canvas'
+}));
+
+
+</script>
+	</head>
+</html>
