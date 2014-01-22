@@ -78,13 +78,18 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onTouchStart: function(event) {
+		if(this.getIsDisabled()) {
+			event.preventDefault();
+			return;
+		}
+
 		if(event.targetTouches.length == 1) {
 			event.stopPropagation();
 
 			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
 			this.connect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
 
-			if(this.timer != undefined) {
+			if(this.timer !== undefined) {
 				this.timer.abort();
 				this.timer = undefined;
 			}
@@ -157,6 +162,11 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onMouseDown: function(event) {
+		if(this.getIsDisabled()) {
+			event.preventDefault();
+			return;
+		}
+
 		this.setSelectable(true);
 		event.stopPropagation();
 
@@ -273,7 +283,18 @@ Ui.Element.extend('Ui.ContentEditable', {
 
 		return { width: needWidth, height: needHeight };
 	},
-	
+
+	onDisable: function() {
+		Ui.ContentEditable.base.onDisable.call(this);
+		this.getDrawing().blur();
+		this.getDrawing().style.cursor = 'default';
+	},
+
+	onEnable: function() {
+		Ui.ContentEditable.base.onEnable.call(this);
+		this.getDrawing().style.cursor = 'auto';
+	},
+
 	onStyleChange: function() {
 		var color = Ui.Color.create(this.getStyleProperty('color'));
 		this.getDrawing().style.fontSize = this.getStyleProperty('fontSize')+'px';
