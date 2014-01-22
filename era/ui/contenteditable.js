@@ -216,8 +216,9 @@ Ui.Element.extend('Ui.ContentEditable', {
 
 	onMouseUp: function(event) {
 		this.testAnchorChange();
+		event.stopPropagation();
 
-		if(this.timer != undefined) {
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}
