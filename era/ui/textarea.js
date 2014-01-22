@@ -143,7 +143,7 @@ Ui.Element.extend('Ui.TextArea',
 			event.preventDefault();
 			return;
 		}
-	
+			
 		this.setSelectable(true);
 		event.stopPropagation();
 
@@ -179,7 +179,7 @@ Ui.Element.extend('Ui.TextArea',
 
 			// if the user move to much, release the touch event
 			if(delta > 10) {
-				if(this.timer != undefined) {
+				if(this.timer !== undefined) {
 					this.timer.abort();
 					this.timer = undefined;
 				}
@@ -207,7 +207,9 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	onMouseUp: function(event) {
-		if(this.timer != undefined) {
+		event.stopPropagation();
+
+		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
 		}

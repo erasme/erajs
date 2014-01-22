@@ -215,6 +215,8 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	onMouseUp: function(event) {
+		event.stopPropagation();
+
 		if(this.timer != undefined) {
 			this.timer.abort();
 			this.timer = undefined;
