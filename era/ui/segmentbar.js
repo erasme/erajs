@@ -2,10 +2,11 @@ Ui.LBox.extend('Ui.SegmentBar',
 /** @lends Ui.SegmentBar#*/
 {
 	border: undefined,
-	hbox: undefined,
+	box: undefined,
 	current: undefined,
 	field: 'text',
 	data: undefined,
+	orientation: 'horizontal',
 
 	/**
 	 * @constructs
@@ -20,12 +21,17 @@ Ui.LBox.extend('Ui.SegmentBar',
 		this.border = new Ui.Rectangle({ fill: '#888888' });
 		this.append(this.border);
 
-		this.hbox = new Ui.HBox({ uniform: true, margin: 1, spacing: 1 });
-		this.append(this.hbox);
+		this.box = new Ui.Box({ uniform: true, margin: 1, spacing: 1, orientation: this.orientation });
+		this.append(this.box);
 
 		this.connect(this, 'focus', this.updateColors);
 		this.connect(this, 'blur', this.updateColors);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+	},
+
+	setOrientation: function(orientation) {
+		this.orientation = orientation;
+		this.box.setOrientation(orientation);
 	},
 
 	setField: function(field) {
@@ -33,26 +39,31 @@ Ui.LBox.extend('Ui.SegmentBar',
 	},
 
 	setData: function(data) {
-		while(this.hbox.getFirstChild() != undefined) {
-			this.disconnect(this.hbox.getFirstChild(), 'select', this.onSegmentSelect);
-			this.hbox.remove(this.hbox.getFirstChild());
+		while(this.box.getFirstChild() != undefined) {
+			this.disconnect(this.box.getFirstChild(), 'select', this.onSegmentSelect);
+			this.box.remove(this.box.getFirstChild());
 		}
 		this.data = data;
 		for(var i = 0; i < data.length; i++) {
-			var segment = new Ui.SegmentButton({ data: data[i], text: data[i][this.field], mode: (i == 0)?'left':(i == data.length - 1)?'right':'middle' });
-			this.hbox.append(segment, true);
+			var mode;
+			if(this.orientation === 'horizontal')
+	 			mode = (i == 0)?'left':(i == data.length - 1)?'right':'middle';
+	 		else
+				mode = (i == 0)?'top':(i == data.length - 1)?'bottom':'middle';
+			var segment = new Ui.SegmentButton({ data: data[i], text: data[i][this.field], mode: mode });
+			this.box.append(segment, true);
 			this.connect(segment, 'select', this.onSegmentSelect);
 		}
 	},
 
 	setCurrentPosition: function(position) {
-		if((position >= 0) && (position < this.hbox.getChildren().length))
-			this.hbox.getChildren()[position].select();
+		if((position >= 0) && (position < this.box.getChildren().length))
+			this.box.getChildren()[position].select();
 	},
 
 	getCurrentPosition: function() {
-		for(var i = 0; i < this.hbox.getChildren().length; i++) {
-			if(this.hbox.getChildren()[i].getIsSelected())
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			if(this.box.getChildren()[i].getIsSelected())
 				return i;
 		}
 	},
@@ -61,8 +72,8 @@ Ui.LBox.extend('Ui.SegmentBar',
 	* Move the current choice to the next choice
 	*/
 	next: function() {
-		for(var i = 0; i < this.hbox.getChildren().length; i++) {
-			if(this.hbox.getChildren()[i] === this.current) {
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			if(this.box.getChildren()[i] === this.current) {
 				this.setCurrentPosition(i+1);
 				break;
 			}
@@ -73,8 +84,8 @@ Ui.LBox.extend('Ui.SegmentBar',
 	* Move the current choice to the previous choice
 	*/
 	previous: function() {
-		for(var i = 0; i < this.hbox.getChildren().length; i++) {
-			if(this.hbox.getChildren()[i] === this.current) {
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			if(this.box.getChildren()[i] === this.current) {
 				this.setCurrentPosition(i-1);
 				break;
 			}
@@ -115,8 +126,8 @@ Ui.LBox.extend('Ui.SegmentBar',
 
 	updateColors: function() {
 		var color = this.getCurrentColor();
-		for(var i = 0; i < this.hbox.getChildren().length; i++)
-			this.hbox.getChildren()[i].setFill(color);
+		for(var i = 0; i < this.box.getChildren().length; i++)
+			this.box.getChildren()[i].setFill(color);
 	}
 	/**#@-*/
 }, {
@@ -124,9 +135,9 @@ Ui.LBox.extend('Ui.SegmentBar',
 		var spacing = this.getStyleProperty('spacing');
 		var radius = this.getStyleProperty('radius');
 		this.border.setRadius(radius);
-		for(var i = 0; i < this.hbox.getChildren().length; i++) {
-			this.hbox.getChildren()[i].setRadius(radius-1);
-			this.hbox.getChildren()[i].setSpacing(spacing);
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			this.box.getChildren()[i].setRadius(radius-1);
+			this.box.getChildren()[i].setSpacing(spacing);
 		}
 		this.updateColors();
 	}
@@ -185,6 +196,18 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 			this.bg.setRadiusTopLeft(0);
 			this.bg.setRadiusBottomLeft(0);
 			this.bg.setRadiusTopRight(this.radius);
+			this.bg.setRadiusBottomRight(this.radius);
+		}
+		else if(mode == 'top') {
+			this.bg.setRadiusTopLeft(this.radius);
+			this.bg.setRadiusBottomLeft(0);
+			this.bg.setRadiusTopRight(this.radius);
+			this.bg.setRadiusBottomRight(0);
+		}
+		else if(mode == 'bottom') {
+			this.bg.setRadiusTopLeft(0);
+			this.bg.setRadiusBottomLeft(this.radius);
+			this.bg.setRadiusTopRight(0);
 			this.bg.setRadiusBottomRight(this.radius);
 		}
 		else {
