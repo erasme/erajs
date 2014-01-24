@@ -323,6 +323,7 @@ Ui.Element.extend('Ui.TextArea',
 		drawing.setAttribute('rows', 1);
 		drawing.setAttribute('cols', 1);
 
+		drawing.style.opacity = 1;
 		drawing.style.display = 'block';
 		drawing.style.resize = 'none';
 		drawing.style.overflow = 'hidden';
@@ -368,11 +369,13 @@ Ui.Element.extend('Ui.TextArea',
 		Ui.TextArea.base.onDisable.call(this);
 		this.getDrawing().blur();
 		this.getDrawing().style.cursor = 'default';
+		this.getDrawing().disabled = true;
 	},
 
 	onEnable: function() {
 		Ui.TextArea.base.onEnable.call(this);
 		this.getDrawing().style.cursor = 'auto';
+		this.getDrawing().disabled = false;
 	},
 
 	onStyleChange: function() {
