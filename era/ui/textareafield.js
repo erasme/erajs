@@ -41,6 +41,8 @@ Ui.LBox.extend('Ui.TextAreaField',
 		this.textarea.setValue(value);
 		if((value == undefined) || (value == ''))
 			this.textholder.show();
+		else
+			this.textholder.hide();
 	},
 
 	/**#@+
