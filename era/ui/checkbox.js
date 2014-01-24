@@ -65,7 +65,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 					this.content = undefined;
 				}
 				this.text = text;
-				this.contentBox = new Ui.Text({ margin: 8,  text: this.text });
+				this.contentBox = new Ui.Text({ margin: 8,  text: this.text, verticalAlign: 'center' });
 				this.hbox.append(this.contentBox, true);
 			}
 		}
@@ -133,7 +133,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 			if(this.content != undefined)
 				this.contentBox.remove(this.content);
 			else {
-				this.contentBox = new Ui.LBox({ padding: 8 });
+				this.contentBox = new Ui.LBox({ padding: 8, verticalAlign: 'center' });
 				this.hbox.append(this.contentBox);
 			}
 			this.content = content;
