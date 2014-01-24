@@ -329,6 +329,7 @@ Ui.Element.extend('Ui.Entry',
 	renderDrawing: function() {
 		var drawing = document.createElement('input');
 		drawing.setAttribute('type', 'text');
+		drawing.style.opacity = 1;
 		drawing.style.border = '0px';
 		drawing.style.margin = '0px';
 		drawing.style.padding = '0px';
@@ -364,11 +365,13 @@ Ui.Element.extend('Ui.Entry',
 		Ui.Entry.base.onDisable.call(this);
 		this.getDrawing().blur();
 		this.getDrawing().style.cursor = 'default';
+		this.getDrawing().disabled = true;
 	},
 
 	onEnable: function() {
 		Ui.Entry.base.onEnable.call(this);
 		this.getDrawing().style.cursor = 'auto';
+		this.getDrawing().disabled = false;
 	},
 
 	onStyleChange: function() {
