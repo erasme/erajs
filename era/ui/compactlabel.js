@@ -200,7 +200,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	},
 
 	updateFlowWords: function(width, render) {
-		if(this.text === undefined)
+		if((this.text === undefined) || (this.text === null))
 			return { width: 0, height: 0 };
 
 		var fontSize = this.getFontSize();
