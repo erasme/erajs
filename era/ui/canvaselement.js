@@ -494,7 +494,7 @@ Core.Object.extend('Core.SVG2DContext', {
 		t.style.fontSize = font.size;
 		t.style.fontStyle = font.style;
 
-		if(navigator.isFirefox) {
+		if(navigator.isFirefox || navigator.isIE) {
 			var fontSize = parseInt(font.size);
 			if(this.textBaseline === 'top')
 				y += fontSize*0.8;
