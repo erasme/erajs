@@ -1201,7 +1201,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	updateTransform: function() {
-		if(this.transform != undefined) {
+		if(this.transform !== undefined) {
 //			console.log('updateTransform');
 
 			var matrix = new Ui.Matrix();
@@ -1224,6 +1224,10 @@ Core.Object.extend('Ui.Element',
 			if(matrix.isTranslateOnly()/* && (navigator.isIE7 || navigator.isIE8 || navigator.supportDrag)*/) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
+				if('removeProperty' in this.drawing.style) {
+					this.drawing.style.removeProperty('transform');
+					this.drawing.style.removeProperty('transform-origin');
+				}
 				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
 					this.drawing.style.removeProperty('-ms-transform');
 					this.drawing.style.removeProperty('-ms-transform-origin');
@@ -1249,6 +1253,8 @@ Core.Object.extend('Ui.Element',
 //					this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
 //				}
 //				else
+				this.drawing.style.transform = matrix.toString();
+				this.drawing.style.transformOrigin = '0% 0%';
 				if(navigator.isIE) {
 					this.drawing.style.msTransform = matrix.toString();
 					this.drawing.style.msTransformOrigin = '0% 0%';
@@ -1275,6 +1281,10 @@ Core.Object.extend('Ui.Element',
 //				this.drawing.style.top = Math.round(this.layoutY)+'px';
 //			}
 //			else
+			if('removeProperty' in this.drawing.style) {
+				this.drawing.style.removeProperty('transform');
+				this.drawing.style.removeProperty('transform-origin');
+			}
 			if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
 				this.drawing.style.removeProperty('-ms-transform');
 				this.drawing.style.removeProperty('-ms-transform-origin');
