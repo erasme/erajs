@@ -12,8 +12,10 @@ Ui.Togglable.extend('Ui.ToggleButton',
 		this.graphic = new Ui.ButtonGraphic();
 		this.append(this.graphic);
 
-		this.connect(this, 'down', this.onToggleButtonDown);
-		this.connect(this, 'up', this.onToggleButtonUp);
+		this.connect(this, 'down', this.onToggleButtonUpdate);
+		this.connect(this, 'up', this.onToggleButtonUpdate);
+		this.connect(this, 'toggle', this.onToggleButtonUpdate);
+		this.connect(this, 'untoggle', this.onToggleButtonUpdate);
 		this.connect(this, 'focus', this.onToggleButtonFocus);
 		this.connect(this, 'blur', this.onToggleButtonBlur);
 	},
@@ -41,12 +43,8 @@ Ui.Togglable.extend('Ui.ToggleButton',
 	setOrientation: function(orientation) {
 		this.graphic.setOrientation(orientation);
 	},
-	
-	onToggleButtonDown: function() {
-		this.graphic.setIsDown(true);
-	},
-	
-	onToggleButtonUp: function() {
+
+	onToggleButtonUpdate: function() {
 		this.graphic.setIsDown(this.getIsDown() || this.getIsToggled());
 	},
 
