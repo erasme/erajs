@@ -333,7 +333,7 @@ Ui.Element.extend('Ui.TextArea',
 		drawing.style.outline = 'none';
 		if(navigator.isIE) {
 			if(navigator.isIE7 || navigator.isIE8)
-				drawing.style.background = 'transparent';
+				drawing.style.backgroundColor = 'transparent';
 			else
 				drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
 		}
