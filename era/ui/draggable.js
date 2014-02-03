@@ -443,9 +443,19 @@ Ui.LBox.extend('Ui.Draggable',
 		this.clock.begin();
 	},
 
-	onKeyUp: function(event) {
+	onKeyDown: function(event) {
 		var key = event.which;
 		if((key == 13) && !this.getIsDisabled() && !this.lock) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.isDown = true;
+		}
+	},
+
+	onKeyUp: function(event) {
+		var key = event.which;
+		if(this.isDown && (key == 13) && !this.getIsDisabled() && !this.lock) {
+			this.isDown = false;
 			event.preventDefault();
 			event.stopPropagation();
 			this.fireEvent('press', this);

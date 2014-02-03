@@ -179,7 +179,7 @@ Ui.LBox.extend('Ui.Pressable',
 
 	onKeyUp: function(event) {
 		var key = event.which;
-		if((key == 13) && !this.getIsDisabled() && !this.lock) {
+		if((this.isDown) && (key == 13) && !this.getIsDisabled() && !this.lock) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.onUp();
