@@ -19,7 +19,8 @@ Ui.LBox.extend('Ui.TextAreaField',
 		this.append(this.graphic);
 
 		this.textholder = new Ui.Label({ opacity: 0.5, horizontalAlign: 'center', color: new Ui.Color({ r: 0.4, g: 0.4, b: 0.4 }), margin: 3 });
-		this.append(this.textholder);
+		if(!navigator.isIE7 && !navigator.isIE8)
+			this.append(this.textholder);
 
 		this.textarea = new Ui.TextArea({ margin: 4, fontSize: 16 });
 		this.append(this.textarea);
