@@ -42,6 +42,8 @@ Ui.LBox.extend('Ui.App',
 	constructor: function(config) {
 		this.addEvents('resize', 'ready', 'parentmessage', 'orientationchange');
 
+		this.setClipToBounds(true);
+
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
 		
@@ -378,7 +380,7 @@ Ui.LBox.extend('Ui.App',
 	onWindowScroll: function(event) {
 		if(event.target != document)
 			return;
-
+		
 //		console.log('onWindowScroll');
 		this.checkWindowSize();
 
@@ -543,6 +545,11 @@ Ui.LBox.extend('Ui.App',
 		// update measure
 		var innerWidth = (window.innerWidth !== undefined) ? window.innerWidth : document.body.clientWidth;
 		var innerHeight = (window.innerHeight !== undefined) ? window.innerHeight : document.body.clientHeight;
+
+		// disable page scroll horizontal that might happened because of focused elements
+		// out of the screen
+		if(navigator.isIE7 || navigator.isIE8)
+			document.body.scrollLeft = '0px';
 
 //		var innerWidth = document.body.clientWidth;
 //		var innerHeight = document.body.clientHeight;
