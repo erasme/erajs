@@ -1,3 +1,9 @@
+erajs (1.6.0) saucy; urgency=low
+
+  * Bug corrections
+
+ -- Daniel Lacroix <dlacroix@erasme.org>  Wed,  5 Jan 2014 12:16:00 +0100
+
 erajs (1.5.0) saucy; urgency=low
 
   * Provide SVG rendering for Canvas
