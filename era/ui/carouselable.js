@@ -234,8 +234,13 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	onChange: function() {
 		this.loadItems();
 		this.updateItems();
+		var current = this.getCurrent();
+		if(current !== undefined)
+			current.enable();
 		var currentPosition = this.getCurrentPosition();
 		if((this.lastPosition === undefined) || (this.lastPosition !== currentPosition)) {
+			if((this.lastPosition !== undefined) && (this.items[this.lastPosition] !== undefined))
+				this.items[this.lastPosition].disable();
 			this.lastPosition = currentPosition;
 			this.fireEvent('change', this, currentPosition);
 		}
@@ -300,8 +305,10 @@ Ui.MovableBase.extend('Ui.Carouselable',
 				}
 			}
 			newItems.push(item);
-			if(!active)
+			if(!active) {
+				item.disable();
 				this.appendChild(item);
+			}
 		}
 
 		// remove unviewable items
