@@ -41,10 +41,7 @@ Core.Object.extend('Core.Event',
 			while(current != undefined) {
 				if('dispatchEvent' in current)
 					stack.push(current);
-//				if('offsetParent' in current)
-//					current = current.offsetParent;
-//				else
-					current = current.parentNode;
+				current = current.parentNode;
 			}
 			stack.push(window);
 
@@ -115,13 +112,14 @@ Core.Object.extend('Core.Event',
 	},
 
 	dispatchEvent: function(event) {
-		if(Core.Event.hasInstance(event))
+		if(Core.Event.hasInstance(event)) {
 			return event.dispatchEvent(this);
+		}
 		else if(this.__dispatchEvent != undefined)
 			return this.__dispatchEvent(event);
 	},
 
-	addEventListener: function(eventName, callback, capture) {
+	addEventListener: function(eventName, callback, capture) {	
 		if(Core.Event.getType(eventName) != undefined) {
 			if(capture) {
 				if(this.__extendCaptureEvents == undefined)

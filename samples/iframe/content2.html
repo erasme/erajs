@@ -10,7 +10,15 @@
 
 var app = new Ui.App();
 
-app.setContent(new Ui.Rectangle({ fill: 'lightgreen', margin: 10 }));
+var scroll = new Ui.ScrollingArea();
+app.setContent(scroll);
+
+var vbox = new Ui.VBox();
+scroll.setContent(vbox);
+
+vbox.append(new Ui.Rectangle({ fill: 'lightgreen', margin: 10, height: 400 }));
+vbox.append(new Ui.Rectangle({ fill: 'blue', margin: 10, height: 400 }));
+vbox.append(new Ui.Rectangle({ fill: 'orange', margin: 10, height: 400 }));
 
 </script>
   </head>

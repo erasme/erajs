@@ -262,10 +262,10 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 }, {
 	style: {
 		orientation: 'horizontal',
-		background: '#eeeeee',
+		background: 'rgba(250,250,250,1)',
 		foreground: '#444444',
-		focusBackground: '#f6caa2',
-		focusForeground: '#444444',
+		focusBackground: new Ui.Color({ r: 0.13, g: 0.83, b: 1, a: 0.5 }),
+		focusForeground: '#222222',
 		radius: 3,
 		spacing: 5,
 		iconSize: 24,

@@ -8,12 +8,13 @@
 <script>
 
 Ui.CanvasElement.extend('Sample.MyCanvas', {
-	svgDrawing: undefined,
 	fill: 'black',
 
 	constructor: function(config) {
-		if('fill' in config)
+		if('fill' in config) {
 			this.setFill(config.fill);
+			delete(config.fill);
+		}
 		else
 			this.setFill(this.fill);
 	},
@@ -21,7 +22,6 @@ Ui.CanvasElement.extend('Sample.MyCanvas', {
 	setFill: function(fill) {
 		this.fill = Ui.Color.create(fill);
 		this.invalidateDraw();
-//		this.invalidateArrange();
 	}
 }, {
 	updateCanvas: function(ctx) {

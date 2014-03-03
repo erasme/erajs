@@ -1,4 +1,4 @@
-Ui.LBox.extend('Ui.Draggable', 
+Ui.Pressable.extend('Ui.Draggable', 
 {
 	/**
 	 * Fires when object start to be dragged
@@ -21,18 +21,8 @@ Ui.LBox.extend('Ui.Draggable',
 	allowedMode: 'copyMove',
 	mimetype: undefined,
 	data: undefined,
-	lastPress: undefined,
-	isDown: false,
-	isDrag: false,
-	timer: undefined,
 	dragDelta: undefined,
-	clock: undefined,
-	screenX: undefined,
-	screenY: undefined,
-	clientX: undefined,
-	clientY: undefined,
-	lock: false,
-	directionDrag: undefined,
+	localkey: undefined,
 
 	/**
 	 * @constructs
@@ -40,50 +30,20 @@ Ui.LBox.extend('Ui.Draggable',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.addEvents('dragstart', 'dragend', 'press', 'activate', 'menu');
-
-		this.getDrawing().style.cursor = 'pointer';
-
-		this.setFocusable(true);
+		this.addEvents('dragstart', 'dragend');
 
 		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
 		this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
-		
-		this.connect(this.getDrawing(), 'localdragstart', this.onDragStart, true);
-		this.connect(this.getDrawing(), 'localdragend', this.onDragEnd, true);
 
-		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
-		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
-		
-		// handle keyboard
-		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
-	},
-
-	/**
-	 * If direction drag is set, allow a drag before the long press
-	 * but only in the given direction. Possible values are:
-	 * horizontal, vertical
-	 */
-	setDirectionDrag: function(direction) {
-		this.directionDrag = direction;
-	},
-
-	setLock: function(lock) {
-    	this.lock = lock;
-	},
-
-	getLock: function() {
-		return this.lock;
+		// default data is the draggable object itself
+		this.setData(this);
 	},
 
 	/**
 	 * Set the mimetype of the data
 	 */
 	setMimetype: function(mimetype) {
-		if(mimetype === undefined)
-			this.mimetype = 'application/era-framework';
-		else
-			this.mimetype = mimetype;
+		this.mimetype = mimetype;
 	},
 
 	getMimetype: function() {
@@ -95,17 +55,15 @@ Ui.LBox.extend('Ui.Draggable',
 	 */
 	setData: function(data) {
 		this.data = data;
-		if(typeof(this.data) === 'object') {
-			if(this.mimetype === undefined) {
-				if(this.data.classType !== undefined) 
-					this.mimetype = this.data.classType;
-				else
-					this.mimetype = 'object';
-			}
+		// handle a default mimetype for object
+		if((this.mimetype === undefined) && (typeof(this.data) === 'object')) {
+			if(Core.Object.hasInstance(this.data))
+				this.mimetype = Ui.Draggable.localmimetype+'-'+this.data.classType.toLowerCase();
+			else
+				this.mimetype = Ui.Draggable.localmimetype;
 		}
 		// allow native drag & drop
-		else
-			this.getDrawing().setAttribute('draggable', true);
+		this.getDrawing().setAttribute('draggable', true);
 	},
 
 	/**
@@ -157,36 +115,8 @@ Ui.LBox.extend('Ui.Draggable',
 	onDragStart: function(event) {
 		if(this.lock || this.getIsDisabled())
 			return;
-		if(!this.dragAllowed) {
-			this.setTransform(new Ui.Matrix());
-			if(this.clock !== undefined) {
-				this.clock.stop();
-				this.clock = undefined;
-			}
-			if(this.timer !== undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-			event.stopPropagation();
-			event.preventDefault();
-			return;
-		}
-
-		if(this.clock !== undefined) {
-			this.clock.stop();
-			this.clock = undefined;
-			this.setTransform(new Ui.Matrix());
-		}
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-
-		this.isDown = false;
-		this.isDrag = true;
+		
 		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 
 		event.stopPropagation();
 		event.dataTransfer.effectAllowed = this.allowedMode;
@@ -202,7 +132,36 @@ Ui.LBox.extend('Ui.Draggable',
 		// use Text as data because it is the only thing
 		// that works cross browser. Only Firefox support different mimetypes
 		//event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.data);
-		event.dataTransfer.setData(this.mimetype, this.data);
+
+		var mergedData = '';
+		if(typeof(this.data) === 'object') {
+			this.localkey = Ui.Draggable.addLocalData(this.data);
+			if(Core.Object.hasInstance(this.data)) {
+				// handle class heritage for Core.Object
+				var current = this.data;
+				while((current !== undefined) && (current !== null)) {
+					if(!navigator.supportDrag || navigator.supportMimetypeDrag)
+						event.dataTransfer.setData(Ui.Draggable.localmimetype+'-'+current.classType.toLowerCase(), this.localkey);
+					else 
+						mergedData += Ui.Draggable.localmimetype+'-'+current.classType.toLowerCase()+':'+this.localkey+';';
+					current = current.__baseclass__;
+				}
+			}
+			else {
+				if(!navigator.supportDrag || navigator.supportMimetypeDrag)
+					event.dataTransfer.setData(Ui.Draggable.localmimetype, this.localkey);
+				else
+					mergedData += Ui.Draggable.localmimetype+':'+this.localkey+';';
+			}
+		}
+		else {
+			if(!navigator.supportDrag || navigator.supportMimetypeDrag)
+				event.dataTransfer.setData(this.mimetype, this.data);
+			else
+				mergedData += this.mimetype+':'+data+';';
+		}
+		if(!(!navigator.supportDrag || navigator.supportMimetypeDrag))
+			event.dataTransfer.setData('Text', mergedData);
 		
 		this.fireEvent('dragstart', this);
 
@@ -215,260 +174,44 @@ Ui.LBox.extend('Ui.Draggable',
 	},
 
 	onDragEnd: function(event) {
-		this.isDrag = false;
-		this.isDown = false;
-
 		event.stopPropagation();
 		// dropEffect give the operation done: [none|copy|link|move]
 		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
+
+		if(this.localkey !== undefined) {
+			Ui.Draggable.removeLocalData(this.localkey);
+			this.localkey = undefined;
+		}
+	}
+
+}, {}, {
+	localmimetype: undefined,
+	localdata: undefined,
+
+	constructor: function() {
+		Ui.Draggable.localdata = {};
+		var mimetype = 'application/x-erajs-local-';
+		var characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        for(var i = 0; i < 16; i++)
+			mimetype += characters.charAt(Math.floor(Math.random()*characters.length));
+		Ui.Draggable.localmimetype = mimetype;
 	},
 
-	onMouseDown: function(event) {	
-		if(this.lock || this.isDown || (event.button != 0) || this.getIsDisabled())
-			return;
-		this.isDown = true;
-		this.dragAllowed = false;
-		this.setTransform(new Ui.Matrix());
-		if(this.clock !== undefined) {
-			this.clock.stop();
-			this.clock = undefined;
-		}
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.timer = new Core.DelayedTask({ scope: this, delay: 0.5, callback: this.onTimer });
-
-		this.screenX = event.screenX;
-		this.screenY = event.screenY;
-		this.clientX = event.clientX;
-		this.clientY = event.clientY;
-
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-
-		event.stopPropagation();
-		if((!navigator.supportDrag || (typeof(this.data) === 'object')) && (event.button == 0))
-			new Core.DragDataTransfer({ local: (typeof(this.data) === 'object'), draggable: this.getDrawing(), x: event.clientX, y: event.clientY, event: event, mouse: true });
+	addLocalData: function(data) {
+		var key = '';
+		var characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        for(var i = 0; i < 16; i++)
+			key += characters.charAt(Math.floor(Math.random()*characters.length));
+		Ui.Draggable.localdata[key] = data;
+		return key;
 	},
 
-	onMouseMove: function(event) {	
-		var deltaX = event.clientX - this.clientX;
-		var deltaY = event.clientY - this.clientY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		// if the user move to much, release the touch event
-		if(delta > 10) {
-			this.disconnect(window, 'mousemove', this.onMouseMove, true);
-			this.disconnect(window, 'mouseup', this.onMouseUp, true);
-		
-			this.isDrag = false;
-			this.isDown = false;
-			this.dragAllowed = false;
-			this.setTransform(new Ui.Matrix());
-			if(this.clock !== undefined) {
-				this.clock.stop();
-				this.clock = undefined;
-			}
-			if(this.timer !== undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-
-			// allow fast drag when directionDrag is set
-			if((this.directionDrag !== undefined) && (((this.directionDrag === 'horizontal') && (Math.abs(deltaX) > Math.abs(deltaY))) ||
-			   ((this.directionDrag === 'vertical') && (Math.abs(deltaY) > Math.abs(deltaX))))) {
-				this.isDrag = true;
-				this.dragAllowed = true;
-			}
-			else {
-				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.screenX, this.screenY,
-					this.clientX, this.clientY,
-					event.ctrlKey, event.altKey, event.shiftKey,
-					event.metaKey, 0, event.target);
-				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
-			}
-		}
+	getLocalData: function(key) {
+		return Ui.Draggable.localdata[key];
 	},
 
-	onMouseUp: function(event) {	
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-
-		this.isDown = false;
-		this.dragAllowed = false;
-		this.setTransform(new Ui.Matrix());
-		if(this.clock !== undefined) {
-			this.clock.stop();
-			this.clock = undefined;
-		}
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-
-		if(!this.isDrag) {
-			this.isDrag = false;
-			var currentTime = (new Date().getTime())/1000;
-			if((this.lastPress !== undefined) && ((currentTime - this.lastPress) < 0.5)) {
-				this.fireEvent('activate', this);
-			}
-			else {
-				this.fireEvent('press', this);
-			}
-			this.lastPress = currentTime;
-			this.focus();
-		}
-		this.isDrag = false;
-	},
-
-	onFingerDown: function(event) {		
-		if(this.lock || this.isDown || this.getIsDisabled())
-			return;
-		this.connect(event.finger, 'fingermove', this.onFingerMove);
-		this.connect(event.finger, 'fingerup', this.onFingerUp);
-		event.finger.capture(this.getDrawing());
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.clientX = event.finger.getX();
-		this.clientY = event.finger.getY();
-
-		this.isDown = true;
-		this.dragAllowed = false;
-		this.setTransform(new Ui.Matrix());
-		if(this.clock !== undefined) {
-			this.clock.stop();
-			this.clock = undefined;
-		}
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.timer = new Core.DelayedTask({ scope: this, delay: 0.5, callback: this.onTimer });
-	},
-
-	onFingerMove: function(event) {	
-		var deltaX = event.finger.getX() - this.clientX;
-		var deltaY = event.finger.getY() - this.clientY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-		
-		event.preventDefault();
-		event.stopPropagation();
-		
-		// if the user move to much, release the touch event
-		if(delta > 20) {
-			this.setTransform(new Ui.Matrix());
-			if(this.clock !== undefined) {
-				this.clock.stop();
-				this.clock = undefined;
-			}
-			if(this.timer !== undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-
-			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-
-			// allow fast drag when directionDrag is set
-			if((this.directionDrag !== undefined) && (((this.directionDrag === 'horizontal') && (Math.abs(deltaX) > Math.abs(deltaY))) ||
-			   	((this.directionDrag === 'vertical') && (Math.abs(deltaY) > Math.abs(deltaX))))) {
-				this.isDrag = true;
-				this.dragAllowed = true;
-			}
-
-			if(this.dragAllowed) {
-				if(navigator.supportDrag)
-					event.finger.release();
-				else
-					new Core.DragDataTransfer({ draggable: this.getDrawing(), x: event.finger.getX(), y: event.finger.getY(), event: event, finger: event.finger });
-			}
-			else {
-				event.finger.release();
-			}
-			this.dragAllowed = false;
-			this.isDown = false;
-		}
-	},
-	
-	onFingerUp: function(event) {	
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-
-		this.dragAllowed = false;
-		this.isDown = false;
-		this.setTransform(new Ui.Matrix());
-		if(this.clock !== undefined) {
-			this.clock.stop();
-			this.clock = undefined;
-		}
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-
-		if(!this.isDrag) {
-			this.isDrag = false;
-			var currentTime = (new Date().getTime())/1000;			
-			if((this.lastPress !== undefined) && ((currentTime - this.lastPress) < 0.5)) {
-				this.fireEvent('activate', this);
-			}
-			else {
-				this.fireEvent('press', this);
-			}
-			this.lastPress = currentTime;
-			this.focus();
-		}
-		this.isDrag = false;
-	},
-
-	onTimer: function() {
-		this.timer = undefined;
-
-		this.isDrag = true;
-		this.dragAllowed = true;
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-
-		this.clock = new Anim.Clock({ duration: 'forever' });
-		this.connect(this.clock, 'timeupdate', this.onAnim);
-		this.clock.begin();
-	},
-
-	onKeyDown: function(event) {
-		var key = event.which;
-		if((key == 13) && !this.getIsDisabled() && !this.lock) {
-			event.preventDefault();
-			event.stopPropagation();
-			this.isDown = true;
-		}
-	},
-
-	onKeyUp: function(event) {
-		var key = event.which;
-		if(this.isDown && (key == 13) && !this.getIsDisabled() && !this.lock) {
-			this.isDown = false;
-			event.preventDefault();
-			event.stopPropagation();
-			this.fireEvent('press', this);
-		}
-	},
-
-	onAnim: function(clock) {
-		var progress = (clock.getGlobalTime() % 0.8) / 0.8;
-		var ease = new Anim.ElasticEase({ mode: 'inout' });
-		progress = ease.ease(progress);
-
-		var scale = 1 + (progress/12);
-		this.setTransform(Ui.Matrix.createScale(scale, scale));
+	removeLocalData: function(key) {
+		delete(Ui.Draggable.localdata[key]);
 	}
 });
 

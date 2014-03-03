@@ -129,7 +129,7 @@ Ui.Container.extend('Ui.ListView',
 			var cell = new Ui.ListViewCellString({ key: this.headers[col].key });
 			this.connect(cell, 'down', this.onCellDown);
 			this.connect(cell, 'up', this.onCellUp);
-			this.connect(cell, 'select', this.onCellSelect);
+			this.connect(cell, 'toggle', this.onCellSelect);
 			this.connect(cell, 'activate', this.onCellActivate);
 			cell.setString(data[this.headers[col].key]);
 			this.headers[col].rows.push(cell);
@@ -161,10 +161,10 @@ Ui.Container.extend('Ui.ListView',
 			for(var col = 0; col < this.headers.length; col++) {
 				var cell = this.headers[col].rows[position];
 				if(this.selectedRow == position)
-					cell.unselect();
+					cell.untoggle();
 				this.disconnect(cell, 'down', this.onCellDown);
 				this.disconnect(cell, 'up', this.onCellUp);
-				this.disconnect(cell, 'select', this.onCellSelect);
+				this.disconnect(cell, 'toggle', this.onCellSelect);
 				this.disconnect(cell, 'activate', this.onCellActivate);
 				this.rowContainer.removeChild(cell);
 				this.headers[col].rows.splice(position, 1);
@@ -211,15 +211,15 @@ Ui.Container.extend('Ui.ListView',
 				if(this.selectedRow == row)
 					return;
 				for(var col = 0; col < this.headers.length; col++)
-					this.headers[col].rows[this.selectedRow].unselect();
+					this.headers[col].rows[this.selectedRow].untoggle();
 				this.fireEvent('unselect', this, this.selectedRow);
 			}
 			this.selectedRow = row;
 			for(var col = 0; col < this.headers.length; col++) {
 				var tmpCell = this.headers[col].rows[row];
-				this.disconnect(tmpCell, 'select', this.onCellSelect);
-				tmpCell.select();
-				this.connect(tmpCell, 'select', this.onCellSelect);
+				this.disconnect(tmpCell, 'toggle', this.onCellSelect);
+				tmpCell.toggle();
+				this.connect(tmpCell, 'toggle', this.onCellSelect);
 			}
 			this.fireEvent('select', this, this.selectedRow);
 		}
@@ -592,7 +592,7 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	}
 });
 
-Ui.Selectable.extend('Ui.ListViewCellString',
+Ui.Togglable.extend('Ui.ListViewCellString',
 /** @lends Ui.ListViewCellString#*/
 {
 	string: '',
@@ -618,8 +618,8 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 		this.ui = new Ui.Label({ margin: 8, horizontalAlign: 'left' });
 		this.append(this.ui);
 
-		this.connect(this, 'select', this.onCellSelect);
-		this.connect(this, 'unselect', this.onCellUnselect);
+		this.connect(this, 'toggle', this.onCellSelect);
+		this.connect(this, 'untoggle', this.onCellUnselect);
 	},
 
 	getKey: function() {
@@ -643,13 +643,13 @@ Ui.Selectable.extend('Ui.ListViewCellString',
 
 	down: function() {
 		this.cellDown = true;
-		if(!this.getIsSelected())
+		if(!this.getIsToggled())
 			this.background.setFill(this.getBackgroundDownColor());
 	},
 
 	up: function() {
 		this.cellDown = false;
-		if(!this.getIsSelected())
+		if(!this.getIsToggled())
 			this.background.setFill(this.getBackgroundColor());
 	},
 
@@ -720,8 +720,8 @@ Ui.Container.extend('Ui.ListViewColBar', {
 
 		var lbox = new Ui.LBox();
 		this.grip.setContent(lbox);
-		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 4, marginRight: 8+2, marginTop: 6, marginBottom: 6 }));
-		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 9, marginRight: 3+2, marginTop: 6, marginBottom: 6 }));
+		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 14, marginRight: 8+2, marginTop: 6, marginBottom: 6 }));
+		lbox.append(new Ui.Rectangle({ width: 1, opacity: 0.2, fill: 'black', marginLeft: 19, marginRight: 3+2, marginTop: 6, marginBottom: 6 }));
 
 		this.separator = new Ui.Rectangle({ width: 1, fill: 'black', opacity: 0.3 });
 		this.appendChild(this.separator);

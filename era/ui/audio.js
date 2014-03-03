@@ -241,7 +241,8 @@ Ui.Element.extend('Ui.Audio',
 	verticalAlign: 'top',
 	horizontalAlign: 'left',
 
-	render: function() {
+	renderDrawing: function() {
+		var drawing;
 		if(Ui.Audio.htmlAudio) {
 			this.audioDrawing = document.createElement('audio');
 			this.audioDrawing.style.display = 'none';
@@ -253,8 +254,12 @@ Ui.Element.extend('Ui.Audio',
 			this.connect(this.audioDrawing, 'waiting', this.onWaiting);
 			this.audioDrawing.setAttribute('preload', 'auto');
 			this.audioDrawing.load();
+			drawing = this.audioDrawing;
 		}
-		return this.audioDrawing;
+		else {
+			drawing = Ui.Audio.base.renderDrawing.apply(this, arguments);
+		}
+		return drawing;
 	}
 });
 

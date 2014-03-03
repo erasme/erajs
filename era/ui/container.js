@@ -2,14 +2,21 @@ Ui.Element.extend('Ui.Container',
 /** @lends Ui.Container#*/
 {
 	children: undefined,
+	containerDrawing: undefined,
 
     /**
-		 * @constructs
-		 * @class
-		 * @extends Ui.Element
-		 */
+	 * @constructs
+	 * @class
+	 * @extends Ui.Element
+	 */
 	constructor: function(config) {
 		this.children = [];
+		if(this.containerDrawing === undefined)
+			this.containerDrawing = this.getDrawing();
+	},
+
+	setContainerDrawing: function(containerDrawing) {
+		this.containerDrawing = containerDrawing;
 	},
 
 	/**
@@ -18,7 +25,7 @@ Ui.Element.extend('Ui.Container',
 	appendChild: function(child) {
 		child.parent = this;
 		this.children.push(child);
-		this.getDrawing().appendChild(child.getDrawing());
+		this.containerDrawing.appendChild(child.getDrawing());
 		child.getDrawing().style.zIndex = this.children.length;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
@@ -32,10 +39,10 @@ Ui.Element.extend('Ui.Container',
 	prependChild: function(child) {
 		child.parent = this;
 		this.children.unshift(child);
-		if(this.getDrawing().firstChild != undefined)
-			this.getDrawing().insertBefore(child.getDrawing(), this.getDrawing().firstChild);
+		if(this.containerDrawing.firstChild != undefined)
+			this.containerDrawing.insertBefore(child.getDrawing(), this.containerDrawing.firstChild);
 		else
-			this.getDrawing().appendChild(child.getDrawing());
+			this.containerDrawing.appendChild(child.getDrawing());
 		for(var i = 0; i < this.children.length; i++)
 			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
@@ -49,7 +56,7 @@ Ui.Element.extend('Ui.Container',
 	 */
 	removeChild: function(child) {
 		child.parent = undefined;
-		this.getDrawing().removeChild(child.getDrawing());
+		this.containerDrawing.removeChild(child.getDrawing());
 		var i = 0;
 		while((i < this.children.length) && (this.children[i] != child)) { i++ };
 		if(i < this.children.length)

@@ -54,6 +54,7 @@ Core.Object.extend('Core.MouseManager',
 		Core.Event.register('mousedown', Core.MouseEvents);
 		Core.Event.register('mousemove', Core.MouseEvents);
 		Core.Event.register('mouseup', Core.MouseEvents);
+		Core.Event.register('click', Core.MouseEvents);
 
 		var wrapperDown = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
@@ -82,20 +83,48 @@ Core.Object.extend('Core.MouseManager',
 		wrapperDblClick.scope = this;
 		wrapperDblClick.callback = this.onMouseDblClick;
 		document.attachEvent('ondblclick', wrapperDblClick);
+
+		var wrapperClick = function() {
+			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+		}
+		wrapperClick.scope = this;
+		wrapperClick.callback = this.onMouseClick;
+		document.attachEvent('onclick', wrapperClick);
 	},
 
 	onMouseDblClick: function(event) {
 		this.onMouseDown(event);
-		return this.onMouseUp(event);
+		this.onMouseUp(event);
+		return this.onMouseClick(event);
 	},
 
-	onMouseDown: function(event) {
-		if(('tagName' in event.srcElement) && ((event.srcElement.tagName == 'INPUT') || (event.srcElement.tagName == 'TEXTAREA')))
-			return;
-
-		this.captureElement = event.srcElement;
-		this.captureElement.setCapture();
+	onMouseClick: function(event) {
 		var target = Core.Event.cleanTarget(event.srcElement);
+		var mouseEvent = document.createEvent('MouseEvents');
+		// rename button for IE
+		var button = event.button;
+		if(button == 1)
+			button = 0;
+		else if(button == 4)
+			button = 1;
+		mouseEvent.initMouseEvent('click', true, true, event.view, event.detail,
+			event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey,
+			event.altKey, event.shiftKey, event.metaKey, button, target);
+		target.dispatchEvent(mouseEvent);
+
+		event.returnValue = !mouseEvent.defaultPrevented;
+		return event.returnValue;
+	},
+
+	onMouseDown: function(event) {	
+		var target = Core.Event.cleanTarget(event.srcElement);
+		// capture the mouse but not for input and textarea because
+		// they will no more work
+		if(('tagName' in target) && (target.tagName.toUpperCase() !== 'INPUT') && (target.tagName.toUpperCase() !== 'TEXTAREA')) {
+			this.captureElement = target;
+			this.captureElement.setCapture();
+		}
+
 		var mouseEvent = document.createEvent('MouseEvents');
 		// rename button for IE
 		var button = event.button;
@@ -112,11 +141,9 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseMove: function(event) {
-		if(('tagName' in event.srcElement) && ((event.srcElement.tagName == 'INPUT') || (event.srcElement.tagName == 'TEXTAREA')))
-			return;
-
 		var mouseEvent = document.createEvent('MouseEvents');
 		var target = Core.Event.cleanTarget(event.srcElement);
+
 		// rename button for IE
 		var button = event.button;
 		if(button == 1)
@@ -132,11 +159,9 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseUp: function(event) {
-		if(('tagName' in event.srcElement) && ((event.srcElement.tagName == 'INPUT') || (event.srcElement.tagName == 'TEXTAREA')))
-			return;
-
 		if(this.captureElement != undefined)
 			this.captureElement.releaseCapture();
+
 		var target = Core.Event.cleanTarget(event.srcElement);
 		var mouseEvent = document.createEvent('MouseEvents');
 		// rename button for IE

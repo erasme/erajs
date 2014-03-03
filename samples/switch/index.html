@@ -38,7 +38,7 @@ app.connect(disableButton, 'press', function() {
 	switcher.disable();
 });
 
-var vbox2 = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+var vbox2 = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 10 });
 vbox.append(vbox2, true);
 
 var switcher = new Ui.Switch({ verticalAlign: 'center', horizontalAlign: 'center', trueContent: new Ui.Label({ text: 'PRESENT' }), falseContent: new Ui.Label({ text: 'ABSENT' }) });

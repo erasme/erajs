@@ -29,17 +29,17 @@ Ui.LBox.extend('Ui.Switch',
 		this.fixed = new Ui.Fixed();
 		this.append(this.fixed);
 
-		this.bg1 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.9, b: 0.6 }), radius: 3 });
+		this.bg1 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.2, g: 0.9, b: 0.6 }), radius: 4 });
 		this.fixed.append(this.bg1);
 
-		this.bg2 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.9, g: 0.2, b: 0.2 }), radius: 3 });
+		this.bg2 = new Ui.Rectangle({ fill: new Ui.Color({ r: 0.9, g: 0.2, b: 0.2 }), radius: 4 });
 		this.fixed.append(this.bg2);
 
-		this.append(new Ui.Frame({ fill: '#aaaaaa', frameWidth: 1, radius: 3 }));
+		this.append(new Ui.Frame({ fill: '#aaaaaa', frameWidth: 1, radius: 4 }));
 
 		this.setClipToBounds(true);
 
-		this.movable = new Ui.Movable({ moveVertical: false, margin: 1, directionRelease: true });
+		this.movable = new Ui.Movable({ moveVertical: false, margin: 1 });
 		this.movable.setFocusable(false);
 		this.append(this.movable);
 
@@ -130,7 +130,6 @@ Ui.LBox.extend('Ui.Switch',
 	},
 
 	onDown: function(movable) {
-		this.focus();
 		this.stopAnimation();
 	},
 
@@ -260,7 +259,7 @@ Ui.LBox.extend('Ui.Switch',
 }, {
 	style: {
 		color: new Ui.Color({ r: 0.96, g: 0.96, b: 0.96 }),
-		focusColor: '#f6caa2',
+		focusColor: new Ui.Color({ r: 0.13, g: 0.83, b: 1, a: 1 }),
 		trueColor: '#b1f5c1',
 		falseColor: '#f5b1b1'
 	}
@@ -271,7 +270,7 @@ Ui.LBox.extend('Ui.SwitchButton',
 {
 	shadow: undefined,
 	background: undefined,
-	radius: 8,
+	radius: 3,
 	fill: undefined,
 
 	/**

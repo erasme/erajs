@@ -62,6 +62,6 @@ Ui.CanvasElement.extend('Ui.TextBgGraphic', {
 }, {
 	style: {
 		background: '#444444',
-		focusBackground: '#f6caa2'
+		focusBackground: '#21d3ff'
 	}
 });

@@ -1,14 +1,6 @@
 
 Ui.Element.extend('Ui.ContentEditable', {
 	html: undefined,
-	screenX: 0,
-	screenY: 0,
-	clientX: 0,
-	clientY: 0,
-	startTime: undefined,
-	allowSelect: false,
-	timer: undefined,
-//	hasHtmlFocus: false,
 	anchorNode: null,
 	anchorOffset: 0,
 	
@@ -18,15 +10,9 @@ Ui.Element.extend('Ui.ContentEditable', {
 		this.setSelectable(true);
 		this.setFocusable(true);
 		this.getDrawing().setAttribute('contenteditable', 'true');
-//		this.connect(this.getDrawing(), 'selectstart', this.onHtmlSelectStart);
-		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
-//		this.connect(this.getDrawing(), 'focus', this.onHtmlFocus);
-//		this.connect(this.getDrawing(), 'blur', this.onHtmlBlur);
-//		this.connect(this.getDrawing(), 'keypress', this.onHtmlKeyPress);
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 
-		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.getDrawing(), 'touchend', this.onTouchEndCapture, true);
+//		this.connect(this.getDrawing(), 'touchend', this.onTouchEndCapture, true);
 	},
 
 	getHtml: function() {
@@ -67,7 +53,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 	},
 
 	onKeyPress: function(event) {
-		if(this.getDrawing().innerHTML != this.html) {
+		if(this.getDrawing().innerHTML !== this.html) {
 			this.html = this.getDrawing().innerHTML;
 			this.invalidateMeasure();
 		}
@@ -75,165 +61,6 @@ Ui.Element.extend('Ui.ContentEditable', {
 
 	onTouchEndCapture: function() {
 		new Core.DelayedTask({ delay: 0, scope: this, callback: this.testAnchorChange });
-	},
-
-	onTouchStart: function(event) {
-		if(this.getIsDisabled()) {
-			event.preventDefault();
-			return;
-		}
-
-		if(event.targetTouches.length == 1) {
-			event.stopPropagation();
-
-			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-			this.connect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-
-			if(this.timer !== undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-			this.timer = new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.onTimer });
-		}
-	},
-
-	onTouchMove: function(event) {
-		if(!this.allowSelect) {
-			if(this.timer != undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);			
-		}
-//		else {
-//			if(this.hasHtmlFocus)
-//				event.stopPropagation();
-//		}
-	},
-
-	onTouchEnd: function(event) {
-		event.stopPropagation();
-
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-
-		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-		this.allowSelect = false;
-	},
-
-	onHtmlKeyPress: function(event) {
-//		console.log('onHtmlKeyPress');
-
-/*		console.log('keypress: '+event.which);
-		if(event.which == 13) {
-			event.stopPropagation();
-			event.preventDefault();
-		}*/
-	},
-
-/*	onHtmlFocus: function(event) {
-		console.log('onHtmlFocus');
-		this.hasHtmlFocus = true;
-		this.setSelectable(true);
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.timer = new Core.DelayedTask({ delay: 0.25, scope: this, callback: this.onTimer });
-	},
-
-	onHtmlBlur: function(event) {
-		console.log('onHtmlBlur');
-		this.hasHtmlFocus = false;
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.allowSelect = false;
-	},*/
-
-	onTimer: function(timer) {
-		this.allowSelect = true;
-		this.timer = undefined;
-	},
-
-	onMouseDown: function(event) {
-		if(this.getIsDisabled()) {
-			event.preventDefault();
-			return;
-		}
-
-		this.setSelectable(true);
-		event.stopPropagation();
-
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.allowSelect = false;
-		this.timer = new Core.DelayedTask({ delay: 0.50, scope: this, callback: this.onTimer });
-
-		this.screenX = event.screenX;
-		this.screenY = event.screenY;
-		this.clientX = event.clientX;
-		this.clientY = event.clientY;
-
-		var currentTime = (new Date().getTime())/1000;
-		this.startTime = currentTime;
-
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-	},
-
-	onMouseMove: function(event) {
-		if(!this.allowSelect) {
-			var deltaX = event.clientX - this.clientX;
-			var deltaY = event.clientY - this.clientY;
-			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-			event.stopPropagation();
-			event.preventDefault();
-
-			// if the user move to much, release the touch event
-			if(delta > 10) {
-				if(this.timer != undefined) {
-					this.timer.abort();
-					this.timer = undefined;
-				}
-
-				var selection = window.getSelection();
-				selection.removeAllRanges();
-				this.setSelectable(false);
-
-				this.disconnect(window, 'mousemove', this.onMouseMove, true);
-				this.disconnect(window, 'mouseup', this.onMouseUp, true);
-	
-				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.screenX, this.screenY,
-					this.clientX, this.clientY,
-					event.ctrlKey, event.altKey, event.shiftKey,
-					event.metaKey, 0, event.target);
-				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
-			}
-		}
-		else
-			event.stopPropagation();
-	},
-
-	onMouseUp: function(event) {
-		this.testAnchorChange();
-		event.stopPropagation();
-
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 	},
 
 	testAnchorChange: function() {
@@ -245,10 +72,6 @@ Ui.Element.extend('Ui.ContentEditable', {
 			this.fireEvent('anchorchange', this);
 		}
 	}
-
-//	onHtmlSelectStart: function(event) {
-//		event.stopPropagation();
-//	}
 
 }, {
 	renderDrawing: function() {

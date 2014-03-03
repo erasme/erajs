@@ -4,12 +4,7 @@ Ui.LBox.extend('Ui.Pressable',
 	isDown: false,
 	lock: false,
 	lastTime: undefined,
-	mouseStartScreenX: undefined,
-	mouseStartScreenY: undefined,
-	mouseStartClientX: undefined,
-	mouseStartClientY: undefined,
-	touchStartX: undefined,
-	touchStartY: undefined,
+	startPosition: undefined,
 
     /**
      * @constructs   
@@ -21,15 +16,19 @@ Ui.LBox.extend('Ui.Pressable',
 		this.addEvents('press', 'down', 'up', 'activate');
 
 		this.getDrawing().style.cursor = 'pointer';
+		// to disable double tap zoom and allow dblclick
+		this.getDrawing().style.touchAction = 'manipulation';
 
 		this.setFocusable(true);
 		this.setRole('button');
+
+		this.connect(this.getDrawing(), 'click', this.onClick);
 
 		// handle mouse
 		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
 
 		// handle touches
-		this.connect(this.getDrawing(), 'fingerdown', this.onFingerDown);
+		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -55,119 +54,69 @@ Ui.LBox.extend('Ui.Pressable',
 	/**#@+
 	 * @private
 	 */
-	onMouseDown: function(event) {
-		if((event.button != 0) || this.getIsDisabled() || this.lock)
-			return;
-
+	onClick: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-
-		this.mouseStartClientX = event.clientX;
-		this.mouseStartClientY = event.clientY;
-		this.mouseStartScreenX = event.screenX;
-		this.mouseStartScreenY = event.screenY;
-
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-
-		this.onDown();
-	},
-
-	onMouseMove: function(event) {
-		var deltaX = event.clientX - this.mouseStartClientX;
-		var deltaY = event.clientY - this.mouseStartClientY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		// if the user move to much, release the touch event
-		if(delta > 20) {
-			this.onUp();
-
-			if('createEvent' in document) {
-				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.mouseStartScreenX, this.mouseStartScreenY,
-					this.mouseStartClientX, this.mouseStartClientY,
-					event.ctrlKey, event.altKey, event.shiftKey,
-					event.metaKey, 0, event.target);
-				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
-			}
-		}
-	},
-
-	onMouseUp: function(event) {
-		if(!this.isDown)
-			return;
-
-		event.preventDefault();
-		event.stopPropagation();
-				
-		if(event.button == 0) {
-			// focus before in case the press event handlers decide to get the focus
-			this.focus();
-			this.onUp();
-			this.fireEvent('press', this, event.clientX, event.clientY);
-			// test for activate signal
-			var currentTime = (new Date().getTime())/1000;
-			if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
-				this.fireEvent('activate', this);
-			this.lastTime = currentTime;
-		}
-	},
-
-	onFingerDown: function(event) {	
-		if(this.getIsDisabled() || this.isDown || this.lock)
-			return;
-
-		this.connect(event.finger, 'fingermove', this.onFingerMove);
-		this.connect(event.finger, 'fingerup', this.onFingerUp);
-		event.finger.capture(this.getDrawing());
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.touchStartX = event.finger.getX();
-		this.touchStartY = event.finger.getY();
-		this.onDown();
-	},
-
-	onFingerMove: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var deltaX = event.finger.getX() - this.touchStartX;
-		var deltaY = event.finger.getY() - this.touchStartY;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-		// if the user move to much, release the touch event
-		if(delta > 40) {
-			this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-			this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-			this.onUp();
-			event.finger.release();
-		}
-	},
-	
-	onFingerUp: function(event) {
-		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-
-		event.preventDefault();
-		event.stopPropagation();
-				
-		// focus before in case the press event handlers decide to get the focus
-		this.focus();
-		this.onUp();
-		this.fireEvent('press', this, event.clientX, event.clientY);
-
-		// test for activate signal
 		var currentTime = (new Date().getTime())/1000;
-		if((this.lastTime != undefined) && (currentTime - this.lastTime < 0.250))
+		var deltaTime = (currentTime - this.lastTime);
+		this.fireEvent('press', this, event.clientX, event.clientY);
+		// test for activate signal
+		if((this.lastTime !== undefined) && (deltaTime < 0.250))
 			this.fireEvent('activate', this);
 		this.lastTime = currentTime;
 	},
 
+	onMouseDown: function(event) {
+		if((event.button !== 0) || this.getIsDisabled() || this.lock)
+			return;		
+		event.stopPropagation();
+		this.connect(window, 'mouseup', this.onMouseUp, true);
+		this.onDown();
+	},
+
+	onMouseUp: function(event) {
+		event.stopPropagation();
+		this.disconnect(window, 'mouseup', this.onMouseUp, true);
+		this.onUp();
+	},
+
+	onTouchStart: function(event) {
+		if((event.changedTouches.length !== 1) || this.getIsDisabled() || this.lock)
+			return;
+		this.startPosition = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
+		this.connect(this.getDrawing(), 'touchmove', this.onTouchMove);
+		this.connect(this.getDrawing(), 'touchcancel', this.onTouchCancel);
+		this.connect(this.getDrawing(), 'touchend', this.onTouchEnd);
+		this.onDown();
+	},
+
+	onTouchMove: function(event) {
+		var deltaX = event.changedTouches[0].clientX - this.startPosition.x;
+		var deltaY = event.changedTouches[0].clientY - this.startPosition.y;
+		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		if(delta > 20)
+			this.onTouchCancel(event);
+	},
+
+	onTouchCancel: function(event) {
+		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove);
+		this.disconnect(this.getDrawing(), 'touchcancel', this.onTouchCancel);
+		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd);
+		this.onUp();
+	},
+
+	onTouchEnd: function(event) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove);
+		this.disconnect(this.getDrawing(), 'touchcancel', this.onTouchCancel);
+		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd);
+		this.onUp();
+	
+		this.getDrawing().click();
+	},
+	
 	onKeyDown: function(event) {
 		var key = event.which;
 		if((key == 13) && !this.getIsDisabled() && !this.lock) {
@@ -193,9 +142,6 @@ Ui.LBox.extend('Ui.Pressable',
 	},
 
 	onUp: function() {
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-
  		this.isDown = false;
 		this.fireEvent('up', this);
 	}

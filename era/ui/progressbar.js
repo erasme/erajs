@@ -69,7 +69,7 @@ Ui.Container.extend('Ui.ProgressBar',
 {
 	style: {
 		color: '#999999',
-		radius: 4
+		radius: 0
 	}
 });
 

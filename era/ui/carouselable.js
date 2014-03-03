@@ -18,7 +18,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	 * @extends Ui.MovableBase
 	 */
 	constructor: function(config) {
-		this.addEvents('change', 'press', 'activate');
+		this.addEvents('change');
 		this.setClipToBounds(true);
 		this.setFocusable(true);
 		this.setMoveVertical(false);
@@ -29,7 +29,6 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		this.connect(this, 'down', this.onCarouselableDown);
 		this.connect(this, 'up', this.onCarouselableUp);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
-		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
 		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
 	},
@@ -158,29 +157,17 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		if(this.getIsDisabled())
 			return;
 		var key = event.which;
-		if((key == 32) || (key == 37) || (key == 39)) {
+		if((key == 37) || (key == 39)) {
 			event.stopPropagation();
 			event.preventDefault();
-		}
-		if(key == 32)
-			this.next();
-		else if(key == 37)
-			this.previous();
-		else if(key == 39)
-			this.next();
-	},
 
-	onKeyUp: function(event) {
-		if(this.getIsDisabled())
-			return;
-		// Enter = activate
-		if(event.which == 13) {
-			event.stopPropagation();
-			event.preventDefault();
-			this.fireEvent('activate', this);
+			if(key == 37)
+				this.previous();
+			else if(key == 39)
+				this.next();
 		}
 	},
-
+	
 	onMouseWheel: function(event) {
 		var deltaX = 0;
 		var deltaY = 0;
@@ -211,17 +198,38 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onCarouselableUp: function(el, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
-		this.focus();
-		// if too slow just re-align the content
-		if(Math.abs(speedX) < 100) {
+		//console.log(this+'.onCarouselableUp cumulMove: '+cumulMove+', speedX: '+speedX+', deltaX: '+deltaX);
+
+		if(abort === true) {
+			// just re-align the content
 			var mod = this.pos % 1;
 			if(mod > 0.5)
 				speedX = -400;
 			else
 				speedX = 400;
 		}
+		else {
+			// if too slow
+			if(Math.abs(speedX) < 50) {
+				// if we have done 20% on the move or 100 units, continue in this direction
+				if((deltaX > 0.2 * this.getLayoutWidth()) || (Math.abs(deltaX) > 100)) {
+					if(deltaX < 0)
+						speedX = -400;
+					else
+						speedX = 400;
+				}
+				// else just re-align the content
+				else {
+					var mod = this.pos % 1;
+					if(mod > 0.5)
+						speedX = -400;
+					else
+						speedX = 400;
+				}
+			}
+		}
 		// if slow set a minimun speed
-		else if(Math.abs(speedX) < 800) {
+		if(Math.abs(speedX) < 800) {
 			if(speedX < 0)
 				speedX = -800;
 			else
@@ -326,15 +334,8 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		var w = this.getLayoutWidth();
 		var h = this.getLayoutHeight();
 
-		//console.log('updateItems w: '+w);
-
-//		var current = this.pos;
-//		var target = this.pos;
 		if(this.animClock !== undefined)
 			target = this.animNext;
-
-//		for(var i = 0; i < this.activeItems.length; i++)
-//			this.activeItems[i].carouselableSeen = undefined;
 
 		for(var i = 0; i < this.activeItems.length; i++) {
 			var item = this.activeItems[i];
@@ -343,79 +344,11 @@ Ui.MovableBase.extend('Ui.Carouselable',
 			if(ipos < this.items.length) {
 				// measure & arrange
 				item.measure(w, h);
-				item.arrange((ipos - this.pos)*w, 0, w, h);
+				item.arrange(0, 0, w, h);
+				item.setTransform(Ui.Matrix.createTranslate((ipos - this.pos)*w, 0));
 			}
 		}
-
-/*		var newItems = [];
-		for(var i = Math.max(0, Math.floor(target-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(target+1+this.bufferingSize)); i++) {
-			var item = this.items[i];
-			var active = false;
-			for(var i2 = 0; !active && (i2 < this.activeItems.length); i2++) {
-				if(this.activeItems[i2] === item) {
-					active = true;
-					this.activeItems[i2].carouselableSeen = true;
-				}
-			}
-			newItems.push(item);
-			if(!active)
-				this.appendChild(item);
-			// measure & arrange
-			item.measure(w, h);
-			item.arrange((i - current)*w, 0, w, h);
-		}
-
-		// remove unviewable items
-		for(var i = 0; i < this.activeItems.length; i++) {
-			if(!this.activeItems[i].carouselableSeen)
-				this.removeChild(this.activeItems[i]);
-		}
-		this.activeItems = newItems;*/
 	}
-
-/*
-	updateItems: function() {
-		if(!this.getIsLoaded())
-			return;
-
-		var w = this.getLayoutWidth();
-		var h = this.getLayoutHeight();
-
-		//console.log('updateItems w: '+w);
-
-		var current = this.pos;
-		var target = this.pos;
-		if(this.animClock !== undefined)
-			target = this.animNext;
-
-		for(var i = 0; i < this.activeItems.length; i++)
-			this.activeItems[i].carouselableSeen = undefined;
-
-		var newItems = [];
-		for(var i = Math.max(0, Math.floor(target-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(target+1+this.bufferingSize)); i++) {
-			var item = this.items[i];
-			var active = false;
-			for(var i2 = 0; !active && (i2 < this.activeItems.length); i2++) {
-				if(this.activeItems[i2] === item) {
-					active = true;
-					this.activeItems[i2].carouselableSeen = true;
-				}
-			}
-			newItems.push(item);
-			if(!active)
-				this.appendChild(item);
-			// measure & arrange
-			item.measure(w, h);
-			item.arrange((i - current)*w, 0, w, h);
-		}
-
-		// remove unviewable items
-		for(var i = 0; i < this.activeItems.length; i++) {
-			if(!this.activeItems[i].carouselableSeen)
-				this.removeChild(this.activeItems[i]);
-		}
-		this.activeItems = newItems;
-	}*/
 	/**#@-*/
 }, {
 	onLoad: function() {

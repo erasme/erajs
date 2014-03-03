@@ -177,7 +177,7 @@ Ui.Popup.extend('Ui.ComboDialog', {
 		this.setExpandable(true);
 		this.setAutoHide(true);
 
-		this.scroll = new Ui.ScrollingArea({ scrollHorizontal: true });
+		this.scroll = new Ui.ScrollingArea();//{ scrollHorizontal: true });
 		this.list = new Ui.VBox();
 		this.scroll.setContent(this.list);
 

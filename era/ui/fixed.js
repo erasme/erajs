@@ -11,19 +11,20 @@ Ui.Container.extend('Ui.Fixed',
 	},
 
 	setPosition: function(item, x, y) {
-		if(x != undefined)
+		if(x !== undefined)
 			item['Ui.Fixed.x'] = x;
-		if(y != undefined)
+		if(y !== undefined)
 			item['Ui.Fixed.y'] = y;
-		this.onChildInvalidateArrange(item);
+		this.updateItemTransform(item);
 	},
 	
 	setRelativePosition: function(item, x, y, absolute) {
-		if(x != undefined)
+		if(x !== undefined)
 			item['Ui.Fixed.relativeX'] = x;
-		if(y != undefined)
+		if(y !== undefined)
 			item['Ui.Fixed.relativeY'] = y;
 		item['Ui.Fixed.relativeAbsolute'] = absolute === true;
+		this.updateItemTransform(item);
 	},
 
 	append: function(child, x, y) {
@@ -39,8 +40,23 @@ Ui.Container.extend('Ui.Fixed',
 		delete(child['Ui.Fixed.relativeY']);
 		delete(child['Ui.Fixed.relativeAbsolute']);
 		this.removeChild(child);
-	}
+	},
 
+	updateItemTransform: function(child) {
+		var x = 0;
+		if(child['Ui.Fixed.x'] != undefined)
+			x = child['Ui.Fixed.x'];
+		if(child['Ui.Fixed.relativeX'] != undefined)
+			x -= child['Ui.Fixed.relativeX'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureWidth());
+
+		var y = 0;
+		if(child['Ui.Fixed.y'] != undefined)
+			y = child['Ui.Fixed.y'];
+		if(child['Ui.Fixed.relativeY'] != undefined)
+			y -= child['Ui.Fixed.relativeY'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureHeight());
+		
+		child.setTransform(Ui.Matrix.createTranslate(x, y));
+	}
 }, 
 /**@lends Ui.Fixed#*/
 {
@@ -83,19 +99,8 @@ Ui.Container.extend('Ui.Fixed',
 	},
 
 	onChildInvalidateArrange: function(child) {
-		var x = 0;
-		if(child['Ui.Fixed.x'] != undefined)
-			x = child['Ui.Fixed.x'];
-		if(child['Ui.Fixed.relativeX'] != undefined)
-			x -= child['Ui.Fixed.relativeX'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureWidth());
-
-		var y = 0;
-		if(child['Ui.Fixed.y'] != undefined)
-			y = child['Ui.Fixed.y'];
-		if(child['Ui.Fixed.relativeY'] != undefined)
-			y -= child['Ui.Fixed.relativeY'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureHeight());
-
-		child.arrange(x, y, child.getMeasureWidth(), child.getMeasureHeight());
+		child.arrange(0, 0, child.getMeasureWidth(), child.getMeasureHeight());
+		this.updateItemTransform(child);
 	}
 });
 

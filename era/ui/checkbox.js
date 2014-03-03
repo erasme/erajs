@@ -145,8 +145,8 @@ Ui.Togglable.extend('Ui.CheckBox',
 {
 	style: {
 		color: '#444444',
-		focusColor: '#f6caa2',
-		checkColor: new Ui.Color({ r: 0, g: 0.6, b: 0 })
+		focusColor: '#21d3ff',
+		checkColor: new Ui.Color({ r: 0.03, g: 0.63, b: 0.9 })
 	}
 });
 

@@ -3,6 +3,7 @@ Ui.Container.extend('Ui.Popup',
 {
 	background: undefined,
 	shadow: undefined,
+	shadowGraphic: undefined,
 	contentBox: undefined,
 	ppContent: undefined,
 	posX: undefined,
@@ -24,8 +25,11 @@ Ui.Container.extend('Ui.Popup',
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
-		this.shadow = new Ui.Rectangle();
+		this.shadow = new Ui.Pressable({ focusable: false });
 		this.appendChild(this.shadow);
+
+		this.shadowGraphic = new Ui.Rectangle();
+		this.shadow.setContent(this.shadowGraphic);
 
 		this.background = new Ui.PopupBackground({ radius: 0, fill: '#f8f8f8' });
 		this.appendChild(this.background);
@@ -33,11 +37,8 @@ Ui.Container.extend('Ui.Popup',
 		this.contentBox = new Ui.LBox({ padding: 4, paddingLeft: 3 });
 		this.appendChild(this.contentBox);
 
-		this.connect(this.shadow.getDrawing(), 'mousedown', this.onMouseDown);
-//		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onContentMouseDown);
-
-		this.connect(this.shadow.getDrawing(), 'touchstart', this.onTouchStart);
-//		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onContentTouchStart);
+		// handle auto hide
+		this.connect(this.shadow, 'press', this.onShadowPress);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
@@ -81,28 +82,9 @@ Ui.Container.extend('Ui.Popup',
 		}
 	},
 
-	onMouseDown: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
+	onShadowPress: function() {
 		if(this.autoHide)
 			this.hide();
-	},
-
-	onContentMouseDown: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-	},
-
-	onTouchStart: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-		if(this.autoHide)
-			this.hide();
-	},
-
-	onContentTouchStart: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
 	}
 }, 
 /**@lends Ui.Popup#*/
@@ -111,7 +93,7 @@ Ui.Container.extend('Ui.Popup',
 
 	onStyleChange: function() {
 		this.background.setFill(this.getStyleProperty('background'));
-		this.shadow.setFill(this.getStyleProperty('shadowColor'));
+		this.shadowGraphic.setFill(this.getStyleProperty('shadowColor'));
 	},
 
 	show: function(posX, posY) {

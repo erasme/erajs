@@ -20,7 +20,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	 * @extends Ui.MouseOverable
      */
 	constructor: function(config) {
-		this.addEvents('change', 'press', 'activate');
+		this.addEvents('change');
 
 		this.connect(this, 'enter', this.onMouseEnter);
 		this.connect(this, 'leave', this.onMouseLeave);
@@ -31,9 +31,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		this.connect(this.carouselable, 'focus', this.onCarouselableFocus);
 		this.connect(this.carouselable, 'blur', this.onCarouselableBlur);
 		this.connect(this.carouselable, 'change', this.onCarouselableChange);
-		this.connect(this.carouselable, 'press', this.onCarouselablePress);
-		this.connect(this.carouselable, 'activate', this.onCarouselableActivate);
-		
+
 		this.buttonPrevious = new Ui.Pressable({ horizontalAlign: 'left', verticalAlign: 'center', opacity: 0 });
 		this.buttonPrevious.setFocusable(false);
 		this.buttonPreviousIcon = new Ui.Icon({ icon: 'arrowleft', width: 48, height: 48 });
@@ -50,11 +48,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 //		this.buttonNext.hide();
 		this.connect(this.buttonNext, 'press', this.onNextPress);
 	},
-
-	setDirectionRelease: function(release) {
-		this.carouselable.setDirectionRelease(release);
-	},
-
+	
 	setAutoPlay: function(delay) {
 		this.carouselable.setAutoPlay(delay);
 	},
@@ -98,15 +92,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	/**#@+
 	* @private
 	*/
-
-	onCarouselablePress: function(carouselable) {
-		this.fireEvent('press', this);
-	},
-
-	onCarouselableActivate: function(carouselable) {
-		this.fireEvent('activate', this);
-	},
-
+	
 	onCarouselableChange: function(carouselable, position) {
 		this.showArrows();
 		this.fireEvent('change', this, position);
@@ -121,12 +107,10 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	onPreviousPress: function() {
-		this.carouselable.focus();
 		this.previous();
 	},
 
 	onNextPress: function() {
-		this.carouselable.focus();
 		this.next();
 	},
 
@@ -250,7 +234,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	}
 }, {
 	style: {
-		focusColor: '#5d3109'
+		focusColor: '#21d3ff'
 	}
 });
 

@@ -21,9 +21,9 @@ Ui.Pressable.extend('Ui.Uploadable',
 //			this.input = new Ui.UploadableWrapper();
 //			console.log('UploadableWrapper');
 //		}
-		if(navigator.iOs)
-			this.input = new Ui.UploadableWrapper();
-		else
+//		if(navigator.iOs)
+//			this.input = new Ui.UploadableWrapper();
+//		else
 			this.input = new Ui.UploadableFileWrapper();
 		this.append(this.input);
 		this.connect(this.input, 'file', this.onFile);
@@ -109,6 +109,9 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	 */
 	createInput: function() {
 		this.formDrawing = document.createElement('form');
+		this.connect(this.formDrawing, 'click', function(e) {
+			e.stopPropagation();
+		});
 		this.formDrawing.method = 'POST';
 		this.formDrawing.enctype = 'multipart/form-data';
 		// needed for IE < 9
@@ -178,7 +181,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 
 	onUnload: function() {
 		this.disconnect(this.inputDrawing, 'change', this.onChange);
-        if(this.iframeDrawing != undefined)
+        if(this.iframeDrawing !== undefined)
 			document.body.removeChild(this.iframeDrawing);
 		Ui.UploadableFileWrapper.base.onUnload.call(this);
 	},
@@ -194,14 +197,14 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 			h = 0;
 		Ui.UploadableFileWrapper.base.arrangeCore.call(this, x, y, w, h);
 		if(this.formDrawing != undefined) {
-			this.formDrawing.style.top = Math.round(x)+'px';
-			this.formDrawing.style.left = Math.round(y)+'px';
+			this.formDrawing.style.top = '0px';
+			this.formDrawing.style.left = '0px';
 			this.formDrawing.style.width = Math.round(w)+'px';
 			this.formDrawing.style.height = Math.round(h)+'px';
 		}
 		if(this.inputDrawing != undefined) {
-			this.inputDrawing.style.top = Math.round(x)+'px';
-			this.inputDrawing.style.left = Math.round(y)+'px';
+			this.inputDrawing.style.top = '0px';
+			this.inputDrawing.style.left = '0px';
 			this.inputDrawing.style.width = Math.round(w)+'px';
 			this.inputDrawing.style.height = Math.round(h)+'px';
 		}
@@ -304,8 +307,9 @@ Ui.Element.extend('Ui.UploadableWrapper',
 }, 
 /**@lends Ui.UploadableWrapper#*/
 {
-	render: function() {
-		return this.createInput();
+	renderDrawing: function() {
+		var drawing = Ui.UploadableWrapper.base.renderDrawing.apply(this, arguments);
+		drawing.appendChild(this.createInput());
 	},
 
 	arrangeCore: function(width, height) {

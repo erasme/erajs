@@ -194,15 +194,6 @@ Ui.Element.extend('Ui.Label',
 			else if(navigator.isOpera)
 				this.labelDrawing.style.removeProperty('-o-transform');
 		}
-	},
-
-	onCumulOpacityChange: function(cumulOpacity) {
-		if(navigator.isIE) {
-			if(cumulOpacity < 1)
-				this.labelDrawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity='+(Math.round(cumulOpacity * 100))+')';
-			else
-				this.labelDrawing.style.filter = '';
-		}
 	}
 }, 
 /**@lends Ui.Label*/
@@ -315,6 +306,10 @@ Ui.Element.extend('Ui.Label',
 		}
 		Ui.Label.measureBox = measureWindow.document.createElement('div');
 		Ui.Label.measureBox.style.whiteSpace = 'nowrap';
+		Ui.Label.measureBox.style.position = 'absolute';
+		Ui.Label.measureBox.style.left = '0px';
+		Ui.Label.measureBox.style.top = '0px';
+		Ui.Label.measureBox.style.position = 'absolute';
 		Ui.Label.measureBox.style.display = 'inline';
 		Ui.Label.measureBox.style.visibility = 'hidden';
 		measureWindow.document.body.appendChild(Ui.Label.measureBox);

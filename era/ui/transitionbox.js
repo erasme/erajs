@@ -81,13 +81,21 @@ Ui.LBox.extend('Ui.TransitionBox',
 			this.next = this.getChildren()[position];
 			this.next.show();
 
-			this.transition.run(this.current, this.next, 0);
+			// IE7 and 8 are too slow, drop the transition
+			if(navigator.isIE7 || navigator.isIE8) {
+				this.position = position;
+				this.transition.run(this.current, this.next, 1);
+				this.onTransitionComplete();
+			}
+			else {
+				this.transition.run(this.current, this.next, 0);
 
-			this.transitionClock = new Anim.Clock({ duration: this.duration, scope: this, onTimeupdate: this.onTransitionTick, ease: this.ease });
-			this.connect(this.transitionClock, 'complete', this.onTransitionComplete);
-			this.transitionClock.begin();
+				this.transitionClock = new Anim.Clock({ duration: this.duration, scope: this, onTimeupdate: this.onTransitionTick, ease: this.ease });
+				this.connect(this.transitionClock, 'complete', this.onTransitionComplete);
+				this.transitionClock.begin();
 
-			this.position = position;
+				this.position = position;
+			}
 		}
 	},
 

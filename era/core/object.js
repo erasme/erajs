@@ -124,7 +124,8 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 		current = current[tab[i]];
 	}
 	var func = eval("( "+classType+" = function(config) { Core.Object.currentScopes.push(this); var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); Core.Object.currentScopes.pop(); this.autoConfig(nconfig); } )");
-	if(navigator.isIE) {
+
+	if(func.prototype.__proto__ == undefined) {
 		for(var prop in this.prototype) {
 			func.prototype[prop] = this.prototype[prop];
 		}

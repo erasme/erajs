@@ -154,6 +154,7 @@ if (!document.createElement('canvas').getContext) {
         el.attachEvent('onresize', onResize);
 
         var attrs = el.attributes;
+
         if (attrs.width && attrs.width.specified) {
           // TODO: use runtimeStyle and coordsize
           // el.getContext().setWidth_(attrs.width.nodeValue);

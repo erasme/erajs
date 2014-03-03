@@ -40,7 +40,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 
 	setData: function(data) {
 		while(this.box.getFirstChild() != undefined) {
-			this.disconnect(this.box.getFirstChild(), 'select', this.onSegmentSelect);
+			this.disconnect(this.box.getFirstChild(), 'toggle', this.onSegmentSelect);
 			this.box.remove(this.box.getFirstChild());
 		}
 		this.data = data;
@@ -52,18 +52,18 @@ Ui.LBox.extend('Ui.SegmentBar',
 				mode = (i == 0)?'top':(i == data.length - 1)?'bottom':'middle';
 			var segment = new Ui.SegmentButton({ data: data[i], text: data[i][this.field], mode: mode });
 			this.box.append(segment, true);
-			this.connect(segment, 'select', this.onSegmentSelect);
+			this.connect(segment, 'toggle', this.onSegmentSelect);
 		}
 	},
 
 	setCurrentPosition: function(position) {
 		if((position >= 0) && (position < this.box.getChildren().length))
-			this.box.getChildren()[position].select();
+			this.box.getChildren()[position].toggle();
 	},
 
 	getCurrentPosition: function() {
 		for(var i = 0; i < this.box.getChildren().length; i++) {
-			if(this.box.getChildren()[i].getIsSelected())
+			if(this.box.getChildren()[i].getIsToggled())
 				return i;
 		}
 	},
@@ -96,9 +96,8 @@ Ui.LBox.extend('Ui.SegmentBar',
 	 * @private 
 	 */
 	onSegmentSelect: function(segment) {
-		this.focus();
 		if(this.current != undefined)
-			this.current.unselect();
+			this.current.untoggle();
 		this.current = segment;
 		this.fireEvent('change', this, segment.getData());
 	},
@@ -150,7 +149,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 	}
 });
 
-Ui.Selectable.extend('Ui.SegmentButton', {
+Ui.Togglable.extend('Ui.SegmentButton', {
 	label: undefined,
 	bg: undefined,
 	shadow: undefined,
@@ -168,8 +167,8 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 		this.label = new Ui.Label({ margin: 7 });
 		this.append(this.label);
 
-		this.connect(this, 'select', this.onButtonSelect);
-		this.connect(this, 'unselect', this.onButtonUnselect);
+		this.connect(this, 'toggle', this.onButtonSelect);
+		this.connect(this, 'untoggle', this.onButtonUnselect);
 	},
 
 	getData: function() {
@@ -223,7 +222,7 @@ Ui.Selectable.extend('Ui.SegmentButton', {
 			this.fill = Ui.Color.create(fill);
 			var yuv = this.fill.getYuva();
 			this.downFill = new Ui.Color({ y: yuv.y - 0.2, u: yuv.u, v: yuv.v });
-			if(this.getIsSelected())
+			if(this.getIsToggled())
 				this.bg.setFill(this.downFill);
 			else
 				this.bg.setFill(this.fill);

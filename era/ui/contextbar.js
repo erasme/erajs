@@ -47,6 +47,7 @@ Ui.LBox.extend('Ui.ContextBar', {
 			var action = actions[actionName];
 			if(action.hidden === true)
 				continue;
+			//console.log(this+'.onSelectionChange mimetype: '+this.selection.getElements()[0].getMimetype());
 			var button = new Ui.ActionButton({ icon: action.icon, text: action.text, action: action, selection: this.selection });
 			button.addMimetype(this.selection.getElements()[0].getMimetype());
 			this.actionsBox.append(button);

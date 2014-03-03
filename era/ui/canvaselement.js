@@ -3,6 +3,9 @@ Ui.Container.extend('Ui.CanvasElement',
 {
 	canvasEngine: 'svg',
 	context: undefined,
+	svgDrawing: undefined,
+	vmlDrawing: undefined,
+	eventCatcher: undefined,
 	dpiRatio: 1,
 
 	/**
@@ -27,11 +30,26 @@ Ui.Container.extend('Ui.CanvasElement',
 			this.context.restore();
 		}
 		else {
-			var ctx = new Core.SVG2DContext({ document: this.getDrawing() });
+			if(this.svgDrawing !== undefined)
+				this.getDrawing().removeChild(this.svgDrawing);
+			var svgDrawing = document.createElementNS(svgNS, 'svg');
+			svgDrawing.style.position = 'absolute';
+			svgDrawing.style.top = '0px';
+			svgDrawing.style.left = '0px';
+			svgDrawing.style.width = this.getLayoutWidth()+'px';
+			svgDrawing.style.height = this.getLayoutHeight()+'px';
+			svgDrawing.setAttribute('focusable', false);
+			svgDrawing.setAttribute('draggable', false);
+			// very important, SVG elements cant take pointers events
+			// because touch* events are captured by the initial element they
+			// are raised over. If this element is remove from the DOM (like canvas redraw)
+			// the following events (like touchmove, touchend) will never raised
+			svgDrawing.setAttribute('pointer-events', 'none');
+			var ctx = new Core.SVG2DContext({ document: svgDrawing });
 			this.updateCanvas(ctx);
-			if(this.getDrawing().childNodes.length > 0)
-				this.getDrawing().removeChild(this.getDrawing().childNodes[0]);
-			this.getDrawing().appendChild(ctx.getSVG());
+			this.svgDrawing = svgDrawing;
+			this.svgDrawing.appendChild(ctx.getSVG());
+			this.getDrawing().appendChild(this.svgDrawing);
 		}
 	},
 
@@ -81,20 +99,61 @@ Ui.Container.extend('Ui.CanvasElement',
 			this.context = drawing.getContext('2d');
 		}
 		else if(this.canvasEngine === 'vml') {
+			drawing = document.createElement('div');
+			var resourceDrawing = document.createElement('div');
+			resourceDrawing.style.width = '0px';
+			resourceDrawing.style.height = '0px';
+			resourceDrawing.style.visibility = 'hidden';
+			drawing.appendChild(resourceDrawing);
+			this.setContainerDrawing(resourceDrawing);
+
 			// use excanvas
-			drawing = document.createElement('canvas');
-			drawing = G_vmlCanvasManager.initElement(drawing);
-			this.context = drawing.getContext('2d');
+			this.vmlDrawing = document.createElement('canvas');
+			this.vmlDrawing = G_vmlCanvasManager.initElement(this.vmlDrawing);
+			this.vmlDrawing.style.position = 'absolute';
+			this.vmlDrawing.style.top = '0px';
+			this.vmlDrawing.style.left = '0px';
+			this.context = this.vmlDrawing.getContext('2d');
 			this.context.roundRect = Core.SVG2DPath.prototype.roundRect;
 			this.context.svgPath = Core.SVG2DContext.prototype.svgPath;
 			this.context.roundRectFilledShadow = Core.SVG2DContext.prototype.roundRectFilledShadow;
+			drawing.appendChild(this.vmlDrawing);
+
+			// create an event catcher because if a VML element is the target of 
+			// a mousedown event and then the VML element is remove before the
+			// mouseup event, click event will never rise. This cant happend with
+			// real canvas. Like pointer-events none dont exist for IE 7 & 8, no
+			// other choice
+			this.eventCatcher = document.createElement('div');
+			this.eventCatcher.style.position = 'absolute';
+			this.eventCatcher.style.top = '0px';
+			this.eventCatcher.style.left = '0px';
+			this.eventCatcher.style.background = 'red';
+			this.eventCatcher.style.filter = 'alpha(opacity=0)';
+			drawing.appendChild(this.eventCatcher);
 		}
 		else {
-			drawing = document.createElementNS(svgNS, 'svg');
-			drawing.setAttribute('focusable', false);
-			drawing.setAttribute('draggable', false);
+			drawing = document.createElement('div');
+			var resourceDrawing = document.createElement('div');
+			resourceDrawing.style.width = '0px';
+			resourceDrawing.style.height = '0px';
+			resourceDrawing.style.visibility = 'hidden';
+
+			drawing.appendChild(resourceDrawing);
+			this.setContainerDrawing(resourceDrawing);
+			if(navigator.supportCanvas)
+				drawing.toDataURL = this.svgToDataURL.bind(this);
 		}
 		return drawing;
+	},
+
+	svgToDataURL: function() {
+		var drawing = document.createElement('canvas');
+		var context = drawing.getContext('2d');
+		drawing.setAttribute('width', Math.ceil(this.getLayoutWidth()), null);
+		drawing.setAttribute('height', Math.ceil(this.getLayoutHeight()), null);
+		this.updateCanvas(context);
+		return drawing.toDataURL.apply(drawing, arguments);
 	},
 
 	arrangeCore: function(width, height) {
@@ -111,6 +170,16 @@ Ui.Container.extend('Ui.CanvasElement',
 		this.dpiRatio = devicePixelRatio / backingStoreRatio;
 		this.getDrawing().setAttribute('width', Math.ceil(width * this.dpiRatio), null);
 		this.getDrawing().setAttribute('height', Math.ceil(height * this.dpiRatio), null);
+
+		if(this.canvasEngine === 'vml') {
+			this.vmlDrawing.style.width = width+'px';
+			this.vmlDrawing.style.height = height+'px';
+			this.vmlDrawing.setAttribute('width', Math.ceil(width), null);
+			this.vmlDrawing.setAttribute('height', Math.ceil(height), null);
+
+			this.eventCatcher.style.width = width+'px';
+			this.eventCatcher.style.height = height+'px';
+		}
 
 		if(this.getIsVisible() && this.getIsLoaded())
 			this.update();
@@ -368,11 +437,6 @@ Core.Object.extend('Core.SVG2DContext', {
 		if(this.clipId !== undefined)
 			svg.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
 		svg.style.opacity = this.globalAlpha;
-		// very important, SVG elements cant take pointers events
-		// because touch* events are captured by the initial element they
-		// are raised over. If this element is remove from the DOM (like canvas redraw)
-		// the following events (like touchmove, touchend) will never raised
-		svg.setAttributeNS(null, 'pointer-events', 'none');
 		svg.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
 		this.g.appendChild(svg);
 	},
@@ -494,7 +558,7 @@ Core.Object.extend('Core.SVG2DContext', {
 		t.style.fontSize = font.size;
 		t.style.fontStyle = font.style;
 
-		if(navigator.isFirefox || navigator.isIE) {
+		if(!navigator.isWebkit) {
 			var fontSize = parseInt(font.size);
 			if(this.textBaseline === 'top')
 				y += fontSize*0.8;
@@ -740,8 +804,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.closePath();
 			}
 			else {
-				console.log('Invalid SVG path cmd: '+cmd+' ('+path+')');
-				throw('Invalid SVG path');
+				throw('Invalid SVG path cmd: '+cmd+' ('+path+')');
 			}
 		}
 	},

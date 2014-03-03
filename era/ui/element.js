@@ -134,11 +134,6 @@ Core.Object.extend('Ui.Element',
 		this.drawing.style.left = '-10000px';
 		this.drawing.style.top = '-10000px';
 		this.drawing.style.outline = 'none';
-		var content = this.render(config);
-		if(content !== undefined)
-			this.drawing.appendChild(content);
-
-//		this.setSelectable(false);
 
 		this.connect(this.drawing, 'focus', this.onFocus);
 		this.connect(this.drawing, 'blur', this.onBlur);
@@ -170,8 +165,12 @@ Core.Object.extend('Ui.Element',
 				this.getDrawing().style.removeProperty('-webkit-user-select');
 			else if(navigator.isGecko)
 				this.getDrawing().style.removeProperty('-moz-user-select');
-			else if(navigator.isIE)
-				this.disconnect(this.getDrawing(), 'selectstart', this.onSelectStart);
+			else if(navigator.isIE) {
+				if(navigator.isIE7 || navigator.isIE8)
+					this.disconnect(this.getDrawing(), 'selectstart', this.onIESelectStart);
+				else
+					this.getDrawing().style.removeProperty('-ms-user-select');
+			}
 			else if(navigator.isOpera)
 				this.getDrawing().onmousedown = undefined;
 		}
@@ -181,8 +180,12 @@ Core.Object.extend('Ui.Element',
 				this.getDrawing().style.webkitUserSelect = 'none';
 			else if(navigator.isGecko)
 				this.getDrawing().style.MozUserSelect = 'none';
-			else if(navigator.isIE)
-				this.connect(this.getDrawing(), 'selectstart', this.onSelectStart);
+			else if(navigator.isIE) {
+				if(navigator.isIE7 || navigator.isIE8)
+					this.connect(this.getDrawing(), 'selectstart', this.onIESelectStart);
+				else
+					this.getDrawing().style.msUserSelect = 'none';
+			}
 			else if(navigator.isOpera)
 				this.getDrawing().onmousedown = function(event) { event.preventDefault(); };
 		}
@@ -502,16 +505,7 @@ Core.Object.extend('Ui.Element',
 	renderDrawing: function() {
 		return document.createElement('div');
 	},
-
-	/**
-	 * Override this method to provide a custom
-	 * rendering of the current element.
-	 * Return the HTML element of the rendering
-	 */
-	render: function() {
-		return undefined;
-	},
-
+	
 	/**
 	 * Return the prefered width of the element
 	 * or undefined
@@ -735,12 +729,6 @@ Core.Object.extend('Ui.Element',
 				this.drawing.focus();
 			} catch(e) {}
 		}
-//		var current = this;
-//		while(current.parent != undefined) {
-//			current = current.parent;
-//		}
-//		if(Ui.App.hasInstance(current))
-//			current.askFocus(this);
 	},
 
 	/**
@@ -750,12 +738,6 @@ Core.Object.extend('Ui.Element',
 		try {
 			this.drawing.blur();
 		} catch(e) {}
-//		var current = this;
-//		while(current.parent != undefined) {
-//			current = current.parent;
-//		}
-//		if(Ui.App.hasInstance(current))
-//			current.removeFocus(this);
 	},
 
 	/**
@@ -1168,7 +1150,7 @@ Core.Object.extend('Ui.Element',
 	* @private
 	*/
 
-	onSelectStart: function(event) {
+	onIESelectStart: function(event) {
 		event.preventDefault();
 	},
 
@@ -1202,8 +1184,6 @@ Core.Object.extend('Ui.Element',
 
 	updateTransform: function() {
 		if(this.transform !== undefined) {
-//			console.log('updateTransform');
-
 			var matrix = new Ui.Matrix();
 			var x = this.transformOriginX;
 			var y = this.transformOriginY;
@@ -1211,48 +1191,15 @@ Core.Object.extend('Ui.Element',
 				x *= this.layoutWidth;
 				y *= this.layoutHeight;
 			}
-
-//			console.log('updateTransform trans: '+this.transform);
-
 			matrix.translate(x, y);
-
-//			console.log('updateTransform step1: '+matrix);
-
 			matrix.multiply(this.transform);
 			matrix.translate(-x, -y);
 
-			if(matrix.isTranslateOnly()/* && (navigator.isIE7 || navigator.isIE8 || navigator.supportDrag)*/) {
+			if(navigator.isIE7 || navigator.isIE8) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
-				if('removeProperty' in this.drawing.style) {
-					this.drawing.style.removeProperty('transform');
-					this.drawing.style.removeProperty('transform-origin');
-				}
-				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
-					this.drawing.style.removeProperty('-ms-transform');
-					this.drawing.style.removeProperty('-ms-transform-origin');
-				}
-				else if(navigator.isGecko) {
-					this.drawing.style.removeProperty('-moz-transform');
-					this.drawing.style.removeProperty('-moz-transform-origin');
-				}
-				else if(navigator.isWebkit) {
-					this.drawing.style.removeProperty('-webkit-transform');
-					this.drawing.style.removeProperty('-webkit-transform-origin');
-				}
-				else if(navigator.isOpera) {
-					this.drawing.style.removeProperty('-o-transform');
-					this.drawing.style.removeProperty('-o-transform-origin');
-				}
 			}
 			else {
-				this.drawing.style.left = Math.round(this.layoutX)+'px';
-				this.drawing.style.top = Math.round(this.layoutY)+'px';
-//				if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
-//					this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
-//					this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
-//				}
-//				else
 				this.drawing.style.transform = matrix.toString();
 				this.drawing.style.transformOrigin = '0% 0%';
 				if(navigator.isIE) {
@@ -1274,32 +1221,31 @@ Core.Object.extend('Ui.Element',
 			}
 		}
 		else {
-			this.drawing.style.left = Math.round(this.layoutX)+'px';
-			this.drawing.style.top = Math.round(this.layoutY)+'px';
-//			if((navigator.userAgent.match(/MSIE 8.0/i) != null) || (navigator.userAgent.match(/MSIE 7.0/i) != null)) {
-//				this.drawing.style.left = Math.round(this.layoutX)+'px';
-//				this.drawing.style.top = Math.round(this.layoutY)+'px';
-//			}
-//			else
-			if('removeProperty' in this.drawing.style) {
-				this.drawing.style.removeProperty('transform');
-				this.drawing.style.removeProperty('transform-origin');
+			if(navigator.isIE7 || navigator.isIE8) {
+				this.drawing.style.left = Math.round(this.layoutX)+'px';
+				this.drawing.style.top = Math.round(this.layoutY)+'px';
 			}
-			if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
-				this.drawing.style.removeProperty('-ms-transform');
-				this.drawing.style.removeProperty('-ms-transform-origin');
-			}
-			else if(navigator.isGecko) {
-				this.drawing.style.removeProperty('-moz-transform');
-				this.drawing.style.removeProperty('-moz-transform-origin');
-			}
-			else if(navigator.isWebkit) {
-				this.drawing.style.removeProperty('-webkit-transform');
-				this.drawing.style.removeProperty('-webkit-transform-origin');
-			}
-			else if(navigator.isOpera) {
-				this.drawing.style.removeProperty('-o-transform');
-				this.drawing.style.removeProperty('-o-transform-origin');
+			else {
+				if('removeProperty' in this.drawing.style) {
+					this.drawing.style.removeProperty('transform');
+					this.drawing.style.removeProperty('transform-origin');
+				}
+				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
+					this.drawing.style.removeProperty('-ms-transform');
+					this.drawing.style.removeProperty('-ms-transform-origin');
+				}
+				else if(navigator.isGecko) {
+					this.drawing.style.removeProperty('-moz-transform');
+					this.drawing.style.removeProperty('-moz-transform-origin');
+				}
+				else if(navigator.isWebkit) {
+					this.drawing.style.removeProperty('-webkit-transform');
+					this.drawing.style.removeProperty('-webkit-transform-origin');
+				}
+				else if(navigator.isOpera) {
+					this.drawing.style.removeProperty('-o-transform');
+					this.drawing.style.removeProperty('-o-transform-origin');
+				}
 			}
 		}
 	},
@@ -1360,7 +1306,7 @@ Core.Object.extend('Ui.Element',
 					}
 					var cssMatrix = new WebKitCSSMatrix(trans);
 					var localMatrix = Ui.Matrix.createMatrix(cssMatrix.a, cssMatrix.b, cssMatrix.c, cssMatrix.d, cssMatrix.e, cssMatrix.f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
@@ -1392,7 +1338,7 @@ Core.Object.extend('Ui.Element',
 						originY = new Number(origins[1].replace(/px$/, ''));
 					}
 					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
@@ -1424,7 +1370,7 @@ Core.Object.extend('Ui.Element',
 						originY = new Number(origins[1].replace(/px$/, ''));
 					}
 					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
@@ -1437,7 +1383,7 @@ Core.Object.extend('Ui.Element',
 		else if(navigator.isIE) {
 			var matrix = new Ui.Matrix();
 			var current = element;
-			while(current != undefined) {
+			while((current !== undefined) && (current !== null) && (current !== window)) {
 				var trans;
 				try {
 					trans = win.getComputedStyle(current, null).getPropertyValue('-ms-transform');
@@ -1461,10 +1407,20 @@ Core.Object.extend('Ui.Element',
 						originY = new Number(origins[1].replace(/px$/, ''));
 					}
 					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(current.offsetLeft - originX, current.offsetTop - originY);
+					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
 				}
+				matrix.translate(current.offsetLeft, current.offsetTop);
+				matrix.translate(-current.scrollLeft, -current.scrollTop);
+				current = current.offsetParent;
+			}
+			return matrix;
+		}
+		else if(!navigator.supportSVG) {
+			var matrix = new Ui.Matrix();
+			var current = element;
+			while((current !== undefined) && (current !== null) && (current !== window)) {
 				matrix.translate(current.offsetLeft, current.offsetTop);
 				matrix.translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;

@@ -8,14 +8,6 @@ Ui.Element.extend('Ui.Entry',
 	color: undefined,
 	value: '',
 	passwordMode: false,
-	isDown: false,
-	screenX: undefined,
-	screenY: undefined,
-	clientX: undefined,
-	clientY: undefined,
-	startTime: undefined,
-	allowSelect: false,
-	timer: undefined,
 
 	/**
 	 * @constructs
@@ -23,15 +15,8 @@ Ui.Element.extend('Ui.Entry',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.addEvents('press', 'down', 'up', 'change', 'validate');
-		this.setSelectable(true);
+		this.addEvents('change', 'validate');
 		this.setFocusable(true);
-
-		// handle mouse
-		this.connect(this.getDrawing(), 'mousedown', this.onMouseDown);
-
-		// handle touches
-		this.connect(this.getDrawing(), 'touchstart', this.onTouchStart);
 
 		// handle change
 		this.connect(this.getDrawing(), 'change', this.onChange);
@@ -139,153 +124,9 @@ Ui.Element.extend('Ui.Entry',
 		this.getDrawing().value = this.value;
 	},
 
-	getIsDown: function() {
-		return this.isDown;
-	},
-
 	/**#@+
 	 * @private
 	 */
-
-	onMouseDown: function(event) {
-		if(this.getIsDisabled()) {
-			event.preventDefault();
-			return;
-		}
-	
-		this.setSelectable(true);
-		event.stopPropagation();
-
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-		this.allowSelect = false;
-		this.timer = new Core.DelayedTask({	delay: 0.50, scope: this, callback: this.onTimer });
-
-		this.screenX = event.screenX;
-		this.screenY = event.screenY;
-		this.clientX = event.clientX;
-		this.clientY = event.clientY;
-
-		var currentTime = (new Date().getTime())/1000;
-		this.startTime = currentTime;
-
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-		
-		this.onDown();
-	},
-
-	onMouseMove: function(event) {
-		if(!this.allowSelect) {
-			var deltaX = event.clientX - this.clientX;
-			var deltaY = event.clientY - this.clientY;
-			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-			event.stopPropagation();
-			event.preventDefault();
-
-			// if the user move to much, release the touch event
-			if(delta > 10) {
-				if(this.timer != undefined) {
-					this.timer.abort();
-					this.timer = undefined;
-				}
-
-				var selection = window.getSelection();
-				selection.removeAllRanges();
-				this.setSelectable(false);
-
-				this.disconnect(window, 'mousemove', this.onMouseMove, true);
-				this.disconnect(window, 'mouseup', this.onMouseUp, true);
-	
-				var mouseDownEvent = document.createEvent('MouseEvents');
-				mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.screenX, this.screenY,
-					this.clientX, this.clientY,
-					event.ctrlKey, event.altKey, event.shiftKey,
-					event.metaKey, 0, event.target);
-				this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
-				
-				this.onUp();
-			}
-		}
-		else
-			event.stopPropagation();
-	},
-
-	onMouseUp: function(event) {
-		event.stopPropagation();
-
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}		
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-		this.onUp();
-	},
-
-	onTouchStart: function(event) {
-		if(this.getIsDisabled()) {
-			event.preventDefault();
-			return;
-		}	
-		if(event.targetTouches.length == 1) {
-			event.stopPropagation();
-
-			this.connect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-			this.connect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-
-			if(this.timer != undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-			this.timer = new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.onTimer });
-			this.onDown();
-		}
-	},
-
-	onTouchMove: function(event) {
-		if(!this.allowSelect) {
-			if(this.timer != undefined) {
-				this.timer.abort();
-				this.timer = undefined;
-			}
-			this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-			this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-			this.onUp();
-		}
-	},
-
-	onTouchEnd: function(event) {
-		event.stopPropagation();
-
-		if(this.timer != undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-
-		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove, true);
-		this.disconnect(this.getDrawing(), 'touchend', this.onTouchEnd, true);
-		this.allowSelect = false;
-		this.onUp();
-	},
-
-	onTimer: function(timer) {
-		this.allowSelect = true;
-		this.timer = undefined;
-	},
-
-	onDown: function() {
-		this.isDown = true;
-		this.fireEvent('down', this);
-	},
-
-	onUp: function() {
- 		this.isDown = false;
-		this.fireEvent('up', this);
-	},
 
 	onPaste: function(event) {
 		event.stopPropagation();
@@ -306,9 +147,11 @@ Ui.Element.extend('Ui.Entry',
 		}
 	},
 
-	onKeyDown: function(event) {	
-		if(this.getHasFocus())
+	onKeyDown: function(event) {
+		if((event.which == 13) || (event.which == 37) ||
+		   (event.which == 39) || (event.which == 36) || (event.which == 35)) {
 			event.stopPropagation();
+		}
 	},
 
 	onKeyUp: function(event) {	
@@ -321,8 +164,10 @@ Ui.Element.extend('Ui.Entry',
 			event.stopPropagation();
 			this.fireEvent('validate', this);
 		}
-		else if(this.getHasFocus())
+		else if((event.which == 13) || (event.which == 37) ||
+				(event.which == 39) || (event.which == 36) || (event.which == 35)) {
 			event.stopPropagation();
+		}
 	}
 	/**#@-*/
 }, {

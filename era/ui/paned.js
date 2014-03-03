@@ -237,8 +237,8 @@ Ui.LBox.extend('Ui.HPanedCursor',
 	*	@extends Ui.LBox
 	*/
 	constructor: function(config) {
-		this.append(new Ui.Frame({ frameWidth: 1, radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }) }));
-		this.append(new Ui.Rectangle({ radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.05 }) }));
+		this.append(new Ui.Frame({ frameWidth: 1, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }) }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.05 }) }));
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), width: 1, margin: 5, marginRight: 10, height: 30, verticalAlign: 'center' }));
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), width: 1, margin: 5, marginLeft: 10, height: 30, verticalAlign: 'center' }));
 		
@@ -263,7 +263,7 @@ Ui.LBox.extend('Ui.VPanedCursor',
 	*/
 	constructor: function(config) {
 		this.append(new Ui.Frame({ frameWidth: 1, radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }) }));
-		this.append(new Ui.Rectangle({ radius: 0, fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.05 }) }));
+		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.05 }) }));
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), height: 1, margin: 5, marginTop: 10, width: 30, horizontalAlign: 'center' }));
 		this.append(new Ui.Rectangle({ fill: new Ui.Color({ r: 0, g: 0, b: 0, a: 0.1 }), height: 1, margin: 5, marginBottom: 10, width: 30, horizontalAlign: 'center' }));
 	

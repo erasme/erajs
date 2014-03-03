@@ -8,6 +8,7 @@ doc/jsdoc/symbols/
 vrac/
 site/
 release/
+debian/files
 debian/libjs-erajs/*
 debian/libjs-erajs.debhelper.log
 debian/libjs-erajs.substvars

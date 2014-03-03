@@ -16,6 +16,11 @@ Ui.Element.extend('Ui.Image',
 	 */
 	constructor: function(config) {
 		this.addEvents('ready', 'error');
+		// no context menu
+		this.connect(this.imageDrawing, 'contextmenu', function(event) {
+			event.preventDefault();
+		});
+
 		this.connect(this.imageDrawing, 'load', this.onImageLoad);
 		this.connect(this.imageDrawing, 'error', this.onImageError);
 	},
@@ -109,7 +114,7 @@ Ui.Element.extend('Ui.Image',
 			this.connect(Ui.App.current, 'ready', this.onAppReady);
 		else {
 			this.loaddone = true;
-			if(document.body === undefined) {
+			if((document.body === undefined) || (document.body === null)) {
 				var body = document.createElement('body');
 				document.body = body;
 			}
@@ -136,8 +141,12 @@ Ui.Element.extend('Ui.Image',
 		this.imageDrawing.style.width = '0px';
 		this.imageDrawing.style.height = '0px';
 		this.imageDrawing.setAttribute('draggable', false);
-		if(navigator.isWebkit)
+		if(navigator.isWebkit) {
+			// no text selection
 			this.imageDrawing.style.webkitUserSelect = 'none';
+			// no context menu
+			this.imageDrawing.style.webkitTouchCallout = 'none';
+		}
 		else if(navigator.isGecko)
 			this.imageDrawing.style.MozUserSelect = 'none';
 		else if(navigator.isIE) {

@@ -23,6 +23,9 @@ pressable.append(rectangle);
 app.connect(pressable, 'press', function() {
 	label.setText('press count: '+(++count));
 });
+app.connect(pressable, 'activate', function() {
+	console.log('activate')
+});
 app.connect(pressable, 'down', function() {
 	rectangle.setFill('blue');
 });

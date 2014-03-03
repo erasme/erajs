@@ -35,38 +35,36 @@ Ui.Element.extend('Ui.IFrame',
 }, 
 /**@lends Ui.IFrame#*/
 {
-	render: function() {
-		this.iframeDrawing = document.createElement('iframe');
-		this.iframeDrawing.style.position = 'absolute';
-		this.iframeDrawing.style.border = '0px';
-		this.iframeDrawing.style.margin = '0px';
-		this.iframeDrawing.style.padding = '0px';
-		this.iframeDrawing.style.left = '0px';
-		this.iframeDrawing.style.top = '0px';
-		if(navigator.isIE)
-			this.iframeDrawing.frameBorder = '0';
-		return this.iframeDrawing;
-	},
+	renderDrawing: function() {
+		if(navigator.iOs) {
+			var drawing = Ui.IFrame.base.renderDrawing.apply(this, arguments);
+			drawing.style.overflow = 'scroll';
+			drawing.style.webkitOverflowScrolling = 'touch';
 
-	arrangeCore: function(width, height) {
-//		console.log('iframe.arrangeCore('+width+','+height+') '+this.iframeDrawing.getAttribute('src'));
-		var tmpWidth = width;
-		var tmpHeight = height;
-		// correct a bug in Chrome
-		if(navigator.isChrome) {
-			var matrix = this.transformFromWindow();
-			tmpWidth = (width*matrix.getA());
-			tmpHeight = (height*matrix.getD());
+			this.iframeDrawing = document.createElement('iframe');
+			this.iframeDrawing.scrolling = 'no';
+			this.iframeDrawing.style.border = '0px';
+			this.iframeDrawing.style.margin = '0px';
+			this.iframeDrawing.style.padding = '0px';
+			this.iframeDrawing.style.width = '100%';
+			this.iframeDrawing.style.height = '100%';
+			drawing.appendChild(this.iframeDrawing);
+
+			return drawing;
 		}
-		// correct a bug in Safari iOS if possible
-		try {
-			this.iframeDrawing.contentWindow.innerWidth = tmpWidth;
-			this.iframeDrawing.contentWindow.innerHeight = tmpHeight;
-		} catch(e) {}
-		this.iframeDrawing.style.width = tmpWidth+'px';
-		this.iframeDrawing.style.height = tmpHeight+'px';
+		else {
+			this.iframeDrawing = document.createElement('iframe');
+			this.iframeDrawing.style.border = '0px';
+			this.iframeDrawing.style.margin = '0px';
+			this.iframeDrawing.style.padding = '0px';
+			this.iframeDrawing.style.width = '100%';
+			this.iframeDrawing.style.height = '100%';
+			if(navigator.isIE)
+				this.iframeDrawing.frameBorder = '0';
+			return this.iframeDrawing;
+		}
 	},
-
+	
 	onVisible: function() {
 		// IE < 9 dont fire resize event when display: none some where
 		// when visible, reading clientWidth and clientHeight force

@@ -13,6 +13,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	isArrangeValid: false,
 	lastMeasureWidth: 0,
 	lastMeasureHeight: 0,
+	lastAvailableWidth: 0,
 	superCompact: false,
 
 	/**
@@ -21,6 +22,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
+		this.setSelectable(false);
 	},
 
 	getSuperCompact: function() {
@@ -328,7 +330,8 @@ Ui.Element.extend('Ui.CompactLabel',
 }, 
 /**@lends Ui.CompactLabel#*/
 {
-	render: function() {
+	renderDrawing: function() {
+		var drawing = Ui.CompactLabel.base.renderDrawing.apply(this, arguments);
 		// create the container for all text rendering
 		this.textDrawing = document.createElement('div');
 		this.textDrawing.style.fontFamily = this.getFontFamily();
@@ -341,7 +344,8 @@ Ui.Element.extend('Ui.CompactLabel',
 		this.textDrawing.style.position = 'absolute';
 		this.textDrawing.style.left = '0px';
 		this.textDrawing.style.top = '0px';
-		return this.textDrawing;
+		drawing.appendChild(this.textDrawing);
+		return drawing;
 	},
 
 	onStyleChange: function() {	
@@ -355,9 +359,10 @@ Ui.Element.extend('Ui.CompactLabel',
 		this.invalidateMeasure();
 	},
 
-	measureCore: function(width, height) {	
-		if(!this.isMeasureValid || (this.lastMeasureWidth != width)) {
-			this.lastMeasureWidth = width;
+	measureCore: function(width, height) {
+		if(!this.isMeasureValid || (this.lastAvailableWidth != width)) {
+			//console.log(this+'.measureCore('+width+','+height+') isMeasureValid: '+this.isMeasureValid+', lastMeasureWidth: '+this.lastMeasureWidth);
+			this.lastAvailableWidth = width;
 			var size;
 			if(this.superCompact)
 				size = this.updateFlow(width, false);
@@ -373,6 +378,7 @@ Ui.Element.extend('Ui.CompactLabel',
 
 	arrangeCore: function(width, height) {
 		if(!this.isArrangeValid) {
+			//console.log(this+'.arrangeCore('+width+','+height+')');
 			this.isArrangeValid = true;
 			while(this.textDrawing.hasChildNodes())
 				this.textDrawing.removeChild(this.textDrawing.firstChild);
