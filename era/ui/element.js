@@ -312,7 +312,7 @@ Core.Object.extend('Ui.Element',
 			this.measureWidth = this.width + marginLeft + marginRight;
 		else
 			this.measureWidth = size.width + marginLeft + marginRight;
-		if((this.height != undefined) && (size.height < this.height))
+		if((this.height !== undefined) && (size.height < this.height))
 			this.measureHeight = this.height + marginTop + marginBottom;
 		else
 			this.measureHeight = size.height + marginTop + marginBottom;
@@ -457,7 +457,7 @@ Core.Object.extend('Ui.Element',
 	invalidateArrange: function() {
 		if(this.arrangeValid) {
 			this.arrangeValid = false;
-			if(this.parent != undefined)
+			if(this.parent !== undefined)
 				this.parent.onChildInvalidateArrange(this);
 		}
 	},
@@ -606,7 +606,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	updateClipRectangle: function() {
-		if(this.clipX != undefined) {
+		if(this.clipX !== undefined) {
 			var x = Math.round(this.clipX);
 			var y = Math.round(this.clipY);
 			var width = Math.round(this.clipWidth);
@@ -617,7 +617,7 @@ Core.Object.extend('Ui.Element',
 			if('removeProperty' in this.drawing.style)
 				this.drawing.style.removeProperty('clip');
 			else if('removeAttribute' in this.drawing.style)
-	                            this.drawing.style.removeAttribute('clip');
+				this.drawing.style.removeAttribute('clip');
 		}
 	},
 
@@ -917,8 +917,8 @@ Core.Object.extend('Ui.Element',
 			return;
 		var visible = false;
 		var current = this.getDrawing();
-		while(current != undefined) {
-			if(current.style.display == 'none') {
+		while(current !== undefined) {
+			if(current.style.display === 'none') {
 				visible = false;
 				break;
 			}
@@ -1023,9 +1023,10 @@ Core.Object.extend('Ui.Element',
 			if(dst[prop] !== undefined) {
 				var old = dst[prop];
 				dst[prop] = {};
-				for(var prop2 in old)
+				var prop2;
+				for(prop2 in old)
 					dst[prop][prop2] = old[prop2];
-				for(var prop2 in src[prop])
+				for(prop2 in src[prop])
 					dst[prop][prop2] = src[prop][prop2];
 			}
 			else
@@ -1036,10 +1037,11 @@ Core.Object.extend('Ui.Element',
 	mergeStyles: function() {
 //		console.log(this+'.mergeStyles parent: '+this.parentStyle+', style: '+this.style);
 //		console.log(this.parentStyle);
+		var current; var found;
 		this.mergeStyle = undefined;
 		if(this.parentStyle !== undefined) {
-			var current = this;
-			var found = false;
+			current = this;
+			found = false;
 			while(current !== undefined) {
 				if((this.parentStyle[current.classType] !== undefined) && (this.containSubStyle(this.parentStyle[current.classType]))) {
 					if(this.mergeStyle === undefined)
@@ -1058,7 +1060,7 @@ Core.Object.extend('Ui.Element',
 				this.mergeStyle = Core.Util.clone(this.mergeStyle);
 				this.fusionStyle(this.mergeStyle, this.style);
 
-				var current = this;
+				current = this;
 				while(current !== undefined) {
 					if((this.style[current.classType] !== undefined) && (this.containSubStyle(this.style[current.classType]))) {
 						this.fusionStyle(this.mergeStyle, this.style[current.classType]);
@@ -1068,8 +1070,8 @@ Core.Object.extend('Ui.Element',
 				}
 			}
 			else {
-				var current = this;
-				var found = false;
+				current = this;
+				found = false;
 				while(current !== undefined) {
 					if((this.style[current.classType] !== undefined) && (this.containSubStyle(this.style[current.classType]))) {
 						if(this.mergeStyle === undefined)
@@ -1112,18 +1114,19 @@ Core.Object.extend('Ui.Element',
 	},
 
 	getStyleProperty: function(property) {
+		var current;
 		if(this.mergeStyle !== undefined) {
-			var current = this;
-			while(current != undefined) {
+			current = this;
+			while(current !== undefined) {
 				if((this.mergeStyle[current.classType] !== undefined) && (this.mergeStyle[current.classType][property] !== undefined))
 					return this.mergeStyle[current.classType][property];
 				current = current.__baseclass__;
 			}
 		}
 		// look for static default
-		var current = this;
-		while(current != undefined) {
-			if((current.constructor.style != undefined) && (property in current.constructor.style))
+		current = this;
+		while(current !== undefined) {
+			if((current.constructor.style !== undefined) && (property in current.constructor.style))
 				return current.constructor.style[property];
 			current = current.__baseclass__;
 		}
@@ -1252,7 +1255,7 @@ Core.Object.extend('Ui.Element',
 
 	setAnimClock: function(clock) {
 		// if an anim clock is already set stop it
-		if(this.animClock != undefined)
+		if(this.animClock !== undefined)
 			this.animClock.stop();
 		this.animClock = clock;
 		if(clock !== undefined)
@@ -1273,7 +1276,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	onUnload: function() {
-		if(this.animClock != undefined) {
+		if(this.animClock !== undefined) {
 			this.animClock.stop();
 			this.animClock = undefined;
 		}
@@ -1288,24 +1291,29 @@ Core.Object.extend('Ui.Element',
 	* coordinate system
 	*/
 	transformToWindow: function(element, win) {
+		var a; var b; var c; var d; var e; var f;
+		var originX; var originY; var origin; var origins;
+		var current; var matrix; var localMatrix;
+		var trans; var splits; var exception;
+
 		if(win === undefined)
 			win = window;
 		if(navigator.isWebkit) {
-			var matrix = new Ui.Matrix();
-			var current = element;
-			while(current != undefined) {
-				var trans = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform');
+			matrix = new Ui.Matrix();
+			current = element;
+			while((current !== undefined) && (current !== null)) {
+				trans = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform');
 				if(trans != 'none') {
-					var origin = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
-					var originX = 0;
-					var originY = 0;
+					origin = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
+					originX = 0;
+					originY = 0;
 					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
+						origins = origin.split(' ');
+						originX = parseFloat(origins[0].replace(/px$/, ''));
+						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
 					var cssMatrix = new WebKitCSSMatrix(trans);
-					var localMatrix = Ui.Matrix.createMatrix(cssMatrix.a, cssMatrix.b, cssMatrix.c, cssMatrix.d, cssMatrix.e, cssMatrix.f);
+					localMatrix = Ui.Matrix.createMatrix(cssMatrix.a, cssMatrix.b, cssMatrix.c, cssMatrix.d, cssMatrix.e, cssMatrix.f);
 					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
@@ -1317,27 +1325,27 @@ Core.Object.extend('Ui.Element',
 			return matrix;
 		}
 		else if(navigator.isGecko) {
-			var matrix = new Ui.Matrix();
-			var current = element;
-			while(current != undefined) {
-				var trans = win.getComputedStyle(current, null).getPropertyValue('-moz-transform');
-				if(trans != 'none') {
-					var splits = trans.split(' ');
-					var a = new Number(splits[0].slice(7, splits[0].length-1));
-					var b = new Number(splits[1].slice(0, splits[1].length-1));
-					var c = new Number(splits[2].slice(0, splits[2].length-1));
-					var d = new Number(splits[3].slice(0, splits[3].length-1));
-					var e = new Number(splits[4].slice(0, splits[4].length-3));
-					var f = new Number(splits[5].slice(0, splits[5].length-3));
-					var origin = win.getComputedStyle(current, null).getPropertyValue('-moz-transform-origin');
-					var originX = 0;
-					var originY = 0;
+			matrix = new Ui.Matrix();
+			current = element;
+			while((current !== undefined) && (current !== null)) {
+				trans = win.getComputedStyle(current, null).getPropertyValue('-moz-transform');
+				if(trans !== 'none') {
+					splits = trans.split(' ');
+					a = parseFloat(splits[0].slice(7, splits[0].length-1));
+					b = parseFloat(splits[1].slice(0, splits[1].length-1));
+					c = parseFloat(splits[2].slice(0, splits[2].length-1));
+					d = parseFloat(splits[3].slice(0, splits[3].length-1));
+					e = parseFloat(splits[4].slice(0, splits[4].length-3));
+					f = parseFloat(splits[5].slice(0, splits[5].length-3));
+					origin = win.getComputedStyle(current, null).getPropertyValue('-moz-transform-origin');
+					originX = 0;
+					originY = 0;
 					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
+						origins = origin.split(' ');
+						originX = parseFloat(origins[0].replace(/px$/, ''));
+						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
-					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
+					localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
 					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
@@ -1349,27 +1357,27 @@ Core.Object.extend('Ui.Element',
 			return matrix;
 		}
 		else if(navigator.isOpera) {
-			var matrix = new Ui.Matrix();
-			var current = element;
-			while(current != undefined) {
-				var trans = win.getComputedStyle(current, null).getPropertyValue('-o-transform');
+			matrix = new Ui.Matrix();
+			current = element;
+			while((current !== undefined) && (current !== null)) {
+				trans = win.getComputedStyle(current, null).getPropertyValue('-o-transform');
 				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
-					var splits = trans.split(' ');
-					var a = new Number(splits[0].slice(7, splits[0].length-1));
-					var b = new Number(splits[1].slice(0, splits[1].length-1));
-					var c = new Number(splits[2].slice(0, splits[2].length-1));
-					var d = new Number(splits[3].slice(0, splits[3].length-1));
-					var e = new Number(splits[4].slice(0, splits[4].length-1));
-					var f = new Number(splits[5].slice(0, splits[5].length-1));
-					var origin = win.getComputedStyle(current, null).getPropertyValue('-o-transform-origin');
-					var originX = 0;
-					var originY = 0;
+					splits = trans.split(' ');
+					a = parseFloat(splits[0].slice(7, splits[0].length-1));
+					b = parseFloat(splits[1].slice(0, splits[1].length-1));
+					c = parseFloat(splits[2].slice(0, splits[2].length-1));
+					d = parseFloat(splits[3].slice(0, splits[3].length-1));
+					e = parseFloat(splits[4].slice(0, splits[4].length-1));
+					f = parseFloat(splits[5].slice(0, splits[5].length-1));
+					origin = win.getComputedStyle(current, null).getPropertyValue('-o-transform-origin');
+					originX = 0;
+					originY = 0;
 					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
+						origins = origin.split(' ');
+						originX = parseFloat(origins[0].replace(/px$/, ''));
+						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
-					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
+					localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
 					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
@@ -1381,32 +1389,31 @@ Core.Object.extend('Ui.Element',
 			return matrix;
 		}
 		else if(navigator.isIE) {
-			var matrix = new Ui.Matrix();
-			var current = element;
+			matrix = new Ui.Matrix();
+			current = element;
 			while((current !== undefined) && (current !== null) && (current !== window)) {
-				var trans;
 				try {
 					trans = win.getComputedStyle(current, null).getPropertyValue('-ms-transform');
-				} catch(e) {
+				} catch(exception) {
 					trans = 'none';
 				}
-				if((trans != 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
-					var splits = trans.split(' ');
-					var a = new Number(splits[0].slice(7, splits[0].length-1));
-					var b = new Number(splits[1].slice(0, splits[1].length-1));
-					var c = new Number(splits[2].slice(0, splits[2].length-1));
-					var d = new Number(splits[3].slice(0, splits[3].length-1));
-					var e = new Number(splits[4].slice(0, splits[4].length-1));
-					var f = new Number(splits[5].slice(0, splits[5].length-1));
-					var origin = win.getComputedStyle(current, null).getPropertyValue('-ms-transform-origin');
-					var originX = 0;
-					var originY = 0;
+				if((trans !== 'none') && (trans != 'matrix(1, 0, 0, 1, 0, 0)')) {
+					splits = trans.split(' ');
+					a = parseFloat(splits[0].slice(7, splits[0].length-1));
+					b = parseFloat(splits[1].slice(0, splits[1].length-1));
+					c = parseFloat(splits[2].slice(0, splits[2].length-1));
+					d = parseFloat(splits[3].slice(0, splits[3].length-1));
+					e = parseFloat(splits[4].slice(0, splits[4].length-1));
+					f = parseFloat(splits[5].slice(0, splits[5].length-1));
+					origin = win.getComputedStyle(current, null).getPropertyValue('-ms-transform-origin');
+					originX = 0;
+					originY = 0;
 					if(origin != '0px 0px') {
-						var origins = origin.split(' ');
-						originX = new Number(origins[0].replace(/px$/, ''));
-						originY = new Number(origins[1].replace(/px$/, ''));
+						origins = origin.split(' ');
+						originX = parseFloat(origins[0].replace(/px$/, ''));
+						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
-					var localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
+					localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
 					matrix.translate(-originX, -originY);
 					matrix.multiply(localMatrix);
 					matrix.translate(originX, originY);
@@ -1418,8 +1425,8 @@ Core.Object.extend('Ui.Element',
 			return matrix;
 		}
 		else if(!navigator.supportSVG) {
-			var matrix = new Ui.Matrix();
-			var current = element;
+			matrix = new Ui.Matrix();
+			current = element;
 			while((current !== undefined) && (current !== null) && (current !== window)) {
 				matrix.translate(current.offsetLeft, current.offsetTop);
 				matrix.translate(-current.scrollLeft, -current.scrollTop);
@@ -1462,5 +1469,5 @@ Core.Object.extend('Ui.Element',
 	}
 });
 
-navigator.supportOpacity = !((navigator.userAgent.match(/MSIE 7/i) != null) || (navigator.userAgent.match(/MSIE 8/i) != null));
+navigator.supportOpacity = !navigator.isIE7 && !navigator.isIE8;
 

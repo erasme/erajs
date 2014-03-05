@@ -82,8 +82,8 @@ Ui.Container.extend('Ui.Accordeonable',
 	* current opened page 
 	*/
 	setCurrentPosition: function(pos) {
-		if(this.getChildren().length == 0) {
-			if(this.currentPage != undefined)
+		if(this.getChildren().length === 0) {
+			if(this.currentPage !== undefined)
 				this.currentPage.unselect();
 			this.currentPage = undefined;
 			this.current = -1;
@@ -91,8 +91,8 @@ Ui.Container.extend('Ui.Accordeonable',
 		else {
 			this.current = pos;
 			var newPage = this.getChildren()[this.current];
-			if(newPage != this.currentPage) {
-				if(this.currentPage != undefined)
+			if(newPage !== this.currentPage) {
+				if(this.currentPage !== undefined)
 					this.currentPage.unselect();
 				this.currentPage = newPage;
 				this.fireEvent('change', this, this.currentPage, this.current);
@@ -100,7 +100,7 @@ Ui.Container.extend('Ui.Accordeonable',
 				this.currentPage.select();
 				this.connect(this.currentPage, 'select', this.onPageSelect);
 			}
-			if(this.clock != undefined)
+			if(this.clock !== undefined)
 				this.clock.stop();
 			this.clock = new Anim.Clock({ scope: this, duration: 2, target: this, onTimeupdate: this.onClockTick });
 			this.clock.begin();
@@ -133,11 +133,11 @@ Ui.Container.extend('Ui.Accordeonable',
 				break;
 			}
 		}
-		if(pos != -1) {
+		if(pos !== -1) {
 			this.disconnect(page, 'select', this.onPageSelect);
 			this.disconnect(page, 'close', this.onPageClose);
 			this.removeChild(page);
-			if((this.current == pos) && (this.current == 0))
+			if((this.current === pos) && (this.current === 0))
 				this.setCurrentPosition(0);
 			else if(this.current >= pos)
 				this.setCurrentPosition(this.current - 1);
@@ -182,24 +182,25 @@ Ui.Container.extend('Ui.Accordeonable',
 	},
 
 	measureHorizontal: function(width, height) {
+		var i; var size; var child; var content;
 		var minHeaders = 0;
 		var minContent = 0;
 		var minHeight = 0;
 
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var size = child.measure(width, height);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			size = child.measure(width, height);
 			minHeaders += child.getHeader().getMeasureWidth();
 			if(child.getHeader().getMeasureHeight() > minHeight)
 				minHeight = child.getHeader().getMeasureHeight();
 		}
 
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var size = child.measure((width - minHeaders) + child.getHeader().getMeasureWidth(), height);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			size = child.measure((width - minHeaders) + child.getHeader().getMeasureWidth(), height);
 
-			var content = child.getContent();
-			if((content != undefined) && (content.getMeasureWidth() > minContent)) {
+			content = child.getContent();
+			if((content !== undefined) && (content.getMeasureWidth() > minContent)) {
 				minContent = content.getMeasureWidth();
 				if(content.getMeasureHeight() > minHeight)
 					minHeight = content.getMeasureHeight();
@@ -210,24 +211,25 @@ Ui.Container.extend('Ui.Accordeonable',
 	},
 
 	measureVertical: function(width, height) {
+		var i; var child; var size; var content;
 		var minHeaders = 0;
 		var minContent = 0;
 		var minWidth = 0;
 
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var size = child.measure(width, height);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			size = child.measure(width, height);
 			minHeaders += child.getHeader().getMeasureHeight();
 			if(child.getHeader().getMeasureWidth() > minWidth)
 				minWidth = child.getHeader().getMeasureWidth();
 		}
 
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var size = child.measure(width, (height - minHeaders) + child.getHeader().getMeasureHeight());
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			size = child.measure(width, (height - minHeaders) + child.getHeader().getMeasureHeight());
 
-			var content = child.getContent();
-			if((content != undefined) && (content.getMeasureHeight() > minContent)) {
+			content = child.getContent();
+			if((content !== undefined) && (content.getMeasureHeight() > minContent)) {
 				minContent = content.getMeasureHeight();
 				if(content.getMeasureWidth() > minWidth)
 					minWidth = content.getMeasureWidth();
@@ -248,20 +250,21 @@ Ui.Container.extend('Ui.Accordeonable',
 	},
 
 	arrangeCore: function(width, height) {
+		var i; var child; var x; var y;
 		if(this.orientation == 'horizontal') {
-			var x = 0;
+			x = 0;
 			this.contentSize = width - this.headersSize;
-			for(var i = 0; i < this.getChildren().length; i++) {
-				var child = this.getChildren()[i];
+			for(i = 0; i < this.getChildren().length; i++) {
+				child = this.getChildren()[i];
 				child.arrange(x, 0, this.contentSize + child.getHeader().getMeasureWidth(), height);
 				x += child.getHeader().getMeasureWidth();
 			}
 		}
 		else {
-			var y = 0;
+			y = 0;
 			this.contentSize = height - this.headersSize;
-			for(var i = 0; i < this.getChildren().length; i++) {
-				var child = this.getChildren()[i];
+			for(i = 0; i < this.getChildren().length; i++) {
+				child = this.getChildren()[i];
 				child.arrange(0, y, width, this.contentSize + child.getHeader().getMeasureHeight());
 				y += child.getHeader().getMeasureHeight();
 			}
@@ -333,10 +336,10 @@ Ui.Container.extend('Ui.AccordeonPage',
 	setHeader: function(header) {
 		header = Ui.Element.create(header);
 		if(header != this.header) {
-			if(this.header != undefined)
+			if(this.header !== undefined)
 				this.headerBox.removeChild(this.header);
 			this.header = header;
-			if(this.header != undefined)
+			if(this.header !== undefined)
 				this.headerBox.appendChild(this.header);
 		}
 	},
@@ -354,10 +357,10 @@ Ui.Container.extend('Ui.AccordeonPage',
 	setContent: function(content) {
 		content = Ui.Element.create(content) ;
 		if(this.content != content) {
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.removeChild(this.content);
 			this.content = content;
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.appendChild(this.content, true);
 		}
 	},
@@ -373,7 +376,7 @@ Ui.Container.extend('Ui.AccordeonPage',
 
 	/**
 	* Set the orientation of the accordeon
-	* 	@param orientation Possibles values: [horizontal|vertical]
+	* @param orientation Possibles values: [horizontal|vertical]
 	* default value: horizontal
 	*/
 	setOrientation: function(orientation) {
@@ -396,13 +399,13 @@ Ui.Container.extend('Ui.AccordeonPage',
 	},
 
 	showContent: function() {
-		if(this.content != undefined) {
+		if(this.content !== undefined) {
 			this.content.show();
 		}
 	},
 
 	hideContent: function() {
-		if(this.content != undefined) {
+		if(this.content !== undefined) {
 			this.content.hide();
 		}
 	},
@@ -432,7 +435,7 @@ Ui.Container.extend('Ui.AccordeonPage',
 	measureCore: function(width, height) {
 		var size = this.headerBox.measure(width, height);
 		var contentSize = { width: 0, height: 0 };
-		if(this.content != undefined) {
+		if(this.content !== undefined) {
 			if(this.orientation == 'horizontal') {
 				contentSize = this.content.measure(width - size.width, height);
 				if(contentSize.height > size.height)
@@ -455,12 +458,12 @@ Ui.Container.extend('Ui.AccordeonPage',
 	arrangeCore: function(width, height) {
 		if(this.orientation == 'horizontal') {
 			this.headerBox.arrange(0, 0, this.headerBox.getMeasureWidth(), height);
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.content.arrange(this.headerBox.getMeasureWidth(), 0, width - this.headerBox.getMeasureWidth(), height);
 		}
 		else {
 			this.headerBox.arrange(0, 0, width, this.headerBox.getMeasureHeight());
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.content.arrange(0, this.headerBox.getMeasureHeight(), width, height - this.headerBox.getMeasureHeight());
 		}
 		this.setOffset(this.offset);

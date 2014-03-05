@@ -64,7 +64,7 @@ Ui.Pressable.extend('Ui.Combo',
 
 	setField: function(field) {
 		this.field = field;
-		if(this.data != undefined)
+		if(this.data !== undefined)
 			this.setData(this.data);
 	},
 

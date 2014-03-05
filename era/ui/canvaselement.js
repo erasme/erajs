@@ -93,14 +93,14 @@ Ui.Container.extend('Ui.CanvasElement',
 				this.canvasEngine = 'svg';
 		}
 
-		var drawing;
+		var drawing; var resourceDrawing;
 		if(this.canvasEngine === 'canvas') {
 			drawing = document.createElement('canvas');
 			this.context = drawing.getContext('2d');
 		}
 		else if(this.canvasEngine === 'vml') {
 			drawing = document.createElement('div');
-			var resourceDrawing = document.createElement('div');
+			resourceDrawing = document.createElement('div');
 			resourceDrawing.style.width = '0px';
 			resourceDrawing.style.height = '0px';
 			resourceDrawing.style.visibility = 'hidden';
@@ -134,7 +134,7 @@ Ui.Container.extend('Ui.CanvasElement',
 		}
 		else {
 			drawing = document.createElement('div');
-			var resourceDrawing = document.createElement('div');
+			resourceDrawing = document.createElement('div');
 			resourceDrawing.style.width = '0px';
 			resourceDrawing.style.height = '0px';
 			resourceDrawing.style.visibility = 'hidden';
@@ -161,7 +161,7 @@ Ui.Container.extend('Ui.CanvasElement',
 		var devicePixelRatio = window.devicePixelRatio || 1;
 		var backingStoreRatio = 1;
 		if(this.context !== undefined) {
-        	backingStoreRatio = this.context.webkitBackingStorePixelRatio ||
+			backingStoreRatio = this.context.webkitBackingStorePixelRatio ||
 				this.context.mozBackingStorePixelRatio ||
 				this.context.msBackingStorePixelRatio ||
 				this.context.oBackingStorePixelRatio ||
@@ -247,7 +247,7 @@ Core.Object.extend('Core.SVG2DPath', {
 		this.path.pathSegList.appendItem(this.path.createSVGPathSegClosePath());
 	},
 
-  	rect: function(x, y, w, h) {
+	rect: function(x, y, w, h) {
 		this.moveTo(x, y);
 		this.lineTo(x+w, y);
 		this.lineTo(x+w, y+h);
@@ -343,7 +343,7 @@ Core.Object.extend('Core.SVGGradient', {
 		var svgStop = document.createElementNS(svgNS, 'stop');
 		svgStop.setAttributeNS(null, 'offset', offset);
 		svgStop.style.stopColor = color;
-		var color = Ui.Color.create(color);
+		color = Ui.Color.create(color);
 		svgStop.style.stopOpacity = color.getRgba().a;
 		this.gradient.appendChild(svgStop);
 	},
@@ -466,26 +466,27 @@ Core.Object.extend('Core.SVG2DContext', {
 		this.clipId = undefined;
 	},
 
-  	// drawing images
-  	drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
-  		var nw = image.naturalWidth;
-  		var nh = image.naturalHeight;
-
-  		if(sw === undefined) {
-  			dx = sx; dy = sy;
-  			sx = 0; sy = 0;
-  			sw = nw; sh = nh;
-  			dw = nw; dh = nh;
-  		}
-  		else if(dx === undefined) {
-  			dx = sx; dy = sy;
-  			dw = sw; dh = sh;
-  			sx = 0; sy = 0;
-  			sw = nw; sh = nh;
-  		}
-
-  		if((sx === 0) && (sy === 0) && (sw === nw) && (sh == nh)) {
-  			var img = document.createElementNS(svgNS, 'image');
+	// drawing images
+	drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
+		var img;
+		var nw = image.naturalWidth;
+		var nh = image.naturalHeight;
+		
+		if(sw === undefined) {
+			dx = sx; dy = sy;
+			sx = 0; sy = 0;
+			sw = nw; sh = nh;
+			dw = nw; dh = nh;
+		}
+		else if(dx === undefined) {
+			dx = sx; dy = sy;
+			dw = sw; dh = sh;
+			sx = 0; sy = 0;
+			sw = nw; sh = nh;
+		}
+		
+		if((sx === 0) && (sy === 0) && (sw === nw) && (sh == nh)) {
+			img = document.createElementNS(svgNS, 'image');
 			if(this.clipId !== undefined)
 				img.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
 			img.style.opacity = this.globalAlpha;
@@ -512,7 +513,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			pattern.setAttributeNS(null, 'width', dw);
 			pattern.setAttributeNS(null, 'height', dh);
 
-			var img = document.createElementNS(svgNS, 'image');
+			img = document.createElementNS(svgNS, 'image');
 			img.href.baseVal = image.src;
 			img.setAttributeNS(null, 'x', -sx*dw/sw);
 			img.setAttributeNS(null, 'y', -sy*dh/sh);
@@ -535,7 +536,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			path.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
 			this.g.appendChild(path);
 		}
-  	},
+	},
 
 	fillText: function(text, x, y, maxWidth) {
 		var t = document.createElementNS(svgNS, 'text');
@@ -608,7 +609,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			textBaseLine: this.textBaseLine,
 			direction: this.direction,
 			clipId: this.clipId
-		}
+		};
 		this.states.push(state);
 	},
 
@@ -692,8 +693,8 @@ Core.Object.extend('Core.SVG2DContext', {
 	},
 
 	svgPath: function(path) {
-		var x = 0;
-		var y = 0;
+		var x = 0; var y = 0;
+		var x1; var y1; var x2; var y2; var x3; var y3;
 
 		var parser = new Ui.SvgParser({ path: path });
 		parser.next();
@@ -744,59 +745,59 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.lineTo(x, y);
 			}
 			else if(cmd == 'c') {
-				var x1 = x + parser.getCurrent(); parser.next();
-				var y1 = y + parser.getCurrent(); parser.next();
-				var x2 = x + parser.getCurrent(); parser.next();
-				var y2 = y + parser.getCurrent(); parser.next();
-				var x3 = x + parser.getCurrent(); parser.next();
-				var y3 = y + parser.getCurrent(); parser.next();
+				x1 = x + parser.getCurrent(); parser.next();
+				y1 = y + parser.getCurrent(); parser.next();
+				x2 = x + parser.getCurrent(); parser.next();
+				y2 = y + parser.getCurrent(); parser.next();
+				x3 = x + parser.getCurrent(); parser.next();
+				y3 = y + parser.getCurrent(); parser.next();
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
 			else if(cmd == 'C') {
-				var x1 = parser.getCurrent(); parser.next();
-				var y1 = parser.getCurrent(); parser.next();
-				var x2 = parser.getCurrent(); parser.next();
-				var y2 = parser.getCurrent(); parser.next();
-				var x3 = parser.getCurrent(); parser.next();
-				var y3 = parser.getCurrent(); parser.next();
+				x1 = parser.getCurrent(); parser.next();
+				y1 = parser.getCurrent(); parser.next();
+				x2 = parser.getCurrent(); parser.next();
+				y2 = parser.getCurrent(); parser.next();
+				x3 = parser.getCurrent(); parser.next();
+				y3 = parser.getCurrent(); parser.next();
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
 			else if(cmd == 's') {
-				var x1 = x + parser.getCurrent(); parser.next();
-				var y1 = y + parser.getCurrent(); parser.next();
-				var x2 = x1;
-				var y2 = y1;
-				var x3 = x + parser.getCurrent(); parser.next();
-				var y3 = y + parser.getCurrent(); parser.next();
+				x1 = x + parser.getCurrent(); parser.next();
+				y1 = y + parser.getCurrent(); parser.next();
+				x2 = x1;
+				y2 = y1;
+				x3 = x + parser.getCurrent(); parser.next();
+				y3 = y + parser.getCurrent(); parser.next();
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				this.lineTo(x3, y3);
 				x = x3; y = y3;
 			}
 			else if(cmd == 'S') {
-				var x1 = parser.getCurrent(); parser.next();
-				var y1 = parser.getCurrent(); parser.next();
-				var x2 = x1;
-				var y2 = y1;
-				var x3 = parser.getCurrent(); parser.next();
-				var y3 = parser.getCurrent(); parser.next();
+				x1 = parser.getCurrent(); parser.next();
+				y1 = parser.getCurrent(); parser.next();
+				x2 = x1;
+				y2 = y1;
+				x3 = parser.getCurrent(); parser.next();
+				y3 = parser.getCurrent(); parser.next();
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
 			else if(cmd == 'q') {
-				var x1 = x + parser.getCurrent(); parser.next();
-				var y1 = y + parser.getCurrent(); parser.next();
-				var x2 = x + parser.getCurrent(); parser.next();
-				var y2 = y + parser.getCurrent(); parser.next();
+				x1 = x + parser.getCurrent(); parser.next();
+				y1 = y + parser.getCurrent(); parser.next();
+				x2 = x + parser.getCurrent(); parser.next();
+				y2 = y + parser.getCurrent(); parser.next();
 				this.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
 			}
 			else if(cmd == 'Q') {
-				var x1 = parser.getCurrent(); parser.next();
-				var y1 = parser.getCurrent(); parser.next();
-				var x2 = parser.getCurrent(); parser.next();
-				var y2 = parser.getCurrent(); parser.next();
+				x1 = parser.getCurrent(); parser.next();
+				y1 = parser.getCurrent(); parser.next();
+				x2 = parser.getCurrent(); parser.next();
+				y2 = parser.getCurrent(); parser.next();
 				this.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
 			}
@@ -837,7 +838,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			else
 				opacity = (i+1) / (shadowWidth + 1);
 
-			var color = new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a*opacity });			
+			color = new Ui.Color({ r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a*opacity });			
 			this.fillStyle = color.getCssRgba();
 
 			if(inner) {

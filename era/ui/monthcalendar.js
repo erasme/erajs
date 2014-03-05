@@ -99,16 +99,17 @@ Ui.VBox.extend('Ui.MonthCalendar',
 	},
 
 	updateDate: function() {
+		var i;
 		var dayPivot = [ 6, 0, 1, 2, 3, 4, 5 ];
 		var dayNames = [ 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di' ];
 		var monthNames = [ 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre' ];
 
 		this.title.setText(monthNames[this.date.getMonth()]+' '+this.date.getFullYear());
 
-		while(this.grid.getFirstChild() != undefined)
+		while(this.grid.getFirstChild() !== undefined)
 			this.grid.detach(this.grid.getFirstChild());
 
-		for(var i = 0; i < 7; i++)
+		for(i = 0; i < 7; i++)
 			this.grid.attach(new Ui.Label({ text: dayNames[i], fontWeight: 'bold', margin: 5 }), i, 0);
 
 		var month = this.date.getMonth();
@@ -132,17 +133,17 @@ Ui.VBox.extend('Ui.MonthCalendar',
 				day.append(bg);
 			}
 
-			if((this.selectedDate != undefined) && (current.getFullYear() == this.selectedDate.getFullYear()) && (current.getMonth() == this.selectedDate.getMonth()) && (current.getDate() == this.selectedDate.getDate()))
+			if((this.selectedDate !== undefined) && (current.getFullYear() === this.selectedDate.getFullYear()) && (current.getMonth() === this.selectedDate.getMonth()) && (current.getDate() === this.selectedDate.getDate()))
 				day.append(new Ui.Frame({ frameWidth: 3, fill: 'red', radius: 0 }));
 
 			var disable = false;
-			if(this.dayFilter != undefined) {
+			if(this.dayFilter !== undefined) {
 				var weekday = current.getDay();
-				for(var i = 0; (i < this.dayFilter.length) && !disable; i++)
+				for(i = 0; (i < this.dayFilter.length) && !disable; i++)
 					if(weekday == this.dayFilter[i])
 						disable = true;
 			}
-			if(this.dateFilter != undefined) {
+			if(this.dateFilter !== undefined) {
 				var daystr = current.getFullYear()+'/';
 				if(current.getMonth() + 1 < 10)
 					daystr += '0';
@@ -150,7 +151,7 @@ Ui.VBox.extend('Ui.MonthCalendar',
 				if(current.getDate() < 10)
 					daystr += '0';
 				daystr += current.getDate();
-				for(var i = 0; (i < this.dateFilter.length) && !disable; i++) {
+				for(i = 0; (i < this.dateFilter.length) && !disable; i++) {
 					var re = new RegExp(this.dateFilter[i]);
 					if(re.test(daystr)) {
 						disable = true;
@@ -163,11 +164,11 @@ Ui.VBox.extend('Ui.MonthCalendar',
 				day.setOpacity(0.2);
 			}
 
-			day.append(new Ui.Label({ text: current.getDate(), margin: 5 }))
+			day.append(new Ui.Label({ text: current.getDate(), margin: 5 }));
 
 			this.grid.attach(day, dayPivot[current.getDay()], row);
 			current = new Date(current.getTime() + 1000*60*60*24);
-			if(dayPivot[current.getDay()] == 0)
+			if(dayPivot[current.getDay()] === 0)
 				row++;
 		} while(month == current.getMonth());
 		this.onStyleChange();

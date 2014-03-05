@@ -40,7 +40,7 @@ Ui.LBox.extend('Ui.TextAreaField',
 
 	setValue: function(value) {
 		this.textarea.setValue(value);
-		if((value == undefined) || (value == ''))
+		if((value === undefined) || (value === ''))
 			this.textholder.show();
 		else
 			this.textholder.hide();
@@ -56,7 +56,7 @@ Ui.LBox.extend('Ui.TextAreaField',
 	},
 
 	onTextAreaBlur: function() {
-		if(this.getValue() == '')
+		if(this.getValue() === '')
 			this.textholder.show();	
 		this.graphic.setHasFocus(false);
 	},

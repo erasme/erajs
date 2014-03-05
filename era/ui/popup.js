@@ -58,7 +58,7 @@ Ui.Container.extend('Ui.Popup',
 	setContent: function(content) {
 		content = Ui.Element.create(content);
 		if(this.ppContent !== content) {
-			if(this.ppContent != undefined)
+			if(this.ppContent !== undefined)
 				this.contentBox.remove(this.ppContent);
 			this.ppContent = content;
 			if(this.ppContent !== undefined)
@@ -77,7 +77,7 @@ Ui.Container.extend('Ui.Popup',
 	},
 
 	onWindowResize: function() {
-		if(this.visible && this.autoHide && (this.posX != undefined)) {
+		if(this.visible && this.autoHide && (this.posX !== undefined)) {
 			this.hide();
 		}
 	},
@@ -113,7 +113,7 @@ Ui.Container.extend('Ui.Popup',
 				this.posX = point.x;
 				this.posY = point.y;
 			}
-			else if((posX != undefined) && (posY != undefined)) {
+			else if((posX !== undefined) && (posY !== undefined)) {
 				this.posX = posX;
 				this.posY = posY;
 			}
@@ -138,7 +138,7 @@ Ui.Container.extend('Ui.Popup',
 		var constraintWidth = Math.max(width - 40, 0);
 		var constraintHeight = Math.max(height - 40, 0);
 
-//		if((this.posX != undefined) || (this.attachedElement != undefined)) {
+//		if((this.posX !== undefined) || (this.attachedElement !== undefined)) {
 //			constraintWidth = 0;
 //			constraintHeight = 0;
 //		}
@@ -152,15 +152,14 @@ Ui.Container.extend('Ui.Popup',
 
 //		console.log('contentBox = '+size.width+' x '+size.height);
 
-		if((this.posX != undefined) || (this.attachedElement != undefined))
+		if((this.posX !== undefined) || (this.attachedElement !== undefined))
 			return { width: size.width, height: size.height };
 		else
 			return { width: Math.max(width, size.width + 40), height: Math.max(height, size.height + 40) };
 	},
 
 	arrangeCore: function(width, height) {
-		var x = 0;
-		var y = 0;
+		var x = 0; var y = 0; var point; var borders; var border; var i;
 
 //		console.log(this+'.arrangeCore('+width+','+height+')');
 
@@ -172,34 +171,34 @@ Ui.Container.extend('Ui.Popup',
 		}
 		// handle open at an element
 		else if(this.attachedElement !== undefined) {
-			var borders = ['left', 'right', 'top', 'bottom', 'center'];
+			borders = ['left', 'right', 'top', 'bottom', 'center'];
 			if(this.attachedBorder !== undefined)
 				borders.unshift(this.attachedBorder);
-			for(var i = 0; i < borders.length; i++) {
-				var border = borders[i];
+			for(i = 0; i < borders.length; i++) {
+				border = borders[i];
 				if(border === 'left') {
-					var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
-				  	if(this.contentBox.getMeasureWidth() + point.x + 10 < width) {
+					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
+					if(this.contentBox.getMeasureWidth() + point.x + 10 < width) {
 						this.setLeft(point.x, point.y, width, height);
 						break;
 					}
 				}
 				else if(border === 'right') {
-					var point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
+					point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
 					if(this.contentBox.getMeasureWidth() + 10 < point.x) {
 						this.setRight(point.x, point.y, width, height);
 						break;
 					}
 				}
 				else if(border === 'top') {
-					var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: 0 });
+					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: 0 });
 					if(this.contentBox.getMeasureHeight() + 10 < point.y) {
 						this.setTop(point.x, point.y, width, height);
 						break;
 					}
 				}
 				else if(border === 'bottom') {
-					var point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: this.attachedElement.getLayoutHeight() });
+					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth()/2, y: this.attachedElement.getLayoutHeight() });
 					if(this.contentBox.getMeasureHeight() + 10 + point.y < height) {
 						this.setBottom(point.x, point.y, width, height);
 						break;
@@ -213,11 +212,11 @@ Ui.Container.extend('Ui.Popup',
 		}
 		// handle open at a position
 		else {
-			var borders = ['left', 'right', 'top', 'bottom', 'center'];
+			borders = ['left', 'right', 'top', 'bottom', 'center'];
 			if(this.attachedBorder !== undefined)
 				borders.unshift(this.attachedBorder);
-			for(var i = 0; i < borders.length; i++) {
-				var border = borders[i];
+			for(i = 0; i < borders.length; i++) {
+				border = borders[i];
 				if(border === 'left') {				
 					if(this.contentBox.getMeasureWidth() + this.posX + 10 < width) {
 						this.setLeft(this.posX, this.posY, width, height);
@@ -417,29 +416,30 @@ Ui.CanvasElement.extend('Ui.PopupBackground',
 	 */
 
 	genPath: function(width, height, radius, arrowBorder, arrowSize, arrowOffset) {
+		var v1; var v2;
 		if(arrowBorder == 'none') {
-			var v1 = width - radius;
-			var v2 = height - radius;
+			v1 = width - radius;
+			v2 = height - radius;
 			return 'M'+radius+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
 		}
 		else if(arrowBorder == 'left') {
-			var v1 = width - this.radius;
-			var v2 = height - this.radius;
+			v1 = width - this.radius;
+			v2 = height - this.radius;
 			return 'M'+(radius+arrowSize)+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+(radius+arrowSize)+','+height+' Q'+arrowSize+','+height+' '+arrowSize+','+v2+' L'+arrowSize+','+(arrowOffset+arrowSize)+' L0,'+arrowOffset+' L'+arrowSize+','+(arrowOffset-arrowSize)+' L'+arrowSize+','+radius+' Q'+arrowSize+',0 '+(radius+arrowSize)+',0 z';
 		}
 		else if(arrowBorder == 'right') {
-			var v1 = width - (this.radius + arrowSize);
-			var v2 = height - this.radius;
+			v1 = width - (this.radius + arrowSize);
+			v2 = height - this.radius;
 			return 'M'+radius+',0 L'+v1+',0 Q'+(width - arrowSize)+',0 '+(width - arrowSize)+','+radius+' L'+(width - arrowSize)+','+(arrowOffset - arrowSize)+' L'+width+','+arrowOffset+' L'+(width - arrowSize)+','+(arrowOffset + arrowSize)+' L '+(width - arrowSize)+','+v2+' Q'+(width - arrowSize)+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
 		}
 		else if(arrowBorder == 'top') {
-			var v1 = width - this.radius;
-			var v2 = height - this.radius;
+			v1 = width - this.radius;
+			v2 = height - this.radius;
 			return 'M'+radius+','+arrowSize+' L'+(arrowOffset - arrowSize)+','+arrowSize+' L'+arrowOffset+',0 L'+(arrowOffset + arrowSize)+','+arrowSize+' L'+v1+','+arrowSize+' Q'+width+','+arrowSize+' '+width+','+(arrowSize + radius)+' L'+width+','+v2+' Q'+width+','+height+' '+v1+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+v2+' L0,'+(arrowSize+radius)+' Q0,'+arrowSize+' '+radius+','+arrowSize+' z';
 		}
 		else if(arrowBorder == 'bottom') {
-			var v1 = width - this.radius;
-			var v2 = height - (this.radius + arrowSize);
+			v1 = width - this.radius;
+			v2 = height - (this.radius + arrowSize);
 			return 'M'+radius+',0 L'+v1+',0 Q'+width+',0 '+width+','+radius+' L'+width+','+v2+' Q'+width+','+(height-arrowSize)+' '+v1+','+(height-arrowSize)+' L '+(arrowOffset+arrowSize)+','+(height-arrowSize)+' L'+arrowOffset+','+height+' L'+(arrowOffset-arrowSize)+','+(height-arrowSize)+' L'+radius+','+(height-arrowSize)+' Q0,'+(height-arrowSize)+' 0,'+v2+' L0,'+radius+' Q0,0 '+radius+',0 z';
 		}
 	}

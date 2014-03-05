@@ -19,14 +19,14 @@ Ui.Element.extend('Ui.Audio',
 	constructor: function(config) {
 		this.addEvents('ready', 'ended', 'timeupdate', 'bufferingupdate', 'statechange', 'error');
 		this.connect(this, 'unload', this.onAudioUnload);
-		if((config.oggSrc != undefined) || (config.mp3Src != undefined) || (config.wavSrc != undefined)) {
-			if((config.oggSrc != undefined) && (Ui.Audio.supportOgg))
+		if((config.oggSrc !== undefined) || (config.mp3Src !== undefined) || (config.wavSrc !== undefined)) {
+			if((config.oggSrc !== undefined) && (Ui.Audio.supportOgg))
 				this.setSrc(config.oggSrc);
-			else if((config.aacSrc != undefined) && (Ui.Audio.supportAac))
+			else if((config.aacSrc !== undefined) && (Ui.Audio.supportAac))
 				this.setSrc(config.aacSrc);
-			else if((config.mp3Src != undefined) && (Ui.Audio.supportMp3))
+			else if((config.mp3Src !== undefined) && (Ui.Audio.supportMp3))
 				this.setSrc(config.mp3Src);
-			else if((config.wavSrc != undefined) && (Ui.Audio.supportWav))
+			else if((config.wavSrc !== undefined) && (Ui.Audio.supportWav))
 				this.setSrc(config.wavSrc);
 			delete(config.oggSrc);
 			delete(config.aacSrc);
@@ -117,7 +117,7 @@ Ui.Element.extend('Ui.Audio',
 	 * This value is only known after the ready event.
 	 */
 	getCurrentTime: function() {
-		if(this.audioDrawing.currentTime == undefined)
+		if(this.audioDrawing.currentTime === undefined)
 			return 0;
 		else
 			return this.audioDrawing.currentTime;
@@ -171,13 +171,13 @@ Ui.Element.extend('Ui.Audio',
 		var buffered = this.audioDrawing.buffered;
 		var timebuffer = 0;
 		var time = this.audioDrawing.currentTime;
-		if(time == undefined)
+		if(time === undefined)
 			time = 0;
-		var lastEnd = undefined;
+		var lastEnd;
 		for(var i = 0; i < buffered.length; i++) {
 			var start = buffered.start(i);
 			var end = buffered.end(i);
-			if(lastEnd == undefined) {
+			if(lastEnd === undefined) {
 				if((start <= time) && (end >= time)) {
 					timebuffer = end - time;
 					lastEnd = end;
@@ -273,12 +273,12 @@ Ui.Audio.supportAac = false;
 
 // check for HTMLAudioElement
 Ui.Audio.audioTest = document.createElement('audio');
-if(Ui.Audio.audioTest.play != undefined) {
+if(Ui.Audio.audioTest.play !== undefined) {
 	Ui.Audio.htmlAudio = true;
-	Ui.Audio.supportWav = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/wav');
-	Ui.Audio.supportMp3 = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/mpeg');
-	Ui.Audio.supportOgg = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/ogg; codecs="vorbis"');
-	Ui.Audio.supportAac = !!Ui.Audio.audioTest.canPlayType && "" != Ui.Audio.audioTest.canPlayType('audio/mp4; codecs="mp4a.40.2"');
+	Ui.Audio.supportWav = !!Ui.Audio.audioTest.canPlayType && '' !== Ui.Audio.audioTest.canPlayType('audio/wav');
+	Ui.Audio.supportMp3 = !!Ui.Audio.audioTest.canPlayType && '' !== Ui.Audio.audioTest.canPlayType('audio/mpeg');
+	Ui.Audio.supportOgg = !!Ui.Audio.audioTest.canPlayType && '' !== Ui.Audio.audioTest.canPlayType('audio/ogg; codecs="vorbis"');
+	Ui.Audio.supportAac = !!Ui.Audio.audioTest.canPlayType && '' !== Ui.Audio.audioTest.canPlayType('audio/mp4; codecs="mp4a.40.2"');
 }
 Ui.Audio.audioTest = undefined;
 

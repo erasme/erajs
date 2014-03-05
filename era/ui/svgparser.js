@@ -25,7 +25,7 @@ Core.Object.extend('Ui.SvgParser', {
 			while((this.pos < this.path.length) && ((this.path[this.pos] == ' ') || (this.path[this.pos] == ',') || (this.path[this.pos] == ';')))
 				this.pos++;
 			this.current = '';
-			var lastIsText = undefined;
+			var lastIsText;
 			while((this.pos < this.path.length) && (this.path[this.pos] != ' ') && (this.path[this.pos] != ',') && (this.path[this.pos] != ';')) {
 				var c = this.path[this.pos];
 				var isText = (c != 'e') && ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
@@ -37,7 +37,7 @@ Core.Object.extend('Ui.SvgParser', {
 				else
 					break;
 			}
-			var value = new Number(this.current);
+			var value = parseFloat(this.current);
 			this.value = !isNaN(value);
 			if(this.value)
 				this.current = value;

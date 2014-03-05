@@ -68,7 +68,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 					this.next = undefined;
 				}
 			}
-			if(this.transitionClock != undefined) {
+			if(this.transitionClock !== undefined) {
 				this.disconnect(this.transitionClock, 'complete', this.onTransitionComplete);
 				this.transitionClock.stop();
 			}
@@ -119,7 +119,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 	},
 
 	onTransitionBoxUnload: function() {
-		if(this.transitionClock != undefined) {
+		if(this.transitionClock !== undefined) {
 			this.transitionClock.stop();
 			this.transitionClock = undefined;
 		}
@@ -131,23 +131,23 @@ Ui.LBox.extend('Ui.TransitionBox',
 	},
 
 	onTransitionComplete: function(clock) {
+		var i;
 		this.transitionClock = undefined;
-
 		var current = this.next;
 
-		if(this.current != undefined)
+		if(this.current !== undefined)
 			this.current.hide();
 		this.next = undefined;
 		if(this.replaceMode) {
 			this.replaceMode = false;
 
 			var removeList = [];
-			for(var i = 0; i < this.getChildren().length; i++) {
+			for(i = 0; i < this.getChildren().length; i++) {
 				var item = this.getChildren()[i];
 				if(item !== current)
 					removeList.push(item.getFirstChild());
 			}
-			for(var i = 0; i < removeList.length; i++)
+			for(i = 0; i < removeList.length; i++)
 				this.remove(removeList[i]);
 		}
 		this.fireEvent('change', this, this.position);
@@ -157,7 +157,7 @@ Ui.LBox.extend('Ui.TransitionBox',
 	arrangeCore: function(width, height) {
 		Ui.TransitionBox.base.arrangeCore.call(this, width, height);
 		// update the transition if needed
-		if(this.transitionClock != undefined)
+		if(this.transitionClock !== undefined)
 			this.transition.run(this.current, this.next, this.transitionClock.getProgress());
 	},
 

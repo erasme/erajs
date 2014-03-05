@@ -2,48 +2,49 @@
 /** @define {boolean} */
 var DEBUG = true;
 
-navigator.isGecko = (navigator.userAgent.match(/Gecko\//i) != null);
-navigator.isWebkit = (navigator.userAgent.match(/WebKit\//i) != null);
+navigator.isGecko = (navigator.userAgent.match(/Gecko\//i) !== null);
+navigator.isWebkit = (navigator.userAgent.match(/WebKit\//i) !== null);
 
-navigator.isIE = (navigator.userAgent.match(/MSIE/i) != null) || (navigator.userAgent.match(/Trident/i) != null);
-navigator.isIE7 = (navigator.userAgent.match(/MSIE 7\./i) != null);
-navigator.isIE8 = (navigator.userAgent.match(/MSIE 8\./i) != null);
-navigator.isIE11 = navigator.isIE && (navigator.userAgent.match(/rv:11\./i) != null);
+navigator.isIE = (navigator.userAgent.match(/MSIE/i) !== null) || (navigator.userAgent.match(/Trident/i) !== null);
+navigator.isIE7 = (navigator.userAgent.match(/MSIE 7\./i) !== null);
+navigator.isIE8 = (navigator.userAgent.match(/MSIE 8\./i) !== null);
+navigator.isIE11 = navigator.isIE && (navigator.userAgent.match(/rv:11\./i) !== null);
 
-navigator.isOpera =  ((navigator.userAgent == undefined) || (navigator.userAgent.match(/Opera\//i) != null));
+navigator.isOpera =  ((navigator.userAgent === undefined) || (navigator.userAgent.match(/Opera\//i) !== null));
 
-navigator.isChrome = (navigator.userAgent.match(/ Chrome\//) != null);
+navigator.isChrome = (navigator.userAgent.match(/ Chrome\//) !== null);
 
-navigator.isSafari = (navigator.userAgent.match(/ Safari\//) != null);
+navigator.isSafari = (navigator.userAgent.match(/ Safari\//) !== null);
 
-navigator.isFirefox = (navigator.userAgent.match(/ Firefox\//) != null);
-navigator.isFirefox3 = (navigator.userAgent.match(/ Firefox\/3\./) != null);
-navigator.isFirefox3_5 = (navigator.userAgent.match(/ Firefox\/3\.5\./) != null);
-navigator.isFirefox3_6 = (navigator.userAgent.match(/ Firefox\/3\.6\./) != null);
+navigator.isFirefox = (navigator.userAgent.match(/ Firefox\//) !== null);
+navigator.isFirefox3 = (navigator.userAgent.match(/ Firefox\/3\./) !== null);
+navigator.isFirefox3_5 = (navigator.userAgent.match(/ Firefox\/3\.5\./) !== null);
+navigator.isFirefox3_6 = (navigator.userAgent.match(/ Firefox\/3\.6\./) !== null);
 
-navigator.iPad = (navigator.userAgent.match(/iPad/i) != null);
-navigator.iPhone = (navigator.userAgent.match(/iPhone/i) != null);
+navigator.iPad = (navigator.userAgent.match(/iPad/i) !== null);
+navigator.iPhone = (navigator.userAgent.match(/iPhone/i) !== null);
 navigator.iOs = navigator.iPad || navigator.iPhone;
 
-navigator.Android = (navigator.userAgent.match(/Android/i) != null);
+navigator.Android = (navigator.userAgent.match(/Android/i) !== null);
 
 var svgNS = "http://www.w3.org/2000/svg";
 var htmlNS = "http://www.w3.org/1999/xhtml";
 
 (function() {
+var test;
 navigator.supportSVG = false;
 try {
-	var test = document.createElementNS(svgNS, 'g');
+	test = document.createElementNS(svgNS, 'g');
 	if('ownerSVGElement' in test)
 		navigator.supportSVG = true;
 } catch(e) {}
 
-var test = document.createElement('canvas');
+test = document.createElement('canvas');
 navigator.supportCanvas = 'getContext' in test;
 
 navigator.supportRgba = true;
 navigator.supportRgb = true;
-var test = document.createElement('div');
+test = document.createElement('div');
 try {
 	test.style.background = 'rgba(0, 0, 0, 0.5)';
 } catch(e) {
@@ -73,7 +74,7 @@ Core.Util.generateId = function() {
 
 Core.Util.baseDirectory = function(file) {
 	var scripts;
-	if(document.scripts != undefined)
+	if(document.scripts !== undefined)
 		scripts = document.scripts;
 	else
 		scripts = document.getElementsByTagName('script');
@@ -86,10 +87,12 @@ Core.Util.baseDirectory = function(file) {
 };
 
 Core.Util.include = function(fileName) {
-   	document.write("<script type='text/javascript' src='"+fileName+"'></script>");
-}
+	document.write("<script type='text/javascript' src='"+fileName+"'></script>");
+};
 
 Core.Util.clone = function(obj) {
+	if(obj === undefined)
+		return undefined;
 	if(obj === null || typeof(obj) !== 'object')
 		return null;
 	var clone = {};
@@ -101,22 +104,22 @@ Core.Util.clone = function(obj) {
 Core.Util.encodeURIQuery = function(obj) {
 	// encode arguments
 	var args = '';
-	if(obj != undefined) {
+	if((obj !== undefined) && (obj !== null)) {
 		for(var prop in obj) {
 			var propValue = obj[prop];
-			if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') &&  (typeof(propValue) != 'boolean') && (typeof(propValue) != 'object'))
+			if((typeof(propValue) !== 'number') && (typeof(propValue) !== 'string') &&  (typeof(propValue) !== 'boolean') && (typeof(propValue) !== 'object'))
 				continue;
-			if(args != '')
+			if(args !== '')
 				args += '&';
 			args += encodeURIComponent(prop)+'=';
-			if(typeof(propValue) == 'object')
+			if(typeof(propValue) === 'object')
 				args += encodeURIComponent(JSON.stringify(propValue));
 			else
 				args += encodeURIComponent(propValue);
 		}
 	}
 	return args;
-}
+};
 
 String.prototype.utf8Encode = function() {
 	var res = '';
@@ -154,40 +157,44 @@ String.prototype.utf8Decode = function() {
 };
 
 String.prototype.toBase64 = function() {
+	var val1; var val2; var val3;
+	var enc1; var enc2; var enc3; var enc4;
 	var value = this.utf8Encode();
 	var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	var res = '';
 	var i = 0;
 	while(i + 2 < value.length) {
-		var val1 = value.charCodeAt(i++) & 0xff;
-		var val2 = value.charCodeAt(i++) & 0xff;
-		var val3 = value.charCodeAt(i++) & 0xff;
-		var enc1 = code.charAt(val1 >> 2);
-		var enc2 = code.charAt(((val1 & 3) << 4) | (val2 >> 4));
-		var enc3 = code.charAt(((val2 & 15) << 2) | (val3 >> 6));
-		var enc4 = code.charAt(val3 & 63);
+		val1 = value.charCodeAt(i++) & 0xff;
+		val2 = value.charCodeAt(i++) & 0xff;
+		val3 = value.charCodeAt(i++) & 0xff;
+		enc1 = code.charAt(val1 >> 2);
+		enc2 = code.charAt(((val1 & 3) << 4) | (val2 >> 4));
+		enc3 = code.charAt(((val2 & 15) << 2) | (val3 >> 6));
+		enc4 = code.charAt(val3 & 63);
 		res += enc1+enc2+enc3+enc4;
 	}
 	// 2 bytes
 	if(i + 1 < value.length) {
-		var val1 = value.charCodeAt(i++) & 0xff;
-		var val2 = value.charCodeAt(i++) & 0xff;
-		var enc1 = code.charAt(val1 >> 2);
-		var enc2 = code.charAt(((val1 & 3) << 4) | (val2 >> 4));
-		var enc3 = code.charAt((val2 & 15) << 2);
+		val1 = value.charCodeAt(i++) & 0xff;
+		val2 = value.charCodeAt(i++) & 0xff;
+		enc1 = code.charAt(val1 >> 2);
+		enc2 = code.charAt(((val1 & 3) << 4) | (val2 >> 4));
+		enc3 = code.charAt((val2 & 15) << 2);
 		res += enc1+enc2+enc3+'=';
 	}
 	// 1 byte
 	else if(i < value.length) {
-		var val1 = value.charCodeAt(i++) & 0xff;
-		var enc1 = code.charAt(val1 >> 2);
-		var enc2 = code.charAt((val1 & 3) << 4);
+		val1 = value.charCodeAt(i++) & 0xff;
+		enc1 = code.charAt(val1 >> 2);
+		enc2 = code.charAt((val1 & 3) << 4);
 		res += enc1+enc2+'==';
 	}
 	return res;
 };
 
 String.prototype.fromBase64 = function() {
+	var char1; var char2; var char3;
+	var enc1; var enc2; var enc3; var enc4;
 	var value = this;
 	var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	var res = '';
@@ -203,9 +210,9 @@ String.prototype.fromBase64 = function() {
 		char3 = ((enc3 & 3) << 6) | enc4;
 
 		res += String.fromCharCode(char1);
-		if(enc3 != 64) {
+		if(enc3 !== 64) {
 			res += String.fromCharCode(char2);
-			if(enc4 != 64)
+			if(enc4 !== 64)
 				res += String.fromCharCode(char3);
 		}
 	}
@@ -223,18 +230,18 @@ if(!String.prototype.trim) {
 // Implement bind function if not supported
 if(!Function.prototype.bind) {
 	Function.prototype.bind = function(obj) {
-      	var scope = obj;
-      	var callback = this;
+		var scope = obj;
+		var callback = this;
 		var args;
 		if(arguments.length > 1)
-      		args = arguments.slice(1, arguments.length-1);
-      	else
+			args = arguments.slice(1, arguments.length-1);
+		else
 			args = [];
- 		var wrapper = function() {
- 			return callback.apply(scope, args.concat(arguments));
+		var wrapper = function() {
+			return callback.apply(scope, args.concat(arguments));
 		};
 		return wrapper;
-  	};
+	};
 }
 
 navigator.supportVML = false;
@@ -274,8 +281,8 @@ if(navigator.isIE) {
 	}
 	// else, add support for VML
 	else {
-		if(!document.namespaces['vml']) {
-			if(navigator.userAgent.match(/MSIE 8/i) != null)
+		if(!document.namespaces.vml) {
+			if(navigator.isIE8)
 				document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml', '#default#VML');
 			else
 				document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml');
@@ -290,19 +297,19 @@ if(navigator.isIE) {
 	// re-write elementFromPoint for IE7 & IE8 when in iframe because it dont work
 	if((navigator.isIE7 || navigator.isIE8) && (window.parent != window)) {
 		document.elementFromPoint = function(x, y, el) {
-			if(el == undefined)
+			if(el === undefined)
 				el = document.body;
 			if(!(('childNodes' in el) && ('offsetLeft' in el) && ('offsetTop' in el)))
 				return undefined;
 			for(var i = 0; i < el.childNodes.length; i++) {
 				var res = document.elementFromPoint(x - el.offsetLeft, y - el.offsetTop, el.childNodes[i]);
-				if(res != undefined)
+				if(res !== undefined)
 					return res;
 			}
 			if((x >= el.offsetLeft) && (y >= el.offsetTop) && (x - el.offsetLeft <= el.clientWidth) && (y - el.offsetTop <= el.clientHeight))
 				return el;
 			return undefined;
-		}
+		};
 	}
 	if((navigator.isIE7 || navigator.isIE8) && !('DOMParser' in window)) {
 		window.DOMParser = function() {
@@ -311,12 +318,12 @@ if(navigator.isIE) {
 				xmlDocument.async = false;
 				xmlDocument.loadXML(str);
 				return xmlDocument;
-			}
+			};
 		};
 	}
 }
 
-if(window.JSON == undefined) {
+if(window.JSON === undefined) {
 	var json = {};
 	json.parse = function(json) {
 		return eval('('+json+')');
@@ -357,11 +364,23 @@ if(window.JSON == undefined) {
 	window.JSON = json;
 }
 	
-if(window.console == undefined) {
+if(window.console === undefined) {
 	window.console = {
 		log: function() {},
 		error: function() {},
 		warn: function() {}
+	};
+}
+
+if(Object.create === undefined) {
+	Object.create = function(proto) {
+		var prop;
+		var res = {};
+		for(prop in proto) {
+			if(prop !== 'constructor')
+				res[prop] = proto[prop];
+		}
+		return res;
 	};
 }
 /**#nocode-*/

@@ -19,7 +19,7 @@ Anim.Clock.extend('Anim.ClockGroup',
 
 	setContent: function(content) {
 		this.children = [];
-		if((content != undefined) && (typeof(content) == 'object')) {
+		if((content !== undefined) && (typeof(content) === 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
 					this.appendChild(Anim.Clock.create(content[i]));

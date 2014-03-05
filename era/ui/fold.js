@@ -128,11 +128,11 @@ Ui.Container.extend('Ui.Fold',
 	 * set the content visible
 	 */
 	setHeader: function(header) {
-		if(header != this.header) {
-			if(this.header != undefined)
+		if(header !== this.header) {
+			if(this.header !== undefined)
 				this.headerBox.removeChild(this.header);
 			this.header = header;
-			if(this.header != undefined)
+			if(this.header !== undefined)
 				this.headerBox.appendChild(this.header);
 		}
 	},
@@ -148,11 +148,11 @@ Ui.Container.extend('Ui.Fold',
 	 * Set the content element of the page
 	 */
 	setContent: function(content) {
-		if(this.content != content) {
-			if(this.content != undefined)
+		if(this.content !== content) {
+			if(this.content !== undefined)
 				this.contentBox.removeChild(this.content);
 			this.content = content;
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.contentBox.appendChild(this.content);
 		}
 	},
@@ -264,7 +264,7 @@ Ui.Container.extend('Ui.Fold',
 	},
 
 	startAnimation: function() {
-		if(this.clock != undefined)
+		if(this.clock !== undefined)
 			this.clock.stop();
 
 		if(!this.isFolded)
@@ -275,15 +275,15 @@ Ui.Container.extend('Ui.Fold',
 	},
 
 	stopAnimation: function() {
-		if(this.clock != undefined) {
+		if(this.clock !== undefined) {
 			this.clock.stop();
-			this.clock = undefined
+			this.clock = undefined;
 		}
 	},
 
 	onClockTick: function(clock, progress) {
 		if(this.content === undefined) {
-			if(this.clock != undefined) {
+			if(this.clock !== undefined) {
 				this.clock.stop();
 				this.clock = undefined;
 			}

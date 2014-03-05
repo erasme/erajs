@@ -42,7 +42,7 @@ Ui.Pressable.extend('Ui.Menu',
 			item = new Ui.Label({ horizontalAlign: 'left', text: item });
 		var menu = this;
 		var pressable = this.dialog.appendItem(item);
-		if(callback != undefined) {
+		if(callback !== undefined) {
 			if(scope === undefined) {
 				if(this.scope === undefined)
 					scope = this;
@@ -126,7 +126,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 	},
 
 	clearItems: function() {
-		while(this.content.getFirstChild() != undefined) {
+		while(this.content.getFirstChild() !== undefined) {
 			this.content.remove(this.content.getFirstChild());
 		}
 	},
@@ -150,6 +150,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 	},
 
 	onKeyDown: function(event) {
+		var i;
 		var key = event.which;
 		// escape
 		if(key == 27) {
@@ -159,7 +160,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 		}
 		// arrow down
 		else if(key == 40) {
-			for(var i = 0; i < this.content.getChildren().length; i++) {
+			for(i = 0; i < this.content.getChildren().length; i++) {
 				if(!Ui.MenuItem.hasInstance(this.content.getChildren()[i]))
 					continue;
 				if(this.content.getChildren()[i].getIsCurrent()) {
@@ -176,12 +177,12 @@ Ui.Popup.extend('Ui.MenuDialog',
 		}
 		// arrow up
 		else if(key == 38) {
-			var prev = undefined;
-			for(var i = 0; i < this.content.getChildren().length; i++) {
+			var prev;
+			for(i = 0; i < this.content.getChildren().length; i++) {
 				if(!Ui.MenuItem.hasInstance(this.content.getChildren()[i]))
 					continue;
 				if(this.content.getChildren()[i].getIsCurrent()) {
-					if(prev != undefined) {
+					if(prev !== undefined) {
 						event.preventDefault();
 						event.stopPropagation();
 						prev.setCurrent();

@@ -53,7 +53,7 @@ Ui.LBox.extend('Ui.DialogButtonBox', {
 		
 		this.cancelBox.setContent(button);
 		var newbutton = this.cancelBox.getFirstChild();
-		if((newbutton != undefined) && Ui.Pressable.hasInstance(newbutton))
+		if((newbutton !== undefined) && Ui.Pressable.hasInstance(newbutton))
 			this.connect(newbutton, 'press', this.onCancelPress);
 	},
 
@@ -166,7 +166,7 @@ Ui.Container.extend('Ui.Dialog', {
 	setTitle: function(title) {
 		this.title = title;
 
-		if(((this.title == '') || (this.title === undefined))  && (this.titleLabel !== undefined)) {
+		if(((this.title === '') || (this.title === undefined))  && (this.titleLabel !== undefined)) {
 			this.contentVBox.remove(this.titleLabel);
 			this.titleLabel = undefined;
 		}
@@ -232,7 +232,7 @@ Ui.Container.extend('Ui.Dialog', {
 	onKeyDown: function(event) {
 		// delete key
 		if(event.which === 46) {
-		 	// selection is not empty
+			// selection is not empty
 			if(this.dialogSelection.getElements().length !== 0) {
 				if(this.dialogSelection.executeDeleteAction()) {
 					event.preventDefault();

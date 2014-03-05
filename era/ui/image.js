@@ -37,7 +37,7 @@ Ui.Element.extend('Ui.Image',
 	* ready event is fired and getIsReady return true.
 	*/
 	setSrc: function(src) {
-		if(src == undefined)
+		if(src === undefined)
 			throw('Image src cant be undefined');
 	
 		this.setSrcLock = true;
@@ -83,7 +83,7 @@ Ui.Element.extend('Ui.Image',
 	},
 
 	onImageLoad: function(event) {	
-		if((event.target != undefined) && (event.target.naturalWidth != undefined) && (event.target.naturalHeight != undefined)) {
+		if((event.target !== undefined) && (event.target.naturalWidth !== undefined) && (event.target.naturalHeight !== undefined)) {
 			this.loaddone = true;
 			this.naturalWidth = event.target.naturalWidth;
 			this.naturalHeight = event.target.naturalHeight;
@@ -184,7 +184,7 @@ Ui.Element.extend('Ui.Image',
 	},
 
 	arrangeCore: function(width, height) {
-		if(this.imageDrawing != undefined) {
+		if(this.imageDrawing !== undefined) {
 			this.imageDrawing.style.width = width+'px';
 			this.imageDrawing.style.height = height+'px';
 		}

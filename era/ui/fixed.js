@@ -44,15 +44,15 @@ Ui.Container.extend('Ui.Fixed',
 
 	updateItemTransform: function(child) {
 		var x = 0;
-		if(child['Ui.Fixed.x'] != undefined)
+		if(child['Ui.Fixed.x'] !== undefined)
 			x = child['Ui.Fixed.x'];
-		if(child['Ui.Fixed.relativeX'] != undefined)
+		if(child['Ui.Fixed.relativeX'] !== undefined)
 			x -= child['Ui.Fixed.relativeX'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureWidth());
 
 		var y = 0;
-		if(child['Ui.Fixed.y'] != undefined)
+		if(child['Ui.Fixed.y'] !== undefined)
 			y = child['Ui.Fixed.y'];
-		if(child['Ui.Fixed.relativeY'] != undefined)
+		if(child['Ui.Fixed.relativeY'] !== undefined)
 			y -= child['Ui.Fixed.relativeY'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureHeight());
 		
 		child.setTransform(Ui.Matrix.createTranslate(x, y));
@@ -78,15 +78,15 @@ Ui.Container.extend('Ui.Fixed',
 			var child = this.getChildren()[i];
 
 			var x = 0;
-			if(child['Ui.Fixed.x'] != undefined)
+			if(child['Ui.Fixed.x'] !== undefined)
 				x = child['Ui.Fixed.x'];
-			if(child['Ui.Fixed.relativeX'] != undefined)
+			if(child['Ui.Fixed.relativeX'] !== undefined)
 				x -= child['Ui.Fixed.relativeX'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureWidth());
 
 			var y = 0;
-			if(child['Ui.Fixed.y'] != undefined)
+			if(child['Ui.Fixed.y'] !== undefined)
 				y = child['Ui.Fixed.y'];
-			if(child['Ui.Fixed.relativeY'] != undefined)
+			if(child['Ui.Fixed.relativeY'] !== undefined)
 				y -= child['Ui.Fixed.relativeY'] * ((child['Ui.Fixed.relativeAbsolute'] === true)?1:child.getMeasureHeight());
 
 			child.arrange(x, y, child.getMeasureWidth(), child.getMeasureHeight());

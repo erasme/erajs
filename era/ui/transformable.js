@@ -4,7 +4,6 @@ Ui.LBox.extend('Ui.Transformable',
 	inertia: true,
 	mouseStart: undefined,
 	contentBox: undefined,
-	mouseStart: undefined,
 
 	speedComputed: false,
 	lastTranslateX: undefined,
@@ -12,6 +11,7 @@ Ui.LBox.extend('Ui.Transformable',
 	lastAngle: 0,
 	isDown: false,
 	transformDone: false,
+	transformLock: false,
 
 	finger1: undefined,
 	finger2: undefined,
@@ -25,6 +25,10 @@ Ui.LBox.extend('Ui.Transformable',
 	startScale: 0,
 	startTranslateX: 0,
 	startTranslateY: 0,
+
+	allowScale: true,
+	allowRotate: true,
+	allowTranslate: true,
 
 	speedX: 0,
 	speedY: 0,
@@ -44,10 +48,28 @@ Ui.LBox.extend('Ui.Transformable',
 
 		this.contentBox.getDrawing().style.cursor = 'move';
 
-		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
+
+		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onTouchStart);
+		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onTouchMove);
+		this.connect(this.contentBox.getDrawing(), 'touchend', this.onTouchEnd);
+		this.connect(this.contentBox.getDrawing(), 'touchcancel', this.onTouchCancel);
+
+//		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
 		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
 		this.connect(this.contentBox.getDrawing(), 'mousewheel', this.onMouseWheel);
 		this.connect(this.contentBox.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
+	},
+
+	setAllowScale: function(allow) {
+		this.allowScale = allow;
+	},
+
+	setAllowRotate: function(allow) {
+		this.allowRotate = allow;
+	},
+
+	setAllowTranslate: function(allow) {
+		this.allowTranslate = allow;
 	},
 
 	getIsDown: function() {
@@ -86,6 +108,25 @@ Ui.LBox.extend('Ui.Transformable',
 		this.setContentTransform(undefined, translateY, undefined, undefined);
 	},
 
+	buildMatrix: function(translateX, translateY, scale, angle) {
+		if(translateX === undefined)
+			translateX = this.translateX;
+		if(translateY === undefined)
+			translateY = this.translateY;
+		if(scale === undefined)
+			scale = this.scale;
+		if(angle === undefined)
+			angle = this.angle;
+
+		var matrix = new Ui.Matrix();
+		matrix.translate(this.getLayoutWidth() / 2, this.getLayoutHeight() / 2);
+		matrix.translate(translateX, translateY);
+		matrix.scale(scale, scale);
+		matrix.rotate(angle);
+		matrix.translate(-this.getLayoutWidth() / 2, -this.getLayoutHeight() / 2);
+		return matrix;
+	},
+
 	getMatrix: function() {
 		var matrix = new Ui.Matrix();
 		matrix.translate(this.getLayoutWidth() / 2, this.getLayoutHeight() / 2);
@@ -94,6 +135,22 @@ Ui.LBox.extend('Ui.Transformable',
 		matrix.rotate(this.angle);
 		matrix.translate(-this.getLayoutWidth() / 2, -this.getLayoutHeight() / 2);
 		return matrix;
+	},
+
+	getBoundaryBox: function(matrix) {
+		if(matrix === undefined)
+			matrix = this.getMatrix();
+		var p1 = (new Ui.Point({ x: 0, y: 0 })).matrixTransform(matrix);
+		var p2 = (new Ui.Point({ x: this.getLayoutWidth(), y: 0 })).matrixTransform(matrix);
+		var p3 = (new Ui.Point({ x: this.getLayoutWidth(), y: this.getLayoutHeight() })).matrixTransform(matrix);
+		var p4 = (new Ui.Point({ x: 0, y: this.getLayoutHeight() })).matrixTransform(matrix);
+
+		var minX = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
+		var minY = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
+		var maxX = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
+		var maxY = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+
+		return { x: minX, y: minY, width: maxX-minX, height: maxY-minY };
 	},
 
 	setContentTransform: function(translateX, translateY, scale, angle) {
@@ -113,7 +170,11 @@ Ui.LBox.extend('Ui.Transformable',
 		this.contentBox.setTransformOrigin(0, 0);
 		this.contentBox.setTransform(this.getMatrix());
 
-		this.fireEvent('transform', this);
+		if(!this.transformLock) {
+			this.transformLock = true;
+			this.fireEvent('transform', this);
+			this.transformLock = false;
+		}
 	},
 
 	/**#@+
@@ -122,16 +183,18 @@ Ui.LBox.extend('Ui.Transformable',
 
 	onDown: function() {
 		this.isDown = true;
-		this.transformDone = false;
+//		this.transformDone = false;
 		this.fireEvent('down', this);
 	},
 
 	onUp: function() {
- 		this.isDown = false;
+		this.isDown = false;
 		this.fireEvent('up', this);
 	},
 
 	onMouseDown: function(event) {
+		console.log(this+'.onMouseDown');
+
 		if(this.lock || this.getIsDisabled())
 			return;
 
@@ -173,7 +236,7 @@ Ui.LBox.extend('Ui.Transformable',
 		this.setContentTransform(this.startTranslateX + deltaX, this.startTranslateY + deltaY, undefined, undefined);
 
 		// if the user move to much without transform success, release the mouse
-		if((this.translateX == 0) && (this.translateY == 0) && (this.angle == 0) && (this.scale == 1)) {
+/*		if((this.translateX == 0) && (this.translateY == 0) && (this.angle == 0) && (this.scale == 1)) {
 
 			if(!this.transformDone && (delta > 20)) {
 
@@ -193,14 +256,14 @@ Ui.LBox.extend('Ui.Transformable',
 			}
 		}
 		else
-			this.transformDone = true;
+			this.transformDone = true;*/
 	},
 
 	onMouseUp: function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
 		
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
@@ -213,15 +276,63 @@ Ui.LBox.extend('Ui.Transformable',
 		this.onUp();
 	},
 
-	onFingerDown: function(event) {
-		if(this.lock || this.getIsDisabled())
+	onTouchStart: function(event) {
+//		console.log(this+'.onTouchStart '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
+		if(this.lock || this.getIsDisabled() || (event.changedTouches.length > 2))
 			return;
+		for(var i = 0; i < event.changedTouches.length; i++)
+			this.onFingerDown(event.changedTouches[i].identifier, event.changedTouches[i].clientX, event.changedTouches[i].clientY);
+		
+		if(((this.finger1 !== undefined) && (this.finger2 !== undefined)) ||
+			((this.finger1 !== undefined) && (this.allowTranslate))) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
 
+	onTouchMove: function(event) {
+		if(this.finger1 === undefined)
+			return;
+//		console.log(this+'.onTouchMove '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
+		for(var i = 0; i < event.changedTouches.length; i++) {
+			this.onFingerMove(event.changedTouches[i].identifier, event.changedTouches[i].clientX, event.changedTouches[i].clientY);
+		}
+		if(((this.finger1 !== undefined) && (this.finger2 !== undefined)) ||
+			((this.finger1 !== undefined) && (this.allowTranslate))) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+
+	onTouchCancel: function(event) {
+		if(this.finger1 === undefined)
+			return;
+//		console.log(this+'.onTouchCancel '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
+		this.onTouchEnd(event);
+	},
+
+	onTouchEnd: function(event) {
+		if(this.finger1 === undefined)
+			return;
+//		console.log(this+'.onTouchEnd '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
+		for(var i = 0; i < event.changedTouches.length; i++) {
+			this.onFingerUp(event.changedTouches[i].identifier, event.changedTouches[i].clientX, event.changedTouches[i].clientY);
+		}
+		if(((this.finger1 !== undefined) && (this.finger2 !== undefined)) ||
+			((this.finger1 !== undefined) && (this.allowTranslate))) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+
+	onFingerDown: function(identifier, x, y) {
 		if(this.finger1 === undefined) {
-			this.onDown();
+			if(this.allowTranslate)
+				this.onDown();
 
-			var start = new Ui.Point({ x: event.finger.getX(), y: event.finger.getY() });
-			this.finger1 = { finger: event.finger, start: start };
+//			console.log('onFingerDown identifier: '+identifier);
+
+			this.finger1 = { identifier: identifier, start: {x: x, y: y }, current: {x: x, y: y } };
 
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
@@ -229,47 +340,46 @@ Ui.LBox.extend('Ui.Transformable',
 			this.startTranslateY = this.translateY;
 
 			this.startComputeInertia();
-
-			event.preventDefault();
-			event.stopPropagation();
-			
-			this.connect(event.finger, 'fingermove', this.onFingerMove);
-			this.connect(event.finger, 'fingerup', this.onFingerUp);
-
-			event.finger.capture(this.getDrawing());
 		}
 		else if(this.finger2 === undefined) {
-			this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+			if(!this.allowTranslate)
+				this.onDown();
 
-			var start = new Ui.Point({ x: event.finger.getX(), y: event.finger.getY() });
-			this.finger2 = { finger: event.finger, start: start };
+			this.finger1.start = { x: this.finger1.current.x, y: this.finger1.current.y };
+
+			this.finger2 = { identifier: identifier, start: { x: x, y: y }, current: { x: x, y: y } };
 
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
 			this.startTranslateX = this.translateX;
 			this.startTranslateY = this.translateY;
-
-			event.preventDefault();
-			event.stopPropagation();
-			
-			this.connect(event.finger, 'fingermove', this.onFingerMove);
-			this.connect(event.finger, 'fingerup', this.onFingerUp);
-
-			event.finger.capture(this.getDrawing());
 		}
 	},
 
-	onFingerMove: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
+	onFingerMove: function(identifier, x, y) {
+		var pos1; var pos2; var start1; var start2;
+//		console.log('onFingerMove identifier: '+identifier+', finger1: '+this.finger1.identifier);
+		// update the fingers positions
+		if((this.finger1 !== undefined) && (this.finger1.identifier === identifier))
+			this.finger1.current = { x: x, y: y };
+		else if((this.finger2 !== undefined) && (this.finger2.identifier === identifier))
+			this.finger2.current = { x: x, y: y };
+		else
+			return;
+							
 		// 2 fingers
 		if((this.finger1 !== undefined) && (this.finger2 !== undefined)) {
-			var pos1 = this.pointFromWindow({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
-			var pos2 = this.pointFromWindow({ x: this.finger2.finger.getX(), y: this.finger2.finger.getY() });
+//			console.log('onFingerMove 2 FINGERS INTERACT');
+//			console.log('FINGER1 START: '+this.finger1.start.x+','+this.finger1.start.y+', current: '+
+//				this.finger1.current.x+','+this.finger1.current.y);
+			//console.log(this.finger1.current);
+			//console.log(this.finger2.current);
 
-			var start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
-			var start2 = this.pointFromWindow({ x: this.finger2.start.x, y: this.finger2.start.y });
+			pos1 = this.pointFromWindow({ x: this.finger1.current.x, y: this.finger1.current.y });
+			pos2 = this.pointFromWindow({ x: this.finger2.current.x, y: this.finger2.current.y });
+
+			start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
+			start2 = this.pointFromWindow({ x: this.finger2.start.x, y: this.finger2.start.y });
 
 			var startVector = { x: start2.x - start1.x, y: start2.y - start1.y };
 			var endVector = { x: pos2.x - pos1.x, y: pos2.y - pos1.y };
@@ -313,16 +423,19 @@ Ui.LBox.extend('Ui.Transformable',
 				this.startScale * scale, this.startAngle + angle);
 		}
 		// 1 finger
-		else if(this.finger1 !== undefined) {
-			var pos1 = this.pointFromWindow({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
-			var start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
+		else if((this.finger1 !== undefined) && this.allowTranslate) {
+//			console.log('onFingerMove 1 FINGER');
+
+
+			pos1 = this.pointFromWindow({ x: this.finger1.current.x, y: this.finger1.current.y });
+			start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
 
 			this.setContentTransform(this.startTranslateX + (pos1.x - start1.x), this.startTranslateY + (pos1.y - start1.y),
 				this.startScale, this.startAngle);
 		}
 
 		// if the user move to much without transform success, release the finger(s)
-		if((this.translateX == 0) && (this.translateY == 0) && (this.angle == 0) && (this.scale == 1)) {
+/*		if((this.translateX == 0) && (this.translateY == 0) && (this.angle == 0) && (this.scale == 1)) {
 			var deltaX = this.finger1.finger.getX() - this.finger1.start.x;
 			var deltaY = this.finger1.finger.getY() - this.finger1.start.y;
 			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -345,50 +458,45 @@ Ui.LBox.extend('Ui.Transformable',
 			}
 		}
 		else
-			this.transformDone = true;
+			this.transformDone = true;*/
 	},
 
+	onFingerUp: function(identifier, x, y) {
+//		console.log('onFingerUp');
 
-	onFingerUp: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.disconnect(event.finger, 'fingermove', this.onFingerMove);
-		this.disconnect(event.finger, 'fingerup', this.onFingerUp);
-
-		if((this.finger1 !== undefined) && (this.finger1.finger === event.finger)) {
+		if((this.finger1 !== undefined) && (this.finger1.identifier === identifier)) {
 			this.finger1 = undefined;
 			if(this.finger2 !== undefined) {
 				this.finger1 = this.finger2;
 				this.finger2 = undefined;
-				this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+				this.finger1.start = { x: this.finger1.current.x, y: this.finger1.current.y };
 				this.startAngle = this.angle;
 				this.startScale = this.scale;
 				this.startTranslateX = this.translateX;
 				this.startTranslateY = this.translateY;
+				if(!this.allowTranslate)
+					this.onUp();
 			}
 			else {
-				this.focus();
-				this.onUp();
-
+				if(this.allowTranslate)
+					this.onUp();
 				this.stopComputeInertia();
 				this.startInertia();
 			}
 		}
-		if((this.finger2 !== undefined) && (this.finger2.finger === event.finger)) {
+		if((this.finger2 !== undefined) && (this.finger2.identifier === identifier)) {
 			this.finger2 = undefined;
-			this.finger1.start = new Ui.Point({ x: this.finger1.finger.getX(), y: this.finger1.finger.getY() });
+			this.finger1.start = { x: this.finger1.current.x, y: this.finger1.current.y };
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
 			this.startTranslateX = this.translateX;
 			this.startTranslateY = this.translateY;
+			if(!this.allowTranslate)
+					this.onUp();
 		}
 	},
 
 	onMouseWheel: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
 		var delta = 0;
 
 		if((event.wheelDeltaX !== undefined) && (event.wheelDelaY !== undefined)) {
@@ -404,8 +512,13 @@ Ui.LBox.extend('Ui.Transformable',
 		
 		if(event.altKey)
 			this.setAngle(this.angle + delta/5);
-		else
+		else if(event.shiftKey)
 			this.setScale(Math.max(0.1, this.scale - delta/120));
+		else
+			return;		
+
+		event.preventDefault();
+		event.stopPropagation();
 	},
 
 	measureSpeed: function() {
@@ -442,7 +555,7 @@ Ui.LBox.extend('Ui.Transformable',
 	startComputeInertia: function() {
 		this.stopInertia();
 
-		if(this.measureSpeedTimer != undefined)
+		if(this.measureSpeedTimer !== undefined)
 			this.measureSpeedTimer.abort();
 
 		this.lastTranslateX = this.translateX;
@@ -456,7 +569,7 @@ Ui.LBox.extend('Ui.Transformable',
 	},
 
 	stopComputeInertia: function() {
-		if(this.measureSpeedTimer != undefined) {
+		if(this.measureSpeedTimer !== undefined) {
 			this.measureSpeedTimer.abort();
 			this.measureSpeedTimer = undefined;
 		}
@@ -483,7 +596,7 @@ Ui.LBox.extend('Ui.Transformable',
 	},
 
 	onTimeupdate: function(clock, progress, delta) {
-		if(delta == 0)
+		if(delta === 0)
 			return;
 
 		var oldTranslateX = this.translateX;
@@ -509,13 +622,12 @@ Ui.LBox.extend('Ui.Transformable',
 			this.speedX = 0;
 		if(Math.abs(this.speedY) < 0.1)
 			this.speedY = 0;
-		if((this.speedX == 0) && (this.speedY == 0))
+		if((this.speedX === 0) && (this.speedY === 0))
 			this.stopInertia();
 	},
-
-
+	
 	stopInertia: function() {
-		if(this.inertiaClock != undefined) {
+		if(this.inertiaClock !== undefined) {
 			this.inertiaClock.stop();
 			this.inertiaClock = undefined;
 		}
@@ -524,5 +636,11 @@ Ui.LBox.extend('Ui.Transformable',
 }, {
 	setContent: function(content) {
 		this.contentBox.setContent(content);
+	},
+
+	arrangeCore: function(width, height) {
+		Ui.Transformable.base.arrangeCore.apply(this, arguments);
+		this.contentBox.setTransformOrigin(0, 0);
+		this.contentBox.setTransform(this.getMatrix());
 	}
 });

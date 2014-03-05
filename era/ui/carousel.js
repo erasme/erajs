@@ -127,7 +127,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	showArrows: function() {
-		if(this.hideTimeout != undefined) {
+		if(this.hideTimeout !== undefined) {
 			this.hideTimeout.abort();
 			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
 		}
@@ -153,7 +153,7 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	hideArrows: function() {
-		if(this.hideTimeout != undefined) {
+		if(this.hideTimeout !== undefined) {
 			this.hideTimeout.abort();
 			this.hideTimeout = undefined;
 		}
@@ -166,38 +166,38 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	onShowTick: function(clock, progress, delta) {
-		if(delta == 0)
+		if(delta === 0)
 			return;
-
+		var opacity;
 		var previousDone = false;
 		if(this.showPrevious) {
-			var opacity = this.buttonPrevious.getOpacity();
+			opacity = this.buttonPrevious.getOpacity();
 			opacity = Math.min(opacity + delta, 1);
 			this.buttonPrevious.setOpacity(opacity);
 			if(opacity == 1)
 				previousDone = true;
 		}
 		else {
-			var opacity = this.buttonPrevious.getOpacity();
+			opacity = this.buttonPrevious.getOpacity();
 			opacity = Math.max(opacity - (delta * 2), 0);
 			this.buttonPrevious.setOpacity(opacity);
-			if(opacity == 0)
+			if(opacity === 0)
 				previousDone = true;
 		}
 
 		var nextDone = false;
 		if(this.showNext) {
-			var opacity = this.buttonNext.getOpacity();
+			opacity = this.buttonNext.getOpacity();
 			opacity = Math.min(opacity + delta, 1);
 			this.buttonNext.setOpacity(opacity);
 			if(opacity == 1)
 				nextDone = true;
 		}
 		else {
-			var opacity = this.buttonNext.getOpacity();
+			opacity = this.buttonNext.getOpacity();
 			opacity = Math.max(opacity - (delta * 2), 0);
 			this.buttonNext.setOpacity(opacity);
-			if(opacity == 0)
+			if(opacity === 0)
 				nextDone = true;
 		}
 

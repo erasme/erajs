@@ -139,7 +139,7 @@ Ui.LBox.extend('Ui.Switch',
 			this.setValue(!this.value);
 		// else consider a move
 		else {
-			 if(Math.abs(speedX) < 100) {
+			if(Math.abs(speedX) < 100) {
 				if(this.pos > 0.5)
 					speedX = -1;
 				else
@@ -147,7 +147,7 @@ Ui.LBox.extend('Ui.Switch',
 			}
 			else
 				speedX /= this.switchbox.getContentWidth();
-			if(speedX != 0)
+			if(speedX !== 0)
 				this.startAnimation(speedX);
 		}
 	},
@@ -182,22 +182,22 @@ Ui.LBox.extend('Ui.Switch',
 			this.alignClock.begin();
 		}
 		else {
-			if(this.value != (this.animNext == 0)) {
-				this.value = (this.animNext == 0);
+			if(this.value !== (this.animNext === 0)) {
+				this.value = (this.animNext === 0);
 				this.fireEvent('change', this, this.value);
 			}
 		}
 	},
 
 	stopAnimation: function() {
-		if(this.alignClock != undefined) {
+		if(this.alignClock !== undefined) {
 			this.alignClock.stop();
 			this.alignClock = undefined;
 		}
 	},
 
 	onAlignTick: function(clock, progress, delta) {
-		if(delta == 0)
+		if(delta === 0)
 			return;
 
 		var relprogress = -(clock.getTime() * this.speed) / (this.animNext - this.animStart);
@@ -205,7 +205,7 @@ Ui.LBox.extend('Ui.Switch',
 			this.alignClock.stop();
 			this.alignClock = undefined;
 			relprogress = 1;
-			this.value = (this.animNext == 0);
+			this.value = (this.animNext === 0);
 			this.fireEvent('change', this, this.value);
 		}
 		relprogress = this.ease.ease(relprogress);
@@ -345,21 +345,21 @@ Ui.Container.extend('Ui.SwitchBox',
 	},
 
 	setContent1: function(content1) {
-		if(this.content1 != content1) {
-			if(this.content1 != undefined)
+		if(this.content1 !== content1) {
+			if(this.content1 !== undefined)
 				this.content1Box.remove(this.content1);
 			this.content1 = content1;
-			if(this.content1 != undefined)
+			if(this.content1 !== undefined)
 				this.content1Box.append(this.content1);
 		}
 	},
 
 	setContent2: function(content2) {
-		if(this.content2 != content2) {
-			if(this.content2 != undefined)
+		if(this.content2 !== content2) {
+			if(this.content2 !== undefined)
 				this.content2Box.remove(this.content2);
 			this.content2 = content2;
-			if(this.content2 != undefined)
+			if(this.content2 !== undefined)
 				this.content2Box.append(this.content2);
 		}
 	},

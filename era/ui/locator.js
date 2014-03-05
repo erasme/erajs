@@ -33,21 +33,21 @@ Ui.Container.extend('Ui.Locator',
 		this.backgrounds = [];
 		this.foregrounds = [];
 
-		var button;
+		var button; var bg; var fg; var home; var i;
 
 		if(path == '/') {
-			var bg = new Ui.Rectangle({ radius: radius-1 });
+			bg = new Ui.Rectangle({ radius: radius-1 });
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
-			var fg = new Ui.Pressable();
+			fg = new Ui.Pressable();
 			fg.locatorPath = '/';
 			fg.locatorPos = 0;
 			this.connect(fg, 'press', this.onPathPress);
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
 
-			var home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
+			home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);
@@ -59,19 +59,18 @@ Ui.Container.extend('Ui.Locator',
 		else {
 			var paths = path.split('/');
 			var cleanPaths = [];
-			for(var i = 0; i < paths.length; i++) {
-				if(paths[i] != '')
+			for(i = 0; i < paths.length; i++) {
+				if(paths[i] !== '')
 					cleanPaths.push(paths[i]);
 			}
 			paths = cleanPaths;
 			
 			// create all bgs
-			var bg = new Ui.LocatorRightArrow({ arrowLength: spacing, radius: radius-1 });
+			bg = new Ui.LocatorRightArrow({ arrowLength: spacing, radius: radius-1 });
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
-			for(var i = 0; i < paths.length; i++) {
-				var bg;
+			for(i = 0; i < paths.length; i++) {
 				if(i == paths.length -1)
 					bg = new Ui.LocatorLeftArrow({ arrowLength: spacing, radius: radius-1 });
 				else
@@ -81,14 +80,14 @@ Ui.Container.extend('Ui.Locator',
 			}
 
 			// handle pressable parts
-			var fg = new Ui.Pressable();
+			fg = new Ui.Pressable();
 			fg.locatorPath = currentPath;
 			fg.locatorPos = 0;
 			this.connect(fg, 'press', this.onPathPress);
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
 
-			var home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
+			home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
 			home.setMargin(5);
@@ -99,9 +98,9 @@ Ui.Container.extend('Ui.Locator',
 			this.foregrounds.push(fg);
 			this.appendChild(fg);
 			var currentPath = '/';
-			for(var i = 0; i < paths.length; i++) {
+			for(i = 0; i < paths.length; i++) {
 				currentPath += paths[i];	
-				var fg = new Ui.Pressable();
+				fg = new Ui.Pressable();
 				fg.locatorPos = i+1;
 				this.connect(fg, 'press', this.onPathPress);
 				this.connect(fg, 'down', this.onPathDown);
@@ -174,12 +173,12 @@ Ui.Container.extend('Ui.Locator',
 /**@lends Ui.Locator#*/
 {
 	measureCore: function(width, height) {
-		if(this.foregrounds.length == 0)
+		if(this.foregrounds.length === 0)
 			return { width: 0, height: 0 };
-
-		for(var i = 0; i < this.foregrounds.length; i++)
+		var i;
+		for(i = 0; i < this.foregrounds.length; i++)
 			this.foregrounds[i].measure(0, 0);
-		for(var i = 0; i < this.backgrounds.length; i++)
+		for(i = 0; i < this.backgrounds.length; i++)
 			this.backgrounds[i].measure(0, 0);
 		
 		this.border.measure(0, 0);
@@ -189,7 +188,7 @@ Ui.Container.extend('Ui.Locator',
 		else {
 			var minWidth = 0;
 			var minHeight = 0;
-			for(var i = 0; i < this.foregrounds.length; i++) {
+			for(i = 0; i < this.foregrounds.length; i++) {
 				var child = this.foregrounds[i];
 				if(child.getMeasureHeight() > minHeight)
 					minHeight = child.getMeasureHeight();
@@ -215,7 +214,7 @@ Ui.Container.extend('Ui.Locator',
 			var fg = this.foregrounds[i];
 			var fgWidth = fg.getMeasureWidth();
 			fg.arrange(x+1, 0+1, fgWidth, height-2);
-			if(i == 0)
+			if(i === 0)
 				bg.arrange(x, 0+1, fgWidth + spacing, height-2);
 			else if(i == this.foregrounds.length -1)
 				bg.arrange(x - spacing, 0+1, fgWidth + spacing, height-2);

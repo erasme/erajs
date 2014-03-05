@@ -36,15 +36,15 @@ Core.Object.extend('Core.Timer',
 			if(interval < 0)
 				interval = 0;
 
-			if(timer.handle != undefined)
+			if(timer.handle !== undefined)
 				timer.handle = setTimeout(timer.wrapper, interval);
-		}
+		};
 		this.wrapper.timer = this;
 		this.handle = setTimeout(this.wrapper, 0);
 	},
 
 	abort: function() {
-		if(this.handle != undefined) {
+		if(this.handle !== undefined) {
 			clearTimeout(this.handle);
 			this.handle = undefined;
 		}

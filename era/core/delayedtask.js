@@ -42,13 +42,13 @@ Core.Object.extend('Core.DelayedTask',
 			arguments.callee.delayedtask.handle = undefined;
 			arguments.callee.delayedtask.callback.apply(arguments.callee.delayedtask.scope, arguments.callee.delayedtask.arguments);
 			arguments.callee.delayedtask.isDone = true;
-		}
+		};
 		wrapper.delayedtask = this;
 		this.handle = setTimeout(wrapper, this.delay * 1000);
 	},
 
 	abort: function() {
-		if(this.handle != undefined) {
+		if(this.handle !== undefined) {
 			clearTimeout(this.handle);
 			this.handle = undefined;
 		}

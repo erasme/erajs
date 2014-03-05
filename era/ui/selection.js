@@ -17,9 +17,10 @@ Core.Object.extend('Ui.Selection', {
 	},
 
 	append: function(element) {
+		var i;
 		// test if we already have it
 		var found = false;
-		for(var i = 0; !found && (i < this.elements.length); i++)
+		for(i = 0; !found && (i < this.elements.length); i++)
 			found = (this.elements[i] === element);
 		if(!found) {
 			var hasMultiple = false;
@@ -30,11 +31,11 @@ Core.Object.extend('Ui.Selection', {
 			// test compatibility with other element
 			if(this.elements.length > 0) {
 				var compat = true;
-				for(var i = 0; compat && (i < this.elements.length); i++)
+				for(i = 0; compat && (i < this.elements.length); i++)
 					compat = (this.elements[i].getSelectionActions() === element.getSelectionActions());
 				// if not compatible, remove old selection
 				if(!compat || !hasMultiple) {
-					for(var i = 0; i < this.elements.length; i++)
+					for(i = 0; i < this.elements.length; i++)
 						this.elements[i].setIsSelected(false);
 					this.elements = [];
 				}
@@ -47,7 +48,7 @@ Core.Object.extend('Ui.Selection', {
 	
 	remove: function(element) {
 		// test if we already have it
-		var foundPos = undefined;
+		var foundPos;
 		for(var i = 0; (foundPos === undefined) && (i < this.elements.length); i++)
 			if(this.elements[i] === element)
 				foundPos = i;
@@ -63,14 +64,15 @@ Core.Object.extend('Ui.Selection', {
 	},
 	
 	getActions: function() {
+		var actions; var allActions; var actionName; var action;
 		if(this.elements.length === 0)
 			return undefined;
 		else {
 			if(this.elements.length === 1) {
-				var actions = {};
-				var allActions = this.elements[0].getSelectionActions();
-				for(var actionName in allActions) {
-					var action = allActions[actionName];
+				actions = {};
+				allActions = this.elements[0].getSelectionActions();
+				for(actionName in allActions) {
+					action = allActions[actionName];
 					if(!('testRight' in action) || action.testRight.call(this.elements[0]))
 						actions[actionName] = allActions[actionName];
 				}
@@ -78,10 +80,10 @@ Core.Object.extend('Ui.Selection', {
 			}
 			// return only actions that support multiple element
 			else {
-				var actions = {};
-				var allActions = this.elements[0].getSelectionActions();
-				for(var actionName in allActions) {
-					var action = allActions[actionName];
+				actions = {};
+				allActions = this.elements[0].getSelectionActions();
+				for(actionName in allActions) {
+					action = allActions[actionName];
 					if(action.multiple === true) {
 						var allowed = true;
 						// test rights for all elements
@@ -127,8 +129,8 @@ Core.Object.extend('Ui.Selection', {
 		var actions = this.getActions();
 		if('delete' in actions)
 			return actions['delete'];
-		else if('suppress' in actions)
-			return actions['suppress'];
+		else if(actions.suppress !== undefined)
+			return actions.suppress;
 		else
 			return undefined;
 	},

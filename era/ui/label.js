@@ -45,7 +45,7 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	setFontSize: function(fontSize) {
-		if(this.fontSize != fontSize) {
+		if(this.fontSize !== fontSize) {
 			this.fontSize = fontSize;
 			this.labelDrawing.style.fontSize = this.getFontSize()+'px';
 			this.textMeasureValid = false;
@@ -54,14 +54,14 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getFontSize: function() {
-		if(this.fontSize != undefined)
+		if(this.fontSize !== undefined)
 			return this.fontSize;
 		else
 			return this.getStyleProperty('fontSize');
 	},
 
 	setFontFamily: function(fontFamily) {
-		if(this.fontFamily != fontFamily) {
+		if(this.fontFamily !== fontFamily) {
 			this.fontFamily = fontFamily;
 			this.labelDrawing.style.fontFamily = this.getFontFamily();
 			this.textMeasureValid = false;
@@ -70,14 +70,14 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getFontFamily: function() {
-		if(this.fontFamily != undefined)
+		if(this.fontFamily !== undefined)
 			return this.fontFamily;
 		else
 			return this.getStyleProperty('fontFamily');
 	},
 
 	setFontWeight: function(fontWeight) {
-		if(this.fontWeight != fontWeight) {
+		if(this.fontWeight !== fontWeight) {
 			this.fontWeight = fontWeight;
 			this.labelDrawing.style.fontWeight = this.getFontWeight();
 			this.textMeasureValid = false;
@@ -86,14 +86,14 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getFontWeight: function() {
-		if(this.fontWeight != undefined)
+		if(this.fontWeight !== undefined)
 			return this.fontWeight;
 		else
 			return this.getStyleProperty('fontWeight');
 	},
 
 	setColor: function(color) {
-		if(this.color != color) {
+		if(this.color !== color) {
 			this.color = Ui.Color.create(color);
 			if(navigator.supportRgba)
 				this.labelDrawing.style.color = this.getColor().getCssRgba();
@@ -103,7 +103,7 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	getColor: function() {
-		if(this.color != undefined)
+		if(this.color !== undefined)
 			return this.color;
 		else
 			return Ui.Color.create(this.getStyleProperty('color'));
@@ -232,6 +232,7 @@ Ui.Element.extend('Ui.Label',
 	},
 	
 	isFontAvailable: function(fontFamily, fontWeight) {
+		var i;
 		if(!navigator.supportCanvas)
 			return true;
 		if(Ui.Label.measureBox === undefined)
@@ -247,13 +248,12 @@ Ui.Element.extend('Ui.Label',
 		ctx.fillText('@', 0, 0);
 		var wantedImageData = ctx.getImageData(0,0,10,10);
 		var empty = true;
-  		for(var i = 0; empty && (i < wantedImageData.data.length); i += 4) {
-  			if(wantedImageData.data[i+3] !== 0)
-  				empty = false;
-    	}
-    	//console.log(fontFamily+','+fontWeight+' empty: '+empty);
-    	if(empty)
-    		return false;
+		for(i = 0; empty && (i < wantedImageData.data.length); i += 4) {
+			if(wantedImageData.data[i+3] !== 0)
+				empty = false;
+		}
+		if(empty)
+			return false;
 		// draw with a local font
 		ctx.fillStyle = 'rgba(0,0,0,0)';
 		ctx.clearRect(0, 0, 10, 10);
@@ -268,15 +268,12 @@ Ui.Element.extend('Ui.Label',
 		ctx.font = 'normal '+fontWeight+' 10px '+fontFamily+',Sans-Serif';
 		ctx.fillText('@', 0, 0);
 		// test if images are differents
-  		var imageData = ctx.getImageData(0,0,10,10);
-  		for(var i = 0; i < imageData.data.length; i += 4) {
-  			if(imageData.data[i+3] !== refImageData.data[i+3]) {
-  				//console.log(fontFamily+','+fontWeight+' img are diff (pos: '+i+', val: '+imageData.data[i+3]+', ref: '+refImageData.data[i+3]+')');
-  				return true;
-  			}
-    	}
-    	//console.log(fontFamily+','+fontWeight+' BAD img are same');
-  		return false;
+		var imageData = ctx.getImageData(0,0,10,10);
+		for(i = 0; i < imageData.data.length; i += 4) {
+			if(imageData.data[i+3] !== refImageData.data[i+3])
+				return true;
+		}
+		return false;
 	},
 
 	measureTextHtml: function(text, fontSize, fontFamily, fontWeight) {
@@ -285,9 +282,6 @@ Ui.Element.extend('Ui.Label',
 		Ui.Label.measureBox.style.fontSize = fontSize+'px';
 		Ui.Label.measureBox.style.fontFamily = fontFamily;
 		Ui.Label.measureBox.style.fontWeight = fontWeight;
-//		while(Ui.Label.measureBox.hasChildNodes())
-//			Ui.Label.measureBox.removeChild(Ui.Label.measureBox.lastChild);
-//		Ui.Label.measureBox.appendChild(document.createTextNode(text));
 		if('textContent' in Ui.Label.measureBox)
 			Ui.Label.measureBox.textContent = text;
 		else

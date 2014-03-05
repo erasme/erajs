@@ -65,8 +65,8 @@ Ui.LBox.extend('Ui.DropBox',
 	 */
 
 	dragMimetype: function(event) {
-		var found = undefined;
-		if(event.dataTransfer.types != undefined) {
+		var found;
+		if(event.dataTransfer.types !== undefined) {
 			for(var i = 0; (found === undefined) && (i < event.dataTransfer.types.length); i++) {
 				var type = event.dataTransfer.types[i];
 				for(var i2 = 0; (found === undefined) && (i2 < this.allowedMimetypes.length); i2++) {
@@ -104,14 +104,14 @@ Ui.LBox.extend('Ui.DropBox',
 		if((event.dataTransfer !== undefined) && (!(!navigator.supportDrag || navigator.supportMimetypeDrag) || (this.dragMimetype(event) !== undefined))) {
 			// accept the drag over
 			var effectAllowed = 'all';
-			if(event.dataTransfer.effectAllowed != undefined)
+			if(event.dataTransfer.effectAllowed !== undefined)
 				effectAllowed = event.dataTransfer.effectAllowed;
 			if(effectAllowed == 'uninitialized')
 				effectAllowed = 'all';
 			
 			var dropEffect = 'copy';
 			if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
-			   ((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
+				((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
 				dropEffect = 'copy';
 			else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyMove') ||  (this.allowedMode == 'linkMove') || (this.allowedMode == 'move')) &&
 					((effectAllowed == 'all') || (effectAllowed == 'copyMove') || (effectAllowed == 'linkMove') || (effectAllowed == 'move')))
@@ -133,22 +133,24 @@ Ui.LBox.extend('Ui.DropBox',
 		}
 	},
 
-	onDrop: function(event) {		
+	onDrop: function(event) {
+		var i; var pos; var mimetype; var data;
+
 		var dropPoint = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 		// handle files
-		if((event.dataTransfer.files != undefined) && (event.dataTransfer.files.length > 0)) {
+		if((event.dataTransfer.files !== undefined) && (event.dataTransfer.files.length > 0)) {
 			// accept the drop
 			event.preventDefault();
 			event.stopPropagation();
-			for(var i = 0; i < event.dataTransfer.files.length; i++)
+			for(i = 0; i < event.dataTransfer.files.length; i++)
 				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
 		}
 		else {
 			if(!navigator.supportDrag || navigator.supportMimetypeDrag) {
-				var mimetype = this.dragMimetype(event);
+				mimetype = this.dragMimetype(event);
 				if(mimetype !== undefined) {
-					var data = event.dataTransfer.getData(mimetype);
+					data = event.dataTransfer.getData(mimetype);
 					// if this is a local drag and drop, get the local object
 					if(mimetype.indexOf(Ui.Draggable.localmimetype) === 0)
 						data = Ui.Draggable.getLocalData(data);
@@ -161,14 +163,14 @@ Ui.LBox.extend('Ui.DropBox',
 			else {
 				// TODO: correct this
 				var mergedData = event.dataTransfer.getData('Text');
-				var data = {};
+				data = {};
 				var tmp = mergedData.split(';');
-				for(var i = 0; i < tmp.length; i++) {
-					var pos = tmp[i].indexOf(':');
+				for(i = 0; i < tmp.length; i++) {
+					pos = tmp[i].indexOf(':');
 					if(pos !== -1)
 						data[tmp[i].substring(0, pos)] = tmp[i].substring(pos+1);
 				}
-				var mimetype = this.dragMergedMimetype(data);
+				mimetype = this.dragMergedMimetype(data);
 				if(mimetype !== undefined) {
 					// accept the drop
 					event.preventDefault();

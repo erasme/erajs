@@ -100,7 +100,7 @@ Ui.Container.extend('Ui.MovableBase',
 			else
 				this.posY = y;
 		}
-		if(!this.isInMoveEvent && !(dontSignal === true)) {
+		if(!this.isInMoveEvent && (dontSignal !== true)) {
 			this.isInMoveEvent = true;
 			this.fireEvent('move', this);
 			this.onMove(this.posX, this.posY);
@@ -124,8 +124,8 @@ Ui.Container.extend('Ui.MovableBase',
 	 */
 
 	updateTouchAction: function() {
-		console.log(this+'.updateTouchAction');
-/*		if(this.moveHorizontal && this.moveVertical)
+/*		console.log(this+'.updateTouchAction');
+		if(this.moveHorizontal && this.moveVertical)
 			this.getDrawing().style.touchAction = 'none';
 		else if(this.moveHorizontal && !this.moveVertical) {
 			this.getDrawing().style.touchAction = 'pan-y';
@@ -146,14 +146,14 @@ Ui.Container.extend('Ui.MovableBase',
 
 	onUp: function(abort) {
 		//console.log('onUp');
- 		this.isDown = false;
+		this.isDown = false;
 		this.fireEvent('up', this, this.speedX, this.speedY, (this.posX - this.startPosX), (this.posY - this.startPosY), this.cumulMove, abort);
 	},
 
 	onMouseDown: function(event) {
 		//console.log(this+'.onMouseDown isDown: '+this.isDown);
 
-		if(this.isDown || this.lock || this.getIsDisabled() || (event.button != 0))
+		if(this.isDown || this.lock || this.getIsDisabled() || (event.button !== 0))
 			return;
 		
 		this.startTime = (new Date().getTime())/1000;
@@ -207,7 +207,7 @@ Ui.Container.extend('Ui.MovableBase',
 		var oldY = this.posY;
 
 		var point = { x: event.clientX, y: event.clientY };
-		if(this.iframe != undefined)
+		if(this.iframe !== undefined)
 			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
 		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
@@ -253,7 +253,7 @@ Ui.Container.extend('Ui.MovableBase',
 			event.preventDefault();
 		event.stopPropagation();
 
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
 		
 		abort = (abort === true);
@@ -436,7 +436,7 @@ Ui.Container.extend('Ui.MovableBase',
 		if(this.inertiaClock === undefined) {
 			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
 				onTimeupdate: function(clock, progress, delta) {
-					if(delta == 0)
+					if(delta === 0)
 						return;
 
 					var oldPosX = this.posX;
@@ -456,7 +456,7 @@ Ui.Container.extend('Ui.MovableBase',
 						this.speedX = 0;
 					if(Math.abs(this.speedY) < 0.1)
 						this.speedY = 0;
-					if((this.speedX == 0) && (this.speedY == 0))
+					if((this.speedX === 0) && (this.speedY === 0))
 						this.stopInertia();
 				}
 			});
@@ -465,7 +465,7 @@ Ui.Container.extend('Ui.MovableBase',
 	},
 
 	stopInertia: function() {
-		if(this.inertiaClock != undefined) {
+		if(this.inertiaClock !== undefined) {
 			this.inertiaClock.stop();
 			this.inertiaClock = undefined;
 		}

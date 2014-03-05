@@ -51,7 +51,7 @@ Ui.Container.extend('Ui.ListView',
 		this.rowContainer = new Ui.Container();
 		this.appendChild(this.rowContainer);
 
-		if(config.headers != undefined) {
+		if(config.headers !== undefined) {
 			this.headers = config.headers;
 			delete(config.headers);
 		}
@@ -59,8 +59,8 @@ Ui.Container.extend('Ui.ListView',
 			this.headers = [{ width: 100, type: 'string', title: 'Title', key: 'default' }];
 		this.data = [];
 		this.cols = [];
-
-		for(var i = 0; i < this.headers.length; i++) {
+		var i;
+		for(i = 0; i < this.headers.length; i++) {
 			var header = this.headers[i];
 			header.ui = new Ui.ListViewHeader({ title: header.title, width: header.width });
 			this.connect(header.ui, 'up', this.onHeaderUp);
@@ -68,7 +68,7 @@ Ui.Container.extend('Ui.ListView',
 			header.colWidth = header.width;
 			this.appendChild(header.ui);
 		}
-		for(var i = 0; i < this.headers.length; i++) {
+		for(i = 0; i < this.headers.length; i++) {
 			var col = new Ui.ListViewColBar({ header: this.headers[i].ui });
 			this.cols.push(col);
 			this.appendChild(col);
@@ -155,7 +155,7 @@ Ui.Container.extend('Ui.ListView',
 
 	removeDataAt: function(position) {
 		if(position < this.data.length) {
-			if(this.selectedRow == position)
+			if(this.selectedRow === position)
 				this.fireEvent('unselect', this, this.selectedRow);
 			this.data.splice(position, 1);
 			for(var col = 0; col < this.headers.length; col++) {
@@ -169,8 +169,8 @@ Ui.Container.extend('Ui.ListView',
 				this.rowContainer.removeChild(cell);
 				this.headers[col].rows.splice(position, 1);
 			}
-			if(this.selectedRow != undefined) {
-				if(this.selectedRow == position)
+			if(this.selectedRow !== undefined) {
+				if(this.selectedRow === position)
 					this.selectedRow = undefined;
 				else if(position < this.selectedRow)
 					this.selectedRow--;
@@ -196,7 +196,7 @@ Ui.Container.extend('Ui.ListView',
 
 	setData: function(data) {
 		this.clearData();
-		if(data != undefined) {
+		if(data !== undefined) {
 			for(var i = 0; i < data.length; i++)
 				this.appendData(data[i]);
 		}
@@ -206,16 +206,17 @@ Ui.Container.extend('Ui.ListView',
 	* Select the given row
 	*/
 	selectRow: function(row) {
+		var col;
 		if((row >= 0) && (row < this.data.length)) {
-			if(this.selectedRow != undefined) {
+			if(this.selectedRow !== undefined) {
 				if(this.selectedRow == row)
 					return;
-				for(var col = 0; col < this.headers.length; col++)
+				for(col = 0; col < this.headers.length; col++)
 					this.headers[col].rows[this.selectedRow].untoggle();
 				this.fireEvent('unselect', this, this.selectedRow);
 			}
 			this.selectedRow = row;
-			for(var col = 0; col < this.headers.length; col++) {
+			for(col = 0; col < this.headers.length; col++) {
 				var tmpCell = this.headers[col].rows[row];
 				this.disconnect(tmpCell, 'toggle', this.onCellSelect);
 				tmpCell.toggle();
@@ -238,18 +239,18 @@ Ui.Container.extend('Ui.ListView',
 
 	findCellRow: function(cell) {
 		var key = cell.getKey();
-		var headerCol = undefined;
+		var headerCol;
 		for(var col = 0; col < this.headers.length; col++) {
-			if(this.headers[col].key == key) {
+			if(this.headers[col].key === key) {
 				headerCol = this.headers[col];
 				break;
 			}
 		}
 		if(headerCol === undefined)
 			return -1;
-		var foundRow = undefined;
+		var foundRow;
 		for(var row = 0; row < headerCol.rows.length; row++) {
-			if(cell == headerCol.rows[row]) {
+			if(cell === headerCol.rows[row]) {
 				foundRow = row;
 				break;
 			}
@@ -296,7 +297,7 @@ Ui.Container.extend('Ui.ListView',
 			}
 		}
 
-		if(key != null){
+		if(key !== undefined){
 			this.fireEvent('header', this, key);
 		}
 	}
@@ -306,24 +307,24 @@ Ui.Container.extend('Ui.ListView',
  /** @lends Ui.ListView#*/
 {
 	measureCoreAuto: function(width, height) {
-		for(var col = 0; col < this.headers.length; col++)
+		var col; var colWidth; var header; var heightDone;
+		var minHeight; var availableWidth; var size;
+		for(col = 0; col < this.headers.length; col++)
 			this.headers[col].minWidth = 0;
 		var widthDone;
 		do {
 			widthDone = true;
 			this.rowsHeight = 0;
 			this.headersHeight = 0;
-			var heightDone;
 			do {
 				heightDone = true;
-				var minHeight = 0;
-				var availableWidth = width;
-				for(var col = 0; col < this.headers.length; col++) {
-					var header = this.headers[col];
-					var colWidth = header.minWidth;
+				minHeight = 0;
+				availableWidth = width;
+				for(col = 0; col < this.headers.length; col++) {
+					header = this.headers[col];
+					colWidth = header.minWidth;
 					if(col == this.headers.length - 1)
 						colWidth = Math.max(availableWidth, colWidth);
-					var size;
 					if(this.headersVisible)
 						size = header.ui.measure(colWidth, this.headersHeight);
 					else
@@ -345,18 +346,17 @@ Ui.Container.extend('Ui.ListView',
 			for(var dataRow = 0; dataRow < this.data.length; dataRow++) {
 				var data = this.data[dataRow];
 				data.rowHeight = 0;
-				var heightDone;
 				do {
 					heightDone = true;
-					var minHeight = 0;
-					var availableWidth = width;
-					for(var col = 0; col < this.headers.length; col++) {
-						var header = this.headers[col];
+					minHeight = 0;
+					availableWidth = width;
+					for(col = 0; col < this.headers.length; col++) {
+						header = this.headers[col];
 						var cell = this.headers[col].rows[dataRow];
-						var colWidth = header.minWidth;
+						colWidth = header.minWidth;
 						if(col == this.headers.length - 1)
 							colWidth = Math.max(availableWidth, colWidth);
-						var size = cell.measure(colWidth, data.rowHeight);
+						size = cell.measure(colWidth, data.rowHeight);
 						if(size.height > minHeight)
 							minHeight = size.height;
 						if(size.width > header.minWidth) {
@@ -375,7 +375,7 @@ Ui.Container.extend('Ui.ListView',
 		} while(!widthDone);
 
 		var minWidth = 0;
-		for(var col = 0; col < this.headers.length; col++)
+		for(col = 0; col < this.headers.length; col++)
 			minWidth += this.headers[col].minWidth;
 
 		return { width: minWidth, height: this.headersHeight + this.rowsHeight };
@@ -385,10 +385,11 @@ Ui.Container.extend('Ui.ListView',
 		this.rowsHeight = 0;
 		this.headersHeight = 0;
 		var minHeight = 0;
+		var col; var size; var header;
 		// measure headers
-		for(var col = 0; col < this.headers.length; col++) {
-			var header = this.headers[col];
-			var size = header.ui.measure(0, 0);
+		for(col = 0; col < this.headers.length; col++) {
+			header = this.headers[col];
+			size = header.ui.measure(0, 0);
 			if(size.height > minHeight)
 				minHeight = size.height;
 		}
@@ -397,12 +398,12 @@ Ui.Container.extend('Ui.ListView',
 		// measure content
 		for(var dataRow = 0; dataRow < this.data.length; dataRow++) {
 			var data = this.data[dataRow];
-			var minHeight = 0;
-			for(var col = 0; col < this.headers.length; col++) {
-				var header = this.headers[col];
+			minHeight = 0;
+			for(col = 0; col < this.headers.length; col++) {
+				header = this.headers[col];
 				var cell = this.headers[col].rows[dataRow];
 				var colWidth = header.ui.getMeasureWidth();
-				var size = cell.measure(colWidth, 0);
+				size = cell.measure(colWidth, 0);
 				if(size.height > minHeight)
 					minHeight = size.height;
 			}
@@ -410,12 +411,12 @@ Ui.Container.extend('Ui.ListView',
 			this.rowsHeight += data.rowHeight;
 		}
 		var minWidth = 0;
-		for(var col = 0; col < this.headers.length; col++)
+		for(col = 0; col < this.headers.length; col++)
 			minWidth += this.headers[col].ui.getMeasureWidth();
 
 		// measure col bars
 		for(var i = 0; i < this.cols.length; i++) {
-			var col = this.cols[i];
+			col = this.cols[i];
 			col.measure(0, this.headersHeight + this.rowsHeight);
 		}
 
@@ -426,10 +427,11 @@ Ui.Container.extend('Ui.ListView',
 		// update headers
 		var x = 0;
 		var availableWidth = width;
-		for(var col = 0; col < this.headers.length; col++) {
-			var header = this.headers[col];
+		var col; var colWidth; var header;
+		for(col = 0; col < this.headers.length; col++) {
+			header = this.headers[col];
 			var colbar = this.cols[col];
-			var colWidth = header.minWidth;
+			colWidth = header.minWidth;
 			if(col == this.headers.length - 1)
 				colWidth = Math.max(colWidth, availableWidth);
 			header.ui.arrange(x, 0, colWidth, this.headersHeight);
@@ -442,17 +444,17 @@ Ui.Container.extend('Ui.ListView',
 		}
 
 		// handle no data case
-		if(this.data.length == 0)
+		if(this.data.length === 0)
 			return;
 
 		var y = 0;
 		for(var row = 0; row < this.data.length; row++) {
 			var data = this.data[row];
-			var x = 0;
-			var availableWidth = width;
-			for(var col = 0; col < this.headers.length; col++) {
-				var header = this.headers[col];
-				var colWidth = header.minWidth;
+			x = 0;
+			availableWidth = width;
+			for(col = 0; col < this.headers.length; col++) {
+				header = this.headers[col];
+				colWidth = header.minWidth;
 				if(col == this.headers.length - 1)
 					colWidth = Math.max(colWidth, availableWidth);
 				var cell = header.rows[row];
@@ -467,12 +469,12 @@ Ui.Container.extend('Ui.ListView',
 
 	arrangeCoreManual: function(width, height) {
 		// update headers
-		var x = 0;
+		var x = 0; var header; var colWidth; var col;
 		var availableWidth = width;
-		for(var col = 0; col < this.headers.length; col++) {
-			var header = this.headers[col];
+		for(col = 0; col < this.headers.length; col++) {
+			header = this.headers[col];
 			var colbar = this.cols[col];
-			var colWidth = header.ui.getMeasureWidth();
+			colWidth = header.ui.getMeasureWidth();
 			if(col == this.headers.length - 1)
 				colWidth = Math.max(colWidth, availableWidth);
 			header.ui.arrange(x, 0, colWidth, this.headersHeight);
@@ -484,17 +486,17 @@ Ui.Container.extend('Ui.ListView',
 			availableWidth -= colWidth;
 		}
 		// handle no data case
-		if(this.data.length == 0)
+		if(this.data.length === 0)
 			return;
 
 		var y = 0;
 		for(var row = 0; row < this.data.length; row++) {
 			var data = this.data[row];
-			var x = 0;
-			var availableWidth = width;
-			for(var col = 0; col < this.headers.length; col++) {
-				var header = this.headers[col];
-				var colWidth = header.ui.getMeasureWidth();
+			x = 0;
+			availableWidth = width;
+			for(col = 0; col < this.headers.length; col++) {
+				header = this.headers[col];
+				colWidth = header.ui.getMeasureWidth();
 				if(col == this.headers.length - 1)
 					colWidth = Math.max(colWidth, availableWidth);
 				var cell = header.rows[row];

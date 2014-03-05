@@ -31,42 +31,42 @@ Ui.LBox.extend('Ui.App',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
+		var args;
 		this.addEvents('resize', 'ready', 'parentmessage', 'orientationchange');
-
 		this.setClipToBounds(true);
 
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
 		
 		// check if arguments are available
-		if((window.location.search != undefined) && (window.location.search != '')) {
-			var base64 = undefined;
-			var arguments = {};
+		if((window.location.search !== undefined) && (window.location.search !== '')) {
+			var base64;
+			args = {};
 			var tab = window.location.search.substring(1).split('&');
 			for(var i = 0; i < tab.length; i++) {
 				var tab2 = tab[i].split('=');
 				if(tab2.length == 2) {
 					var key = decodeURIComponent(tab2[0]);
 					var val = decodeURIComponent(tab2[1]);
-					if(key == 'base64')
+					if(key === 'base64')
 						base64 = JSON.parse(val.fromBase64());
 					else
-						arguments[key] = val;
+						args[key] = val;
 				}
 			}
-			if(base64 != undefined) {
+			if(base64 !== undefined) {
 				this.arguments = base64;
-				for(var prop in arguments)
-					this.arguments[prop] = arguments[prop];
+				for(var prop in args)
+					this.arguments[prop] = args[prop];
 			}
 			else
-				this.arguments = arguments;
+				this.arguments = args;
 		}
 		else
 			this.arguments = {};
 		// handle remote debugging
-		if(this.arguments['remotedebug'] != undefined) {
-			var args = this.arguments['remotedebug'].split(':');
+		if(this.arguments.remotedebug !== undefined) {
+			args = this.arguments.remotedebug.split(':');
 			new Core.RemoteDebug({ host: args[0], port: args[1] });
 		}
 
@@ -89,7 +89,7 @@ Ui.LBox.extend('Ui.App',
 			this.setStyle(Ui.Styles['default']);
 		
 		this.connect(window, 'focus', function(event) {
-			if(event.target == undefined)
+			if((event.target === undefined) || (event.target === null))
 				return;
 			this.focusElement = event.target;
 		}, true);
@@ -179,11 +179,12 @@ Ui.LBox.extend('Ui.App',
 	 */
 
 	onWindowLoad: function() {
+		var meta; var style;
 //		console.log('onWindowLoad updateTask: '+this.updateTask);
 		if(navigator.iPad || navigator.iPhone || navigator.Android) {
 			if(this.webApp) {
 				// support app mode for iPad, iPod and iPhone
-				var meta = document.createElement('meta');
+				meta = document.createElement('meta');
 				meta.name = 'apple-mobile-web-app-capable';
 				meta.content = 'yes';
 				document.getElementsByTagName("head")[0].appendChild(meta);
@@ -206,14 +207,14 @@ Ui.LBox.extend('Ui.App',
 		}
 		// hide scroll tap focus (webkit)
 		if(navigator.isWebkit) {
-			var style = document.createElement('style');
+			style = document.createElement('style');
 			style.type = 'text/css';
 			style.innerHTML = '* { -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }';
 			document.getElementsByTagName('head')[0].appendChild(style);
 		}
 		// disable page zoom and auto scale for IE
 		else if(navigator.isIE && !(navigator.isIE8 || navigator.isIE7)) {
-			var style = document.createElement('style');
+			style = document.createElement('style');
 			style.type = 'text/css';
 			style.innerHTML = '@-ms-viewport { width: device-width; } body { -ms-content-zooming: none; }';
 			document.getElementsByTagName('head')[0].appendChild(style);
@@ -271,7 +272,7 @@ Ui.LBox.extend('Ui.App',
 //		console.log('update A1 '+localCounter+', task: '+this.updateTask);
 
 		// update arrange
-//		while(this.layoutList != undefined) {
+//		while(this.layoutList !== undefined) {
 //			var next = this.layoutList.layoutNext;
 //			this.layoutList.layoutValid = true;
 //			this.layoutList.layoutNext = undefined;
@@ -279,7 +280,7 @@ Ui.LBox.extend('Ui.App',
 //			this.layoutList = next;
 
 		// update draw
-		while(this.drawList != undefined) {
+		while(this.drawList !== undefined) {
 			var next = this.drawList.drawNext;
 			this.drawList.drawNext = undefined;
 			this.drawList.draw();
@@ -321,14 +322,14 @@ Ui.LBox.extend('Ui.App',
 			this.dialogs.getChildren()[i].disable();
 		// find the first focusable element in the new dialog
 //		var focusElement = this.findFocusableDiv(dialog.getDrawing());
-//		if(focusElement != undefined)
+//		if(focusElement !== undefined)
 //			focusElement.focus();
 	},
 
 	removeDialog: function(dialog) {
-		if(this.dialogs != undefined) {
+		if(this.dialogs !== undefined) {
 			this.dialogs.remove(dialog);
-			if(this.dialogs.getChildren().length == 0) {
+			if(this.dialogs.getChildren().length === 0) {
 				this.remove(this.dialogs);
 				this.dialogs = undefined;
 				this.contentBox.enable();
@@ -483,7 +484,7 @@ Ui.LBox.extend('Ui.App',
 	getWindowIFrame: function(currentWindow) {
 		if(currentWindow === undefined)
 			currentWindow = window;
-		var iframe = undefined;
+		var iframe;
 		if(currentWindow.parent !== currentWindow) {
 			try {
 				var frames = currentWindow.parent.document.getElementsByTagName("IFRAME");

@@ -39,7 +39,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 	},
 
 	setData: function(data) {
-		while(this.box.getFirstChild() != undefined) {
+		while(this.box.getFirstChild() !== undefined) {
 			this.disconnect(this.box.getFirstChild(), 'toggle', this.onSegmentSelect);
 			this.box.remove(this.box.getFirstChild());
 		}
@@ -47,9 +47,9 @@ Ui.LBox.extend('Ui.SegmentBar',
 		for(var i = 0; i < data.length; i++) {
 			var mode;
 			if(this.orientation === 'horizontal')
-	 			mode = (i == 0)?'left':(i == data.length - 1)?'right':'middle';
-	 		else
-				mode = (i == 0)?'top':(i == data.length - 1)?'bottom':'middle';
+				mode = (i === 0)?'left':(i === data.length - 1)?'right':'middle';
+			else
+				mode = (i === 0)?'top':(i === data.length - 1)?'bottom':'middle';
 			var segment = new Ui.SegmentButton({ data: data[i], text: data[i][this.field], mode: mode });
 			this.box.append(segment, true);
 			this.connect(segment, 'toggle', this.onSegmentSelect);
@@ -96,7 +96,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 	 * @private 
 	 */
 	onSegmentSelect: function(segment) {
-		if(this.current != undefined)
+		if(this.current !== undefined)
 			this.current.untoggle();
 		this.current = segment;
 		this.fireEvent('change', this, segment.getData());

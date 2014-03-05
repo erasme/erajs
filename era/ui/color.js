@@ -7,33 +7,33 @@ Core.Object.extend('Ui.Color',
 	a: 1,
 
 	/**
-	 * @constructs
-	 * @class
-	 * @extends Core.Object
- 	 */
+	* @constructs
+	* @class
+	* @extends Core.Object
+	*/
 	constructor: function(config) {
 		// define from RGB model
-		if((config.r != undefined) && (config.g != undefined) && (config.b != undefined)) {
+		if((config.r !== undefined) && (config.g !== undefined) && (config.b !== undefined)) {
 			this.r = Math.min(Math.max(config.r, 0), 1);
 			this.g = Math.min(Math.max(config.g, 0), 1);
 			this.b = Math.min(Math.max(config.b, 0), 1);
 			delete(config.r); delete(config.g);	delete(config.b);
 		}
-		else if((config.h != undefined) && (config.s != undefined) && (config.l != undefined)) {
-			var h = (config.h != undefined)?config.h:0;
-			var s = (config.s != undefined)?config.s:0;
-			var l = (config.l != undefined)?config.l:0;
+		else if((config.h !== undefined) && (config.s !== undefined) && (config.l !== undefined)) {
+			var h = (config.h !== undefined)?config.h:0;
+			var s = (config.s !== undefined)?config.s:0;
+			var l = (config.l !== undefined)?config.l:0;
 			this.initFromHsl(h, s, l);
 			delete(config.h); delete(config.s); delete(config.l);
 		}
-		else if((config.y != undefined) && (config.u != undefined) && (config.v != undefined)) {
-			var y = Math.max((config.y != undefined)?config.y:0, 0);
-			var u = (config.u != undefined)?config.u:0;
-			var v = (config.v != undefined)?config.v:0;
+		else if((config.y !== undefined) && (config.u !== undefined) && (config.v !== undefined)) {
+			var y = Math.max((config.y !== undefined)?config.y:0, 0);
+			var u = (config.u !== undefined)?config.u:0;
+			var v = (config.v !== undefined)?config.v:0;
 			this.initFromYuv(y, u, v);
 			delete(config.y); delete(config.u); delete(config.v);
 		}
-		if(config.a != undefined) {
+		if(config.a !== undefined) {
 			this.a = Math.min(Math.max(config.a, 0), 1);
 			delete(config.a);
 		}
@@ -82,13 +82,13 @@ Core.Object.extend('Ui.Color',
 		var s;
 		var l = max;
 		var delta = max - min;
-		if(max != 0)
+		if(max !== 0)
 			s = delta / max;
 		else
 			return { h: 0, s: 0, l: l, a: this.a };
-		if(r == max)
+		if(r === max)
 			h = (g - b) / delta;
-		else if(g == max)
+		else if(g === max)
 			h = 2 + (b -r) / delta;
 		else
 			h = 4 + (r - g) / delta;
@@ -127,7 +127,7 @@ Core.Object.extend('Ui.Color',
 		var p = l * ( 1 - s );
 		var q = l * ( 1 - s * f );
 		var t = l * ( 1 - s * ( 1 - f ) );
-		if(i == 0) {
+		if(i === 0) {
 			this.r = l; this.g = t; this.b = p;
 		}
 		else if(i == 1) {
@@ -174,35 +174,37 @@ Core.Object.extend('Ui.Color',
 	},
 
 	parse: function(color) {
+		var r; var g; var b; var a;
+
 		if(typeof(color) == 'string') {
 			if(color in Ui.Color.knownColor)
 				color = Ui.Color.knownColor[color];
 			// parse the color
 			var res;
-			if((res = color.match(/^\s*rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+\.?\d*)\s*\)\s*$/)) != null) {
-				var r = parseInt(res[1]) / 255;
-				var g = parseInt(res[2]) / 255;
-				var b = parseInt(res[3]) / 255;
-				var a = parseFloat(res[4]);
+			if((res = color.match(/^\s*rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+\.?\d*)\s*\)\s*$/)) !== null) {
+				r = parseInt(res[1]) / 255;
+				g = parseInt(res[2]) / 255;
+				b = parseInt(res[3]) / 255;
+				a = parseFloat(res[4]);
 				return new Ui.Color({ r: r, g: g, b: b, a: a });
 			}
-			else if((res = color.match(/^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/)) != null) {
-				var r = parseInt(res[1]) / 255;
-				var g = parseInt(res[2]) / 255;
-				var b = parseInt(res[3]) / 255;
+			else if((res = color.match(/^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/)) !== null) {
+				r = parseInt(res[1]) / 255;
+				g = parseInt(res[2]) / 255;
+				b = parseInt(res[3]) / 255;
 				return new Ui.Color({ r: r, g: g, b: b });
 			}
-			else if(color.indexOf('#') == 0) {
+			else if(color.indexOf('#') === 0) {
 				if(color.length == 7) {
-					var r = parseInt(color.substr(1,2), 16) / 255;
-					var g = parseInt(color.substr(3,2), 16) / 255;
-					var b = parseInt(color.substr(5,2), 16) / 255;
+					r = parseInt(color.substr(1,2), 16) / 255;
+					g = parseInt(color.substr(3,2), 16) / 255;
+					b = parseInt(color.substr(5,2), 16) / 255;
 					return new Ui.Color({ r: r, g: g, b: b });
 				}
 				else if(color.length == 4) {
-					var r = parseInt(color.substr(1,1), 16) / 15;
-					var g = parseInt(color.substr(2,1), 16) / 15;
-					var b = parseInt(color.substr(3,1), 16) / 15;
+					r = parseInt(color.substr(1,1), 16) / 15;
+					g = parseInt(color.substr(2,1), 16) / 15;
+					b = parseInt(color.substr(3,1), 16) / 15;
 					return new Ui.Color({ r: r, g: g, b: b });
 				}
 			}

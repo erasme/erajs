@@ -18,16 +18,16 @@ Core.Object.extend('Anim.TimeManager',
 
 	add: function(clock) {
 		this.clocks.push(clock);
-		if(this.clocks.length == 1)
+		if(this.clocks.length === 1)
 			this.timer = new Core.Timer({ onTimeupdate: this.onTick, scope: this, interval: 1/60 });
 	},
 
 	remove: function(clock) {
 		var i = 0;
-		while((i < this.clocks.length) && (this.clocks[i] != clock)) { i++ };
+		while((i < this.clocks.length) && (this.clocks[i] != clock)) { i++; }
 		if(i < this.clocks.length)
 			this.clocks.splice(i, 1);
-		if(this.clocks.length == 0) {
+		if(this.clocks.length === 0) {
 			this.timer.abort();
 			this.timer = undefined;
 		}

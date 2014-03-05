@@ -73,7 +73,7 @@ Ui.Shape.extend('Ui.Icon',
 	},
 
 	register: function(iconName, iconPath) {
-		if(Ui.Icon.icons[iconName] != undefined)
+		if(Ui.Icon.icons[iconName] !== undefined)
 			throw('Icon \''+iconName+'\' is already registered. To change it, use override');
 		Ui.Icon.icons[iconName] = iconPath;
 	},

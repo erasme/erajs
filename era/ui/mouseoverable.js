@@ -27,7 +27,7 @@ Ui.LBox.extend('Ui.MouseOverable',
 	 */
 
 	onMouseOver: function(event) {
-		if(this.task != undefined) {
+		if(this.task !== undefined) {
 			this.task.abort();
 			this.task = undefined;
 		}

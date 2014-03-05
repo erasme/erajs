@@ -42,7 +42,7 @@ Ui.Element.extend('Ui.Html',
 		do {
 			if(('tagName' in element) && (element.tagName.toUpperCase() == tagName))
 				return element;
-			if(element.parentNode == undefined)
+			if((element.parentNode === undefined) || (element.parentNode === null))
 				return undefined;
 			if(element.parentNode === this.getDrawing())
 				return undefined;

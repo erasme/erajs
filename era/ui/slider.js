@@ -107,16 +107,17 @@ Ui.Container.extend('Ui.Slider',
 	},
 
 	updateValue: function() {
+		var max;
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 		if(this.orientation === 'horizontal') {		
-			var max = width - 44;
+			max = width - 44;
 			this.button.setPosition(max * this.value, 0);
 			var y = (height - 44)/2;
 			this.bar.arrange(18, y + 18, (width - 36) * this.value, 9);
 		}
 		else {		
-			var max = height - 44;
+			max = height - 44;
 			var x = (width - 44)/2;
 			var size = (height - 36) * this.value;
 			this.button.setPosition(0, (height - max * this.value) - 44);			

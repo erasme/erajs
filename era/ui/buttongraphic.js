@@ -74,10 +74,10 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 	},
 
 	getBackground: function() {
-	 	var color;
-	 	if(this.buttonHasFocus)
-	 		color = Ui.Color.create(this.getStyleProperty('focusBackground'));
-	 	else
+		var color;
+		if(this.buttonHasFocus)
+			color = Ui.Color.create(this.getStyleProperty('focusBackground'));
+		else
 			color = Ui.Color.create(this.getStyleProperty('background'));
 		var yuv = color.getYuva();
 		var deltaY = 0;
@@ -91,9 +91,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 
 	getBackgroundDark: function() {
 		var color;
-	 	if(this.buttonHasFocus)
-	 		color = Ui.Color.create(this.getStyleProperty('focusBackground'));
-	 	else
+		if(this.buttonHasFocus)
+			color = Ui.Color.create(this.getStyleProperty('focusBackground'));
+		else
 			color = Ui.Color.create(this.getStyleProperty('background'));
 		var yuv = color.getYuva();
 		var deltaY = 0;
@@ -121,7 +121,8 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			return new Ui.Color({ y: yuv.y - deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
 	}
 }, {
-	updateCanvas: function(ctx) {	
+	updateCanvas: function(ctx) {
+		var path; var scale;
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
 
@@ -149,8 +150,8 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 
 		// icon only
 		if((this.icon !== undefined) && (this.text === undefined)) {
-			var path = Ui.Icon.getPath(this.icon);
-			var scale = this.iconSize/48;
+			path = Ui.Icon.getPath(this.icon);
+			scale = this.iconSize/48;
 			// icon
 			ctx.save();
 			ctx.translate((width-this.iconSize)/2, (height-this.iconSize)/2);
@@ -173,9 +174,9 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		// text + icon
 		else if((this.icon !== undefined) && (this.text !== undefined)) {
 			// vertical
-			if(orientation == 'vertical') {
-				var path = Ui.Icon.getPath(this.icon);
-				var scale = this.iconSize/48;
+			if(orientation === 'vertical') {
+				path = Ui.Icon.getPath(this.icon);
+				scale = this.iconSize/48;
 				// icon
 				ctx.save();
 				ctx.translate((width-this.iconSize)/2, (height-this.fontSize-this.iconSize-this.spacing)/2);
@@ -194,8 +195,8 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 			}
 			// horizontal
 			else {
-				var path = Ui.Icon.getPath(this.icon);
-				var scale = this.iconSize/48;
+				path = Ui.Icon.getPath(this.icon);
+				scale = this.iconSize/48;
 				// icon
 				ctx.save();
 				ctx.translate(this.spacing+4, (height-this.iconSize)/2 -1);
@@ -218,7 +219,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 
 	measureCore: function(width, height) {
 		// measure text if needed
-		if(this.text != undefined)
+		if(this.text !== undefined)
 			this.textWidth = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight).width;
 
 		var size = { width: 10, height: 10 };
@@ -264,7 +265,7 @@ Ui.CanvasElement.extend('Ui.ButtonGraphic', {
 		orientation: 'horizontal',
 		background: 'rgba(250,250,250,1)',
 		foreground: '#444444',
-		focusBackground: new Ui.Color({ r: 0.13, g: 0.83, b: 1, a: 0.5 }),
+		focusBackground: new Ui.Color({ r: 0.13, g: 0.83, b: 1 }),
 		focusForeground: '#222222',
 		radius: 3,
 		spacing: 5,

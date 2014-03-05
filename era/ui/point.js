@@ -17,6 +17,7 @@ Core.Object.extend('Ui.Point',
 		var y = this.x * matrix.b + this.y * matrix.d + matrix.f;
 		this.x = x;
 		this.y = y;
+		return this;
 	},
 
 	setPoint: function(point) {

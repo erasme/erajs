@@ -39,7 +39,7 @@ Ui.Element.extend('Ui.Container',
 	prependChild: function(child) {
 		child.parent = this;
 		this.children.unshift(child);
-		if(this.containerDrawing.firstChild != undefined)
+		if(this.containerDrawing.firstChild !== undefined)
 			this.containerDrawing.insertBefore(child.getDrawing(), this.containerDrawing.firstChild);
 		else
 			this.containerDrawing.appendChild(child.getDrawing());
@@ -58,10 +58,10 @@ Ui.Element.extend('Ui.Container',
 		child.parent = undefined;
 		this.containerDrawing.removeChild(child.getDrawing());
 		var i = 0;
-		while((i < this.children.length) && (this.children[i] != child)) { i++ };
+		while((i < this.children.length) && (this.children[i] != child)) { i++; }
 		if(i < this.children.length)
 			this.children.splice(i, 1);
-		for(var i = 0; i < this.children.length; i++)
+		for(i = 0; i < this.children.length; i++)
 			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(false);
 		child.setParentVisible(false);
@@ -90,11 +90,11 @@ Ui.Element.extend('Ui.Container',
 		if(position >= this.children.length)
 			position = this.children.length;
 		var i = 0;
-		while((i < this.children.length) && (this.children[i] != child)) { i++ };
+		while((i < this.children.length) && (this.children[i] != child)) { i++; }
 		if(i < this.children.length) {
 			this.children.splice(i, 1);
 			this.children.splice(position, 0, child);
-			for(var i = 0; i < this.children.length; i++)
+			for(i = 0; i < this.children.length; i++)
 				this.children[i].getDrawing().style.zIndex = i + 1;
 		}
 		this.onChildInvalidateMeasure(child, 'move');
@@ -154,7 +154,7 @@ Ui.Element.extend('Ui.Container',
 	 * Remove all the container's children
 	 */
 	clear: function(){
-		while(this.getFirstChild() != null){
+		while(this.getFirstChild() !== undefined){
 			this.removeChild(this.getFirstChild());
 		}
 	}
@@ -194,7 +194,7 @@ Ui.Element.extend('Ui.Container',
 		if(!this.isLoaded)
 			return;
 		this.onStyleChange();
-		if(this.children != undefined) {
+		if(this.children !== undefined) {
 			for(var i = 0; i < this.children.length; i++)
 				this.children[i].setParentStyle(this.mergeStyle);
 		}

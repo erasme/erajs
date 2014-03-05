@@ -19,7 +19,7 @@ Core.Object.extend('Ui.LinearGradient',
 			this.stops = [
 				{ offset: 0, color: new Ui.Color({ r: 1, g: 1, b: 1, a: 1}) },
 				{ offset: 1, color: new Ui.Color({ r: 0, g: 0, b: 0, a: 1}) }];
-		if(config.orientation != undefined) {
+		if(config.orientation !== undefined) {
 			this.orientation = config.orientation;
 			delete(config.orientation);
 		}
@@ -28,7 +28,8 @@ Core.Object.extend('Ui.LinearGradient',
 	},
 
 	getBackgroundImage: function() {
-		if(this.image != undefined)
+		var i; var stop; var gradient;
+		if(this.image !== undefined)
 			return this.image;
 
 		if(navigator.isWebkit) {
@@ -37,8 +38,8 @@ Core.Object.extend('Ui.LinearGradient',
 				this.image += '0% 100%';
 			else
 				this.image += '100% 0%';
-			for(var i = 0; i < this.stops.length; i++) {
-				var stop = this.stops[i];
+			for(i = 0; i < this.stops.length; i++) {
+				stop = this.stops[i];
 				this.image += ', color-stop('+stop.offset+', '+stop.color.getCssRgba()+')';
 			}
 			this.image += ')';
@@ -49,8 +50,8 @@ Core.Object.extend('Ui.LinearGradient',
 				this.image += '-90deg';
 			else
 				this.image += '0deg';
-			for(var i = 0; i < this.stops.length; i++) {
-				var stop = this.stops[i];
+			for(i = 0; i < this.stops.length; i++) {
+				stop = this.stops[i];
 				this.image += ', '+stop.color.getCssRgba()+' '+Math.round(stop.offset * 100)+'%';
 			}
 			this.image += ')';
@@ -61,9 +62,9 @@ Core.Object.extend('Ui.LinearGradient',
 			if(this.orientation == 'vertical') {
 				canvas.setAttribute('width', 1, null);
 				canvas.setAttribute('height', 100, null);
-				var gradient = context.createLinearGradient(0, 0, 0, 100);
-				for(var i = 0; i < this.stops.length; i++) {
-					var stop = this.stops[i];
+				gradient = context.createLinearGradient(0, 0, 0, 100);
+				for(i = 0; i < this.stops.length; i++) {
+					stop = this.stops[i];
 					gradient.addColorStop(stop.offset, stop.color.getCssRgba());
 				}
 				context.fillStyle = gradient;
@@ -72,9 +73,9 @@ Core.Object.extend('Ui.LinearGradient',
 			else {
 				canvas.setAttribute('width', 100, null);
 				canvas.setAttribute('height', 1, null);
-				var gradient = context.createLinearGradient(0, 0, 100, 0);
-				for(var i = 0; i < this.stops.length; i++) {
-					var stop = this.stops[i];
+				gradient = context.createLinearGradient(0, 0, 100, 0);
+				for(i = 0; i < this.stops.length; i++) {
+					stop = this.stops[i];
 					gradient.addColorStop(stop.offset, stop.color.getCssRgba());
 				}
 				context.fillStyle = gradient;
@@ -140,7 +141,7 @@ Core.Object.extend('Ui.LinearGradient',
 		if(this.stops.length > 2) {
 			var colors = '';
 			for(var i = 1; i < this.stops.length-1; i++) {
-				if(colors != '')
+				if(colors !== '')
 					colors += ',';
 				colors += Math.round(this.stops[i].offset * 100)+'% '+this.stops[i].color.getCssHtml();
 			}

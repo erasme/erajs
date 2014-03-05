@@ -24,33 +24,36 @@ Ui.VBox.extend('Test.Logs', {
 	}
 });
 
+Ui.App.extend('Test.App', {
+	constructor: function() {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
 
-var app = new Ui.App();
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
 
-var vbox = new Ui.VBox();
-app.setContent(vbox);
+		var button = new Ui.Button({ text: 'get date' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			var date = datepicker.getSelectedDate();
+			if(date == undefined)
+				logs.log('date is undefined');
+			else
+				logs.log('date: '+date);
+		});
 
-var toolbar = new Ui.ToolBar();
-vbox.append(toolbar);
+		var hbox = new Ui.HBox();
+		vbox.append(hbox, true);
 
-var button = new Ui.Button({ text: 'get date' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	var date = datepicker.getSelectedDate();
-	if(date == undefined)
-		logs.log('date is undefined');
-	else
-		logs.log('date: '+date);
+		var datepicker = new Ui.DatePicker({ verticalAlign: 'center', horizontalAlign: 'center', dayFilter: [0, 6] });
+		hbox.append(datepicker, true);
+
+		var logs = new Test.Logs();
+		hbox.append(logs, true);
+	}
 });
 
-var hbox = new Ui.HBox();
-vbox.append(hbox, true);
-
-var datepicker = new Ui.DatePicker({ verticalAlign: 'center', horizontalAlign: 'center', dayFilter: [0, 6] });
-hbox.append(datepicker, true);
-
-var logs = new Test.Logs();
-hbox.append(logs, true);
+new Test.App();
 
 </script>
 	</head>	

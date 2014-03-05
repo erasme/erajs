@@ -20,13 +20,13 @@ Core.Object.prototype.toString = function() {
 *	@param {string} filter Regex filter of the dump
 */
 Core.Object.prototype.dump = function(filter) {
-	if(filter != undefined)
-		filter = new RegExp(filter,'i');
+	if(filter !== undefined)
+		filter = new RegExp(filter, 'i');
 	console.log(this+':');
 	for(var prop in this) {
 		try {
 			var test = true;
-			if(filter != undefined)
+			if(filter !== undefined)
 				test = filter.test(prop);
 			if(test)
 				console.log(prop+' => '+this[prop]);
@@ -40,13 +40,13 @@ Core.Object.prototype.dump = function(filter) {
 *	@param {string} filter Regex filter of the dump
 */
 Core.Object.dump = function(obj, filter) {
-	if(filter != undefined)
+	if(filter !== undefined)
 		filter = new RegExp(filter,'i');
 	console.log(obj+':');
 	for(var prop in obj) {
 		try {
 			var test = true;
-			if(filter != undefined)
+			if(filter !== undefined)
 				test = filter.test(prop);
 			if(test)
 				console.log(prop+' => '+obj[prop]);
@@ -86,21 +86,19 @@ Core.Object.prototype.serialize = function() {
 
 /** 
 *	@private
-* 	INTERNAL: dont use. Usefull function for the object constructor.
+*	INTERNAL: dont use. Usefull function for the object constructor.
 */
 Core.Object.prototype.constructorHelper = function(config, proto) {
-	if(proto == undefined)
-		proto = this.__proto__;
-	if(proto == undefined)
+//	console.log(this+'.constructorHelper config: '+config+', proto: '+proto+', this.__proto___: '+this.__proto__);
+	if(proto === undefined)
+		proto = this;
+	if((proto === undefined) || (proto === null))
 		return;
-	if(config == undefined)
+	if(config === undefined)
 		config = {};
-	if(proto.__baseclass__ != undefined)
+	if(proto.__baseclass__ !== undefined)
 		this.constructorHelper.call(this, config, proto.__baseclass__);
-	else
-		if(proto.__proto__ != undefined)
-			this.constructorHelper.call(this, config, proto.__proto__);
-	if(proto.__constructor != undefined)
+	if(proto.__constructor !== undefined)
 		proto.__constructor.call(this, config);
 };
 
@@ -112,47 +110,41 @@ Core.Object.prototype.constructorHelper = function(config, proto) {
 *	@param {string} classStatic An object with all the static members.
 */
 Function.prototype.extend = function(classType, classDefine, classOverride, classStatic) {
+	var prop;
 	var tab = classType.split('.');
-	var namespace = "";
+	var namespace = '';
 	var current = window;
 	for(var i = 0; i < tab.length-1; i++) {
-		if(namespace != "")
-			namespace += ".";
+		if(namespace !== '')
+			namespace += '.';
 		namespace += tab[i];
-		if(current[tab[i]] == undefined)
+		if(current[tab[i]] === undefined)
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
 	var func = eval("( "+classType+" = function(config) { Core.Object.currentScopes.push(this); var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); Core.Object.currentScopes.pop(); this.autoConfig(nconfig); } )");
 
-	if(func.prototype.__proto__ == undefined) {
-		for(var prop in this.prototype) {
-			func.prototype[prop] = this.prototype[prop];
-		}
-		func.prototype['__proto__'] = func.prototype;
-	}
-	else {
-		func.prototype.__proto__ = this.prototype;
-	}
-	func.prototype['__baseclass__'] = this.prototype;
-	func['base'] = this.prototype;
+	func.prototype = Object.create(this.prototype);
+	func.prototype.constructor = func;
+	func.prototype.__baseclass__ = this.prototype;
+	func.base = this.prototype;
 
 	// inherit static methods
-	for(var prop in func['base'].constructor) {
-		if(typeof(func['base'].constructor[prop]) == 'function') {
-			func[prop] = func['base'].constructor[prop];
+	for(prop in func.base.constructor) {
+		if(typeof(func.base.constructor[prop]) === 'function') {
+			func[prop] = func.base.constructor[prop];
 		}
 	}
 
 	if(classStatic !== undefined) {
-		for(var prop in classStatic)
+		for(prop in classStatic)
 			func[prop] = classStatic[prop];
 	}
 
 	if(classDefine !== undefined) {
-		for(var prop in classDefine) {
+		for(prop in classDefine) {
 			if(prop === 'constructor')
-				func.prototype['__constructor'] = classDefine[prop];
+				func.prototype.__constructor = classDefine[prop];
 			else {
 				if((typeof(classDefine[prop]) === 'object') && (classDefine[prop] !== null))
 					throw('object are not allowed in classDefine ('+prop+'). Create object in the constructor');
@@ -163,15 +155,15 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 				func.prototype[prop] = classDefine[prop];
 			}
 		}
-		if(classDefine['constructor'] === Object.prototype.constructor)
-			 func.prototype['__constructor'] = undefined;
+		if(classDefine.constructor === Object.prototype.constructor)
+			func.prototype.__constructor = undefined;
 		if((navigator.isIE) && (classDefine.constructor !== Object.prototype.constructor))
-				func.prototype['__constructor'] = classDefine.constructor;
+			func.prototype.__constructor = classDefine.constructor;
 	}
 
 	if(classOverride !== undefined) {
-		for(var prop in classOverride) {
-			if((typeof(classOverride[prop]) == 'object') && (classOverride[prop] != null))
+		for(prop in classOverride) {
+			if((typeof(classOverride[prop]) === 'object') && (classOverride[prop] !== null))
 				throw('object are not allowed in classOverride ('+prop+'). Create object in the constructor');
 			func.prototype[prop] = classOverride[prop];
 		}
@@ -188,12 +180,12 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 *	@return {Boolean} Whether or not an object is or derives from the class Type of the calling instance.
 */ 
 Function.prototype.hasInstance = function(obj) {
-	if((typeof(obj) != 'object') || (obj == null) || (obj.constructorHelper != Core.Object.prototype.constructorHelper))
+	if((typeof(obj) !== 'object') || (obj === null) || (obj.constructorHelper !== Core.Object.prototype.constructorHelper))
 		return false;
 
 	var current = obj;
-	while(current != undefined) {
-		if(current.classType == this.prototype.classType)
+	while(current !== undefined) {
+		if(current.classType === this.prototype.classType)
 			return true;
 		current = current.__baseclass__;
 	}
@@ -206,8 +198,8 @@ Function.prototype.hasInstance = function(obj) {
 */
 Core.Object.prototype.isSubclassOf = function(parentClassName) {
 	var current = this;
-	while(current != undefined) {
-		if(current.classType == parentClassName)
+	while(current !== undefined) {
+		if(current.classType === parentClassName)
 			return true;
 		current = current.__baseclass__;
 	}
@@ -220,7 +212,7 @@ Core.Object.prototype.isSubclassOf = function(parentClassName) {
 *	@example this.addEvents('press', 'down', 'up');
 */
 Core.Object.prototype.addEvents = function() {
-	if(this.events == undefined)
+	if(this.events === undefined)
 		this.events = [];
 	for(var i = 0; i < arguments.length; i++)
 		this.events[arguments[i]] = [];
@@ -232,7 +224,7 @@ Core.Object.prototype.addEvents = function() {
 *	@example this.hasEvent('press');
 */
 Core.Object.prototype.hasEvent = function(event) {
-	return (this.events != undefined) && (event in this.events);
+	return (this.events !== undefined) && (event in this.events);
 };
 
 /**
@@ -242,15 +234,16 @@ Core.Object.prototype.hasEvent = function(event) {
 *   Must have been registred with {@link Core.Object#addEvents} before.
 */
 Core.Object.prototype.fireEvent = function(eventName) {
+	var i;
 	var args = [];
-	for(var i = 1; i < arguments.length; i++)
+	for(i = 1; i < arguments.length; i++)
 		args[i-1] = arguments[i];
 	var handled = false;
 	var eventListeners = this.events[eventName];
-	if(eventListeners != null) {
-		for(var i = 0; (i < eventListeners.length) && !handled; i++) {
+	if(eventListeners !== undefined) {
+		for(i = 0; (i < eventListeners.length) && !handled; i++) {
 			handled = this.events[eventName][i].method.apply(this.events[eventName][i].scope, args);
-			if(handled == undefined)
+			if(handled === undefined)
 				handled = false;
 		}
 	}
@@ -268,16 +261,17 @@ Core.Object.prototype.fireEvent = function(eventName) {
 *	@param capture
 */
 Core.Object.prototype.connect = function(obj, eventName, method, capture) {
+	var wrapper;
 	/**#nocode+ Avoid Jsdoc warnings...*/
-	if(capture == undefined)
+	if(capture === undefined)
 		capture = false;
 	if(DEBUG && (typeof(method) !== 'function'))
 		throw('Invalid method to connect on event \''+eventName+'\'');
 	
 	if('addEventListener' in obj) {
-		var wrapper = function() {
+		wrapper = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapper.scope = this;
 		wrapper.callback = method;
 		wrapper.eventName = eventName;
@@ -288,9 +282,9 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 		obj.events.push(wrapper);
 	}
 	else if('attachEvent' in obj) {
-		var wrapper = function() {
+		wrapper = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapper.scope = this;
 		wrapper.callback = method;
 		wrapper.eventName = eventName;
@@ -328,11 +322,12 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 *	@param {function} method
 */
 Core.Object.prototype.disconnect = function(obj, eventName, method) {
+	var wrapper; var i; var signal;
 	if('removeEventListener' in obj) {
-		for(var i = 0; (obj.events !== undefined) && (i < obj.events.length); i++) {
-			var wrapper = obj.events[i];
-			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
-				if((method != undefined) && (wrapper.callback != method))
+		for(i = 0; (obj.events !== undefined) && (i < obj.events.length); i++) {
+			wrapper = obj.events[i];
+			if((wrapper.scope === this) && (wrapper.eventName === eventName)) {
+				if((method !== undefined) && (wrapper.callback !== method))
 					continue;
 				obj.removeEventListener(wrapper.eventName, wrapper, wrapper.capture);
 				obj.events.splice(i, 1);
@@ -341,10 +336,10 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 		}
 	}
 	else if('detachEvent' in obj) {
-		for(var i = 0; (obj.events != undefined) && (i < obj.events.length); i++) {
-			var wrapper = obj.events[i];
-			if((wrapper.scope == this) && (wrapper.eventName == eventName)) {
-				if((method != undefined) && (wrapper.callback != method))
+		for(i = 0; (obj.events !== undefined) && (i < obj.events.length); i++) {
+			wrapper = obj.events[i];
+			if((wrapper.scope === this) && (wrapper.eventName === eventName)) {
+				if((method !== undefined) && (wrapper.callback !== method))
 					continue;
 				obj.detachEvent(wrapper.eventName, wrapper);
 				obj.events.splice(i, 1);
@@ -353,10 +348,10 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 		}
 	}
 	else {
-		for(var i = 0; (obj.events !== undefined) && (i < obj.events[eventName].length); i++) {
-			var signal = obj.events[eventName][i];
+		for(i = 0; (obj.events !== undefined) && (i < obj.events[eventName].length); i++) {
+			signal = obj.events[eventName][i];
 			if(signal.scope == this) {
-				if((method != undefined) && (signal.method != method))
+				if((method !== undefined) && (signal.method !== method))
 					continue;
 				obj.events[eventName].splice(i, 1);
 				i--;
@@ -368,9 +363,9 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 Core.Object.currentScopes = [];
 
 Core.Object.prototype.autoConfig = function(config) {
-	if(config == undefined)
+	if(config === undefined)
 		return;
-	var scope;
+	var scope; var func;
 	var pushScope = false;
 
 	if('scope' in config) {
@@ -394,7 +389,7 @@ Core.Object.prototype.autoConfig = function(config) {
 			continue;
 		}
 		// look for normal properties
-		var func = 'set'+prop.charAt(0).toUpperCase()+prop.substr(1);
+		func = 'set'+prop.charAt(0).toUpperCase()+prop.substr(1);
 		if((func in this) && (typeof(this[func]) == 'function')) {
 			this[func].call(this, config[prop]);
 			delete(config[prop]);
@@ -407,7 +402,7 @@ Core.Object.prototype.autoConfig = function(config) {
 				current = current[props[i]];
 			}
 			var c = props[props.length-1];
-			var func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
+			func = 'set'+c.charAt(0).toUpperCase()+c.substr(1);
 			if((func in current) && (typeof(current[func] == 'function'))) {
 				current[func].call(current, this, config[prop]);
 				delete(config[prop]);
@@ -415,10 +410,10 @@ Core.Object.prototype.autoConfig = function(config) {
 			else if(DEBUG)
 				throw('Attached property \''+prop+'\' not found');
 		}
-		else if(prop.indexOf('on') == 0) {
+		else if(prop.indexOf('on') === 0) {
 			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
-			if((this.events != undefined) && (eventName in this.events)) {
-				if(DEBUG && (typeof(config[prop]) != 'function'))
+			if((this.events !== undefined) && (eventName in this.events)) {
+				if(DEBUG && (typeof(config[prop]) !== 'function'))
 					throw('function is need to connect to the \''+eventName+'\' on '+this.classType);
 				scope.connect(this, eventName, config[prop]);
 				delete(config[prop]);
@@ -457,7 +452,7 @@ Core.Object.create = function(element, scope) {
 		else if(DEBUG) {
 			var current = type;
 			while((current !== undefined) && (current !== this)) {
-				if(current.base == undefined)
+				if(current.base === undefined)
 					throw('Expecting class '+this.prototype.classType+' got '+type.prototype.classType);
 				current = current.base.constructor;
 			}

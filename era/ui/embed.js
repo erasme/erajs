@@ -24,10 +24,10 @@ Ui.LBox.extend('Ui.Embed',
 	},
 
 	setDiv: function(div) {
-		if(this.div != undefined)
+		if(this.div !== undefined)
 			this.div.removeChild(this.getDrawing());
 		this.div = div;
-		if(this.div != undefined) {
+		if(this.div !== undefined) {
 			this.div.style.position = 'relative';
 			this.div.style.left = '0px';
 			this.div.style.top = '0px';
@@ -47,8 +47,8 @@ Ui.LBox.extend('Ui.Embed',
 	},
 
 	update: function() {
-		var aWidth = (this.getWidth() != undefined)?this.getWidth():0;
-		var aHeight = (this.getHeight() != undefined)?this.getHeight():0;
+		var aWidth = (this.getWidth() !== undefined)?this.getWidth():0;
+		var aHeight = (this.getHeight() !== undefined)?this.getHeight():0;
 		
 		var size = this.measure(aWidth, aHeight);
 		aWidth = Math.max(aWidth, size.width);
@@ -86,9 +86,9 @@ Ui.LBox.extend('Ui.Embed',
 	setContent: function(content) {
 		content = Ui.Element.create(content);
 		if(this.content != content) {
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.remove(this.content);
-			if(content != undefined)
+			if(content !== undefined)
 				this.append(content);
 			this.content = content;
 		}

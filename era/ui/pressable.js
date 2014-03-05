@@ -106,7 +106,6 @@ Ui.LBox.extend('Ui.Pressable',
 	},
 
 	onTouchEnd: function(event) {
-		event.stopPropagation();
 		event.preventDefault();
 
 		this.disconnect(this.getDrawing(), 'touchmove', this.onTouchMove);
@@ -142,7 +141,7 @@ Ui.LBox.extend('Ui.Pressable',
 	},
 
 	onUp: function() {
- 		this.isDown = false;
+		this.isDown = false;
 		this.fireEvent('up', this);
 	}
 	/**#@-*/

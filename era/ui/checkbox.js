@@ -47,7 +47,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 
 	setText: function(text) {
 		if(text === undefined) {
-			if(this.contentBox != undefined) {
+			if(this.contentBox !== undefined) {
 				this.hbox.remove(this.contentBox);
 				this.contentBox = undefined;
 			}
@@ -55,12 +55,12 @@ Ui.Togglable.extend('Ui.CheckBox',
 			this.content = undefined;
 		}
 		else {
-			if(this.text != undefined) {
+			if(this.text !== undefined) {
 				this.text = text;
 				this.contentBox.setText(this.text);
 			}
 			else {
-				if(this.content != undefined) {
+				if(this.content !== undefined) {
 					this.hbox.remove(this.contentBox);
 					this.content = undefined;
 				}
@@ -118,7 +118,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 	setContent: function(content) {
 		content = Ui.Element.create(content);
 		if(content === undefined) {
-			if(this.contentBox != undefined) {
+			if(this.contentBox !== undefined) {
 				this.hbox.remove(this.contentBox);
 				this.contentBox = undefined;
 			}
@@ -126,11 +126,11 @@ Ui.Togglable.extend('Ui.CheckBox',
 			this.content = undefined;
 		}
 		else {
-			if(this.text != undefined) {
+			if(this.text !== undefined) {
 				this.hbox.remove(this.contentBox);
 				this.text = undefined;
 			}
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.contentBox.remove(this.content);
 			else {
 				this.contentBox = new Ui.LBox({ padding: 8, verticalAlign: 'center' });

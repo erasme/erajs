@@ -13,7 +13,7 @@ Ui.CanvasElement.extend('Ui.Shadow',
 	/**
 	 * @constructs
 	 * @class
- 	 * @extends Ui.LBox
+	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
 		this.color = Ui.Color.create('black');

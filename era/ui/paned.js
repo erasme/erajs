@@ -30,9 +30,6 @@ Ui.Container.extend('Ui.Paned',
 
 		this.cursor.setContent(new Ui.VPanedCursor());
 		this.connect(this.cursor, 'move', this.onCursorMove);
-
-		if(config.orientation != undefined)
-			this.setOrientation(config.orientation);
 	},
 
 	//
@@ -78,11 +75,11 @@ Ui.Container.extend('Ui.Paned',
 	},
 
 	setContent1: function(content1) {
-		if(this.content1 != content1) {
-			if(this.content1 != undefined)
+		if(this.content1 !== content1) {
+			if(this.content1 !== undefined)
 				this.content1Box.remove(this.content1);
 			this.content1 = content1;
-			if(this.content1 != undefined)
+			if(this.content1 !== undefined)
 				this.content1Box.append(this.content1);
 		}
 	},
@@ -92,11 +89,11 @@ Ui.Container.extend('Ui.Paned',
 	},
 
 	setContent2: function(content2) {
-		if(this.content2 != content2) {
-			if(this.content2 != undefined)
+		if(this.content2 !== content2) {
+			if(this.content2 !== undefined)
 				this.content2Box.remove(this.content2);
 			this.content2 = content2;
-			if(this.content2 != undefined)
+			if(this.content2 !== undefined)
 				this.content2Box.append(this.content2);
 		}
 	},
@@ -154,25 +151,26 @@ Ui.Container.extend('Ui.Paned',
 /**@lends Ui.Paned#*/
 {
 	measureCore: function(width, height) {
+		var cursorSize; var content1Size; var content2Size;
 		if(this.vertical) {
-			var cursorSize = this.cursor.measure(width, 0);
+			cursorSize = this.cursor.measure(width, 0);
 
 			this.minContent1Size = this.content1Box.measure(width, 0).height;
 			this.minContent2Size = this.content2Box.measure(width, 0).height;
 
-			var content1Size = this.content1Box.measure(width, (height - cursorSize.height) * this.pos);
-			var content2Size = this.content2Box.measure(width, (height - cursorSize.height) * (1 - this.pos));
+			content1Size = this.content1Box.measure(width, (height - cursorSize.height) * this.pos);
+			content2Size = this.content2Box.measure(width, (height - cursorSize.height) * (1 - this.pos));
 
 			return { width: Math.max(cursorSize.width, Math.max(content1Size.width, content2Size.width)), height: content1Size.height + cursorSize.height + content2Size.height };
 		}
 		else {
-			var cursorSize = this.cursor.measure(0, height);
+			cursorSize = this.cursor.measure(0, height);
 
 			this.minContent1Size = this.content1Box.measure(0, 0).width;
 			this.minContent2Size = this.content2Box.measure(0, 0).width;
 
-			var content1Size = this.content1Box.measure((width - cursorSize.width) * this.pos, height);
-			var content2Size = this.content2Box.measure((width - cursorSize.width) * (1 - this.pos), height);
+			content1Size = this.content1Box.measure((width - cursorSize.width) * this.pos, height);
+			content2Size = this.content2Box.measure((width - cursorSize.width) * (1 - this.pos), height);
 
 			return { width: content1Size.width + cursorSize.width + content2Size.width, height: Math.max(cursorSize.height, Math.max(content1Size.height, content2Size.height)) };
 		}

@@ -17,11 +17,11 @@ Core.Object.extend('Ui.Matrix',
 	},
 
 	isTranslateOnly: function() {
-		return((this.a == 1) && (this.b == 0) && (this.c == 0) && (this.d == 1));
+		return((this.a === 1) && (this.b === 0) && (this.c === 0) && (this.d === 1));
 	},
 
 	isIdentity: function() {
-		return((this.a == 1) && (this.b == 0) && (this.c == 0) && (this.d == 1) && (this.e == 0) && (this.f == 0));
+		return((this.a === 1) && (this.b === 0) && (this.c === 0) && (this.d === 1) && (this.e === 0) && (this.f === 0));
 	},
 
 	translate: function(x, y) {
@@ -56,7 +56,7 @@ Core.Object.extend('Ui.Matrix',
 
 	inverse: function() {
 		var determinant = this.getDeterminant();
-		if(determinant == 0)
+		if(determinant === 0)
 			throw("Matrix not invertible");
 
 		var invd = 1 / determinant;
@@ -151,7 +151,7 @@ Core.Object.extend('Ui.Matrix',
 		if(typeof(stringMatrix) === 'string') {
 			// parse the matrix
 			var res;
-			if((res = stringMatrix.match(/^matrix\((-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)\)$/)) != null) {
+			if((res = stringMatrix.match(/^matrix\((-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)\)$/)) !== null) {
 				var a = parseFloat(res[1]);
 				var b = parseFloat(res[2]);
 				var c = parseFloat(res[3]);

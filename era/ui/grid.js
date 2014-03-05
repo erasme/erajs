@@ -25,9 +25,9 @@ Ui.Container.extend('Ui.Grid',
 			else if(col == '*')
 				this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: 1 });
 			else if(col.match(/^[0-9]+\.?[0-9]*\*$/))
-				this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: new Number(col.slice(0, col.length-1)) });
+				this.cols.push({ auto: false, star: true, absolute: false, actualWidth: 0, offset: 0, width: parseInt(col.slice(0, col.length-1)) });
 			else if(col.match(/^[0-9]+$/))
-				this.cols.push({ auto: false, star: false, absolute: true, actualWidth: 0, offset: 0, width: new Number(col) });
+				this.cols.push({ auto: false, star: false, absolute: true, actualWidth: 0, offset: 0, width: parseInt(col) });
 			else if(DEBUG)
 				throw('Ui.Grid column definition "'+col+'" not supported');
 		}
@@ -44,18 +44,18 @@ Ui.Container.extend('Ui.Grid',
 			else if(row == '*')
 				this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: 1 });
 			else if(row.match(/^[0-9]+\.?[0-9]*\*$/))
-				this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: new Number(row.slice(0, row.length-1)) });
+				this.rows.push({ auto: false, star: true, absolute: false, actualHeight: 0, offset: 0, height: parseInt(row.slice(0, row.length-1)) });
 			else if(row.match(/^[0-9]+$/))
-				this.rows.push({ auto: false, star: false, absolute: true, actualHeight: 0, offset: 0, height: new Number(row) });
+				this.rows.push({ auto: false, star: false, absolute: true, actualHeight: 0, offset: 0, height: parseInt(row) });
 			else if(DEBUG)
 				throw('Ui.Grid row definition "'+row+'" not supported');
 		}
 	},
 
 	setContent: function(content) {
-		while(this.getFirstChild() != undefined)
+		while(this.getFirstChild() !== undefined)
 			this.removeChild(this.getFirstChild());
-		if((content != undefined) && (typeof(content) == 'object')) {
+		if((content !== undefined) && (typeof(content) === 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
 					this.appendChild(Ui.Element.create(content[i]));
@@ -102,9 +102,10 @@ Ui.Container.extend('Ui.Grid',
 	 */
 
 	getColMin: function(colPos) {
+		var i; var i2; var currentColumn;
 		var col = this.cols[colPos];
 		var min = 0;
-		for(var i = 0; i < this.getChildren().length; i++) {
+		for(i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var childCol = Ui.Grid.getCol(child);
 			var childColSpan = Ui.Grid.getColSpan(child);
@@ -118,8 +119,8 @@ Ui.Container.extend('Ui.Grid',
 				var hasStar = false;
 				var prev = 0.0;
 					
-				for(var i2 = childCol; i2 < colPos; i2++) {
-					var currentColumn = this.cols[i2];
+				for(i2 = childCol; i2 < colPos; i2++) {
+					currentColumn = this.cols[i2];
 					prev += currentColumn.actualWidth;
 					if(currentColumn.star) {
 						hasStar = true;
@@ -128,8 +129,8 @@ Ui.Container.extend('Ui.Grid',
 				}
 				
 				if(!hasStar) {
-					for(var i2 = colPos+1; i2 < childCol + childColSpan; i2++) {
-						var currentColumn = this.cols[i2];
+					for(i2 = colPos+1; i2 < childCol + childColSpan; i2++) {
+						currentColumn = this.cols[i2];
 						if(currentColumn.star) {
 							hasStar = true;
 							break;
@@ -151,10 +152,11 @@ Ui.Container.extend('Ui.Grid',
 
 	getRowMin: function(rowPos)
 	{
+		var i; var i2; var currentRow;
 		var row = this.rows[rowPos];
 		var min = 0;
 
-		for(var i = 0; i < this.getChildren().length; i++) {
+		for(i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var childRow = Ui.Grid.getRow(child);
 			var childRowSpan = Ui.Grid.getRowSpan(child);
@@ -168,8 +170,8 @@ Ui.Container.extend('Ui.Grid',
 				var hasStar = false;
 				var prev = 0.0;
 				
-				for(var i2 = childRow; i2 < rowPos; i2++) {
-					var currentRow = this.rows[i2];
+				for(i2 = childRow; i2 < rowPos; i2++) {
+					currentRow = this.rows[i2];
 					prev += currentRow.actualHeight;
 					if(currentRow.star) {
 						hasStar = true;
@@ -178,8 +180,8 @@ Ui.Container.extend('Ui.Grid',
 				}
 
 				if(!hasStar) {
-					for(var i2 = rowPos+1; i2 < childRow + childRowSpan; i2++) {
-						var currentRow = this.rows[i2];
+					for(i2 = rowPos+1; i2 < childRow + childRowSpan; i2++) {
+						currentRow = this.rows[i2];
 						if(currentRow.star) {
 							hasStar = true;
 							break;
@@ -204,10 +206,11 @@ Ui.Container.extend('Ui.Grid',
 /**@lends Ui.Grid#*/
 {
 	measureCore: function(width, height) {
-//		console.log(this+'.measureCore('+width+','+height+')');
+		var i; var child; var col; var colSpan; var colPos;
+		var childX; var childWidth; var x; var row; var rowPos;
 
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
 			var constraintWidth = (width * Ui.Grid.getColSpan(child)) / this.cols.length;
 			var constraintHeight = (height * Ui.Grid.getRowSpan(child)) / this.rows.length;
 			child.measure(constraintWidth, constraintHeight);
@@ -219,8 +222,8 @@ Ui.Container.extend('Ui.Grid',
 		var rowStarSize = 0.0;
 			
 		var offsetX = 0;
-		for(var colPos = 0; colPos < this.cols.length; colPos++) {
-			var col = this.cols[colPos];
+		for(colPos = 0; colPos < this.cols.length; colPos++) {
+			col = this.cols[colPos];
 			col.offset = offsetX;
 			if(col.absolute)
 				col.actualWidth += col.width;
@@ -241,8 +244,8 @@ Ui.Container.extend('Ui.Grid',
 
 		// update to column auto with the proposed star width
 		offsetX = 0;
-		for(var i = 0; i < this.cols.length; i++) {
-			var col = this.cols[i];
+		for(i = 0; i < this.cols.length; i++) {
+			col = this.cols[i];
 			col.offset = offsetX;
 			if(col.star)
 				col.actualWidth = starWidth * col.width;
@@ -250,15 +253,15 @@ Ui.Container.extend('Ui.Grid',
 		}
 
 		// redo the element measure with the correct width constraint
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var col = Ui.Grid.getCol(child);
-			var colSpan = Ui.Grid.getColSpan(child);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			col = Ui.Grid.getCol(child);
+			colSpan = Ui.Grid.getColSpan(child);
 				
-			var childX = this.cols[col].offset;
-			var childWidth = 0.0;
+			childX = this.cols[col].offset;
+			childWidth = 0.0;
 				
-			for(var x = col; x < col+colSpan; x++)
+			for(x = col; x < col+colSpan; x++)
 				childWidth += this.cols[x].actualWidth;
 
 			child.measure(childWidth, height);
@@ -266,8 +269,8 @@ Ui.Container.extend('Ui.Grid',
 			
 		// redo the width measure with the new element measure
 		offsetX = 0;
-		for(var colPos = 0; colPos < this.cols.length; colPos++) {
-			var col = this.cols[colPos];
+		for(colPos = 0; colPos < this.cols.length; colPos++) {
+			col = this.cols[colPos];
 			col.offset = offsetX;
 			if(col.absolute) {
 				col.actualWidth = col.width;
@@ -283,15 +286,15 @@ Ui.Container.extend('Ui.Grid',
 		}
 						
 		// redo the element measure with the correct width constraint
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var col = Ui.Grid.getCol(child);
-			var colSpan = Ui.Grid.getColSpan(child);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			col = Ui.Grid.getCol(child);
+			colSpan = Ui.Grid.getColSpan(child);
 				
-			var childX = this.cols[col].offset;
-			var childWidth = 0.0;
+			childX = this.cols[col].offset;
+			childWidth = 0.0;
 				
-			for(var x = col; x < col+colSpan; x++)
+			for(x = col; x < col+colSpan; x++)
 				childWidth += this.cols[x].actualWidth;
 
 			child.measure(childWidth, height);
@@ -299,8 +302,8 @@ Ui.Container.extend('Ui.Grid',
 		
 		// do the height measure
 		var offsetY = 0;
-		for(var rowPos = 0; rowPos < this.rows.length; rowPos++) {
-			var row = this.rows[rowPos];
+		for(rowPos = 0; rowPos < this.rows.length; rowPos++) {
+			row = this.rows[rowPos];
 			row.offset = offsetY;
 			if(row.absolute)
 				row.actualHeight = row.height;
@@ -320,8 +323,8 @@ Ui.Container.extend('Ui.Grid',
 			
 		// update to column with the proposed star width
 		offsetY = 0;
-		for(var i = 0; i < this.rows.length; i++) {
-			var row = this.rows[i];
+		for(i = 0; i < this.rows.length; i++) {
+			row = this.rows[i];
 			row.offset = offsetY;
 			if(row.star)
 				row.actualHeight = starHeight * row.height;
@@ -329,18 +332,18 @@ Ui.Container.extend('Ui.Grid',
 		}
 			
 		// redo the element measure height the correct height constraint
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var col = Ui.Grid.getCol(child);
-			var colSpan = Ui.Grid.getColSpan(child);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			col = Ui.Grid.getCol(child);
+			colSpan = Ui.Grid.getColSpan(child);
 				
-			var childX = this.cols[col].offset;
-			var childWidth = 0.0;
+			childX = this.cols[col].offset;
+			childWidth = 0.0;
 				
-			for(var x = col; x < col+colSpan; x++)
+			for(x = col; x < col+colSpan; x++)
 				childWidth += this.cols[x].actualWidth;
 				
-			var row = Ui.Grid.getRow(child);
+			row = Ui.Grid.getRow(child);
 			var rowSpan = Ui.Grid.getRowSpan(child);
 			
 			var childY = this.rows[row].offset;
@@ -354,8 +357,8 @@ Ui.Container.extend('Ui.Grid',
 				
 		// redo the height measure with the new element measure
 		offsetY = 0;
-		for(var rowPos = 0; rowPos < this.rows.length; rowPos++) {
-			var row = this.rows[rowPos];
+		for(rowPos = 0; rowPos < this.rows.length; rowPos++) {
+			row = this.rows[rowPos];
 			row.offset = offsetY;
 			if(row.absolute) {
 				row.actualHeight = row.height;
@@ -396,7 +399,7 @@ Ui.Container.extend('Ui.Grid',
 	}
 }, {
 	getCol: function(child) {
-		return (child['Ui.Grid.col'] != undefined)?child['Ui.Grid.col']:0;
+		return (child['Ui.Grid.col'] !== undefined)?child['Ui.Grid.col']:0;
 	},
 
 	setCol: function(child, col) {
@@ -407,33 +410,33 @@ Ui.Container.extend('Ui.Grid',
 	},
 
 	getRow: function(child) {
-		return (child['Ui.Grid.row'] != undefined)?child['Ui.Grid.row']:0;
+		return (child['Ui.Grid.row'] !== undefined)?child['Ui.Grid.row']:0;
 	},
 
 	setRow: function(child, row) {
-		if(Ui.Grid.getRow(child) != row) {
+		if(Ui.Grid.getRow(child) !== row) {
 			child['Ui.Grid.row'] = row;
 			child.invalidateMeasure();
 		}
 	},
 
 	getColSpan: function(child) {
-		return (child['Ui.Grid.colSpan'] != undefined)?child['Ui.Grid.colSpan']:1;
+		return (child['Ui.Grid.colSpan'] !== undefined)?child['Ui.Grid.colSpan']:1;
 	},
 
 	setColSpan: function(child, colSpan) {
-		if(Ui.Grid.getColSpan(child) != colSpan) {
+		if(Ui.Grid.getColSpan(child) !== colSpan) {
 			child['Ui.Grid.colSpan'] = colSpan;
 			child.invalidateMeasure();
 		}
 	},
 
 	getRowSpan: function(child) {
-		return (child['Ui.Grid.rowSpan'] != undefined)?child['Ui.Grid.rowSpan']:1;
+		return (child['Ui.Grid.rowSpan'] !== undefined)?child['Ui.Grid.rowSpan']:1;
 	},
 
 	setRowSpan: function(child, rowSpan) {
-		if(Ui.Grid.getRowSpan(child) != rowSpan) {
+		if(Ui.Grid.getRowSpan(child) !== rowSpan) {
 			child['Ui.Grid.rowSpan'] = rowSpan;
 			child.invalidateMeasure();
 		}

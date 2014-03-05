@@ -29,7 +29,7 @@ Core.Object.extend('Core.HttpRequest',
 				httprequest.request.onreadystatechange = null;
 				httprequest.request = undefined;
 			}
-		}
+		};
 		wrapper.httprequest = this;
 		this.request.onreadystatechange = wrapper;
 	},
@@ -47,7 +47,7 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	setRequestHeader: function(header, value) {
-		if(this.headers == undefined)
+		if(this.headers === undefined)
 			this.headers = {};
 		this.headers[header] = value;
 	},
@@ -57,7 +57,7 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	addArgument: function(argName, argValue) {
-		if(this.arguments == undefined)
+		if(this.arguments === undefined)
 			this.arguments = {};
 		this.arguments[argName] = argValue;
 	},
@@ -71,17 +71,18 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	send: function() {
-		if(this.url == undefined)
+		if(this.url === undefined)
 			throw('url MUST be given for an HttpRequest');
+		var header;
 		// encode arguments
 		var args = '';
-		if(this.arguments != undefined) {
+		if(this.arguments !== undefined) {
 			args = Core.Util.encodeURIQuery(this.arguments);
 		}
 		var url = this.url;
 
-		if(((this.method == 'GET') || (this.method == 'DELETE') || (this.content != undefined)) && (args != '')) {
-			if(this.url.indexOf('?') == -1)
+		if(((this.method === 'GET') || (this.method === 'DELETE') || (this.content !== undefined)) && (args !== '')) {
+			if(this.url.indexOf('?') === -1)
 				url += '?'+args;
 			else
 				url += '&'+args;
@@ -90,21 +91,21 @@ Core.Object.extend('Core.HttpRequest',
 		if(this.binary)
 			this.request.overrideMimeType('text/plain; charset=x-user-defined');
 		this.request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		if(Core.HttpRequest.requestHeaders != undefined) {
-			for(var header in Core.HttpRequest.requestHeaders)
+		if(Core.HttpRequest.requestHeaders !== undefined) {
+			for(header in Core.HttpRequest.requestHeaders)
 				this.request.setRequestHeader(header, Core.HttpRequest.requestHeaders[header]);
 		}
-		if(this.headers != undefined) {
-			for(var header in this.headers)
+		if(this.headers !== undefined) {
+			for(header in this.headers)
 				this.request.setRequestHeader(header, this.headers[header]);
 		}
 		if(this.content !== undefined) {
-			if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
+			if((this.headers === undefined) || (this.headers["Content-Type"] === undefined))
 				this.request.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
 			this.request.send(this.content);
 		}
-		else if((args !== '') && ((this.method == 'POST') || (this.method == 'PUT'))) {
-			if((this.headers == undefined) || (this.headers["Content-Type"] == undefined))
+		else if((args !== '') && ((this.method === 'POST') || (this.method === 'PUT'))) {
+			if((this.headers === undefined) || (this.headers["Content-Type"] === undefined))
 				this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			this.request.send(args);
 		}
@@ -121,37 +122,7 @@ Core.Object.extend('Core.HttpRequest',
 	},
 
 	getResponseBase64: function() {
-		var value = this.request.responseText;
-		var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		var res = '';
-		var i = 0;
-		while(i + 2 < value.length) {
-			var val1 = value.charCodeAt(i++) & 0xff;
-			var val2 = value.charCodeAt(i++) & 0xff;
-			var val3 = value.charCodeAt(i++) & 0xff;
-			var enc1 = code[val1 >> 2];
-			var enc2 = code[((val1 & 3) << 4) | (val2 >> 4)];
-			var enc3 = code[((val2 & 15) << 2) | (val3 >> 6)];
-			var enc4 = code[val3 & 63];
-			res += enc1+enc2+enc3+enc4;
-		}
-		// 2 bytes
-		if(i + 1 < value.length) {
-			var val1 = value.charCodeAt(i++) & 0xff;
-			var val2 = value.charCodeAt(i++) & 0xff;
-			var enc1 = code[val1 >> 2];
-			var enc2 = code[((val1 & 3) << 4) | (val2 >> 4)];
-			var enc3 = code[(val2 & 15) << 2];
-			res += enc1+enc2+enc3+'=';
-		}
-		// 1 byte
-		else if(i < value.length) {
-			var val1 = value.charCodeAt(i++) & 0xff;
-			var enc1 = code[val1 >> 2];
-			var enc2 = code[(val1 & 3) << 4];
-			res += enc1+enc2+'==';
-		}
-		return res;
+		return this.request.responseText.toBase64();
 	},
 
 	getResponseJSON: function() {
@@ -181,7 +152,7 @@ Core.Object.extend('Core.HttpRequest',
 	requestHeaders: undefined,
 
 	setRequestHeader: function(header, value) {
-		if(Core.HttpRequest.requestHeaders == undefined)
+		if(Core.HttpRequest.requestHeaders === undefined)
 			Core.HttpRequest.requestHeaders =  {};
 		Core.HttpRequest.requestHeaders[header] = value;
 	}

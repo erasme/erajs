@@ -37,14 +37,14 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	getFontSize: function() {
-		if(this.fontSize != undefined)
+		if(this.fontSize !== undefined)
 			return this.fontSize;
 		else
 			return this.getStyleProperty('fontSize');
 	},
 
 	setFontFamily: function(fontFamily) {
-		if(this.fontFamily != fontFamily) {
+		if(this.fontFamily !== fontFamily) {
 			this.fontFamily = fontFamily;
 			this.getDrawing().style.fontFamily = this.getFontFamily();
 			this.invalidateMeasure();
@@ -52,14 +52,14 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	getFontFamily: function() {
-		if(this.fontFamily != undefined)
+		if(this.fontFamily !== undefined)
 			return this.fontFamily;
 		else
 			return this.getStyleProperty('fontFamily');
 	},
 
 	setFontWeight: function(fontWeight) {
-		if(this.fontWeight != fontWeight) {
+		if(this.fontWeight !== fontWeight) {
 			this.fontWeight = fontWeight;
 			this.getDrawing().style.fontWeight = this.getFontWeight();
 			this.invalidateMeasure();
@@ -67,14 +67,14 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	getFontWeight: function() {
-		if(this.fontWeight != undefined)
+		if(this.fontWeight !== undefined)
 			return this.fontWeight;
 		else
 			return this.getStyleProperty('fontWeight');
 	},
 
 	setColor: function(color) {
-		if(this.color != color) {
+		if(this.color !== color) {
 			this.color = Ui.Color.create(color);
 			if(navigator.supportRgba)
 				this.getDrawing().style.color = this.getColor().getCssRgba();
@@ -84,7 +84,7 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	getColor: function() {
-		if(this.color != undefined)
+		if(this.color !== undefined)
 			return this.color;
 		else
 			return Ui.Color.create(this.getStyleProperty('color'));
@@ -141,7 +141,7 @@ Ui.Element.extend('Ui.TextArea',
 
 	onKeyDown: function(event) {
 		if((event.which == 13) || (event.which == 37) || (event.which == 38) || (event.which == 40) ||
-		   (event.which == 39) || (event.which == 36) || (event.which == 35)) {
+			(event.which == 39) || (event.which == 36) || (event.which == 35)) {
 			event.stopPropagation();
 		}
 	},

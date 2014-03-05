@@ -22,7 +22,7 @@ Ui.Container.extend('Ui.Flow',
 	 * array of given items
 	 */
 	setContent: function(content) {
-		while(this.getFirstChild() != undefined)
+		while(this.getFirstChild() !== undefined)
 			this.removeChild(this.getFirstChild());
 		if((content !== undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
@@ -136,7 +136,7 @@ Ui.Container.extend('Ui.Flow',
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var size = child.measure(width, height);
-			if((ctx.lineX != 0) && (ctx.lineX + size.width > width)) {
+			if((ctx.lineX !== 0) && (ctx.lineX + size.width > width)) {
 				line.width = ctx.lineX - this.spacing;
 				line.height = ctx.lineHeight;
 				ctx.lineX = 0;
@@ -162,11 +162,12 @@ Ui.Container.extend('Ui.Flow',
 	},
 
 	measureChildrenUniform: function(width, height) {
+		var i; var child; var size;
 		var maxWidth = 0;
 		var maxHeight = 0;
-		for(var i = 0; i < this.getChildren().length; i++) {
-			var child = this.getChildren()[i];
-			var size = child.measure(width, height);
+		for(i = 0; i < this.getChildren().length; i++) {
+			child = this.getChildren()[i];
+			size = child.measure(width, height);
 			if(size.width > maxWidth)
 				maxWidth = size.width;
 			if(size.height > maxHeight)
@@ -176,7 +177,7 @@ Ui.Container.extend('Ui.Flow',
 		
 		var nbLine = Math.ceil(this.getChildren().length / countPerLine);
 
-		for(var i = 0; i < this.getChildren().length; i++)
+		for(i = 0; i < this.getChildren().length; i++)
 			this.getChildren()[i].measure(maxWidth, maxHeight);
 		this.uniformWidth = maxWidth;
 		this.uniformHeight = maxHeight;
@@ -190,7 +191,7 @@ Ui.Container.extend('Ui.Flow',
 /**@lends Ui.Flow#*/
 {
 	measureCore: function(width, height) {
-		if(this.getChildren().length == 0)
+		if(this.getChildren().length === 0)
 			return { width: 0, height: 0 };
 		if(this.uniform)
 			return this.measureChildrenUniform(width, height);
@@ -199,12 +200,13 @@ Ui.Container.extend('Ui.Flow',
 	},
 
 	arrangeCore: function(width, height) {
+		var x; var y; var i; var child;
 		if(this.uniform) {
-			if(this.itemAlign == 'left') {
-				var x = 0;
-				var y = 0;
-				for(var i = 0; i < this.getChildren().length; i++) {
-					var child = this.getChildren()[i];
+			if(this.itemAlign === 'left') {
+				x = 0;
+				y = 0;
+				for(i = 0; i < this.getChildren().length; i++) {
+					child = this.getChildren()[i];
 					if(x + this.uniformWidth > width) {
 						x = 0;
 						y += this.uniformHeight + this.spacing;
@@ -213,8 +215,7 @@ Ui.Container.extend('Ui.Flow',
 					x += this.uniformWidth + this.spacing;
 				}
 			}
-			else if(this.itemAlign == 'right') {
-				var x;
+			else if(this.itemAlign === 'right') {
 				var nbItemPerLine = Math.max(Math.floor((width+this.spacing)/(this.uniformWidth+this.spacing)), 1);
 				var lineWidth = nbItemPerLine*this.uniformWidth + (nbItemPerLine-1)*this.spacing;
 				
@@ -222,9 +223,9 @@ Ui.Container.extend('Ui.Flow',
 					x = width - ((this.getChildren().length*(this.uniformWidth+this.spacing)) - this.spacing);
 				else
 					x = width - lineWidth;
-				var y = 0;
-				for(var i = 0; i < this.getChildren().length; i++) {
-					var child = this.getChildren()[i];
+				y = 0;
+				for(i = 0; i < this.getChildren().length; i++) {
+					child = this.getChildren()[i];
 					if(x + this.uniformWidth > width) {
 						if(this.getChildren().length - i < nbItemPerLine)
 							x = width - (((this.getChildren().length-i)*(this.uniformWidth+this.spacing)) - this.spacing);
@@ -238,8 +239,8 @@ Ui.Container.extend('Ui.Flow',
 			}
 		}
 		else {
-			for(var i = 0; i < this.getChildren().length; i++) {
-				var child = this.getChildren()[i];
+			for(i = 0; i < this.getChildren().length; i++) {
+				child = this.getChildren()[i];
 				if(this.itemAlign == 'left')
 					child.arrange(child.flowLineX, child.flowLine.y, child.getMeasureWidth(), child.flowLine.height);
 				else

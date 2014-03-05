@@ -156,11 +156,11 @@ Ui.Element.extend('Ui.Text',
 			this.maxWidth = word.size;
 		var newOffsetX = this.offsetX + word.size;
 
-		if(this.line != '')
+		if(this.line !== '')
 			newOffsetX += this.spaceWidth;
 		if(newOffsetX > this.maxWidth)
 			this.flushLine(this.offsetX);
-		if(this.line != '') {
+		if(this.line !== '') {
 			this.line += ' ';
 			this.offsetX += this.spaceWidth;
 		}
@@ -173,7 +173,7 @@ Ui.Element.extend('Ui.Text',
 	},
 
 	flushLine: function(lineWidth) {
-		if(this.flowRender && (this.line != '')) {
+		if(this.flowRender && (this.line !== '')) {
 			var tspan = document.createElement('div');
 			tspan.style.whiteSpace = 'nowrap';
 			tspan.style.display = 'inline';
@@ -214,10 +214,10 @@ Ui.Element.extend('Ui.Text',
 		var word = '';
 		var i;
 		for(i = 0; i < this.words.length; i++) {
-			var word = this.words[i];
-			if(word.type == 'word')
+			word = this.words[i];
+			if(word.type === 'word')
 				this.addWord(word);
-			else if(word.type == 'newline')
+			else if(word.type === 'newline')
 				this.newLine();
 		}
 	},
@@ -226,18 +226,18 @@ Ui.Element.extend('Ui.Text',
 		var word = '';
 		var words = [];
 		for(var i = 0; i < this.text.length; i++) {
-			if((this.text.charAt(i) == ' ') || (this.text.charAt(i) == '\n')) {
-				if(word != '') {
+			if((this.text.charAt(i) === ' ') || (this.text.charAt(i) === '\n')) {
+				if(word !== '') {
 					words.push({ type: 'word', word: word });
 					word = '';
 				}
-				if(this.text.charAt(i) == '\n')
+				if(this.text.charAt(i) === '\n')
 					words.push({ type: 'newline' });
 			}
 			else
 				word += this.text.charAt(i);
 		}
-		if(word != '')
+		if(word !== '')
 			words.push({ type: 'word', word: word });
 		words.push({ type: 'newline' });
 		this.words = words;
@@ -283,7 +283,7 @@ Ui.Element.extend('Ui.Text',
 
 	measureCore: function(width, height) {
 		if(this.getWidth() !== undefined)
-			width = this.getWidth()
+			width = this.getWidth();
 		this.updateMeasure();
 		this.updateFlow(width, false);
 		if(this.getWidth() === undefined)

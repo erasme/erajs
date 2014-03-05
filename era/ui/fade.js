@@ -6,7 +6,7 @@ Ui.Transition.extend('Ui.Fade',
 /**@lends Ui.Fade#*/ 
 {
 	run: function(current, next, progress) {	
-		if(current != undefined) {
+		if(current !== undefined) {
 			if(progress == 1) {
 				current.hide();
 				current.setOpacity(1);
@@ -14,7 +14,7 @@ Ui.Transition.extend('Ui.Fade',
 			else
 				current.setOpacity(Math.min(1, Math.max(0, 1 - progress*3)));
 		}
-		if(next != undefined)
+		if(next !== undefined)
 			next.setOpacity(progress);
 	}
 }, 

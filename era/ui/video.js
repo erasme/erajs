@@ -20,12 +20,12 @@ Ui.Element.extend('Ui.Video',
 	constructor: function(config) {
 		this.addEvents('ready', 'ended', 'timeupdate', 'bufferingupdate', 'statechange', 'error');
 		this.connect(this, 'unload', this.onVideoUnload);
-		if((config.oggSrc != undefined) || (config.mp4Src != undefined) || (config.webmSrc != undefined)) {
-			if((config.oggSrc != undefined) && (Ui.Video.supportOgg))
+		if((config.oggSrc !== undefined) || (config.mp4Src !== undefined) || (config.webmSrc !== undefined)) {
+			if((config.oggSrc !== undefined) && (Ui.Video.supportOgg))
 				this.setSrc(config.oggSrc);
-			else if((config.mp4Src != undefined) && (Ui.Video.supportMp4))
+			else if((config.mp4Src !== undefined) && (Ui.Video.supportMp4))
 				this.setSrc(config.mp4Src);
-			else if((config.webmSrc != undefined) && (Ui.Video.supportWebm))
+			else if((config.webmSrc !== undefined) && (Ui.Video.supportWebm))
 				this.setSrc(config.webmSrc);
 			delete(config.oggSrc);
 			delete(config.mp4Src);
@@ -133,7 +133,7 @@ Ui.Element.extend('Ui.Video',
 	 * This value is only known after the ready event.
 	 */
 	getCurrentTime: function() {
-		if(this.videoDrawing.currentTime == undefined)
+		if(this.videoDrawing.currentTime === undefined)
 			return 0;
 		else
 			return this.videoDrawing.currentTime;
@@ -208,13 +208,13 @@ Ui.Element.extend('Ui.Video',
 		var buffered = this.videoDrawing.buffered;
 		var timebuffer = 0;
 		var time = this.videoDrawing.currentTime;
-		if(time == undefined)
+		if(time === undefined)
 			time = 0;
-		var lastEnd = undefined;
+		var lastEnd;
 		for(var i = 0; i < buffered.length; i++) {
 			var start = buffered.start(i);
 			var end = buffered.end(i);
-			if(lastEnd == undefined) {
+			if(lastEnd === undefined) {
 				if((start <= time) && (end >= time)) {
 					timebuffer = end - time;
 					lastEnd = end;
@@ -311,11 +311,11 @@ Ui.Video.supportWebm = false;
 
 // check for HTMLVideoElement
 Ui.Video.videoTest = document.createElement('video');
-if(Ui.Video.videoTest.play != undefined) {
+if(Ui.Video.videoTest.play !== undefined) {
 	Ui.Video.htmlVideo = true;
-	Ui.Video.supportMp4 = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-	Ui.Video.supportOgg = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/ogg; codecs="theora, vorbis"');
-	Ui.Video.supportWebm = !!Ui.Video.videoTest.canPlayType && "" != Ui.Video.videoTest.canPlayType('video/webm; codecs="vp8, vorbis"');
+	Ui.Video.supportMp4 = !!Ui.Video.videoTest.canPlayType && '' !== Ui.Video.videoTest.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+	Ui.Video.supportOgg = !!Ui.Video.videoTest.canPlayType && '' !== Ui.Video.videoTest.canPlayType('video/ogg; codecs="theora, vorbis"');
+	Ui.Video.supportWebm = !!Ui.Video.videoTest.canPlayType && '' !== Ui.Video.videoTest.canPlayType('video/webm; codecs="vp8, vorbis"');
 }
 delete(Ui.Video.videoTest);
 

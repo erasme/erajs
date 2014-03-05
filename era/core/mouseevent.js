@@ -58,35 +58,35 @@ Core.Object.extend('Core.MouseManager',
 
 		var wrapperDown = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapperDown.scope = this;
 		wrapperDown.callback = this.onMouseDown;
 		document.attachEvent('onmousedown', wrapperDown);
 
 		var wrapperMove = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapperMove.scope = this;
 		wrapperMove.callback = this.onMouseMove;
 		document.attachEvent('onmousemove', wrapperMove);
 
 		var wrapperUp = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapperUp.scope = this;
 		wrapperUp.callback = this.onMouseUp;
 		document.attachEvent('onmouseup', wrapperUp);
 
 		var wrapperDblClick = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapperDblClick.scope = this;
 		wrapperDblClick.callback = this.onMouseDblClick;
 		document.attachEvent('ondblclick', wrapperDblClick);
 
 		var wrapperClick = function() {
 			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-		}
+		};
 		wrapperClick.scope = this;
 		wrapperClick.callback = this.onMouseClick;
 		document.attachEvent('onclick', wrapperClick);
@@ -159,16 +159,16 @@ Core.Object.extend('Core.MouseManager',
 	},
 
 	onMouseUp: function(event) {
-		if(this.captureElement != undefined)
+		if(this.captureElement !== undefined)
 			this.captureElement.releaseCapture();
 
 		var target = Core.Event.cleanTarget(event.srcElement);
 		var mouseEvent = document.createEvent('MouseEvents');
 		// rename button for IE
 		var button = event.button;
-		if(button == 1)
+		if(button === 1)
 			button = 0;
-		else if(button == 4)
+		else if(button === 4)
 			button = 1;
 		mouseEvent.initMouseEvent('mouseup', true, true, event.view, event.detail,
 			event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey,
@@ -180,6 +180,6 @@ Core.Object.extend('Core.MouseManager',
 });
 
 // load mouse support for old IE
-if(('attachEvent' in window) && ((navigator.userAgent.match(/MSIE 7.0/i) != null) || (navigator.userAgent.match(/MSIE 8.0/i))))
+if(('attachEvent' in window) && (navigator.isIE7 || navigator.isIE8))
 	new Core.MouseManager();
 

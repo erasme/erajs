@@ -122,18 +122,18 @@ Core.Object.extend('Anim.Clock',
 
 	begin: function() {
 		// if this clock is the root clock, add to the TimeManager
-		if(this.parent == undefined) {
+		if(this.parent === undefined) {
 			if(this.animation)
 				Anim.AnimationManager.current.add(this);
 			else
 				Anim.TimeManager.current.add(this);
 		}
-		else if(this.scope == undefined)
+		else if(this.scope === undefined)
 			this.scope = this.parent.scope;
 
 		this.pendingState = 'active';
 		// attach the clock to an element
-		if((this.target != undefined) && (this.target.setAnimClock != undefined))
+		if((this.target !== undefined) && (this.target.setAnimClock !== undefined))
 			this.target.setAnimClock(this);
 	},
 
@@ -151,7 +151,7 @@ Core.Object.extend('Anim.Clock',
 
 	onComplete: function() {
 		// if the current clock is the root clock, remove it from the timemanager
-		if(this.parent == undefined) {
+		if(this.parent === undefined) {
 			if(this.animation)
 				Anim.AnimationManager.current.remove(this);
 			else
@@ -162,7 +162,7 @@ Core.Object.extend('Anim.Clock',
 
 	onTimeUpdate: function(deltaTick) {
 		var progress = this.getProgress();
-		if(this.ease != undefined)
+		if(this.ease !== undefined)
 			progress = this.ease.ease(progress);
 		this.fireEvent('timeupdate', this, progress, deltaTick);
 	},
@@ -174,7 +174,7 @@ Core.Object.extend('Anim.Clock',
 			this.pendingState = 'none';
 			
 			// handle pending state
-			if(state == 'none') {
+			if(state === 'none') {
 				if(this.isActive && !this.isPaused) {
 					// update time
 					var deltaTick = parentGlobalTime - this.lastTick;
@@ -183,13 +183,13 @@ Core.Object.extend('Anim.Clock',
 					globalTime -= this.beginTime;
 
 					if(globalTime >= 0) {
-						if((this.duration != 'forever') && (this.duration != 'automatic')) {
+						if((this.duration !== 'forever') && (this.duration !== 'automatic')) {
 							var iteration = globalTime / this.duration;
 							var iterationRounded = Math.floor(iteration+1);
 							var time = globalTime % this.duration;
 
 							if(this.autoReverse) {
-								if((iterationRounded & 1) == 0)
+								if((iterationRounded & 1) === 0)
 									time = this.duration - time;
 								iteration /= 2;
 								iterationRounded = Math.floor(iteration+1);
@@ -274,7 +274,7 @@ Core.Object.extend('Anim.Clock',
 			}
 		} while(this.pendingState != 'none');
 		// check if clock completed (= root and no more active)
-		if((this.parent == undefined) && !this.isActive)
+		if((this.parent === undefined) && !this.isActive)
 			this.onComplete();
 	}
 });

@@ -26,9 +26,9 @@ Ui.Container.extend('Ui.Box',
 	},
 
 	setContent: function(content) {
-		while(this.getFirstChild() != undefined)
+		while(this.getFirstChild() !== undefined)
 			this.removeChild(this.getFirstChild());
-		if((content != undefined) && (typeof(content) == 'object')) {
+		if((content !== undefined) && (typeof(content) === 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
 					this.append(content[i]);
@@ -272,6 +272,7 @@ Ui.Container.extend('Ui.Box',
 	},
 
 	measureNonUniformVertical: function(width, height) {
+		var i; var child; var size;
 		var constraintWidth = width;
 		var constraintHeight = height;
 		constraintHeight -= this.spacing * (this.getChildren().length - 1);
@@ -283,9 +284,9 @@ Ui.Container.extend('Ui.Box',
 		var star = 0;
 
 		while(loop) {
-			for(var i = 0; i < this.getChildren().length; i++) {
-				var child = this.getChildren()[i];
-				var size = child.measure(constraintWidth, 0);
+			for(i = 0; i < this.getChildren().length; i++) {
+				child = this.getChildren()[i];
+				size = child.measure(constraintWidth, 0);
 				if(size.width > minWidth)
 					minWidth = size.width;
 				if(!Ui.Box.getResizable(child)) {
@@ -311,8 +312,8 @@ Ui.Container.extend('Ui.Box',
 			star = remainHeight / countResizable;
 			do {
 				starFound = true;
-				for(var i = 0; i < this.getChildren().length; i++) {
-					var child = this.getChildren()[i];
+				for(i = 0; i < this.getChildren().length; i++) {
+					child = this.getChildren()[i];
 					if(Ui.Box.getResizable(child)) {
 						if(!child.boxStarDone) {
 							if(child.getMeasureHeight() > star) {
@@ -343,6 +344,7 @@ Ui.Container.extend('Ui.Box',
 	},
 
 	measureNonUniformHorizontal: function(width, height) {
+		var i; var child; var size; var star;
 		var constraintWidth = width;
 		var constraintHeight = height;
 		constraintWidth -= this.spacing * (this.getChildren().length - 1);
@@ -358,10 +360,10 @@ Ui.Container.extend('Ui.Box',
 			minHeight = 0;
 
 			// handle not resizable
-			for(var i = 0; i < this.getChildren().length; i++) {
-				var child = this.getChildren()[i];
+			for(i = 0; i < this.getChildren().length; i++) {
+				child = this.getChildren()[i];
 				if(!Ui.Box.getResizable(child)) {
-					var size = child.measure(0, constraintHeight);
+					size = child.measure(0, constraintHeight);
 					if(size.height > minHeight)
 						minHeight = size.height;
 					minWidth += size.width;
@@ -374,14 +376,14 @@ Ui.Container.extend('Ui.Box',
 			if(countResizable > 0) {
 				var remainWidth = constraintWidth - minWidth;
 				var starFound = true;
-				var star = remainWidth / countResizable;
+				star = remainWidth / countResizable;
 				do {
 					starFound = true;
-					for(var i = 0; i < this.getChildren().length; i++) {
-						var child = this.getChildren()[i];
+					for(i = 0; i < this.getChildren().length; i++) {
+						child = this.getChildren()[i];
 						if(Ui.Box.getResizable(child)) {
 							if(!child.boxStarDone) {
-								var size = child.measure(star, constraintHeight);
+								size = child.measure(star, constraintHeight);
 								if(size.height > minHeight)
 									minHeight = size.height;
 								if(size.width > star) {
@@ -450,7 +452,7 @@ Ui.Container.extend('Ui.Box',
 		var offset = this.vertical?top:left;
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
-			if(i != 0)
+			if(i !== 0)
 				offset += this.spacing;
 
 			if(this.uniform) {

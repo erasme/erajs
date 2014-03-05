@@ -196,7 +196,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 	
 	remove: function(child) {
 		var i = 0;
-		while((i < this.items.length) && (this.items[i] != child)) { i++ };
+		while((i < this.items.length) && (this.items[i] !== child)) { i++; }
 		if(i < this.items.length) {
 			this.items.splice(i, 1);
 			if(child.getParent() === this)
@@ -213,7 +213,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 		if(position >= this.items.length)
 			position = this.items.length;
 		var i = 0;
-		while((i < this.items.length) && (this.items[i] !== child)) { i++ };
+		while((i < this.items.length) && (this.items[i] !== child)) { i++; }
 		if(i < this.items.length) {
 			this.items.splice(i, 1);
 			this.items.splice(position, 0, child);
@@ -283,7 +283,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 		var bottom = this.getPaddingBottom();
 		var constraintWidth = Math.max(0, width - (left + right));
 		var constraintHeight = Math.max(0, height - (top + bottom));
-		var size;
+		var size; var i;
 
 //		console.log(this+'.measureCore('+width+','+height+') START');
 
@@ -297,7 +297,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 		var minSizes = [];
 
 		// set all item as graphical childs and get their min sizes
-		for(var i = 0; i < this.items.length; i++) {
+		for(i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
 			if(item.getParent() !== this) {
 				if(item.getParent() !== undefined)
@@ -315,7 +315,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 		var maxItemHeight = buttonSize.height;
 		var minItemsSize = 0;
 
-		var i = (this.menuPosition === 'left')?(i = this.items.length-1):0;
+		i = (this.menuPosition === 'left')?(i = this.items.length-1):0;
 		while((i>= 0) && (i< this.items.length)) {
 			var minSize = minSizes[i];
 			if(totalWidth + minSize.width + this.spacing > constraintWidth)
@@ -359,7 +359,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 		if(this.uniform) {
 			// we can respect the uniform constraint
 			if((this.keepItems.length * (maxItemWidth + this.spacing)) - this.spacing <= constraintWidth) {
-				for(var i = 0; i < this.keepItems.length; i++)
+				for(i = 0; i < this.keepItems.length; i++)
 					this.keepItems[i].measure(maxItemWidth, maxItemHeight);
 				this.uniformSize = maxItemWidth;
 				size = { width: ((this.keepItems.length * (maxItemWidth + this.spacing)) - this.spacing), height: maxItemHeight };
@@ -378,11 +378,11 @@ Ui.Container.extend('Ui.MenuToolBar',
 				var star = remainWidth / countResizable;
 				do {
 					starFound = true;
-					for(var i = 0; i < this.keepItems.length; i++) {
+					for(i = 0; i < this.keepItems.length; i++) {
 						var child = this.getChildren()[i];
 						if(Ui.MenuToolBar.getResizable(child)) {
 							if(!child.menutoolbarStarDone) {
-								var size = child.measure(star, constraintHeight);
+								size = child.measure(star, constraintHeight);
 								if(size.height > maxItemHeight)
 									maxItemHeight = size.height;
 								if(size.width > star) {
@@ -449,7 +449,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 			var item = this.keepItems[i];
 			if(first)
 				first = false;
-			else 				
+			else
 				x += this.spacing;
 			var itemWidth;
 			if(this.uniform && (this.uniformSize !== undefined))
@@ -466,7 +466,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 		if(this.menuNeeded && (this.menuPosition !== 'left')) {
 			if(first)
 				first = false;
-			else 				
+			else
 				x += this.spacing;
 			this.menuButton.arrange(x, y, this.menuButton.getMeasureWidth(), height);
 		}

@@ -44,13 +44,14 @@ Core.Object.extend('Ui.SFlowState', {
 	},
 
 	append: function(el) {
+		var zone; var isstart; var isstartline; var isendline;
 		var floatVal = Ui.SFlow.getFloat(el);
 //		console.log(this+'.append('+el+') float: '+float);
 		var	size = el.measure(this.width, 0);
 		if(floatVal === 'none') {
 			while(true) {
-				var zone = this.zones[this.currentZone];
-				var isstart = false;
+				zone = this.zones[this.currentZone];
+				isstart = false;
 				if(zone.xstart === this.xpos) isstart = true;
 //				console.log('test xpos: '+this.xpos+', width: '+size.width+', xend: '+zone.xend);
 				if(this.xpos + size.width + ((isstart)?0:this.spacing) <= zone.xend) {
@@ -73,8 +74,8 @@ Core.Object.extend('Ui.SFlowState', {
 		// insert in the nearest free left part of the screen
 		else if(floatVal === 'left') {
 			while(true) {
-				var zone = this.zones[this.currentZone];
-				var isstartline = false;
+				zone = this.zones[this.currentZone];
+				isstartline = false;
 				if(this.xpos === 0) isstartline = true; 
 				if(isstartline && (size.width <= zone.xend - this.xpos)) {
 					// draw
@@ -91,8 +92,8 @@ Core.Object.extend('Ui.SFlowState', {
 		// insert in the nearest free right part of the screen
 		else if(floatVal === 'right') {
 			while(true) {
-				var zone = this.zones[this.currentZone];
-				var isendline = false;
+				zone = this.zones[this.currentZone];
+				isendline = false;
 				if(this.width == zone.xend) isendline = true;
 				if(isendline && (size.width <= zone.xend - this.xpos)) {
 					// draw
@@ -152,6 +153,7 @@ Core.Object.extend('Ui.SFlowState', {
 	},
 
 	calculZone: function() {
+		var zone;
 		this.zones = [{ xstart: 0, xend: this.width }];
 		for(var i2 = 0; i2 < this.boxes.length; i2++) {
 			var box = this.boxes[i2];
@@ -161,7 +163,7 @@ Core.Object.extend('Ui.SFlowState', {
 			}
 			var tmpZones = [];
 			for(var i = 0; i < this.zones.length; i++) {
-				var zone = this.zones[i];
+				zone = this.zones[i];
 				// check different x split
 				if((box.x <= zone.xstart) && (box.x+box.width < zone.xend))
 					tmpZones.push({ xstart: box.x+box.width, xend: zone.xend });
@@ -183,7 +185,7 @@ Core.Object.extend('Ui.SFlowState', {
 		}
 		// search the zone we are in now
 		for(this.currentZone = 0; this.currentZone < this.zones.length; this.currentZone++) {
-			var zone = this.zones[this.currentZone];
+			zone = this.zones[this.currentZone];
 			if((this.xpos >= zone.xstart) && (this.xpos <= zone.xend)) {
 				break;
 			}
@@ -193,7 +195,7 @@ Core.Object.extend('Ui.SFlowState', {
 			this.currentZone = -1;
 			// look for the first available zone after xpos
 			for(this.currentZone = 0; this.currentZone < this.zones.length; this.currentZone++) {
-				var zone = this.zones[this.currentZone];
+				zone = this.zones[this.currentZone];
 				if(zone.xstart >= this.xpos) {
 					this.xpos = zone.xstart;
 					break;
@@ -209,10 +211,10 @@ Core.Object.extend('Ui.SFlowState', {
 	flush: function() {
 //		console.log('flush');
 		// if some draw command have not been done, flush the current line
-		if(this.drawCount != 0) this.nextLine();
+		if(this.drawCount !== 0) this.nextLine();
 		while(true) {
 			var zone = this.zones[this.currentZone];
-			if((zone.xstart == this.xpos) &&  (zone.xend == this.xpos+this.width)) {
+			if((zone.xstart === this.xpos) &&  (zone.xend === this.xpos+this.width)) {
 //				console.log('flush free zone found');
 				break;
 			}
@@ -254,7 +256,7 @@ Core.Object.extend('Ui.SFlowState', {
 //				console.log(this.zones);
 //				throw('break');
 			}
-		} while(this.zones.length == 0);
+		} while(this.zones.length === 0);
 		this.currentZone = 0;
 		this.xpos = this.zones[0].xstart;
 	},
@@ -295,10 +297,10 @@ Ui.Container.extend('Ui.SFlow',
 	 * array of given items
 	 */
 	setContent: function(content) {
-		while(this.getFirstChild() != undefined)
+		while(this.getFirstChild() !== undefined)
 			this.removeChild(this.getFirstChild());
-		if((content !== undefined) && (typeof(content) == 'object')) {
-			if(content.constructor == Array) {
+		if((content !== undefined) && (typeof(content) === 'object')) {
+			if(content.constructor === Array) {
 				for(var i = 0; i < content.length; i++)
 					this.appendChild(Ui.Element.create(content[i]));
 			}
@@ -415,7 +417,7 @@ Ui.Container.extend('Ui.SFlow',
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var size = child.measure(width, height);
-			if((ctx.lineX != 0) && (ctx.lineX + size.width > width)) {
+			if((ctx.lineX !== 0) && (ctx.lineX + size.width > width)) {
 				line.width = ctx.lineX - this.spacing;
 				line.height = ctx.lineHeight;
 				ctx.lineX = 0;
@@ -441,9 +443,10 @@ Ui.Container.extend('Ui.SFlow',
 	},
 
 	measureChildrenUniform: function(width, height) {
+		var i;
 		var maxWidth = 0;
 		var maxHeight = 0;
-		for(var i = 0; i < this.getChildren().length; i++) {
+		for(i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var size = child.measure(width, height);
 			if(size.width > maxWidth)
@@ -455,7 +458,7 @@ Ui.Container.extend('Ui.SFlow',
 		
 		var nbLine = Math.ceil(this.getChildren().length / countPerLine);
 
-		for(var i = 0; i < this.getChildren().length; i++)
+		for(i = 0; i < this.getChildren().length; i++)
 			this.getChildren()[i].measure(maxWidth, maxHeight);
 		this.uniformWidth = maxWidth;
 		this.uniformHeight = maxHeight;
@@ -471,7 +474,7 @@ Ui.Container.extend('Ui.SFlow',
 	measureCore: function(width, height) {
 //		console.log(this+'.measureCore('+width+','+height+')');
 
-		if(this.getChildren().length == 0)
+		if(this.getChildren().length === 0)
 			return { width: 0, height: 0 };
 
 		var state = new Ui.SFlowState({ width: width, render: false, spacing: this.spacing, align: this.itemAlign });

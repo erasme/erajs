@@ -45,7 +45,7 @@ Core.Object.extend('Core.Socket',
 			this.port = config.port;
 			delete(config.port);
 		}
-		else if((document.location.port != undefined) && (document.location.port != ''))
+		else if((document.location.port !== undefined) && (document.location.port !== ''))
 			this.port = document.location.port;
 		else {
 			if(this.secure)
@@ -71,9 +71,6 @@ Core.Object.extend('Core.Socket',
 			else
 				this.mode = 'poll';
 		}
-
-		//console.log('new Socket mode: '+this.mode);
-
 		if(this.mode == 'websocket') {
 			this.websocket = new WebSocket((this.secure?'wss':'ws')+'://'+this.host+':'+this.port+this.service);
 			this.websocketdelay = new Core.DelayedTask({ scope: this, callback: this.onWebSocketOpenTimeout, delay: 30 });
@@ -93,7 +90,7 @@ Core.Object.extend('Core.Socket',
 	},
 
 	send: function(msg) {
-		if(this.websocket != undefined) {
+		if(this.websocket !== undefined) {
 			this.websocket.send(msg);
 		}
 		else {
@@ -116,24 +113,23 @@ Core.Object.extend('Core.Socket',
 	},
 
 	close: function() {
-		//console.log('close');
-		if(this.delayPollTask != undefined) {
+		if(this.delayPollTask !== undefined) {
 			this.delayPollTask.abort();
 			this.delayPollTask = undefined;
 		}
-		if(this.websocket != undefined) {
+		if(this.websocket !== undefined) {
 			this.isClosed = true;
 			this.websocket.close();
 		}
 		else {
 			if(!this.isClosed) {
 				this.isClosed = true;
-				if(this.emuopenrequest != undefined) {
+				if(this.emuopenrequest !== undefined) {
 					this.emuopenrequest.abort();
 					this.emuopenrequest = undefined;
 				}
-				else if(this.emuid != undefined) {
-					if(this.emusendrequest == undefined) {
+				else if(this.emuid !== undefined) {
+					if(this.emusendrequest === undefined) {
 						this.closeSent = true;
 						this.emusendrequest = new Core.HttpRequest({ url:  (this.secure?'https':'http')+'://'+this.host+':'+this.port+this.service+this.sep+'socket='+this.mode+'&command=close&id='+this.emuid });
 						this.connect(this.emusendrequest, 'done', this.onEmuSocketSendDone);
@@ -167,7 +163,7 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onWebSocketOpen: function() {
-		if(this.websocketdelay != undefined) {
+		if(this.websocketdelay !== undefined) {
 			this.websocketdelay.abort();
 			this.websocketdelay = undefined;
 		}
@@ -175,7 +171,7 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onWebSocketError: function() {
-		if(this.websocketdelay != undefined) {
+		if(this.websocketdelay !== undefined) {
 			this.websocketdelay.abort();
 			this.websocketdelay = undefined;
 		}
@@ -183,14 +179,14 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onWebSocketMessage: function(msg) {
-		if(msg.data == 'PING')
+		if(msg.data === 'PING')
 			this.websocket.send('PONG');
 		else
 			this.fireEvent('message', this, msg.data);
 	},
 
 	onWebSocketClose: function(msg) {
-		if(this.websocketdelay != undefined) {
+		if(this.websocketdelay !== undefined) {
 			this.websocketdelay.abort();
 			this.websocketdelay = undefined;
 		}
@@ -198,12 +194,12 @@ Core.Object.extend('Core.Socket',
 	},
 
 	emuSocketDataAvailable: function(data) {
-		if(this.emuid == undefined) {
+		if(this.emuid === undefined) {
 			this.emuid = data;
 			this.fireEvent('open', this);
 		}
 		else {
-			if(data != 'keepalive')
+			if(data !== 'keepalive')
 				this.fireEvent('message', this, data.fromBase64());
 		}
 	},
@@ -212,7 +208,7 @@ Core.Object.extend('Core.Socket',
 		for(var i = 0; i < delta.length; i++) {
 			var character = delta[i];
 			if(this.readSize) {
-				if(character == ':') {
+				if(character === ':') {
 					this.readSize = false;
 					this.size = parseInt('0x'+this.data);
 					this.data = '';
@@ -232,12 +228,11 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketSendDone: function() {
-		//console.log('onEmuSocketSendDone');
 		var response = this.emusendrequest.getResponseJSON();
 		if(this.emumessages.length > 0) {
 			var messages = '';
 			for(var i = 0; i < this.emumessages.length; i++) {
-				if(messages != '')
+				if(messages !== '')
 					messages += ';';
 				messages += this.emumessages[i];
 			}
@@ -258,16 +253,14 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketSendError: function() {
-		//console.log('onEmuSocketSendError');
 		this.emusendrequest = undefined;
 	},
 
 	onEmuSocketOpenDone: function() {
-		//console.log('onEmuSocketOpenDone');
 		this.lastPoll = new Date();
 		var response = this.emuopenrequest.getResponseJSON();
 		this.emuopenrequest = undefined;
-		if(response == undefined) {
+		if(response === undefined) {
 			this.fireEvent('error', this);
 			this.fireEvent('close', this);
 		}
@@ -291,29 +284,26 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketOpenError: function(request, status) {
-		//console.log('onEmuSocketOpenError');
-
 		this.emuopenrequest = undefined;
 		this.fireEvent('error', this);
 		this.fireEvent('close', this);
 	},
 
 	onEmuSocketPollDone: function() {
-		//console.log('onEmuSocketPollDone');
 		var response = this.emupollrequest.getResponseJSON();
 		this.emupollrequest = undefined;
-		if(response == undefined) {
+		if(response === undefined) {
 			this.close();
 			this.fireEvent('close', this);
 		}
 		else {
-			if(response.messages != undefined) {
+			if(response.messages !== undefined) {
 				for(var i = 0; i < response.messages.length; i++) {
 					var msg = response.messages[i].fromBase64();
 					this.fireEvent('message', this, msg);
 				}
 			}
-			if(response.status != 'open') {
+			if(response.status !== 'open') {
 				this.close();
 				this.fireEvent('close', this);
 			}
@@ -331,14 +321,12 @@ Core.Object.extend('Core.Socket',
 	},
 
 	onEmuSocketPollError: function() {
-		//console.log('onEmuSocketPollError');
 		this.emupollrequest = undefined;
 		this.fireEvent('error', this);
 		this.close();
 	},
 	
 	delayPollDone: function() {
-		//console.log('delayPollDone');
 		this.delayPollTask = undefined;
 		if(this.emupollrequest === undefined)
 			this.sendPoll();
@@ -356,11 +344,4 @@ Core.Object.extend('Core.Socket',
 	/**#@-*/
 });
 
-// provide support for Mozilla WebSocket
-if(("MozWebSocket" in window) && !("WebSocket" in window)) {
-	window.WebSocket = window.MozWebSocket;
-}
-
 Core.Socket.supportWebSocket = "WebSocket" in window;
-
-

@@ -96,7 +96,7 @@ Ui.Element.extend('Ui.ContentEditable', {
 		div.style.fontFamily = this.getStyleProperty('fontFamily');
 		div.style.fontWeight = this.getStyleProperty('fontWeight');
 		
-		if(this.getWidth() != undefined)
+		if(this.getWidth() !== undefined)
 			div.style.width = this.getWidth()+'px';
 		div.innerHTML = this.getDrawing().innerHTML;
 		document.body.appendChild(div);

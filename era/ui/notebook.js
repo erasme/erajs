@@ -27,8 +27,8 @@ Ui.Container.extend('Ui.Notebook',
 	setContent: function(content) {
 		while(this.getPages().length > 0)
 			this.removePage(this.getPages()[0]);
-		if((content != undefined) && (typeof(content) == 'object')) {
-			if(content.constructor == Array) {
+		if((content !== undefined) && (typeof(content) === 'object')) {
+			if(content.constructor === Array) {
 				for(var i = 0; i < content.length; i++)
 					this.appendPage(content[i]);
 			}
@@ -61,8 +61,8 @@ Ui.Container.extend('Ui.Notebook',
 	* current opened page 
 	*/
 	setCurrentPosition: function(pos) {
-		if(this.pages.length == 0) {
-			if(this.currentPage != undefined)
+		if(this.pages.length === 0) {
+			if(this.currentPage !== undefined)
 				this.currentPage.unselect();
 			this.currentPage = undefined;
 			this.current = -1;
@@ -70,8 +70,8 @@ Ui.Container.extend('Ui.Notebook',
 		else {
 			this.current = pos;
 			var newPage = this.pages[this.current];
-			if(newPage != this.currentPage) {
-				if(this.currentPage != undefined)
+			if(newPage !== this.currentPage) {
+				if(this.currentPage !== undefined)
 					this.currentPage.unselect();
 				this.currentPage = newPage;
 				this.fireEvent('change', this, this.currentPage, this.current);
@@ -107,7 +107,7 @@ Ui.Container.extend('Ui.Notebook',
 	*/
 	removePage: function(page) {
 		var i = 0;
-		while((i < this.pages.length) && (this.pages[i] != page)) { i++ };
+		while((i < this.pages.length) && (this.pages[i] != page)) { i++; }
 		if(i < this.pages.length) {
 			this.pages.splice(i, 1);
 			
@@ -118,7 +118,7 @@ Ui.Container.extend('Ui.Notebook',
 			this.disconnect(page, 'select', this.onPageSelect);
 			this.disconnect(page, 'close', this.onPageClose);
 
-			if((this.current == i) && (this.current == 0))
+			if((this.current === i) && (this.current === 0))
 				this.setCurrentPosition(0);
 			else if(this.current >= i)
 				this.setCurrentPosition(this.current - 1);
@@ -202,15 +202,16 @@ Ui.Container.extend('Ui.Notebook',
 /**@lends Ui.Notebook#*/
 {
 	measureCore: function(width, height) {
+		var i; var page; var size;
 		var spacing = 10;
 
 		var minHeaderWidth = 0;
 		var minHeaderHeight = 0;
-		for(var i = 0; i < this.pages.length; i++) {
-			var page = this.pages[i];
+		for(i = 0; i < this.pages.length; i++) {
+			page = this.pages[i];
 			page.getBackground().measure(width, height);
 
-			var size = page.getHeaderBox().measure(0, 0);
+			size = page.getHeaderBox().measure(0, 0);
 			minHeaderWidth += size.width + spacing * 2;
 			if(size.height > minHeaderHeight)
 				minHeaderHeight = size.height;
@@ -223,9 +224,9 @@ Ui.Container.extend('Ui.Notebook',
 		var minContentWidth = 0;
 		var minContentHeight = 0;
 
-		for(var i = 0; i < this.pages.length; i++) {
-			var page = this.pages[i];
-			var size = page.getContentBox().measure(constraintWidth, constraintHeight);
+		for(i = 0; i < this.pages.length; i++) {
+			page = this.pages[i];
+			size = page.getContentBox().measure(constraintWidth, constraintHeight);
 			if(size.width > minContentWidth)
 				minContentWidth = size.width;
 			if(size.height > minContentHeight)
@@ -250,7 +251,7 @@ Ui.Container.extend('Ui.Notebook',
 			if(this.current == i) {
 				page.getContentBox().show();
 				page.getContentBox().arrange(spacing, this.headerHeight + spacing, width - (spacing * 2), height - (this.headerHeight + spacing * 2));
-				if(this.currentColor != undefined)
+				if(this.currentColor !== undefined)
 					page.getBackground().setFill(this.getCurrentColor());
 				page.getBackground().setTab(x, headerWidth + spacing * 2, this.headerHeight);
 				page.getBackground().arrange(0, 0, width, height);
@@ -259,7 +260,7 @@ Ui.Container.extend('Ui.Notebook',
 				this.moveChildAt(page.getBackground(), 0);
 
 				page.getContentBox().hide();
-				if(this.hiddenColor != undefined)
+				if(this.hiddenColor !== undefined)
 					page.getBackground().setFill(this.hiddenColor);
 				page.getBackground().setTab(x, headerWidth + spacing * 2, this.headerHeight);
 				page.getBackground().arrange(0, 0, width, height);
@@ -355,10 +356,10 @@ Core.Object.extend('Ui.NotebookPage',
 	*/
 	setHeader: function(header) {
 		if(header != this.header) {
-			if(this.header != undefined)
+			if(this.header !== undefined)
 				this.headerBox.removeChild(this.header);
 			this.header = Ui.Element.create(header);
-			if(this.header != undefined)
+			if(this.header !== undefined)
 				this.headerBox.appendChild(this.header);
 		}
 	},
@@ -375,10 +376,10 @@ Core.Object.extend('Ui.NotebookPage',
 	*/
 	setContent: function(content) {
 		if(content != this.content) {
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.contentBox.removeChild(this.content);
 			this.content = Ui.Element.create(content);
-			if(this.content != undefined)
+			if(this.content !== undefined)
 				this.contentBox.appendChild(this.content);
 		}
 	},
@@ -480,7 +481,7 @@ Ui.CanvasElement.extend('Ui.NotebookBackground', {
 
 	genPath: function(width, height, radius, tabOffset, tabWidth, tabHeight) {
 		var str = 'M'+tabOffset+','+tabHeight+' L'+tabOffset+','+radius+' Q'+tabOffset+',0 '+(tabOffset+radius)+',0 L'+(tabOffset + tabWidth - radius)+',0 Q'+(tabOffset + tabWidth)+',0 '+(tabOffset + tabWidth)+','+radius+' L'+(tabOffset + tabWidth)+','+tabHeight+' L'+(width - radius)+','+tabHeight+' Q'+width+','+tabHeight+' '+width+','+(tabHeight+radius)+' L'+width+','+(height-radius)+' Q'+width+','+height+' '+(width-radius)+','+height+' L'+radius+','+height+' Q0,'+height+' 0,'+(height-radius);
-		if(tabOffset == 0)
+		if(tabOffset === 0)
 			str += ' z';
 		else
 			str += ' L0,'+(tabHeight+radius)+' Q0,'+tabHeight+' '+radius+','+tabHeight+' z';

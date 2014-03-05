@@ -10,16 +10,16 @@ Core.Object.extend('Anim.EasingFunction',
 	mode: 'in',
 	
 	/**
-    *   @constructs
+    *	@constructs
 	*	@class
-    *   @extends Core.Object
+    *	@extends Core.Object
 	*	@param config.mode
 	*/
 	constructor: function(config) {
 	},
 
-	/** 
-	*	@param {String} mode 	
+	/**
+	*	@param {String} mode
 	*/
 	setMode: function(mode) {
 		this.mode = mode;

@@ -136,20 +136,61 @@ Ui.Container.extend('Ui.Scrollable', {
 	updateOffset: function() {
 		if(this.contentBox === undefined)
 			return;
+		
+		console.log(this+'.updateOffset');
 
 		this.offsetX = this.contentBox.getOffsetX();
 		this.offsetY = this.contentBox.getOffsetY();
 
-		this.viewWidth = this.getLayoutWidth();
-		this.viewHeight = this.getLayoutHeight();
+		//this.viewWidth = this.getLayoutWidth();
+		//this.viewHeight = this.getLayoutHeight();
 
-		this.contentWidth = this.contentBox.getContent().getLayoutWidth();
-		this.contentHeight = this.contentBox.getContent().getLayoutHeight();
+		this.viewWidth = this.contentBox.getDrawing().clientWidth;
+		this.viewHeight = this.contentBox.getDrawing().clientHeight;
+
+		//this.contentWidth = this.contentBox.getContent().getLayoutWidth();
+		//this.contentHeight = this.contentBox.getContent().getLayoutHeight();
+
+		this.contentWidth = this.contentBox.getDrawing().scrollWidth;
+		this.contentHeight = this.contentBox.getDrawing().scrollHeight;
 
 		this.relativeOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
 		this.relativeOffsetY = this.offsetY / (this.contentHeight - this.viewHeight);
 
+
 		if(Ui.ScrollableContent.emulatedScrollbars) {
+			if(this.contentHeight > this.viewHeight)
+				this.scrollbarVerticalNeeded = true;
+			else
+				this.scrollbarVerticalNeeded = false;
+			if(this.contentWidth > this.viewWidth)
+				this.scrollbarHorizontalNeeded = true;
+			else
+				this.scrollbarHorizontalNeeded = false;
+	
+			if(this.scrollbarVerticalNeeded) {
+				console.log(this+' scrollbarVerticalNeeded');
+				this.scrollbarVerticalHeight = Math.max((this.viewHeight / this.contentHeight) * this.viewHeight, this.scrollbarVerticalBox.getMeasureHeight());
+				this.scrollbarVerticalBox.arrange(this.getLayoutWidth() - this.scrollbarVerticalBox.getMeasureWidth(), 0,
+					this.scrollbarVerticalBox.getMeasureWidth(), this.scrollbarVerticalHeight);
+				this.scrollbarVerticalBox.show();
+			}
+			else {
+				this.scrollbarVerticalBox.hide();
+				this.offsetY = 0;
+			}
+			if(this.scrollbarHorizontalNeeded) {
+				this.scrollbarHorizontalWidth = Math.max((this.viewWidth / this.contentWidth) * this.viewWidth, this.scrollbarHorizontalBox.getMeasureWidth());
+				this.scrollbarHorizontalBox.arrange(0, this.getLayoutHeight() - this.scrollbarHorizontalBox.getMeasureHeight(),
+					this.scrollbarHorizontalWidth, this.scrollbarHorizontalBox.getMeasureHeight());
+				this.scrollbarHorizontalBox.show();
+			}
+			else {
+				this.scrollbarHorizontalBox.hide();
+				this.offsetX = 0;
+			}
+
+
 			if(this.scrollbarHorizontalNeeded) {
 				var relOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
 				if(relOffsetX > 1) {
@@ -173,7 +214,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(this.lock || this.getIsDisabled())
 			return;
 
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
 		
 		event.preventDefault();
@@ -213,7 +254,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.stopPropagation();
 
 		var point = { x: event.clientX, y: event.clientY };
-		if(this.iframe != undefined)
+		if(this.iframe !== undefined)
 			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
 		var mousePos = this.pointFromWindow(point);
 		var deltaY = mousePos.y - this.mouseStart.y;
@@ -227,7 +268,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
 
 		this.window.document.body.removeChild(this.catcher);
@@ -240,7 +281,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		if(this.lock || this.getIsDisabled())
 			return;
 
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
 		
 		event.preventDefault();
@@ -280,7 +321,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.stopPropagation();
 
 		var point = { x: event.clientX, y: event.clientY };
-		if(this.iframe != undefined)
+		if(this.iframe !== undefined)
 			point = Ui.Element.pointFromWindow(this.iframe, { x: event.clientX, y: event.clientY }, this.window);
 		var mousePos = this.pointFromWindow(point);
 		var deltaX = mousePos.x - this.mouseStart.x;
@@ -294,7 +335,7 @@ Ui.Container.extend('Ui.Scrollable', {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
 
 		this.window.document.body.removeChild(this.catcher);
@@ -343,7 +384,7 @@ Ui.Container.extend('Ui.Scrollable', {
 
 		if(Ui.ScrollableContent.emulatedScrollbars) {
 
-			var contentWidth = width;
+/*			var contentWidth = width;
 			if(this.contentBox.getMeasureHeight() > height)
 				this.scrollbarVerticalNeeded = true;
 			else
@@ -377,7 +418,7 @@ Ui.Container.extend('Ui.Scrollable', {
 				this.scrollbarHorizontalWidth = Math.max((this.viewWidth / this.contentWidth) * this.viewWidth, this.scrollbarHorizontalBox.getMeasureWidth());
 				this.scrollbarHorizontalBox.arrange(0, height - this.scrollbarHorizontalBox.getMeasureHeight(),
 					this.scrollbarHorizontalWidth, this.scrollbarHorizontalBox.getMeasureHeight());
-			}
+			}*/
 		}
 
 		this.contentBox.arrange(0, 0, this.viewWidth, this.viewHeight);

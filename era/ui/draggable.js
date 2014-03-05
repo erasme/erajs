@@ -100,7 +100,7 @@ Ui.Pressable.extend('Ui.Draggable',
 		//if(mimetype === undefined) {
 			// TODO
 		//}
-	 	this.downloadMimetype = mimetype;
+		this.downloadMimetype = mimetype;
 		this.downloadFilename = filename;
 	},
 

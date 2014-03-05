@@ -65,7 +65,6 @@ include(eraBaseDirectory+'ui/matrix.js');
 include(eraBaseDirectory+'ui/point.js');
 include(eraBaseDirectory+'ui/color.js');
 include(eraBaseDirectory+'ui/lineargradient.js');
-include(eraBaseDirectory+'ui/keyboard.js');
 include(eraBaseDirectory+'ui/element.js');
 include(eraBaseDirectory+'ui/container.js');
 include(eraBaseDirectory+'ui/svgparser.js');

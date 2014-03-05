@@ -25,7 +25,7 @@ Core.Object.extend('Anim.AnimationManager',
 
 	remove: function(clock) {
 		var i = 0;
-		while((i < this.clocks.length) && (this.clocks[i] != clock)) { i++ };
+		while((i < this.clocks.length) && (this.clocks[i] != clock)) { i++; }
 		if(i < this.clocks.length)
 			this.clocks.splice(i, 1);
 	},
@@ -58,7 +58,7 @@ if(!('requestAnimationFrame' in window)) {
 	else if('msRequestAnimationFrame' in window)
 		window.requestAnimationFrame = window.msRequestAnimationFrame;
 	else
-		window.requestAnimationFrame = function(cb) { setTimeout(cb, 1/60);	}
+		window.requestAnimationFrame = function(cb) { setTimeout(cb, 1/60);	};
 }
 
 Anim.AnimationManager.current = new Anim.AnimationManager();

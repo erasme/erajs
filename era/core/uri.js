@@ -58,7 +58,7 @@ Core.Object.extend('Core.Uri',
 		if(fullpath)
 			this.path = path;
 		else {
-			if(uri.indexOf('/') == 0)
+			if(uri.indexOf('/') === 0)
 				this.path = Core.Uri.cleanPath(uri);
 			else
 				this.path = Core.Uri.mergePath(path, uri);
@@ -102,10 +102,10 @@ Core.Object.extend('Core.Uri',
 {
 	toString: function() {
 		var str = this.scheme+'://';
-		if((this.user != undefined) && (this.password != undefined))
+		if((this.user !== undefined) && (this.password !== undefined))
 			str += this.user+':'+this.password+'@';
 		str += this.host;
-		if(this.port != undefined)
+		if(this.port !== undefined)
 			str += ':'+this.port;
 		str += this.path;
 		return str;

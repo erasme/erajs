@@ -60,7 +60,7 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	getFontSize: function() {
-		if(this.fontSize != undefined)
+		if(this.fontSize !== undefined)
 			return this.fontSize;
 		else
 			return this.getStyleProperty('fontSize');
@@ -75,7 +75,7 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	getFontFamily: function() {
-		if(this.fontFamily != undefined)
+		if(this.fontFamily !== undefined)
 			return this.fontFamily;
 		else
 			return this.getStyleProperty('fontFamily');
@@ -90,7 +90,7 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	getFontWeight: function() {
-		if(this.fontWeight != undefined)
+		if(this.fontWeight !== undefined)
 			return this.fontWeight;
 		else
 			return this.getStyleProperty('fontWeight');
@@ -107,7 +107,7 @@ Ui.Element.extend('Ui.Entry',
 	},
 
 	getColor: function() {
-		if(this.color != undefined)
+		if(this.color !== undefined)
 			return this.color;
 		else
 			return Ui.Color.create(this.getStyleProperty('color'));
@@ -149,7 +149,7 @@ Ui.Element.extend('Ui.Entry',
 
 	onKeyDown: function(event) {
 		if((event.which == 13) || (event.which == 37) ||
-		   (event.which == 39) || (event.which == 36) || (event.which == 35)) {
+			(event.which == 39) || (event.which == 36) || (event.which == 35)) {
 			event.stopPropagation();
 		}
 	},

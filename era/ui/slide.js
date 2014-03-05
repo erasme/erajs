@@ -20,8 +20,8 @@ Ui.Transition.extend('Ui.Slide',
 /**@lends Ui.Slide#*/
 {
 	run: function(current, next, progress) {
-		if(current != undefined) {
-			if(progress == 1) {
+		if(current !== undefined) {
+			if(progress === 1) {
 				current.hide();
 				current.setTransformOrigin(0, 0);
 				current.setTransform(undefined);
@@ -38,8 +38,8 @@ Ui.Transition.extend('Ui.Slide',
 					current.setTransform(Ui.Matrix.createTranslate(0, -current.getLayoutHeight() * progress));
 			}
 		}
-		if(next != undefined) {
-			if(progress == 1) {
+		if(next !== undefined) {
+			if(progress === 1) {
 				next.setTransformOrigin(0, 0);
 				next.setTransform(undefined);
 			}

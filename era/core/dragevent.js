@@ -23,7 +23,7 @@ Core.Event.extend('Core.DragEvent',
 		this.ctrlKey = ctrlKey;
 		this.altKey = altKey;
 		this.shiftKey = shiftKey;
-		this.metaKey = metaKey
+		this.metaKey = metaKey;
 	}
 });
 
@@ -121,7 +121,7 @@ Core.Object.extend('Core.DragDataTransfer',
 	* @private
 	*/
 	generateImage: function(element) {
-		var res;
+		var res; var key; var child; var i;
 		if(navigator.isIE7 || navigator.isIE8) {
 			var div = document.createElement('div');
 			div.style.position = 'absolute';
@@ -140,7 +140,7 @@ Core.Object.extend('Core.DragDataTransfer',
 				res = document.createElement('img');
 				res.oncontextmenu = function(e) { e.preventDefault(); };
 				// copy styles (position)
-				for(var key in element.style)
+				for(key in element.style)
 					res.style[key] = element.style[key];
 				res.setAttribute('src', element.toDataURL('image/png'));
 			}
@@ -148,14 +148,14 @@ Core.Object.extend('Core.DragDataTransfer',
 				res = document.createElement('img');
 				res.oncontextmenu = function(e) { e.preventDefault(); };
 				// copy styles (position)
-				for(var key in element.style)
+				for(key in element.style)
 					res.style[key] = element.style[key];
 				res.setAttribute('src', element.toDataURL('image/png'));
 			}
 			else {
 				res = element.cloneNode(false);
-				for(var i = 0; i < element.childNodes.length; i++) {
-					var child = element.childNodes[i];
+				for(i = 0; i < element.childNodes.length; i++) {
+					child = element.childNodes[i];
 					res.appendChild(this.generateImage(child));
 				}
 			}
@@ -208,18 +208,20 @@ Core.Object.extend('Core.DragDataTransfer',
 	},
 
 	onMove: function(clientX, clientY) {
+		var deltaX; var deltaY; var delta; var dragEvent; var ofs;
+
 		if(this.timer !== undefined) {
-			var deltaX = clientX - this.startX;
-			var deltaY = clientY - this.startY;
-			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			deltaX = clientX - this.startX;
+			deltaY = clientY - this.startY;
+			delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 			// if we move too much, cancel
 			if(delta > 20)
 				return false;
 		}
 		else if(!this.hasStarted) {
-			var deltaX = clientX - this.startX;
-			var deltaY = clientY - this.startY;
-			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			deltaX = clientX - this.startX;
+			deltaY = clientY - this.startY;
+			delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 			// if we move enough start drag and drop
 			if(delta > 5) {
 				this.onTimer();
@@ -234,15 +236,15 @@ Core.Object.extend('Core.DragDataTransfer',
 			overElement = Core.Event.cleanTarget(overElement);
 			document.body.appendChild(this.image);
 
-			var deltaX = clientX - this.startX;
-			var deltaY = clientY - this.startY;
-			var ofs = this.delayed ? -10 : 0;
+			deltaX = clientX - this.startX;
+			deltaY = clientY - this.startY;
+			ofs = this.delayed ? -10 : 0;
 
 			this.image.style.left = (this.startImagePoint.x + deltaX + ofs)+'px';
 			this.image.style.top = (this.startImagePoint.y + deltaY + ofs)+'px';
 
 			if((overElement !== undefined) && (overElement !== null) && (overElement !== document.documentElement)) {
-				var dragEvent = document.createEvent('DragEvent');
+				dragEvent = document.createEvent('DragEvent');
 				if(this.overElement != overElement)
 					dragEvent.initDragEvent('dragenter', true, true, window, this,
 						clientX, clientY, clientX, clientY,
@@ -252,27 +254,30 @@ Core.Object.extend('Core.DragDataTransfer',
 						clientX, clientY, clientX, clientY,
 						false, false, false, false);
 				overElement.dispatchEvent(dragEvent);
+				this.overElement = overElement;
 			}
-			this.overElement = overElement;
+			else
+				this.overElement = undefined;
 		}
 		return true;
 	},
 	
 	onUp: function(clientX, clientY) {
+		var dragEvent;
 		if(!this.hasStarted)
 			return false;
 		else {
 			document.body.removeChild(this.image);
 
-			if(this.overElement != undefined) {
-				var dragEvent = document.createEvent('DragEvent');
+			if(this.overElement !== undefined) {
+				dragEvent = document.createEvent('DragEvent');
 				dragEvent.initDragEvent('drop', true, true, window, this,
 					clientX, clientY, clientX, clientY,
 					false, false, false, false);
 				this.overElement.dispatchEvent(dragEvent);
 			}
 
-			var dragEvent = document.createEvent('DragEvent');
+			dragEvent = document.createEvent('DragEvent');
 			dragEvent.initDragEvent('dragend', false, true, window, this,
 				clientX, clientY, clientX, clientY,
 				false, false, false, false);
@@ -282,7 +287,6 @@ Core.Object.extend('Core.DragDataTransfer',
 	},
 
 	onMouseMove: function(event) {
-		//console.log('dragevent onMouseMove');
 		if(this.onMove(event.clientX, event.clientY) === true) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -292,10 +296,8 @@ Core.Object.extend('Core.DragDataTransfer',
 	},
 
 	onMouseUp: function(event) {
-		//console.log('dragevent onMouseUp');
-		if(event.button != 0)
+		if(event.button !== 0)
 			return;
-		
 		if(!this.onUp(event.clientX, event.clientY))
 			this.onMouseCancel(event);
 		else {
@@ -308,14 +310,11 @@ Core.Object.extend('Core.DragDataTransfer',
 	},
 
 	onMouseCancel: function() {
-		console.log('dragevent onMouseCancel');
-
 		this.disconnect(window, 'mouseup', this.onMouseUp, true);
 		this.disconnect(window, 'mousemove', this.onMouseMove, true);
 	},
 	
 	onTouchMove: function(event) {
-		console.log(this+'.onTouchMove');
 		if(this.onMove(event.changedTouches[0].clientX, event.changedTouches[0].clientY) === true) {
 			// preventDefault (like scrolling) if the drag has started
 			if(this.timer === undefined) {
@@ -430,7 +429,7 @@ Core.Object.extend('Core.DragManager',
 
 	findDraggable: function(element) {
 		// try to find a draggable element
-		var found = undefined;
+		var found;
 		var current = element;
 		while((found === undefined) && (current !== undefined) && (current !== window) && (current !== null)) {
 			var draggable = current.getAttribute('draggable');

@@ -10,10 +10,10 @@ Ui.CanvasElement.extend('Ui.TextBgGraphic', {
 	},
 
 	getBackground: function() {
-	 	var color;
-	 	if(this.textHasFocus)
-	 		color = Ui.Color.create(this.getStyleProperty('focusBackground'));
-	 	else
+		var color;
+		if(this.textHasFocus)
+			color = Ui.Color.create(this.getStyleProperty('focusBackground'));
+		else
 			color = Ui.Color.create(this.getStyleProperty('background'));
 		return color;
 	}

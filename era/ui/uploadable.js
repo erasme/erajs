@@ -57,10 +57,10 @@ Ui.Pressable.extend('Ui.Uploadable',
 }, {
 	setContent: function(content) {
 		content = Ui.Element.create(content);
-		if(this.content != content) {
-			if(this.content != undefined)
+		if(this.content !== content) {
+			if(this.content !== undefined)
 				this.remove(this.content);
-			if(content != undefined) {
+			if(content !== undefined) {
 				if(Ui.UploadableWrapper.hasInstance(this.input))
 					this.prepend(content);
 				else
@@ -96,7 +96,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 
 	setDirectoryMode: function(active) {
 		this.directoryMode = active;
-		if(this.inputDrawing != undefined) {
+		if(this.inputDrawing !== undefined) {
 			if(this.directoryMode)
 				this.inputDrawing.setAttribute('webkitdirectory', '');
 			else
@@ -196,13 +196,13 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		if(h === undefined)
 			h = 0;
 		Ui.UploadableFileWrapper.base.arrangeCore.call(this, x, y, w, h);
-		if(this.formDrawing != undefined) {
+		if(this.formDrawing !== undefined) {
 			this.formDrawing.style.top = '0px';
 			this.formDrawing.style.left = '0px';
 			this.formDrawing.style.width = Math.round(w)+'px';
 			this.formDrawing.style.height = Math.round(h)+'px';
 		}
-		if(this.inputDrawing != undefined) {
+		if(this.inputDrawing !== undefined) {
 			this.inputDrawing.style.top = '0px';
 			this.inputDrawing.style.left = '0px';
 			this.inputDrawing.style.width = Math.round(w)+'px';

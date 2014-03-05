@@ -110,7 +110,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 
 	remove: function(child) {
 		var i = 0;
-		while((i < this.items.length) && (this.items[i] != child)) { i++ };
+		while((i < this.items.length) && (this.items[i] !== child)) { i++; }
 		if(i < this.items.length) {
 			this.items.splice(i, 1);
 			if((this.pos < 0) || (this.pos > this.items.length-1))
@@ -141,7 +141,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		if(position >= this.items.length)
 			position = this.items.length;
 		var i = 0;
-		while((i < this.items.length) && (this.items[i] != child)) { i++ };
+		while((i < this.items.length) && (this.items[i] != child)) { i++; }
 		if(i < this.items.length) {
 			this.items.splice(i, 1);
 			this.items.splice(position, 0, child);
@@ -172,15 +172,15 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		var deltaX = 0;
 		var deltaY = 0;
 
-		if((event.wheelDeltaX != undefined) && (event.wheelDelaY != undefined)) {
+		if((event.wheelDeltaX !== undefined) && (event.wheelDelaY !== undefined)) {
 			deltaX = -event.wheelDeltaX / 5;
 			deltaY = -event.wheelDeltaY / 5;
 		}
 		// Opera, Chrome, IE
-		else if(event.wheelDelta != undefined)
+		else if(event.wheelDelta !== undefined)
 			deltaY = -event.wheelDelta / 2;
 		// Firefox
-		else if(event.detail != undefined)
+		else if(event.detail !== undefined)
 			deltaY = event.detail * 10;
 		
 		if(deltaX !== 0) {
@@ -198,11 +198,11 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onCarouselableUp: function(el, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
-		//console.log(this+'.onCarouselableUp cumulMove: '+cumulMove+', speedX: '+speedX+', deltaX: '+deltaX);
+		var mod;
 
 		if(abort === true) {
 			// just re-align the content
-			var mod = this.pos % 1;
+			mod = this.pos % 1;
 			if(mod > 0.5)
 				speedX = -400;
 			else
@@ -220,7 +220,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 				}
 				// else just re-align the content
 				else {
-					var mod = this.pos % 1;
+					mod = this.pos % 1;
 					if(mod > 0.5)
 						speedX = -400;
 					else
@@ -235,7 +235,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 			else
 				speedX = 800;
 		}
-		if(speedX != 0)
+		if(speedX !== 0)
 			this.startAnimation(speedX / this.getLayoutWidth());
 	},
 
@@ -255,7 +255,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onAlignTick: function(clock, progress, delta) {
-		if(delta == 0)
+		if(delta === 0)
 			return;	
 		var relprogress = -(clock.getTime() * this.speed) / (this.animNext - this.animStart);
 		if(relprogress >= 1) {
@@ -289,7 +289,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	stopAnimation: function() {
-		if(this.alignClock != undefined) {
+		if(this.alignClock !== undefined) {
 			this.alignClock.stop();
 			this.alignClock = undefined;
 		}
@@ -298,12 +298,13 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	loadItems: function() {
 		if(!this.getIsLoaded())
 			return;
-	
-		for(var i = 0; i < this.activeItems.length; i++)
+		var i;
+
+		for(i = 0; i < this.activeItems.length; i++)
 			this.activeItems[i].carouselableSeen = undefined;
 
 		var newItems = [];
-		for(var i = Math.max(0, Math.floor(this.pos-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(this.pos+1+this.bufferingSize)); i++) {
+		for(i = Math.max(0, Math.floor(this.pos-this.bufferingSize)); i < Math.min(this.items.length,Math.floor(this.pos+1+this.bufferingSize)); i++) {
 			var item = this.items[i];
 			var active = false;
 			for(var i2 = 0; !active && (i2 < this.activeItems.length); i2++) {
@@ -320,7 +321,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		}
 
 		// remove unviewable items
-		for(var i = 0; i < this.activeItems.length; i++) {
+		for(i = 0; i < this.activeItems.length; i++) {
 			if(!this.activeItems[i].carouselableSeen)
 				this.removeChild(this.activeItems[i]);
 		}

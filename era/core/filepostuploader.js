@@ -73,13 +73,14 @@ Core.Object.extend('Core.FilePostUploader',
 
 	/**Send the file*/
 	send: function() {
+		var wrapper; var field;
 		/**#nocode+ Avoid Jsdoc warnings...*/
-		if(this.file.fileApi != undefined) {
+		if(this.file.fileApi !== undefined) {
 			if(navigator.supportFormData) {
 				var formData = new FormData();
-				if(this.destination == undefined)
+				if(this.destination === undefined)
 					this.destination = this.file.getFileName();
-				for(var field in this.fields) {
+				for(field in this.fields) {
 					formData.append(field, this.fields[field]);
 				}
 				formData.append("file", this.file.fileApi);
@@ -90,9 +91,9 @@ Core.Object.extend('Core.FilePostUploader',
 				this.request.open(this.method, this.service);
 				this.request.send(formData);
 	
-				var wrapper = function() {
+				wrapper = function() {
 					return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-				}
+				};
 				wrapper.scope = this;
 				wrapper.callback = this.onStateChange;
 				this.request.onreadystatechange = wrapper;
@@ -113,23 +114,23 @@ Core.Object.extend('Core.FilePostUploader',
 				this.request.setRequestHeader("Content-Type", "multipart/form-data, boundary="+this.boundary);
 				this.request.setRequestHeader("Content-Length", this.file.fileApi.size);
 
-				var wrapper = function() {
+				wrapper = function() {
 					return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-				}
+				};
 				wrapper.scope = this;
 				wrapper.callback = this.onStateChange;
 				this.request.onreadystatechange = wrapper;
 				
 				var readerWrapper = function() {
 					return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-				}
+				};
 				readerWrapper.scope = this;
 				readerWrapper.callback = this.onFileReaderLoad;
 				this.fileReader.onload = readerWrapper;
 
 				var readerErrorWrapper = function() {
 					return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-				}
+				};
 				readerErrorWrapper.scope = this;
 				readerErrorWrapper.callback = this.onFileReaderError;
 				this.fileReader.onerror = readerErrorWrapper;
@@ -140,7 +141,7 @@ Core.Object.extend('Core.FilePostUploader',
 		else {
 			this.file.form.action = this.service;
 
-			for(var field in this.fields) {
+			for(field in this.fields) {
 				var fieldDrawing = document.createElement('input');
 				fieldDrawing.type = 'hidden';
 				fieldDrawing.setAttribute('name', field);
@@ -164,8 +165,10 @@ Core.Object.extend('Core.FilePostUploader',
 	},
 
 	abort: function() {
-		if(this.request != undefined)
+		if(this.request !== undefined) {
 			this.request.abort();
+			this.request = undefined;
+		}
 	},
 
 	getResponseText: function() {

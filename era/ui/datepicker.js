@@ -10,11 +10,11 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	dateFilter: undefined,
 
 	/**
-	 * @constructs
-	 * @class TextButtonField that open a calendar to choose a day and then display it in a DD/MM/YYYY format 
-	 * @extends Ui.TextButtonField
-	 * @param {Date} config.selectedDate Selected date (default nothing)
- 	 */
+	* @constructs
+	* @class TextButtonField that open a calendar to choose a day and then display it in a DD/MM/YYYY format 
+	* @extends Ui.TextButtonField
+	* @param {Date} config.selectedDate Selected date (default nothing)
+	*/
 	constructor: function(config) {
 		this.setButtonIcon('calendar');
 		this.setWidthText(9);
@@ -50,18 +50,18 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 
 	onDatePickerButtonPress: function() {
 		var splitDate = this.getValue().match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
-		if(splitDate != null) {
+		if(splitDate !== null) {
 			this.selectedDate = new Date();
-			this.selectedDate.setFullYear(new Number(splitDate[3]), new Number(splitDate[2]) - 1, new Number(splitDate[1]));
+			this.selectedDate.setFullYear(parseInt(splitDate[3]), parseInt(splitDate[2]) - 1, parseInt(splitDate[1]));
 		}
 		this.popup = new Ui.Popup();
-		if(this.selectedDate != undefined)
+		if(this.selectedDate !== undefined)
 			this.calendar = new Ui.MonthCalendar({ margin: 10, selectedDate: this.selectedDate, date: this.selectedDate });
 		else
 			this.calendar = new Ui.MonthCalendar({ margin: 10 });
-		if(this.dayFilter != undefined)
+		if(this.dayFilter !== undefined)
 			this.calendar.setDayFilter(this.dayFilter);
-		if(this.dateFilter != undefined)
+		if(this.dateFilter !== undefined)
 			this.calendar.setDateFilter(this.dateFilter);
 		this.popup.setContent(this.calendar);
 		this.connect(this.calendar, 'dayselect', this.onDaySelect);
@@ -76,9 +76,9 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		if(dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/)) {
 			var splitDate = this.getValue().match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
 			var date = new Date();
-			date.setFullYear(new Number(splitDate[3]), new Number(splitDate[2]) - 1, new Number(splitDate[1]));
+			date.setFullYear(parseInt(splitDate[3]), parseInt(splitDate[2]) - 1, parseInt(splitDate[1]));
 			var newStr = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();			
-			if((new Number(splitDate[3]) != date.getFullYear()) || (new Number(splitDate[2]) - 1 != date.getMonth()) || (new Number(splitDate[1]) != date.getDate())) {
+			if((parseInt(splitDate[3]) != date.getFullYear()) || (parseInt(splitDate[2]) - 1 != date.getMonth()) || (parseInt(splitDate[1]) != date.getDate())) {
 				this.lastValid = newStr;
 				this.setValue(this.lastValid);
 			}

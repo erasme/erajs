@@ -53,12 +53,12 @@ Ui.Draggable.extend('Ui.Selectionable', {
 	getParentSelectionHandler: function() {	
 		// search for the selection handler
 		var parent = this.getParent();
-		while(parent != undefined) {
+		while(parent !== undefined) {
 			if('getSelectionHandler' in parent)
 				break;
 			parent = parent.getParent();
 		}
-		if(parent != undefined)
+		if(parent !== undefined)
 			return parent.getSelectionHandler();
 		else
 			return undefined;
@@ -69,7 +69,7 @@ Ui.Draggable.extend('Ui.Selectionable', {
 	},
 	
 	onSelectionableDragEnd: function() {
-		 if(this.getIsSelected()) {
+		if(this.getIsSelected()) {
 			var handler = this.getParentSelectionHandler();
 			if(handler !== undefined)
 				handler.clear();
