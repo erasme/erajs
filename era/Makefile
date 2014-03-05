@@ -6,6 +6,11 @@ compact:
 	sed "s/include(eraBaseDirectory+'\(.*\)');/\1/" | \
 	xargs closure-compiler --define DEBUG=false --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file era.js --js 
 
+check:
+	grep '^include(eraBaseDirectory' era-debug.js | \
+	sed "s/include(eraBaseDirectory+'\(.*\)');/\1/" | \
+	xargs jshint  
+
 clean:
 	
 
