@@ -27,8 +27,8 @@ Ui.LBox.extend('Form.Field',
 		//By default use the styleProperty
 		this.labelAlign = this.getStyleProperty('labelAlign');
 		//If label are align on top of the field, then use a VBox, otherwise HBox an
-		var boxType = this.labelAlign ==='top' ? Ui.VBox : Ui.HBox;
-		var lblHorizontalAlign = this.labelAlign ==='right' ? 'right' : 'left';
+		var boxType = this.labelAlign === 'top' ? Ui.VBox : Ui.HBox;
+		var lblHorizontalAlign = this.labelAlign === 'right' ? 'right' : 'left';
 
 		this.setMargin(2);
 		this.setContent([
@@ -93,7 +93,7 @@ Ui.LBox.extend('Form.Field',
 			this.requireStar = new Ui.Label({text: '*', color: '#bf1010', fontWeight: 'bold'});
 			this.labelBox.append(this.requireStar);
 		}
-		else if(this.requireStar != null && this.labelBox.hasChild(this.requireStar)){
+		else if((this.requireStar !== undefined) && this.labelBox.hasChild(this.requireStar)) {
 			this.labelBox.remove(this.requireStar);
 		}
 	},
@@ -229,46 +229,46 @@ Form.Field.extend('Form.ComboField',
 Form.Field.extend('Form.TextField',
 /**@lends From.TextField#*/
 {
-	constructor: function(config){
+	constructor: function(config) {
 		this.setUiElementType(Ui.TextField);
 	}
 },
 /**@lends From.TextField#*/
 {
-	setUiElement: function(elt){
+	setUiElement: function(elt) {
 		Form.TextField.base.setUiElement.call(this, elt);
 		//All little bit hacky
-		if(this.uiElt.entry != null){
+		if(this.uiElt.entry !== undefined) {
 			this.uiElt.entry.setFontSize(this.getStyleProperty('fontSize'));
 			this.connect(this.uiElt, 'change', this.onChange);
 		}
 	},
 
-	isValid: function(){
+	isValid: function() {
 		var valid = true;
-		var realValue = this.getValue() != null ? this.getValue().trim() : "";
+		var realValue = (this.getValue() !== undefined) ? this.getValue().trim() : "";
 		var validation = this.getValidation();
 		var empty = realValue.length === 0 ? true : false;
 		if(this.isRequire() && empty){
 			valid = false;
 			this.setRequireError();
 		}
-		else if(!empty && validation !== undefined){
+		else if(!empty && (validation !== undefined)){
 			//Regex validation
 			if(validation instanceof RegExp){ 
 				valid = validation.test(realValue);
 			}
 			//Function validation
-			else if(typeof validation === "function"){
+			else if(typeof(validation) === "function"){
 				valid = validation(realValue);
 			}
 
 			if(!valid){
-				this.setError('Non valide')
+				this.setError('Non valide');
 			}
 		}
 		
-		if(valid){
+		if(valid) {
 			this.validate();
 		}
 
@@ -303,7 +303,7 @@ Form.TextField.extend('Form.TextAreaField',
 {
 	setUiElement: function(elt){
 		Form.TextAreaField.base.setUiElement.call(this, elt);
-		if(this.uiElt.textarea != null){
+		if(this.uiElt.textarea !== undefined){
 			this.uiElt.textarea.setFontSize(this.getStyleProperty('fontSize'));
 			this.connect(this.uiElt.textarea, 'change', this.onChange);
 		}

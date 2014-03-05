@@ -98,24 +98,24 @@ Ui.LBox.extend('Form.Panel',
 	
 	submit: function(){
 		var valid = this.isValid();
-		if(this.submitUrl !==  undefined && valid){
+		if(this.submitUrl !==  undefined && valid) {
 			var values = this.getValue();
 			//Pass the value throw the handler ?
-			if(this.submitHandler !==  undefined){
+			if(this.submitHandler !==  undefined) {
 				values = this.submitHandler(values);
 			}
 
-			if(this.submitType === 'ajax'){
+			if(this.submitType === 'ajax') {
 				//A form is usually a POST request
 				req = new Core.HttpRequest({url: this.submitUrl, method: 'POST', arguments: values});
 				this.connect(req, "done", this.onSubmitDone);
 				req.send();
 			}
 			//The form is a link so no HttpRequest
-			else if (this.submitType === 'link'){
+			else if (this.submitType === 'link') {
 				var args = Core.Util.encodeURIQuery(values);
 				var url = this.submitUrl;
-				var paramChar = url.indexOf('?') === -1 ? '?' : '&'
+				var paramChar = (url.indexOf('?') === -1) ? '?' : '&';
 				url += paramChar + args;
 				window.open(url);
 			}
@@ -185,10 +185,10 @@ Ui.LBox.extend('Form.Panel',
 	/**
 	 * Append a field at the end of the layout (container)
 	 */
-	appendField: function(name, field){
-		if(this.fields == null){
-			this.fields = {}
-			if(this.defaultLayout){
+	appendField: function(name, field) {
+		if(this.fields === undefined) {
+			this.fields = {};
+			if(this.defaultLayout) {
 				var layout = this._buildDefaultLayout(false);
 				this.setLayout(layout);
 			}
@@ -205,16 +205,16 @@ Ui.LBox.extend('Form.Panel',
 	 * a child of the panel's layout, then you'll have to remove it yourself
 	 */
 	removeField: function(name){
-		if(this.fields != null){
+		if(this.fields !== undefined) {
 			var f = this.fields[name];
-			if(f != null){
+			if(f !== undefined) {
 				this.layout.remove(f);
 			}
 		}
 	},
 
-	getField: function(name){
-		return this.fields != null ? this.fields[name] : undefined;
+	getField: function(name) {
+		return (this.fields !== undefined) ? this.fields[name] : undefined;
 	},
 
 	setLayout: function(layout){

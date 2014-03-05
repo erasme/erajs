@@ -32,7 +32,7 @@ Form.Field.extend('Form.FieldContainer',
 		this.fieldBox.moveChildAt(this.description, 0);
 		//Recall the function in case of setFields has been called
 		//before ui element creation
-		if(this.fields != null){
+		if(this.fields !== undefined) {
 			this.setFields(this.fields);
 		}
 		//Idem for require
@@ -42,23 +42,23 @@ Form.Field.extend('Form.FieldContainer',
 	},
 
 	/**Needs to be done after setting elements*/
-	setValue: function(value){
+	setValue: function(value) {
 		//Only works with objects
-		if(typeof value === 'object' && this.uiElt != null){
-			for(var name in value){
+		if((typeof(value) === 'object') && (this.uiElt !== undefined)) {
+			for(var name in value) {
 				var f = this.fields[name];
-				if(f != null){
+				if(f !== undefined) {
 					f.setValue(value[name]);
 				}
 			}
 		}
 	},
 
-	getValue: function(){
+	getValue: function() {
 		var value = {};
-		for(var name in this.fields){
+		for(var name in this.fields) {
 			var f = this.fields[name];
-			if(f != null){
+			if(f !== undefined) {
 				value[name] = f.getValue();
 			}
 		}
@@ -66,10 +66,10 @@ Form.Field.extend('Form.FieldContainer',
 		return value;
 	},
 
-	isValid: function(){
+	isValid: function() {
 		var fields = this.uiElt.getChildren();
-		for(var i = 0 ; i < fields.length; i++){
-			if(!fields[i].isValid()){
+		for(var i = 0 ; i < fields.length; i++) {
+			if(!fields[i].isValid()) {
 				return false;
 			}
 		}
@@ -77,7 +77,7 @@ Form.Field.extend('Form.FieldContainer',
 	},
 
 	/** Set all fields to require if true. Otherwise do nothing */
-	setRequire: function(require){
+	setRequire: function(require) {
 		this.require = require;
 		if(require){
 			var fields = this.uiElt.getChildren();
