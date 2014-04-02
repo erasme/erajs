@@ -15,10 +15,14 @@ Ui.Element.extend('Ui.Container',
 			this.containerDrawing = this.getDrawing();
 	},
 
+	getContainerDrawing: function() {
+		return this.containerDrawing;
+	},
+
 	setContainerDrawing: function(containerDrawing) {
 		this.containerDrawing = containerDrawing;
 	},
-
+	
 	/**
 	 * Add a child in the container at the end
 	 */
@@ -26,7 +30,6 @@ Ui.Element.extend('Ui.Container',
 		child.parent = this;
 		this.children.push(child);
 		this.containerDrawing.appendChild(child.getDrawing());
-		child.getDrawing().style.zIndex = this.children.length;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
 		child.setParentDisabled(this.getIsDisabled());
@@ -43,8 +46,6 @@ Ui.Element.extend('Ui.Container',
 			this.containerDrawing.insertBefore(child.getDrawing(), this.containerDrawing.firstChild);
 		else
 			this.containerDrawing.appendChild(child.getDrawing());
-		for(var i = 0; i < this.children.length; i++)
-			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(this.isLoaded);
 		child.setParentVisible(this.getIsVisible());
 		child.setParentDisabled(this.getIsDisabled());
@@ -58,11 +59,9 @@ Ui.Element.extend('Ui.Container',
 		child.parent = undefined;
 		this.containerDrawing.removeChild(child.getDrawing());
 		var i = 0;
-		while((i < this.children.length) && (this.children[i] != child)) { i++; }
+		while((i < this.children.length) && (this.children[i] !== child)) { i++; }
 		if(i < this.children.length)
 			this.children.splice(i, 1);
-		for(i = 0; i < this.children.length; i++)
-			this.children[i].getDrawing().style.zIndex = i + 1;
 		child.setIsLoaded(false);
 		child.setParentVisible(false);
 		this.onChildInvalidateMeasure(child, 'remove');
@@ -73,8 +72,18 @@ Ui.Element.extend('Ui.Container',
 	 */
 
 	insertChildAt: function(child, position) {
-		this.appendChild(child);
-		this.moveChildAt(child, position);
+		position = Math.max(0, Math.min(position, this.children.length));
+
+		child.parent = this;
+		this.children.splice(position, 0, child);
+		if((this.containerDrawing.firstChild !== undefined) && (position < this.children.length))
+			this.containerDrawing.insertBefore(child.getDrawing(), this.containerDrawing.childNodes[position]);
+		else
+			this.containerDrawing.appendChild(child.getDrawing());
+		child.setIsLoaded(this.isLoaded);
+		child.setParentVisible(this.getIsVisible());
+		child.setParentDisabled(this.getIsDisabled());
+		this.onChildInvalidateMeasure(child, 'add');
 	},
 
 	/**
@@ -90,12 +99,15 @@ Ui.Element.extend('Ui.Container',
 		if(position >= this.children.length)
 			position = this.children.length;
 		var i = 0;
-		while((i < this.children.length) && (this.children[i] != child)) { i++; }
+		while((i < this.children.length) && (this.children[i] !== child)) { i++; }
 		if(i < this.children.length) {
 			this.children.splice(i, 1);
 			this.children.splice(position, 0, child);
-			for(i = 0; i < this.children.length; i++)
-				this.children[i].getDrawing().style.zIndex = i + 1;
+			this.containerDrawing.removeChild(child.getDrawing());
+			if((this.containerDrawing.firstChild !== undefined) && (position < this.containerDrawing.childNodes.length))
+				this.containerDrawing.insertBefore(child.getDrawing(), this.containerDrawing.childNodes[position]);
+			else
+				this.containerDrawing.appendChild(child.getDrawing());
 		}
 		this.onChildInvalidateMeasure(child, 'move');
 	},
