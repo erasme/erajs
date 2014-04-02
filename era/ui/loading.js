@@ -23,13 +23,13 @@ Ui.LBox.extend('Ui.Loading',
 }, 
 /**@lends Ui.Loading#*/
 {
-	onLoad: function() {
-		Ui.Loading.base.onLoad.call(this);
+	onVisible: function() {
+		Ui.Loading.base.onVisible.apply(this, arguments);
 		this.clock.begin();
 	},
 
-	onUnload: function() {
-		Ui.Loading.base.onUnload.call(this);
+	onHidden: function() {
+		Ui.Loading.base.onHidden.apply(this, arguments);
 		this.clock.stop();
 	},
 
