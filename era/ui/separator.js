@@ -1,4 +1,4 @@
-Ui.Rectangle.extend('Ui.Separator', 
+Ui.Element.extend('Ui.Separator', 
 /** @lends Ui.Separator# */
 {
 	/**
@@ -7,7 +7,6 @@ Ui.Rectangle.extend('Ui.Separator',
 	 * @extends Ui.Rectangle
 	 */
 	constructor: function(config) {
-//		this.setMargin(3);
 		this.setHeight(1);
 		this.setWidth(1);
 	}
@@ -15,7 +14,7 @@ Ui.Rectangle.extend('Ui.Separator',
 /** @lends Ui.Separator# */
 {
 	onStyleChange: function() {
-		this.setFill(this.getStyleProperty('color'));
+		this.setBackground(this.getStyleProperty('color'));
 	}
 }, 
 /** @lends Ui.Separator */
