@@ -55,9 +55,9 @@ Ui.Container.extend('Ui.Box',
 	 */
 	setOrientation: function(orientation) {
 		var vertical = true;
-		if(orientation != 'vertical')
+		if(orientation !== 'vertical')
 			vertical = false;
-		if(this.vertical != vertical) {
+		if(this.vertical !== vertical) {
 			this.vertical = vertical;
 			this.invalidateMeasure();
 		}
