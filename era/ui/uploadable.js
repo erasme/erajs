@@ -117,7 +117,6 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		// needed for IE < 9
 		this.formDrawing.encoding = 'multipart/form-data';
 		this.formDrawing.style.position = 'absolute';
-		this.formDrawing.style.zIndex = 1;
 
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
@@ -125,7 +124,7 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		if(this.directoryMode)
 			this.inputDrawing.setAttribute('webkitdirectory', '');
 		this.inputDrawing.style.position = 'absolute';
-		this.inputDrawing.style.zIndex = 1;
+		this.inputDrawing.tabIndex = -1;
 
 		this.connect(this.inputDrawing, 'change', this.onChange);
 		this.formDrawing.appendChild(this.inputDrawing);
@@ -251,6 +250,7 @@ Ui.Element.extend('Ui.UploadableWrapper',
 		this.inputDrawing = document.createElement('input');
 		this.inputDrawing.type = 'file';
 		this.inputDrawing.name = 'file';
+		this.inputDrawing.tabIndex = -1;
 		this.inputDrawing.style.fontSize = '200px';
 		this.inputDrawing.style.display = 'block';
 		this.inputDrawing.style.cursor = 'pointer';
