@@ -556,6 +556,7 @@ Core.Object.extend('Core.SVG2DContext', {
 		
 		var font = this.parseFont(this.font);
 		t.style.fontFamily = font.family;
+		t.style.fontWeight = font.weight;
 		t.style.fontSize = font.size;
 		t.style.fontStyle = font.style;
 
@@ -690,6 +691,11 @@ Core.Object.extend('Core.SVG2DContext', {
 
 	createLinearGradient: function(x0, y0, x1, y1) {
 		return new Core.SVGGradient({ x0: x0, y0: y0, x1: x1, y1: y1 });
+	},
+
+	measureText: function(text) {
+		var font = this.parseFont(this.font);
+		return Ui.Label.measureText(text, font.size, font.family, font.weight);
 	},
 
 	svgPath: function(path) {
