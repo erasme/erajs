@@ -8,6 +8,7 @@ navigator.isWebkit = (navigator.userAgent.match(/WebKit\//i) !== null);
 navigator.isIE = (navigator.userAgent.match(/MSIE/i) !== null) || (navigator.userAgent.match(/Trident/i) !== null);
 navigator.isIE7 = (navigator.userAgent.match(/MSIE 7\./i) !== null);
 navigator.isIE8 = (navigator.userAgent.match(/MSIE 8\./i) !== null);
+navigator.isIE10 = (navigator.userAgent.match(/MSIE 10\./i) !== null);
 navigator.isIE11 = navigator.isIE && (navigator.userAgent.match(/rv:11\./i) !== null);
 
 navigator.isOpera =  ((navigator.userAgent === undefined) || (navigator.userAgent.match(/Opera\//i) !== null));
