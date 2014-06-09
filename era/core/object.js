@@ -160,6 +160,9 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 		if((navigator.isIE) && (classDefine.constructor !== Object.prototype.constructor))
 			func.prototype.__constructor = classDefine.constructor;
 	}
+	else {
+		func.prototype.__constructor = undefined;
+	}
 
 	if(classOverride !== undefined) {
 		for(prop in classOverride) {
@@ -241,8 +244,11 @@ Core.Object.prototype.fireEvent = function(eventName) {
 	var handled = false;
 	var eventListeners = this.events[eventName];
 	if(eventListeners !== undefined) {
+		// copy the listeners because the events handlers might
+		// change the connected events
+		eventListeners = eventListeners.slice();
 		for(i = 0; (i < eventListeners.length) && !handled; i++) {
-			handled = this.events[eventName][i].method.apply(this.events[eventName][i].scope, args);
+			handled = eventListeners[i].method.apply(eventListeners[i].scope, args);
 			if(handled === undefined)
 				handled = false;
 		}
