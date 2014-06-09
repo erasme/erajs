@@ -6,6 +6,7 @@ Core.Object.extend('Core.DelayedTask',
 	callback: undefined,
 	arguments: undefined,
 	isDone: false,
+	handle: undefined,
 
 	/**
     *   @constructs
@@ -37,14 +38,13 @@ Core.Object.extend('Core.DelayedTask',
 		}
 		else
 			throw('callback MUST be given for a DelayedTask');
+		this.handle = setTimeout(this.onTimeout.bind(this), this.delay * 1000);
+	},
 
-		var wrapper = function() {
-			arguments.callee.delayedtask.handle = undefined;
-			arguments.callee.delayedtask.callback.apply(arguments.callee.delayedtask.scope, arguments.callee.delayedtask.arguments);
-			arguments.callee.delayedtask.isDone = true;
-		};
-		wrapper.delayedtask = this;
-		this.handle = setTimeout(wrapper, this.delay * 1000);
+	onTimeout: function() {
+		this.handle = undefined;
+		this.isDone = true;
+		this.callback.apply(this.scope, this);
 	},
 
 	abort: function() {
