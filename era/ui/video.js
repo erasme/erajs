@@ -234,8 +234,7 @@ Ui.Element.extend('Ui.Video',
 		var timebuffer = this.getCurrentBufferSize();
 		var time = this.videoDrawing.currentTime;
 		var duration = this.videoDrawing.duration;
-
-		if(this.state == 'buffering') {
+/*		if(this.state == 'buffering') {
 			// if we have 5s in the buffer or if the browser already decided
 			// to stop buffering or if we are at the end
 			if((timebuffer >= 5) || (this.videoDrawing.networkState == 1) || (time + timebuffer >= duration)) {
@@ -252,7 +251,7 @@ Ui.Element.extend('Ui.Video',
 				this.videoDrawing.pause();
 				this.fireEvent('statechange', this, this.state);
 			}
-		}
+		}*/
 		this.fireEvent('bufferingupdate', this, timebuffer);
 	},
 
