@@ -1,19 +1,14 @@
 
-Ui.Shape.extend('Ui.Frame', 
-/**@lends Ui.Frame#*/
-{
+Ui.CanvasElement.extend('Ui.Frame', {
+	fill: undefined,
 	radiusTopLeft: 0,
 	radiusTopRight: 0,
 	radiusBottomLeft: 0,
 	radiusBottomRight: 0,
 	frameWidth: 10,
 
-	/**
-	 * @constructs 
-	 * @class
-	 * @extends Ui.Shape
-	 */
 	constructor: function(config) {
+		this.fill = new Ui.Color({ r: 0, g: 0, b: 0 });
 	},
 
 	getFrameWidth: function() {
@@ -23,7 +18,20 @@ Ui.Shape.extend('Ui.Frame',
 	setFrameWidth: function(frameWidth) {
 		if(frameWidth != this.frameWidth) {
 			this.frameWidth = frameWidth;
-			this.invalidateArrange();
+			this.invalidateDraw();
+		}
+	},
+
+	getFill: function() {
+		return this.fill;
+	},
+
+	setFill: function(fill) {
+		if(this.fill != fill) {
+			if(typeof(fill) === 'string')
+				fill = Ui.Color.create(fill);
+			this.fill = fill;
+			this.invalidateDraw();
 		}
 	},
 
@@ -41,7 +49,7 @@ Ui.Shape.extend('Ui.Frame',
 	setRadiusTopLeft: function(radiusTopLeft) {
 		if(this.radiusTopLeft != radiusTopLeft) {
 			this.radiusTopLeft = radiusTopLeft;
-			this.invalidateArrange();
+			this.invalidateDraw();
 		}
 	},
 
@@ -52,7 +60,7 @@ Ui.Shape.extend('Ui.Frame',
 	setRadiusTopRight: function(radiusTopRight) {
 		if(this.radiusTopRight != radiusTopRight) {
 			this.radiusTopRight = radiusTopRight;
-			this.invalidateArrange();
+			this.invalidateDraw();
 		}
 	},
 
@@ -63,7 +71,7 @@ Ui.Shape.extend('Ui.Frame',
 	setRadiusBottomLeft: function(radiusBottomLeft) {
 		if(this.radiusBottomLeft != radiusBottomLeft) {
 			this.radiusBottomLeft = radiusBottomLeft;
-			this.invalidateArrange();
+			this.invalidateDraw();
 		}
 	},
 
@@ -74,69 +82,43 @@ Ui.Shape.extend('Ui.Frame',
 	setRadiusBottomRight: function(radiusBottomRight) {
 		if(this.radiusBottomRight != radiusBottomRight) {
 			this.radiusBottomRight = radiusBottomRight;
-			this.invalidateArrange();
+			this.invalidateDraw();
 		}
-	},
-
-	genPath: function(width, height) {
-		var radius = this.radiusTopLeft;
-		var radius2 = this.radiusTopLeft;
-		var v1 = width - radius;
-		var v2 = height - radius;
-
-		var path = '';
-		if(this.radiusTopLeft > 0)
-			path += 'M0,'+this.radiusTopLeft+' Q0,0 '+this.radiusTopLeft+',0 ';
-		else
-			path += 'M0,0 ';
-		if(this.radiusTopRight > 0)
-			path += 'L'+(width-this.radiusTopRight)+',0 Q'+width+',0 '+width+','+this.radiusTopRight+' ';
-		else
-			path += 'L'+width+',0 ';
-		if(this.radiusBottomRight > 0)
-			path += 'L'+width+','+(height-this.radiusBottomRight)+' Q'+width+','+height+' '+(width-this.radiusBottomRight)+','+height+' ';
-		else
-			path += 'L'+width+','+height+' ';
-		if(this.radiusBottomLeft > 0)
-			path += 'L'+this.radiusBottomLeft+','+height+' Q0,'+height+' 0,'+(height-this.radiusBottomLeft)+' ';
-		else
-			path += 'L0,'+height+' ';
-
-		if(this.radiusTopLeft > this.frameWidth) {
-			path += 'M'+this.radiusTopLeft+','+this.frameWidth+' ';
-			path += 'Q'+this.frameWidth+','+this.frameWidth+' '+this.frameWidth+','+this.radiusTopLeft+' ';
-		}
-		else
-			path += 'M'+this.frameWidth+','+(this.frameWidth)+' ';
-		if(this.radiusBottomLeft > this.frameWidth) {
-			path += 'L'+this.frameWidth+','+(height-this.radiusBottomLeft)+' ';
-			path += 'Q'+this.frameWidth+','+(height-this.frameWidth)+' '+this.radiusBottomLeft+','+(height-this.frameWidth)+' ';
-		}
-		else
-			path += 'L'+this.frameWidth+','+(height-this.frameWidth)+' ';
-		if(this.radiusBottomRight > this.frameWidth) {
-			path += 'L'+(width-this.radiusBottomRight)+','+(height-this.frameWidth)+' ';
-			path += 'Q'+(width-this.frameWidth)+','+(height-this.frameWidth)+' '+(width-this.frameWidth)+','+(height-this.radiusBottomRight)+' ';
-		}
-		else
-			path += 'L'+(width-this.frameWidth)+','+(height-this.frameWidth)+' ';
-		if(this.radiusTopRight > this.frameWidth) {
-			path += 'L'+(width-this.frameWidth)+','+this.radiusTopRight+' ';
-			path += 'Q'+(width-this.frameWidth)+','+this.frameWidth+' '+(width-this.radiusTopRight)+','+this.frameWidth+' ';
-		}
-		else
-			path += 'L'+(width-this.frameWidth)+','+(this.frameWidth)+' ';
-
-		path += 'z';
-		return path;
 	}
+}, {
+	updateCanvas: function(ctx) {
+		var w = this.getLayoutWidth();
+		var h = this.getLayoutHeight();
+		var topLeft = this.radiusTopLeft;
+		var topRight = this.radiusTopRight;
+		if(topLeft + topRight > w) {
+			topLeft = w/2;
+			topRight = w/2;
+		}
+		var bottomLeft = this.radiusBottomLeft;
+		var bottomRight = this.radiusBottomRight;
+		if(bottomLeft + bottomRight > w) {
+			bottomLeft = w/2;
+			bottomRight = w/2;
+		}
+		if(topLeft + bottomLeft > h) {
+			topLeft = h/2;
+			bottomLeft = h/2;
+		}
+		if(topRight + bottomRight > h) {
+			topRight = h/2;
+			bottomRight = h/2;
+		}
 
-}, 
-/**@lends Ui.Frame#*/ 
-{
-	arrangeCore: function(width, height) {
-		Ui.Frame.base.arrangeCore.call(this, width, height);
-		this.setPath(this.genPath(width, height));
+		ctx.beginPath();
+		ctx.roundRect(0, 0, w, h, topLeft, topRight, bottomRight, bottomLeft);
+		ctx.roundRect(this.frameWidth, this.frameWidth, w-(this.frameWidth*2), h-(this.frameWidth*2), topLeft, topRight, bottomRight, bottomLeft, true);
+		ctx.closePath();
+		if(Ui.Color.hasInstance(this.fill))
+			ctx.fillStyle = this.fill.getCssRgba();
+		else if(Ui.LinearGradient.hasInstance(this.fill))
+			ctx.fillStyle = this.fill.getCanvasGradient(ctx, w, h);
+		ctx.fill();		
 	}
 });
-
+	
