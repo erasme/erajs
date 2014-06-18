@@ -143,6 +143,8 @@ Core.Object.extend('Core.MouseManager',
 	onMouseMove: function(event) {
 		var mouseEvent = document.createEvent('MouseEvents');
 		var target = Core.Event.cleanTarget(event.srcElement);
+		if((target === null) || (target === undefined))
+			return;
 
 		// rename button for IE
 		var button = event.button;
