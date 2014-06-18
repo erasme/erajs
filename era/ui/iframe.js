@@ -64,6 +64,10 @@ Ui.Element.extend('Ui.IFrame',
 			return this.iframeDrawing;
 		}
 	},
+
+	arrangeCore: function(w, h) {
+		this.iframeDrawing.style.width = w+'px';
+	},
 	
 	onVisible: function() {
 		// IE < 9 dont fire resize event when display: none some where
