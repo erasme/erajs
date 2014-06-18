@@ -48,7 +48,7 @@ Ui.Element.extend('Ui.Image',
 		this.imageDrawing.setAttribute('src', src);
 		this.setSrcLock = false;
 	},
-
+	
 	/**
 	* Return the natural width of the image as defined
 	* in the image file. Return undefined if the image is
@@ -82,8 +82,8 @@ Ui.Element.extend('Ui.Image',
 		this.fireEvent('error', this);
 	},
 
-	onImageLoad: function(event) {	
-		if((event.target !== undefined) && (event.target.naturalWidth !== undefined) && (event.target.naturalHeight !== undefined)) {
+	onImageLoad: function(event) {
+		if((event.target !== undefined) && (event.target !== null) && (event.target.naturalWidth !== undefined) && (event.target.naturalHeight !== undefined)) {
 			this.loaddone = true;
 			this.naturalWidth = event.target.naturalWidth;
 			this.naturalHeight = event.target.naturalHeight;
@@ -155,8 +155,6 @@ Ui.Element.extend('Ui.Image',
 			if('attachEvent' in this.imageDrawing)
 				this.imageDrawing.attachEvent('ondragstart', this.onIEDragStart);
 		}
-		else if(navigator.isOpera)
-			this.imageDrawing.onmousedown = function(event) { event.preventDefault(); };
 		return this.imageDrawing;
 	},
 
