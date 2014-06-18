@@ -23,17 +23,12 @@ Ui.Container.extend('Ui.Fold',
 	constructor: function(config) {
 		this.addEvents('fold', 'unfold', 'positionchange');
 
-		this.headerBox = new Ui.Pressable();
+		this.headerBox = new Ui.LBox();
 		this.appendChild(this.headerBox);
-		this.connect(this.headerBox, 'press', this.onHeaderPress);
 
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 		this.contentBox.hide();
-	},
-
-	setHeaderActive: function(active) {
-		this.headerBox.setLock(!active);
 	},
 
 	getIsFolded: function() {
@@ -129,11 +124,8 @@ Ui.Container.extend('Ui.Fold',
 	 */
 	setHeader: function(header) {
 		if(header !== this.header) {
-			if(this.header !== undefined)
-				this.headerBox.removeChild(this.header);
 			this.header = header;
-			if(this.header !== undefined)
-				this.headerBox.appendChild(this.header);
+			this.headerBox.setContent(this.header);
 		}
 	},
 
@@ -149,11 +141,8 @@ Ui.Container.extend('Ui.Fold',
 	 */
 	setContent: function(content) {
 		if(this.content !== content) {
-			if(this.content !== undefined)
-				this.contentBox.removeChild(this.content);
 			this.content = content;
-			if(this.content !== undefined)
-				this.contentBox.appendChild(this.content);
+			this.contentBox.setContent(this.content);
 		}
 	},
 
@@ -176,7 +165,7 @@ Ui.Container.extend('Ui.Fold',
 				this.prependChild(this.background);
 		}
 	},
-
+	
 	/**
 	 * Return the position of the content
 	 * possibles values: [top|bottom|left|right]
@@ -208,6 +197,8 @@ Ui.Container.extend('Ui.Fold',
 	},
 
 	setOffset: function(offset) {
+		if(this.offset === offset)
+			return;
 		this.offset = offset;
 
 		if(!this.over)
@@ -252,7 +243,7 @@ Ui.Container.extend('Ui.Fold',
 		}
 	},
 
-	onHeaderPress: function() {
+	invert: function() {
 		if(this.isFolded)
 			this.unfold();
 		else
