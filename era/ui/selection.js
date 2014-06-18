@@ -60,7 +60,9 @@ Core.Object.extend('Ui.Selection', {
 	},
 	
 	getElements: function() {
-		return this.elements;
+		// return a copy, because action on elements might change
+		// the elements list
+		return this.elements.slice();
 	},
 	
 	getActions: function() {
