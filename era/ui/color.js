@@ -39,6 +39,34 @@ Core.Object.extend('Ui.Color',
 		}
 	},
 
+	addA: function(a) {
+		return new Ui.Color({ r: this.r, g: this.g, b: this.b, a: Math.max(0, Math.min(1, this.a + a)) });
+	},
+
+	addY: function(y) {
+		var yuva = this.getYuva();
+		yuva.y += y;
+		return new Ui.Color(yuva);
+	},
+
+	addH: function(h) {
+		var hsla = this.getHsla();
+		hsl.h += h;
+		return new Ui.Color(hsla);
+	},
+
+	addS: function(s) {
+		var hsla = this.getHsla();
+		hsla.s += s;
+		return new Ui.Color(hsla);
+	},
+	
+	addL: function(l) {
+		var hsla = this.getHsla();
+		hsla.l += l;
+		return new Ui.Color(hsla);
+	},
+
 	getCssRgba: function() {
 		return 'rgba('+Math.round(this.r * 255)+','+Math.round(this.g * 255)+','+Math.round(this.b * 255)+','+this.a+')';
 	},
@@ -82,6 +110,8 @@ Core.Object.extend('Ui.Color',
 		var s;
 		var l = max;
 		var delta = max - min;
+		if(delta === 0)
+			return { h: 0, s: 0, l: l, a: this.a };
 		if(max !== 0)
 			s = delta / max;
 		else
