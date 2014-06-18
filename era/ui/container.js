@@ -76,7 +76,7 @@ Ui.Element.extend('Ui.Container',
 
 		child.parent = this;
 		this.children.splice(position, 0, child);
-		if((this.containerDrawing.firstChild !== undefined) && (position < this.children.length))
+		if((this.containerDrawing.firstChild !== undefined) && (position < this.children.length-1))
 			this.containerDrawing.insertBefore(child.getDrawing(), this.containerDrawing.childNodes[position]);
 		else
 			this.containerDrawing.appendChild(child.getDrawing());
