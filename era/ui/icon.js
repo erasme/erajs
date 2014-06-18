@@ -8,8 +8,6 @@ Ui.Shape.extend('Ui.Icon',
      * @extends Ui.Shape
 	 */
 	constructor: function(config) {
-		this.setWidth(24);
-		this.setHeight(24);
 	},
 
 	setIcon: function(icon) {
@@ -59,6 +57,7 @@ Ui.Shape.extend('Ui.Icon',
 		this.register('plus', 'm 18.928571,4.4336 0,15 -14.9999996,0 0,10 14.9999996,0 0,15 10,0 0,-15 15,0 0,-10 -15,0 0,-15 z');
 		this.register('eye', 'M 24.15625 10.40625 C 11.735751 10.40625 2.0024346 23.625025 1.59375 24.1875 L 0.90625 25.125 L 1.59375 26.09375 C 2.0024345 26.656226 11.735751 39.875 24.15625 39.875 C 36.576276 39.875 46.31054 26.655751 46.71875 26.09375 L 47.4375 25.125 L 46.71875 24.1875 C 46.31054 23.625025 36.576276 10.40625 24.15625 10.40625 z M 24.15625 13.6875 C 33.120256 13.6875 40.944331 22.21152 43.34375 25.125 C 40.948128 28.038954 33.140667 36.59375 24.15625 36.59375 C 15.193194 36.59375 7.3984708 28.038005 5 25.125 C 7.3946735 22.210571 15.171835 13.6875 24.15625 13.6875 z M 24.8125 15.1875 C 19.396945 15.1875 15 19.557753 15 24.9375 C 15 30.318383 19.396945 34.6875 24.8125 34.6875 C 30.229761 34.6875 34.625 30.318383 34.625 24.9375 C 34.625 23.144819 34.101438 21.474944 33.25 20.03125 C 33.134618 22.135405 31.391099 23.8125 29.25 23.8125 C 27.035579 23.8125 25.25 22.01328 25.25 19.8125 C 25.25 17.87204 26.649913 16.261489 28.5 15.90625 C 27.361528 15.448132 26.115803 15.1875 24.8125 15.1875 z');
 		this.register('map', 'M 32 5 L 16 13 L 16 45 L 32 37 L 32 5 z M 35 5 L 35 37 L 47 45 L 47 13 L 35 5 z M 1 6 L 1 38 L 13 45 L 13 13 L 1 6 z M 24.625 12.625 L 26.3125 14.3125 L 28 12.625 L 29.6875 14.3125 L 28 16 L 29.6875 17.6875 L 28 19.375 L 26.3125 17.6875 L 24.625 19.375 L 22.9375 17.6875 L 24.625 16 L 22.9375 14.3125 L 24.625 12.625 z');
+		this.register('sortarrow', 'm 24,5.5 -20.5,35 6,4 14.5,-25 14,25 6.5,-4 z');
 	},
 
 	getPath: function(icon) {
@@ -84,5 +83,53 @@ Ui.Shape.extend('Ui.Icon',
 
 	parse: function(icon) {
 		return new Ui.Icon({ icon: icon });
+	},
+
+	drawIcon: function(ctx, icon, size, fill) {
+		ctx.save();
+		var scale = size/48;
+		ctx.scale(scale, scale);
+		ctx.svgPath(Ui.Icon.getPath(icon));
+		ctx.fillStyle = fill;
+		ctx.fill();
+		ctx.restore();
+	},
+
+	drawIconAndBadge: function(ctx, icon, size, fill, badgeText, badgeSize, badgeFill, textFill) {
+		ctx.save();
+		var scale = size/48;
+		badgeSize /= scale;
+		var textHeight = badgeSize*0.75;
+		ctx.font = 'bold '+textHeight+'px sans-serif';
+		var textSize = ctx.measureText(badgeText);
+		var textWidth = textSize.width;
+		var badgeWidth = Math.max(badgeSize, textWidth*1.25);
+		ctx.scale(scale, scale);
+
+		ctx.save();
+
+		ctx.beginPath();
+		ctx.rect(0, 0, 48, 48);
+		ctx.roundRect(1, 48-5-badgeSize, badgeWidth+4, badgeSize+4, badgeSize/2, badgeSize/2, badgeSize/2, badgeSize/2, true);
+		ctx.closePath();
+		ctx.clip();
+
+		ctx.svgPath(Ui.Icon.getPath(icon));
+		ctx.fillStyle = fill;
+		ctx.fill();
+
+		ctx.restore();
+
+		ctx.fillStyle = badgeFill;
+		ctx.beginPath();
+		ctx.roundRect(3, 48-3-badgeSize, badgeWidth, badgeSize, badgeSize/2, badgeSize/2, badgeSize/2, badgeSize/2);
+		ctx.closePath();
+		ctx.fill();
+
+		ctx.textBaseline = 'middle';
+		ctx.fillStyle = textFill;
+		ctx.fillText(badgeText, 3+((badgeWidth-textWidth)/2), 48-(3+(badgeSize/2)));
+
+		ctx.restore();
 	}
 });
