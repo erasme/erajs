@@ -32,6 +32,7 @@ Core.Object.extend('Core.FilePostUploader',
 	boundary: undefined,
 	method: 'POST',
 	fields: undefined,
+	isCompleted: false,
 
 	loadedOctets: undefined,
 	totalOctets: undefined,
@@ -191,6 +192,7 @@ Core.Object.extend('Core.FilePostUploader',
 	*/
 	onStateChange: function(event) {
 		if(this.request.readyState == 4) {
+			this.isCompleted = true;
 			if(this.request.status == 200) {
 				this.responseText = this.request.responseText;
 				this.fireEvent('complete', this);
@@ -201,6 +203,10 @@ Core.Object.extend('Core.FilePostUploader',
 			}
 			this.request = undefined;
 		}
+	},
+
+	getIsCompleted: function() {
+		return this.isCompleted;
 	},
 
 	getTotal: function() {
