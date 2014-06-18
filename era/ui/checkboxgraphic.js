@@ -4,6 +4,7 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 	isChecked: false,
 	color: undefined,
 	checkColor: undefined,
+	borderWidth: 2,
 
 	constructor: function(config) {
 		this.color = new Ui.Color({ r: 1, g: 1, b: 1 });
@@ -37,14 +38,21 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 	},
 
 	setColor: function(color) {
-		if(this.color != color) {
+		if(this.color !== color) {
 			this.color = Ui.Color.create(color);
 			this.invalidateDraw();
 		}
 	},
 
+	setBorderWidth: function(borderWidth) {
+		if(this.borderWidth !== borderWidth) {
+			this.borderWidth = borderWidth;
+			this.invalidateDraw();
+		}
+	},
+
 	setCheckColor: function(color) {
-		if(this.checkColor != color) {
+		if(this.checkColor !== color) {
 			this.checkColor = Ui.Color.create(color);
 			this.invalidateDraw();
 		}
@@ -73,9 +81,18 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 			ctx.globalAlpha = 0.2;
 			
 		// border
-		ctx.strokeStyle = this.getColor().getCssRgba();
-		ctx.lineWidth = 2;
-		ctx.strokeRect(cx-10, cy-10, 20, 20);
+		ctx.fillStyle = this.getColor().getCssRgba();
+		ctx.beginPath();
+		ctx.moveTo(cx-10, cy-10);
+		ctx.lineTo(cx-10, cy+10);
+		ctx.lineTo(cx+10, cy+10);
+		ctx.lineTo(cx+10, cy-10);
+		ctx.moveTo(cx-10+this.borderWidth, cy-10+this.borderWidth);
+		ctx.lineTo(cx+10-this.borderWidth, cy-10+this.borderWidth);
+		ctx.lineTo(cx+10-this.borderWidth, cy+10-this.borderWidth);
+		ctx.lineTo(cx-10+this.borderWidth, cy+10-this.borderWidth);
+		ctx.closePath();
+		ctx.fill();
 
 		if(this.isChecked) {
 			// icon
