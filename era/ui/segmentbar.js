@@ -18,14 +18,14 @@ Ui.LBox.extend('Ui.SegmentBar',
 
 		this.addEvents('change');
 
-		this.border = new Ui.Rectangle({ fill: '#888888' });
+		this.border = new Ui.Frame();
 		this.append(this.border);
 
 		this.box = new Ui.Box({ uniform: true, margin: 1, spacing: 1, orientation: this.orientation });
 		this.append(this.box);
 
-		this.connect(this, 'focus', this.updateColors);
-		this.connect(this, 'blur', this.updateColors);
+		this.connect(this, 'focus', this.onStyleChange);
+		this.connect(this, 'blur', this.onStyleChange);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 	},
 
@@ -52,18 +52,20 @@ Ui.LBox.extend('Ui.SegmentBar',
 				mode = (i === 0)?'top':(i === data.length - 1)?'bottom':'middle';
 			var segment = new Ui.SegmentButton({ data: data[i], text: data[i][this.field], mode: mode });
 			this.box.append(segment, true);
-			this.connect(segment, 'toggle', this.onSegmentSelect);
+			this.connect(segment, 'press', this.onSegmentSelect);
 		}
 	},
 
 	setCurrentPosition: function(position) {
-		if((position >= 0) && (position < this.box.getChildren().length))
-			this.box.getChildren()[position].toggle();
+		if((position >= 0) && (position < this.box.getChildren().length)) {
+			this.current = this.box.getChildren()[position];
+			this.onSegmentSelect(this.current);
+		}
 	},
 
 	getCurrentPosition: function() {
 		for(var i = 0; i < this.box.getChildren().length; i++) {
-			if(this.box.getChildren()[i].getIsToggled())
+			if(this.box.getChildren()[i] === this.current)
 				return i;
 		}
 	},
@@ -96,9 +98,8 @@ Ui.LBox.extend('Ui.SegmentBar',
 	 * @private 
 	 */
 	onSegmentSelect: function(segment) {
-		if(this.current !== undefined)
-			this.current.untoggle();
 		this.current = segment;
+		this.onStyleChange();
 		this.fireEvent('change', this, segment.getData());
 	},
 
@@ -114,61 +115,75 @@ Ui.LBox.extend('Ui.SegmentBar',
 			this.previous();
 		else if(key == 39)
 			this.next();
-	},
-
-	getCurrentColor: function() {
-		var color = this.getStyleProperty('color');
-		if(this.getHasFocus())
-			color = this.getStyleProperty('focusColor');
-		return color;
-	},
-
-	updateColors: function() {
-		var color = this.getCurrentColor();
-		for(var i = 0; i < this.box.getChildren().length; i++)
-			this.box.getChildren()[i].setFill(color);
 	}
 	/**#@-*/
 }, {
 	onStyleChange: function() {
 		var spacing = this.getStyleProperty('spacing');
 		var radius = this.getStyleProperty('radius');
+		var borderWidth = this.getStyleProperty('borderWidth');
 		this.border.setRadius(radius);
-		for(var i = 0; i < this.box.getChildren().length; i++) {
-			this.box.getChildren()[i].setRadius(radius-1);
-			this.box.getChildren()[i].setSpacing(spacing);
+		this.border.setFrameWidth(borderWidth);
+
+		var background = this.getStyleProperty('background');
+		var backgroundBorder = this.getStyleProperty('backgroundBorder');
+		var foreground = this.getStyleProperty('foreground');
+		if(this.getHasFocus() && !this.getIsMouseFocus()) {
+			background = this.getStyleProperty('focusBackground');
+			backgroundBorder = this.getStyleProperty('focusBackgroundBorder');
+			foreground = this.getStyleProperty('focusForeground');
 		}
-		this.updateColors();
+		var activeBackground = this.getStyleProperty('activeBackground');
+		var activeForeground = this.getStyleProperty('activeForeground');
+
+		this.border.setFill(backgroundBorder);
+		for(var i = 0; i < this.box.getChildren().length; i++) {
+			var child = this.box.getChildren()[i];
+			child.setRadius(radius-borderWidth);
+			child.setSpacing(spacing);
+			if(this.current === child) {
+				child.setBackground(activeBackground);
+				child.setForeground(activeForeground);
+			}
+			else {
+				child.setBackground(background);
+				child.setForeground(foreground);
+			}
+		}
 	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99 }),
-		focusColor: '#fff0c8',
+		borderWidth: 1,
+		background: 'rgba(240,240,240,1)',
+		backgroundBorder: 'rgba(102,102,102,1)',
+		foreground: '#444444',
+		focusBackground: 'rgba(240,240,240,1)',
+		focusBackgroundBorder: 'rgba(33,211,255,1)',
+		focusForeground: 'rgba(33,211,255,1)',
+		activeBackground: 'rgba(33,211,255,1)',
+		activeForeground: 'rgba(250,250,250,1)',
 		radius: 3,
 		spacing: 5
 	}
 });
 
-Ui.Togglable.extend('Ui.SegmentButton', {
+Ui.Pressable.extend('Ui.SegmentButton', {
 	label: undefined,
 	bg: undefined,
-	shadow: undefined,
 	mode: undefined,
 	data: undefined,
-	fill: undefined,
-	downFill: undefined,
 	radius: 3,
 
 	constructor: function(config) {
 		this.setFocusable(false);
-		
 		this.bg = new Ui.Rectangle();
 		this.append(this.bg);
 		this.label = new Ui.Label({ margin: 7 });
 		this.append(this.label);
-
-		this.connect(this, 'toggle', this.onButtonSelect);
-		this.connect(this, 'untoggle', this.onButtonUnselect);
+	},
+	
+	setForeground: function(color) {
+		this.label.setColor(color);
 	},
 
 	getData: function() {
@@ -216,48 +231,28 @@ Ui.Togglable.extend('Ui.SegmentButton', {
 			this.bg.setRadiusBottomRight(0);
 		}
 	},
-
-	setFill: function(fill) {
-		if(this.fill !== fill) {
-			this.fill = Ui.Color.create(fill);
-			var yuv = this.fill.getYuva();
-			this.downFill = new Ui.Color({ y: yuv.y - 0.2, u: yuv.u, v: yuv.v });
-			if(this.getIsToggled())
-				this.bg.setFill(this.downFill);
-			else
-				this.bg.setFill(this.fill);
-		}
-	},
 	
 	setRadius: function(radius) {
 		this.radius = radius;
 		this.setMode(this.mode);
 	},
-	
+
 	setSpacing: function(spacing) {
 		this.label.setMargin(spacing);
 	},
 
-	/**#@+ 
-	 * @private 
-	 */
-	onButtonSelect: function() {
-		this.bg.setFill(this.downFill);
-	},
-
-	onButtonUnselect: function() {
-		this.bg.setFill(this.fill);
+	setBackground: function(color) {
+		this.bg.setFill(color);
 	}
-	/**#@-*/
-},
-{
+
+}, {
 	onDisable: function() {
-		Ui.Selectable.base.onDisable.call(this);
+		Ui.SegmentButton.base.onDisable.apply(this, arguments);
 		this.bg.setOpacity(0.2);
 	},
 
 	onEnable: function() {
-		Ui.Selectable.base.onEnable.call(this);
+		Ui.SegmentButton.base.onEnable.apply(this, arguments);
 		this.bg.setOpacity(1);
 	}
 });
