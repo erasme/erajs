@@ -44,7 +44,7 @@ Core.Object.extend('Core.DelayedTask',
 	onTimeout: function() {
 		this.handle = undefined;
 		this.isDone = true;
-		this.callback.apply(this.scope, this);
+		this.callback.apply(this.scope, [ this ]);
 	},
 
 	abort: function() {
