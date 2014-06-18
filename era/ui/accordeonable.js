@@ -334,8 +334,7 @@ Ui.Container.extend('Ui.AccordeonPage',
 	* set the content visible
 	*/
 	setHeader: function(header) {
-		header = Ui.Element.create(header);
-		if(header != this.header) {
+		if(header !== this.header) {
 			if(this.header !== undefined)
 				this.headerBox.removeChild(this.header);
 			this.header = header;
@@ -355,8 +354,7 @@ Ui.Container.extend('Ui.AccordeonPage',
 	* Set the content element of the page
 	*/
 	setContent: function(content) {
-		content = Ui.Element.create(content) ;
-		if(this.content != content) {
+		if(this.content !== content) {
 			if(this.content !== undefined)
 				this.removeChild(this.content);
 			this.content = content;
