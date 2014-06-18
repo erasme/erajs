@@ -1,5 +1,5 @@
 
-Ui.Togglable.extend('Ui.CheckBox', 
+Ui.Pressable.extend('Ui.CheckBox', 
 /**Ui.CheckBox#*/
 {
 	graphic: undefined,
@@ -7,14 +7,18 @@ Ui.Togglable.extend('Ui.CheckBox',
 	hbox: undefined,
 	content: undefined,
 	text: undefined,
+	isToggled: false,
 
 	/**
 	 * @constructs
 	 * @class
-	 * @extends Ui.Togglable
+	 * @extends Ui.Pressable
 	 */
 	constructor: function(config) {
-		this.addEvents('change');
+		this.addEvents('change','toggle', 'untoggle');
+
+		this.setRole('checkbox');
+		this.getDrawing().setAttribute('aria-checked', 'false');
 
 		this.setPadding(3);
 
@@ -26,12 +30,13 @@ Ui.Togglable.extend('Ui.CheckBox',
 
 		this.connect(this, 'down', this.onCheckBoxDown);
 		this.connect(this, 'up', this.onCheckBoxUp);
-		this.connect(this, 'toggle', this.onCheckBoxToggle);
-		this.connect(this, 'untoggle', this.onCheckBoxUntoggle);
-
 		this.connect(this, 'focus', this.onCheckFocus);
 		this.connect(this, 'blur', this.onCheckBlur);
+		this.connect(this, 'press', this.onCheckPress);
+	},
 
+	getIsToggled: function() {
+		return this.isToggled;
 	},
 
 	getValue: function() {
@@ -75,11 +80,47 @@ Ui.Togglable.extend('Ui.CheckBox',
 		return this.text;
 	},
 
+	toggle: function() {
+		this.onToggle();
+	},
+
+	untoggle: function() {
+		this.onUntoggle();
+	},
+	
 	/**
 	 *#@+ @private
 	 */
+	onCheckPress: function() {
+		if(!this.isToggled)
+			this.onToggle();
+		else
+			this.onUntoggle();
+	},
+	
+	onToggle: function() {
+		if(!this.isToggled) {
+			this.isToggled = true;
+			this.getDrawing().setAttribute('aria-checked', 'true');
+			this.fireEvent('toggle', this);
+			this.graphic.setIsChecked(true);
+			this.fireEvent('change', this, true);
+		}
+	},
+
+	onUntoggle: function() {
+		if(this.isToggled) {
+			this.isToggled = false;
+			this.getDrawing().setAttribute('aria-checked', 'false');
+			this.fireEvent('untoggle', this);
+			this.graphic.setIsChecked(false);
+			this.fireEvent('change', this, false);
+		}
+	},
+	
 	onCheckFocus: function() {
-		this.graphic.setColor(this.getStyleProperty('focusColor'));
+		if(!this.getIsMouseFocus())
+			this.graphic.setColor(this.getStyleProperty('focusColor'));
 	},
 	
 	onCheckBlur: function() {
@@ -92,16 +133,6 @@ Ui.Togglable.extend('Ui.CheckBox',
 
 	onCheckBoxUp: function() {
 		this.graphic.setIsDown(false);
-	},
-
-	onCheckBoxToggle: function() {
-		this.graphic.setIsChecked(true);
-		this.fireEvent('change', this, true);
-	},
-
-	onCheckBoxUntoggle: function() {
-		this.graphic.setIsChecked(false);
-		this.fireEvent('change', this, false);
 	}
 	/**#@-*/
 }, 
@@ -113,10 +144,10 @@ Ui.Togglable.extend('Ui.CheckBox',
 		else
 			this.graphic.setColor(this.getStyleProperty('color'));
 		this.graphic.setCheckColor(this.getStyleProperty('checkColor'));
+		this.graphic.setBorderWidth(this.getStyleProperty('borderWidth'));
 	},
 
 	setContent: function(content) {
-		content = Ui.Element.create(content);
 		if(content === undefined) {
 			if(this.contentBox !== undefined) {
 				this.hbox.remove(this.contentBox);
@@ -144,6 +175,7 @@ Ui.Togglable.extend('Ui.CheckBox',
 /**Ui.CheckBox*/
 {
 	style: {
+		borderWidth: 2,
 		color: '#444444',
 		focusColor: '#21d3ff',
 		checkColor: new Ui.Color({ r: 0.03, g: 0.63, b: 0.9 })
