@@ -157,6 +157,7 @@ Ui.Element.extend('Ui.Audio',
 	},
 
 	onEnded: function() {
+		this.audioDrawing.pause();
 		this.state = 'initial';
 		this.audioDrawing.currentTime = 0;
 		this.fireEvent('ended', this);
@@ -198,7 +199,7 @@ Ui.Element.extend('Ui.Audio',
 		var time = this.audioDrawing.currentTime;
 		var duration = this.audioDrawing.duration;
 
-		if(this.state == 'buffering') {
+/*		if(this.state == 'buffering') {
 			// if we have 5s in the buffer or if the browser already decided
 			// to stop buffering or if we are at the end
 			if((timebuffer >= 5) || (this.audioDrawing.networkState == 1) || (time + timebuffer >= duration)) {
@@ -215,7 +216,7 @@ Ui.Element.extend('Ui.Audio',
 				this.audioDrawing.pause();
 				this.fireEvent('statechange', this, this.state);
 			}
-		}
+		}*/
 		this.fireEvent('bufferingupdate', this, timebuffer);
 	},
 
