@@ -158,10 +158,7 @@ Ui.Container.extend('Ui.Dialog', {
 		this.vbox = new Ui.VBox({ margin: 3 });
 		this.lbox.append(this.vbox);
 
-		this.buttonsBox = new Ui.VBox();
-		var lbox = new Ui.LBox({ height: 32 });
-		this.buttonsBox.append(lbox);
-		this.buttonsBox.append(new Ui.Rectangle({ height: 1, fill: 'rgba(0,0,0,0.2)' }));
+		this.buttonsBox = new Ui.LBox({ height: 32 });
 		this.buttonsBox.hide(true);
 		this.vbox.append(this.buttonsBox);
 
@@ -178,11 +175,11 @@ Ui.Container.extend('Ui.Dialog', {
 
 		this.contextBox = new Ui.ContextBar({ selection: this.dialogSelection });
 		this.contextBox.hide();
-		lbox.append(this.contextBox);
+		this.buttonsBox.append(this.contextBox);
 
 		this.actionBox = new Ui.DialogButtonBox();
 		this.connect(this.actionBox, 'cancel', this.close);
-		lbox.append(this.actionBox);
+		this.buttonsBox.append(this.actionBox);
 
 		this.connect(this.dialogSelection, 'change', this.onDialogSelectionChange);
 
