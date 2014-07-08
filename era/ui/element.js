@@ -1405,7 +1405,7 @@ Core.Object.extend('Ui.Element',
 					origin = win.getComputedStyle(current, null).getPropertyValue('-webkit-transform-origin');
 					originX = 0;
 					originY = 0;
-					if(origin != '0px 0px') {
+					if((origin !== '0px 0px') && (origin !== '')) {
 						origins = origin.split(' ');
 						originX = parseFloat(origins[0].replace(/px$/, ''));
 						originY = parseFloat(origins[1].replace(/px$/, ''));
