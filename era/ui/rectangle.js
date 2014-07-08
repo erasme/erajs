@@ -21,11 +21,9 @@ Ui.CanvasElement.extend('Ui.Rectangle',
 	},
 
 	setFill: function(fill) {
-		if(this.fill != fill) {
+		if(this.fill !== fill) {
 			if(typeof(fill) === 'string')
 				fill = Ui.Color.create(fill);
-			else
-				fill = Ui.Element.create(fill);
 			this.fill = fill;
 			this.invalidateDraw();
 		}
@@ -85,15 +83,36 @@ Ui.CanvasElement.extend('Ui.Rectangle',
 /**@lends Ui.Rectangle#*/ 
 {
 	updateCanvas: function(ctx) {
+		var w = this.getLayoutWidth();
+		var h = this.getLayoutHeight();
+		var topLeft = this.radiusTopLeft;
+		var topRight = this.radiusTopRight;
+		if(topLeft + topRight > w) {
+			topLeft = w/2;
+			topRight = w/2;
+		}
+		var bottomLeft = this.radiusBottomLeft;
+		var bottomRight = this.radiusBottomRight;
+		if(bottomLeft + bottomRight > w) {
+			bottomLeft = w/2;
+			bottomRight = w/2;
+		}
+		if(topLeft + bottomLeft > h) {
+			topLeft = h/2;
+			bottomLeft = h/2;
+		}
+		if(topRight + bottomRight > h) {
+			topRight = h/2;
+			bottomRight = h/2;
+		}
+
 		ctx.beginPath();
-		ctx.roundRect(0, 0, this.getLayoutWidth(), this.getLayoutHeight(),
-			this.radiusTopLeft, this.radiusTopRight, this.radiusBottomRight,
-			this.radiusBottomLeft);
+		ctx.roundRect(0, 0, w, h, topLeft, topRight, bottomRight, bottomLeft);
 		ctx.closePath();
 		if(Ui.Color.hasInstance(this.fill))
 			ctx.fillStyle = this.fill.getCssRgba();
 		else if(Ui.LinearGradient.hasInstance(this.fill))
-			ctx.fillStyle = this.fill.getCanvasGradient(ctx, this.getLayoutWidth(), this.getLayoutHeight());
+			ctx.fillStyle = this.fill.getCanvasGradient(ctx, w, h);
 		ctx.fill();		
 	}
 });

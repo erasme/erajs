@@ -27,8 +27,6 @@ Ui.Pressable.extend('Ui.Uploadable',
 			this.input = new Ui.UploadableFileWrapper();
 		this.append(this.input);
 		this.connect(this.input, 'file', this.onFile);
-
-		this.connect(this, 'press', this.onPress);
 	},
 
 	setDirectoryMode: function(active) {
@@ -38,25 +36,17 @@ Ui.Pressable.extend('Ui.Uploadable',
 	/**#@+
 	 * @private
 	 */
-
-	onPress: function() {
-		if(Ui.UploadableFileWrapper.hasInstance(this.input)) {
-			// delay the task because of the iOS thread problem
-			new Core.DelayedTask({ delay: 0, scope: this, callback: this.onPressDelayed });
-		}
-	},
-	
-	onPressDelayed: function() {
-		this.input.select();
-	},
-
 	onFile: function(fileWrapper, file) {
 		this.fireEvent('file', this, file);
 	}
 	/**#@-*/
 }, {
+	onPress: function() {
+		if(Ui.UploadableFileWrapper.hasInstance(this.input))
+			this.input.select();
+	},
+
 	setContent: function(content) {
-		content = Ui.Element.create(content);
 		if(this.content !== content) {
 			if(this.content !== undefined)
 				this.remove(this.content);
@@ -88,6 +78,12 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		this.setOpacity(0);
 		this.setClipToBounds(true);
 		this.addEvents('file');
+
+		if(navigator.iOs) {
+			this.connect(this.getDrawing(), 'touchend', function(event) {
+				event.stopPropagation();
+			});
+		}
 	},
 
 	select: function() {
@@ -110,6 +106,9 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	createInput: function() {
 		this.formDrawing = document.createElement('form');
 		this.connect(this.formDrawing, 'click', function(e) {
+			e.stopPropagation();
+		});
+		this.connect(this.formDrawing, 'touchstart', function(e) {
 			e.stopPropagation();
 		});
 		this.formDrawing.method = 'POST';
@@ -154,6 +153,8 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	},
 
 	onChange: function(event) {
+		console.log(this+'.onChange');
+
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -185,16 +186,8 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		Ui.UploadableFileWrapper.base.onUnload.call(this);
 	},
 	
-	arrangeCore: function(x, y, w, h) {
-		if(x === undefined)
-			x = 0;
-		if(y === undefined)
-			y = 0;
-		if(w === undefined)
-			w = 0;
-		if(h === undefined)
-			h = 0;
-		Ui.UploadableFileWrapper.base.arrangeCore.call(this, x, y, w, h);
+	arrangeCore: function(w, h) {
+		Ui.UploadableFileWrapper.base.arrangeCore.apply(this, arguments);
 		if(this.formDrawing !== undefined) {
 			this.formDrawing.style.top = '0px';
 			this.formDrawing.style.left = '0px';

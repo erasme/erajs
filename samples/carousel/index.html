@@ -34,16 +34,38 @@ vbox.append(lbox, true);
 lbox.append(new Ui.Frame({ fill: 'orange', frameWidth: 4, radius: 8 }));
 
 var carousel = new Ui.Carousel({ margin: 4 });
+app.connect(carousel, 'change', function(c, pos) {
+	console.log('change pos: '+pos);
+});
 lbox.append(carousel);
 
 carousel.append(new Ui.Rectangle({ fill: 'lightgreen' }));
 carousel.append(new Ui.Rectangle({ fill: 'lightblue' }));
-carousel.append(new Ui.Rectangle({ fill: 'purple' }));
+
+var scroll = new Ui.ScrollingArea();
+carousel.append(scroll);
+scroll.setContent(new Ui.Rectangle({ fill: 'orange', height: 600 }));
+
+var scroll2 = new Ui.ScrollingArea();
+carousel.append(scroll2);
+scroll2.setContent(new Ui.Image({ src: '6wind.jpg', width: 600, height: 600 }));
 
 var complexcontent = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 complexcontent.append(new Ui.Button({ text: 'Button 1' }));
 complexcontent.append(new Ui.Button({ text: 'Button 2' }));
 carousel.append(complexcontent);
+
+carousel.append(new Ui.Text({ selectable: true, text: 
+'Thalassius vero ea tempestate praefectus praetorio praesens ipse '+
+'quoque adrogantis ingenii, considerans incitationem eius ad multorum '+
+'augeri discrimina, non maturitate vel consiliis mitigabat, ut aliquotiens '+
+'celsae potestates iras principum molliverunt, sed adversando iurgandoque '+
+'cum parum congrueret, eum ad rabiem potius evibrabat, Augustum actus eius '+
+'exaggerando creberrime docens, idque, incertum qua mente, ne lateret adfectans. '+
+'quibus mox Caesar acrius efferatus, velut contumaciae quoddam vexillum altius '+
+'erigens, sine respectu salutis alienae vel suae ad vertenda opposita instar '+
+'rapidi fluminis irrevocabili impetu ferebatur.'
+}));
 
 carousel.append(new Ui.Rectangle({ fill: 'green' }));
 

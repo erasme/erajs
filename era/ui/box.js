@@ -182,8 +182,8 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the end of the box
 	 */
 	append: function(child, resizable) {
-		child = Ui.Element.create(child);
-		Ui.Box.setResizable(child, resizable === true);
+		if(resizable !== undefined)
+			Ui.Box.setResizable(child, resizable === true);
 		this.appendChild(child);
 	},
 
@@ -191,8 +191,8 @@ Ui.Container.extend('Ui.Box',
 	 * Append a child at the begining of the box
 	 */
 	prepend: function(child, resizable) {
-		child = Ui.Element.create(child);
-		Ui.Box.setResizable(child, resizable === true);
+		if(resizable !== undefined)
+			Ui.Box.setResizable(child, resizable === true);
 		this.prependChild(child);
 	},
 
@@ -200,8 +200,8 @@ Ui.Container.extend('Ui.Box',
 	 * Insert a child element in the current box at the given position
 	 */
 	insertAt: function(child, position, resizable) {
-		child = Ui.Element.create(child);
-		Ui.Box.setResizable(child, resizable === true);
+		if(resizable !== undefined)
+			Ui.Box.setResizable(child, resizable === true);
 		this.insertChildAt(child, position);
 	},
 	
@@ -278,6 +278,84 @@ Ui.Container.extend('Ui.Box',
 		constraintHeight -= this.spacing * (this.getChildren().length - 1);
 
 		var countResizable = 0;
+		var countVisible = 0;
+		var minWidth = 0;
+		var minHeight = 0;
+		var loop = true;
+		var star = 0;
+
+		while(loop) {
+			countVisible = 0;
+			for(i = 0; i < this.getChildren().length; i++) {
+				child = this.getChildren()[i];
+				size = child.measure(constraintWidth, 0);
+				if(size.width > minWidth)
+					minWidth = size.width;
+				if(!Ui.Box.getResizable(child)) {
+					if(size.height > 0) {
+						countVisible++;
+						minHeight += size.height;
+					}
+				}
+				else {
+					countVisible++;
+					child.boxStarDone = false;
+					countResizable++;
+				}
+			}
+			if(minWidth > constraintWidth) {
+				constraintWidth = minWidth;
+				minWidth = 0;
+				minHeight = 0;
+				countResizable = 0;
+			}
+			else
+				loop = false;
+		}
+		if(countResizable > 0) {
+			var remainHeight = constraintHeight - minHeight;
+			var starFound = true;
+			star = remainHeight / countResizable;
+			do {
+				starFound = true;
+				for(i = 0; i < this.getChildren().length; i++) {
+					child = this.getChildren()[i];
+					if(Ui.Box.getResizable(child)) {
+						if(!child.boxStarDone) {
+							if(child.getMeasureHeight() > star) {
+								child.boxStarDone = true;
+								starFound = false;
+								remainHeight -= child.getMeasureHeight();
+								minHeight += child.getMeasureHeight();
+								countResizable--;
+								star = remainHeight / countResizable;
+								break;
+							}
+							else {
+								child.measure(constraintWidth, star);
+							}
+						}
+					}
+				}
+			} while(!starFound);
+		}
+		minHeight += this.spacing * Math.max(0, countVisible - 1);
+		if(countResizable > 0) {
+			minHeight += star * countResizable;
+			this.star = star;
+		}
+		else
+			this.star = 0;
+		return { width: minWidth, height: minHeight };
+	},
+
+	/*measureNonUniformVertical: function(width, height) {
+		var i; var child; var size;
+		var constraintWidth = width;
+		var constraintHeight = height;
+		constraintHeight -= this.spacing * (this.getChildren().length - 1);
+
+		var countResizable = 0;
 		var minWidth = 0;
 		var minHeight = 0;
 		var loop = true;
@@ -341,8 +419,8 @@ Ui.Container.extend('Ui.Box',
 		else
 			this.star = 0;
 		return { width: minWidth, height: minHeight };
-	},
-
+	},*/
+	
 	measureNonUniformHorizontal: function(width, height) {
 		var i; var child; var size; var star;
 		var constraintWidth = width;
@@ -373,11 +451,13 @@ Ui.Container.extend('Ui.Box',
 					countResizable++;
 				}
 			}
+			var resizableMinWidth = 0;
 			if(countResizable > 0) {
 				var remainWidth = constraintWidth - minWidth;
 				var starFound = true;
 				star = remainWidth / countResizable;
 				do {
+					resizableMinWidth = 0;
 					starFound = true;
 					for(i = 0; i < this.getChildren().length; i++) {
 						child = this.getChildren()[i];
@@ -395,6 +475,8 @@ Ui.Container.extend('Ui.Box',
 									star = remainWidth / countResizable;
 									break;
 								}
+								else
+									resizableMinWidth += size.width;
 							}
 						}
 					}
@@ -408,7 +490,10 @@ Ui.Container.extend('Ui.Box',
 
 		minWidth += this.spacing * (this.getChildren().length - 1);
 		if(countResizable > 0) {
-			minWidth += star * countResizable;
+//			console.log(this+' measure resizableMinWidth: '+resizableMinWidth+', countRes: '+countResizable);
+			minWidth += resizableMinWidth;
+
+			//minWidth += star * countResizable;
 			this.star = star;
 		}
 		else
@@ -450,24 +535,199 @@ Ui.Container.extend('Ui.Box',
 		height -= top + bottom;
 
 		var offset = this.vertical?top:left;
-		for(var i = 0; i < this.getChildren().length; i++) {
+
+		var countResizable = 0;
+		var minSize = 0;
+		var maxSize = 0;
+		var count = this.getChildren().length;
+		var countVisible = 0;
+
+		for(var i = 0; i < count; i++) {
+			var child = this.getChildren()[i];
+			var size = this.vertical?child.getMeasureHeight():child.getMeasureWidth();
+			if(Ui.Box.getResizable(child)) {
+				countVisible++;
+				countResizable++;
+				child.boxStarDone = false;
+			}
+			else {
+				if(size > 0)
+					countVisible++;
+				minSize += size;
+			}
+			if(size > maxSize)
+				maxSize = size;
+		}
+		minSize += Math.max(0, countVisible-1) * this.spacing;
+
+		var star = 0;
+		var uniformSize = 0;
+		if(countResizable > 0) {
+			if(this.uniform)
+				uniformSize = ((this.vertical?height:width)-(this.spacing*(countVisible-1)))/countVisible;
+			else {
+				var remainSize = (this.vertical?height:width) - minSize;
+				var starFound = true;
+				star = remainSize / countResizable;
+				do {
+					resizableMinSize = 0;
+					starFound = true;
+					for(i = 0; i < count; i++) {
+						child = this.getChildren()[i];
+						if(Ui.Box.getResizable(child)) {
+							var size = this.vertical?child.getMeasureHeight():child.getMeasureWidth();
+							if(!child.boxStarDone) {
+								if(size > star) {
+									child.boxStarDone = true;
+									starFound = false;
+									remainSize -= size;
+									minSize += size;
+									countResizable--;
+									star = remainSize / countResizable;
+									break;
+								}
+							}
+						}
+					}
+				} while(!starFound);
+			}
+		}
+		else {
+			if(this.uniform)
+				uniformSize = maxSize
+		}
+
+		var isFirst = true;
+		for(var i = 0; i < count; i++) {
+			var child = this.getChildren()[i];
+			var size = this.vertical?child.getMeasureHeight():child.getMeasureWidth();
+
+			if(this.uniform) {
+				if(isFirst)
+					isFirst = false;
+				else
+					offset += this.spacing;
+				if(this.vertical)
+					child.arrange(left, offset, width, uniformSize);
+				else
+					child.arrange(offset, top, uniformSize, height);
+				offset += uniformSize;
+			}
+			else {
+				if((Ui.Box.getResizable(child)) && ((this.vertical?child.getMeasureHeight():child.getMeasureWidth()) < this.star)) {
+					if(isFirst)
+						isFirst = false;
+					else
+						offset += this.spacing;
+					if(this.vertical)
+						child.arrange(left, offset, width, star);
+					else
+						child.arrange(offset, top, star, height);
+					offset += star;
+				}
+				else if(size > 0) {
+
+					if(isFirst)
+						isFirst = false;
+					else
+						offset += this.spacing;
+					
+					if(this.vertical) {
+						child.arrange(left, offset, width, child.getMeasureHeight());
+						offset += child.getMeasureHeight();
+					}
+					else {
+						child.arrange(offset, top, child.getMeasureWidth(), height);
+						offset += child.getMeasureWidth();
+					}
+				}
+			}
+		}
+	}
+	/*
+	arrangeCore: function(width, height) {
+		var left = this.paddingLeft;
+		var right = this.paddingRight;
+		var top = this.paddingTop;
+		var bottom = this.paddingBottom;
+		width -= left + right;
+		height -= top + bottom;
+
+		var offset = this.vertical?top:left;
+
+		var countResizable = 0;
+		var minSize = 0;
+		var maxSize = 0;
+		var count = this.getChildren().length;
+		for(var i = 0; i < count; i++) {
+			var child = this.getChildren()[i];
+			var size = this.vertical?child.getMeasureHeight():child.getMeasureWidth();
+			if(Ui.Box.getResizable(child)) {
+				countResizable++;
+				child.boxStarDone = false;
+			}
+			else {
+				minSize += size;
+			}
+			if(size > maxSize)
+				maxSize = size;
+		}
+		minSize += Math.max(0, count-1) * this.spacing;
+		var star = 0;
+		var uniformSize = 0;
+		if(countResizable > 0) {
+			if(this.uniform)
+				uniformSize = ((this.vertical?height:width)-(this.spacing*(count-1)))/count;
+			else {
+				var remainSize = (this.vertical?height:width) - minSize;
+				var starFound = true;
+				star = remainSize / countResizable;
+				do {
+					resizableMinSize = 0;
+					starFound = true;
+					for(i = 0; i < count; i++) {
+						child = this.getChildren()[i];
+						if(Ui.Box.getResizable(child)) {
+							var size = this.vertical?child.getMeasureHeight():child.getMeasureWidth();
+							if(!child.boxStarDone) {
+								if(size > star) {
+									child.boxStarDone = true;
+									starFound = false;
+									remainSize -= size;
+									minSize += size;
+									countResizable--;
+									star = remainSize / countResizable;
+									break;
+								}
+							}
+						}
+					}
+				} while(!starFound);
+			}
+		}
+		else {
+			if(this.uniform)
+				uniformSize = maxSize
+		}
+
+		for(var i = 0; i < count; i++) {
 			var child = this.getChildren()[i];
 			if(i !== 0)
 				offset += this.spacing;
 
 			if(this.uniform) {
 				if(this.vertical)
-					child.arrange(left, offset, width, this.uniformSize);
+					child.arrange(left, offset, width, uniformSize);
 				else
-					child.arrange(offset, top, this.uniformSize, height);
-				offset += this.uniformSize;
+					child.arrange(offset, top, uniformSize, height);
+				offset += uniformSize;
 			}
 			else {
 				if((Ui.Box.getResizable(child)) && ((this.vertical?child.getMeasureHeight():child.getMeasureWidth()) < this.star)) {
 					if(this.vertical)
-						child.arrange(left, offset, width, this.star);
+						child.arrange(left, offset, width, star);
 					else
-						child.arrange(offset, top, this.star, height);
+						child.arrange(offset, top, star, height);
 					offset += this.star;
 				}
 				else {
@@ -482,14 +742,15 @@ Ui.Container.extend('Ui.Box',
 				}
 			}
 		}
-	}
+	}*/
+	
 }, {
 	getResizable: function(child) {
 		return child['Ui.Box.resizable']?true:false;
 	},
 
 	setResizable: function(child, resizable) {
-		if(Ui.Box.getResizable(child) != resizable) {
+		if(Ui.Box.getResizable(child) !== resizable) {
 			child['Ui.Box.resizable'] = resizable;
 			child.invalidateMeasure();
 		}

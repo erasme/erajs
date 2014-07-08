@@ -22,8 +22,8 @@ Ui.Container.extend('Ui.CanvasElement',
 	 */
 	update: function() {
 		if((this.canvasEngine === 'canvas') || (this.canvasEngine === 'vml')) {
-			this.context.save();
 			this.context.clearRect(0, 0, Math.ceil(this.getLayoutWidth() * this.dpiRatio), Math.ceil(this.getLayoutHeight() * this.dpiRatio));
+			this.context.save();
 			if(this.dpiRatio !== 1)
 				this.context.scale(this.dpiRatio, this.dpiRatio);
 			this.updateCanvas(this.context);

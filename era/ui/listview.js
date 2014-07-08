@@ -33,12 +33,17 @@ Ui.Container.extend('Ui.ListView',
 
 	data: undefined,
 	headers: undefined,
+	firstRow: undefined,
+	firstCol: undefined,
 	cols: undefined,
 	rowsHeight: 0,
 	headersHeight: 0,
 	selectedRow: undefined,
 	headersVisible: true,
 	mode: 'manual',
+	sortColKey: undefined,
+	sortInvert: false,
+	sortArrow: undefined,
 
 	/**
 	 * @constructs
@@ -63,11 +68,18 @@ Ui.Container.extend('Ui.ListView',
 		for(i = 0; i < this.headers.length; i++) {
 			var header = this.headers[i];
 			header.ui = new Ui.ListViewHeader({ title: header.title, width: header.width });
-			this.connect(header.ui, 'up', this.onHeaderUp);
+			this.connect(header.ui, 'press', this.onHeaderPress);
 			header.rows = [];
 			header.colWidth = header.width;
 			this.appendChild(header.ui);
 		}
+		this.sortArrow = new Ui.Icon({ icon: 'sortarrow', width: 10, height: 10, margin: 4 });
+		this.appendChild(this.sortArrow);
+
+		this.firstRow = new Ui.Rectangle({ width: 1, height: 1, fill: 'black', opacity: 0.3 });
+		this.appendChild(this.firstRow);
+		this.firstCol = new Ui.Rectangle({ width: 1, height: 1, fill: 'black', opacity: 0.3 });
+		this.appendChild(this.firstCol);
 		for(i = 0; i < this.headers.length; i++) {
 			var col = new Ui.ListViewColBar({ header: this.headers[i].ui });
 			this.cols.push(col);
@@ -125,13 +137,19 @@ Ui.Container.extend('Ui.ListView',
 
 	appendData: function(data) {
 		this.data.push(data);
+		data.listViewCells = {};
+
 		for(var col = 0; col < this.headers.length; col++) {
-			var cell = new Ui.ListViewCellString({ key: this.headers[col].key });
+			var key = this.headers[col].key;
+			var cell = new Ui.ListViewCellString({ key: key });
 			this.connect(cell, 'down', this.onCellDown);
 			this.connect(cell, 'up', this.onCellUp);
-			this.connect(cell, 'toggle', this.onCellSelect);
+			this.connect(cell, 'press', this.onCellSelect);
 			this.connect(cell, 'activate', this.onCellActivate);
-			cell.setString(data[this.headers[col].key]);
+			cell.setValue(data[this.headers[col].key]);
+
+			data.listViewCells[key] = cell;
+
 			this.headers[col].rows.push(cell);
 			this.rowContainer.appendChild(cell);
 		}
@@ -139,11 +157,9 @@ Ui.Container.extend('Ui.ListView',
 	},
 
 	updateData: function(data) {
-		var row = this.findDataRow(data);
-		if(row != -1) {
-			for(var col = 0; col < this.headers.length; col++) {
-				this.headers[col].rows[row].setString(data[this.headers[col].key]);
-			}
+		for(var col = 0; col < this.headers.length; col++) {
+			var key = this.headers[col].key;
+			data.listViewCells[key].setValue(data[key]);
 		}
 	},
 
@@ -159,12 +175,12 @@ Ui.Container.extend('Ui.ListView',
 				this.fireEvent('unselect', this, this.selectedRow);
 			this.data.splice(position, 1);
 			for(var col = 0; col < this.headers.length; col++) {
-				var cell = this.headers[col].rows[position];
+				var cell = this.data[position].listViewCells[this.headers[col].key];
 				if(this.selectedRow == position)
-					cell.untoggle();
+					cell.unselect();
 				this.disconnect(cell, 'down', this.onCellDown);
 				this.disconnect(cell, 'up', this.onCellUp);
-				this.disconnect(cell, 'toggle', this.onCellSelect);
+				this.disconnect(cell, 'press', this.onCellSelect);
 				this.disconnect(cell, 'activate', this.onCellActivate);
 				this.rowContainer.removeChild(cell);
 				this.headers[col].rows.splice(position, 1);
@@ -212,18 +228,49 @@ Ui.Container.extend('Ui.ListView',
 				if(this.selectedRow == row)
 					return;
 				for(col = 0; col < this.headers.length; col++)
-					this.headers[col].rows[this.selectedRow].untoggle();
+					this.data[this.selectedRow].listViewCells[this.headers[col].key].unselect();
 				this.fireEvent('unselect', this, this.selectedRow);
 			}
 			this.selectedRow = row;
 			for(col = 0; col < this.headers.length; col++) {
-				var tmpCell = this.headers[col].rows[row];
-				this.disconnect(tmpCell, 'toggle', this.onCellSelect);
-				tmpCell.toggle();
-				this.connect(tmpCell, 'toggle', this.onCellSelect);
+				var tmpCell = this.data[row].listViewCells[this.headers[col].key];
+				this.disconnect(tmpCell, 'press', this.onCellSelect);
+				tmpCell.select();
+				this.connect(tmpCell, 'press', this.onCellSelect);
 			}
 			this.fireEvent('select', this, this.selectedRow);
 		}
+	},
+
+	unselectCurrentRow: function() {
+		var col;
+		if(this.selectedRow !== undefined) {
+			for(col = 0; col < this.headers.length; col++)
+				this.data[this.selectedRow].listViewCells[this.headers[col].key].unselect();
+			this.fireEvent('unselect', this, this.selectedRow);
+		}
+		this.selectedRow = undefined;
+	},
+
+	sortBy: function(key, invert) {
+		this.sortColKey = key;
+		this.sortInvert = invert === true;
+		if(this.sortInvert)
+			this.sortArrow.setTransform(Ui.Matrix.createRotate(180));
+		else
+			this.sortArrow.setTransform();
+
+		this.data.sort(function(a, b) {
+			var res;
+			if(a[key] < b[key])
+				res = -1;
+			else if(a[key] > b[key])
+				res = 1;
+			else
+				res = 0;
+			return invert ? -res : res;
+		});
+		this.invalidateArrange();
 	},
 
 	/**#@+ 
@@ -249,8 +296,8 @@ Ui.Container.extend('Ui.ListView',
 		if(headerCol === undefined)
 			return -1;
 		var foundRow;
-		for(var row = 0; row < headerCol.rows.length; row++) {
-			if(cell === headerCol.rows[row]) {
+		for(var row = 0; row < this.data.length; row++) {
+			if(cell === this.data[row].listViewCells[key]) {
 				foundRow = row;
 				break;
 			}
@@ -262,9 +309,9 @@ Ui.Container.extend('Ui.ListView',
 
 	onCellDown: function(cell) {
 		var row = this.findCellRow(cell);
-		if(row != -1) {		
+		if(row != -1) {
 			for(var col = 0; col < this.headers.length; col++)
-				this.headers[col].rows[row].down();
+				this.data[row].listViewCells[this.headers[col].key].down();
 		}
 	},
 
@@ -272,14 +319,18 @@ Ui.Container.extend('Ui.ListView',
 		var row = this.findCellRow(cell);
 		if(row != -1) {		
 			for(var col = 0; col < this.headers.length; col++)
-				this.headers[col].rows[row].up();
+				this.data[row].listViewCells[this.headers[col].key].up();
 		}
 	},
 
 	onCellSelect: function(cell) {
 		var row = this.findCellRow(cell);
-		if(row != -1)
-			this.selectRow(row);
+		if(row != -1) {
+			if(cell.getIsSelected())
+				this.selectRow(row);
+			else
+				this.unselectCurrentRow();
+		}
 	},
 
 	onCellActivate: function(cell) {
@@ -288,17 +339,18 @@ Ui.Container.extend('Ui.ListView',
 			this.fireEvent('activate', this, row, cell.getKey());
 	},
 
-	onHeaderUp: function(header) {
+	onHeaderPress: function(header) {
 		var key;
-		for(var col = 0; col < this.headers.length; col++){
+		for(var col = 0; col < this.headers.length; col++) {
 			var h = this.headers[col];
-			if(h.ui === header){
+			if(h.ui === header) {
 				key = h.key;
 			}
 		}
 
-		if(key !== undefined){
+		if(key !== undefined) {
 			this.fireEvent('header', this, key);
+			this.sortBy(key, (this.sortColKey === key)?!this.sortInvert:false);
 		}
 	}
 
@@ -352,7 +404,7 @@ Ui.Container.extend('Ui.ListView',
 					availableWidth = width;
 					for(col = 0; col < this.headers.length; col++) {
 						header = this.headers[col];
-						var cell = this.headers[col].rows[dataRow];
+						var cell = data.listViewCells[header.key];
 						colWidth = header.minWidth;
 						if(col == this.headers.length - 1)
 							colWidth = Math.max(availableWidth, colWidth);
@@ -401,7 +453,7 @@ Ui.Container.extend('Ui.ListView',
 			minHeight = 0;
 			for(col = 0; col < this.headers.length; col++) {
 				header = this.headers[col];
-				var cell = this.headers[col].rows[dataRow];
+				var cell = data.listViewCells[header.key];
 				var colWidth = header.ui.getMeasureWidth();
 				size = cell.measure(colWidth, 0);
 				if(size.height > minHeight)
@@ -413,7 +465,13 @@ Ui.Container.extend('Ui.ListView',
 		var minWidth = 0;
 		for(col = 0; col < this.headers.length; col++)
 			minWidth += this.headers[col].ui.getMeasureWidth();
+		
+		this.sortArrow.measure(0, 0);
 
+		var size = this.firstRow.measure(width, 0);
+		this.headersHeight = Math.max(this.headersHeight, size.height);
+
+		this.firstCol.measure(0, this.headersHeight + this.rowsHeight);
 		// measure col bars
 		for(var i = 0; i < this.cols.length; i++) {
 			col = this.cols[i];
@@ -446,7 +504,7 @@ Ui.Container.extend('Ui.ListView',
 		// handle no data case
 		if(this.data.length === 0)
 			return;
-
+		
 		var y = 0;
 		for(var row = 0; row < this.data.length; row++) {
 			var data = this.data[row];
@@ -457,7 +515,7 @@ Ui.Container.extend('Ui.ListView',
 				colWidth = header.minWidth;
 				if(col == this.headers.length - 1)
 					colWidth = Math.max(colWidth, availableWidth);
-				var cell = header.rows[row];
+				var cell = data.listViewCells[header.key];
 				cell.arrange(x, y, colWidth, data.rowHeight);
 				x += colWidth;
 				availableWidth -= colWidth;
@@ -471,6 +529,11 @@ Ui.Container.extend('Ui.ListView',
 		// update headers
 		var x = 0; var header; var colWidth; var col;
 		var availableWidth = width;
+
+		this.firstRow.arrange(0, this.headersHeight - this.firstRow.getMeasureHeight(), width, this.firstRow.getMeasureHeight());
+
+		this.firstCol.arrange(0, 0, this.firstCol.getMeasureWidth(), this.headersHeight + this.rowsHeight);
+
 		for(col = 0; col < this.headers.length; col++) {
 			header = this.headers[col];
 			var colbar = this.cols[col];
@@ -481,6 +544,12 @@ Ui.Container.extend('Ui.ListView',
 
 			colbar.setHeaderHeight(this.headersHeight);
 			colbar.arrange(x+colWidth-colbar.getMeasureWidth(), 0, colbar.getMeasureWidth(), this.headersHeight + this.rowsHeight);
+
+			if(this.sortColKey === header.key) {
+				this.sortArrow.arrange(x+colWidth-this.headersHeight*0.8,
+					this.headersHeight*0.1,
+					this.headersHeight*0.8, this.headersHeight*0.8);
+			}
 
 			x += colWidth;
 			availableWidth -= colWidth;
@@ -499,7 +568,7 @@ Ui.Container.extend('Ui.ListView',
 				colWidth = header.ui.getMeasureWidth();
 				if(col == this.headers.length - 1)
 					colWidth = Math.max(colWidth, availableWidth);
-				var cell = header.rows[row];
+				var cell = data.listViewCells[header.key];
 				cell.arrange(x, y, colWidth, data.rowHeight);
 				x += colWidth;
 				availableWidth -= colWidth;
@@ -551,7 +620,7 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	},
 
 	setTitle: function(title) {
-		if(this.title != title) {
+		if(this.title !== title) {
 			this.title = title;
 			this.uiTitle.setText(title);
 		}
@@ -594,16 +663,15 @@ Ui.Pressable.extend('Ui.ListViewHeader',
 	}
 });
 
-Ui.Togglable.extend('Ui.ListViewCellString',
-/** @lends Ui.ListViewCellString#*/
+Ui.Pressable.extend('Ui.ListViewCell',
+/** @lends Ui.ListViewCell#*/
 {
-	string: '',
+	value: undefined,
 	ui: undefined,
-	background: undefined,
 	border: undefined,
 	cellDown: false,
-	cellSelected: false,
 	key: undefined,
+	isSelected: false,
 	
 	/**
 	 * @constructs
@@ -612,16 +680,15 @@ Ui.Togglable.extend('Ui.ListViewCellString',
 	 */
 	constructor: function(config) {
 		this.setClipToBounds(true);
+		this.bg = new Ui.Rectangle();
+		this.append(this.bg);
 		this.border = new Ui.Rectangle({ height: 1, verticalAlign: 'bottom' });
 		this.append(this.border);
 
-		this.background = new Ui.Rectangle({ fill: 'white', marginBottom: 1, marginRight: 1 });
-		this.append(this.background);
 		this.ui = new Ui.Label({ margin: 8, horizontalAlign: 'left' });
 		this.append(this.ui);
 
-		this.connect(this, 'toggle', this.onCellSelect);
-		this.connect(this, 'untoggle', this.onCellUnselect);
+		this.connect(this, 'press', this.onCellPress);
 	},
 
 	getKey: function() {
@@ -632,27 +699,41 @@ Ui.Togglable.extend('Ui.ListViewCellString',
 		this.key = key;
 	},
 
-	getString: function() {
-		return this.string;
+	getValue: function() {
+		return this.value;
 	},
 
-	setString: function(string) {
-		if(this.string != string) {
-			this.string = string;
-			this.ui.setText(string);
+	setValue: function(value) {
+		if(this.value !== value) {
+			this.value = value;
+			this.ui.setText(value);
 		}
+	},
+
+	getIsSelected: function() {
+		return this.isSelected;
+	},
+
+	select: function() {
+		this.isSelected = true;
+		this.onCellSelect();
+	},
+
+	unselect: function() {
+		this.isSelected = false;
+		this.onCellUnselect();
 	},
 
 	down: function() {
 		this.cellDown = true;
-		if(!this.getIsToggled())
-			this.background.setFill(this.getBackgroundDownColor());
+		if(!this.isSelected)
+			this.bg.setFill(this.getBackgroundDownColor());
 	},
 
 	up: function() {
 		this.cellDown = false;
-		if(!this.getIsToggled())
-			this.background.setFill(this.getBackgroundColor());
+		if(!this.isSelected)
+			this.bg.setFill(this.getBackgroundColor());
 	},
 
 	/**#@+ 
@@ -676,29 +757,37 @@ Ui.Togglable.extend('Ui.ListViewCellString',
 		return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
 	},
 
+	onCellPress: function() {
+		this.isSelected = !this.isSelected;
+		if(this.isSelected)
+			this.onCellSelect();
+		else
+			this.onCellUnselect();
+	},
+
 	onCellSelect: function() {
-		this.background.setFill(this.getBackgroundSelectColor());
+		this.bg.setFill(this.getBackgroundSelectColor());
 	},
 
 	onCellUnselect: function() {
-		this.background.setFill(this.getBackgroundColor());
+		this.bg.setFill(this.getBackgroundColor());
 	}
 	/**#@-*/
 }, 
-/** @lends Ui.ListViewCellString#*/
+/** @lends Ui.ListViewCell#*/
 {
 	onStyleChange: function() {
 		var color = this.getStyleProperty('color');
 		var yuv = color.getYuv();
 		var darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-		this.background.setFill(color);
+		this.bg.setFill(color);
 		this.border.setFill(darkColor);
 
 		var spacing = this.getStyleProperty('spacing');
 		this.ui.setMargin(spacing + 2);
 	}
 }, 
-/** @lends Ui.ListViewCellString*/
+/** @lends Ui.ListViewCell*/
 {
 	style: {
 		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99, a: 0.1 }),
@@ -707,6 +796,8 @@ Ui.Togglable.extend('Ui.ListViewCellString',
 	}
 });
 
+Ui.ListViewCell.extend('Ui.ListViewCellString');
+	
 
 Ui.Container.extend('Ui.ListViewColBar', {
 	headerHeight: 0,

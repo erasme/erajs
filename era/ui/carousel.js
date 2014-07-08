@@ -1,5 +1,5 @@
 
-Ui.MouseOverable.extend('Ui.Carousel', 
+Ui.Overable.extend('Ui.Carousel', 
 /**@lends Ui.Carousel#*/
 {
 	carouselable: undefined,
@@ -17,10 +17,12 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	/**
 	 * @constructs
      * @class
-	 * @extends Ui.MouseOverable
+	 * @extends Ui.Overable
      */
 	constructor: function(config) {
 		this.addEvents('change');
+
+		this.setFocusable(true);
 
 		this.connect(this, 'enter', this.onMouseEnter);
 		this.connect(this, 'leave', this.onMouseLeave);
@@ -28,8 +30,8 @@ Ui.MouseOverable.extend('Ui.Carousel',
 
 		this.carouselable = new Ui.Carouselable();
 		Ui.Carousel.base.append.call(this, this.carouselable);
-		this.connect(this.carouselable, 'focus', this.onCarouselableFocus);
-		this.connect(this.carouselable, 'blur', this.onCarouselableBlur);
+		this.connect(this, 'focus', this.onCarouselableFocus);
+		this.connect(this, 'blur', this.onCarouselableBlur);
 		this.connect(this.carouselable, 'change', this.onCarouselableChange);
 
 		this.buttonPrevious = new Ui.Pressable({ horizontalAlign: 'left', verticalAlign: 'center', opacity: 0 });
@@ -47,6 +49,8 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		Ui.Carousel.base.append.call(this, this.buttonNext);
 //		this.buttonNext.hide();
 		this.connect(this.buttonNext, 'press', this.onNextPress);
+
+		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 	},
 	
 	setAutoPlay: function(delay) {
@@ -73,12 +77,12 @@ Ui.MouseOverable.extend('Ui.Carousel',
 		return this.carouselable.getCurrent();
 	},
 
-	setCurrentAt: function(position) {
-		this.carouselable.setCurrentAt(position);
+	setCurrentAt: function(position, noAnimation) {
+		this.carouselable.setCurrentAt(position, noAnimation);
 	},
 
-	setCurrent: function(current) {
-		this.carouselable.setCurrent(current);
+	setCurrent: function(current, noAnimation) {
+		this.carouselable.setCurrent(current, noAnimation);
 	},
 
 	getBufferingSize: function() {
@@ -107,10 +111,12 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	},
 
 	onPreviousPress: function() {
+		this.focus();
 		this.previous();
 	},
 
 	onNextPress: function() {
+		this.focus();
 		this.next();
 	},
 
@@ -205,6 +211,15 @@ Ui.MouseOverable.extend('Ui.Carousel',
 			this.showClock.stop();
 			this.showClock = undefined;
 		}
+	},
+
+	onKeyDown: function(event) {
+		if(this.getHasFocus()) {
+			if(event.which == 39)
+				this.next();
+			else if(event.which == 37)
+				this.previous();
+		}
 	}
 
 	/**#@-*/
@@ -225,6 +240,10 @@ Ui.MouseOverable.extend('Ui.Carousel',
 	
 	moveAt: function(child, pos) {
 		this.carouselable.moveAt(child, pos);
+	},
+
+	setContent: function(content) {
+		this.carouselable.setContent(content);
 	},
 
 	onStyleChange: function() {

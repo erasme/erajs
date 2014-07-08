@@ -95,7 +95,6 @@ Ui.Popup.extend('Ui.MenuDialog',
 /**@lends Ui.MenuDialog#*/
 {
 	element: undefined,
-	scroll: undefined,
 	content: undefined,
 
 	/**
@@ -112,14 +111,11 @@ Ui.Popup.extend('Ui.MenuDialog',
 		}
 		else
 			throw('element property is NEEDED for Ui.MenuDialog');
-
-		this.setExpandable(true);
+		
 		this.setAutoHide(true);
 
-		this.scroll = new Ui.ScrollingArea({ scrollHorizontal: true });
 		this.content = new Ui.VBox();
-		this.scroll.setContent(this.content);
-		this.setContent(this.scroll);
+		this.setContent(this.content);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -202,7 +198,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 	}
 });
 
-Ui.MouseOverable.extend('Ui.MenuItem', 
+Ui.Overable.extend('Ui.MenuItem', 
 /**@lends Ui.MenuItem#*/
 {
 	background: undefined,
@@ -211,7 +207,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	/**
 	 * @constructs
 	 * @class
-	 * @extends Ui.MouseOverable
+	 * @extends Ui.Overable
 	 */
 	constructor: function() {
 		this.addEvents('press');
@@ -272,7 +268,7 @@ Ui.MouseOverable.extend('Ui.MenuItem',
 	}
 }, {
 	setContent: function(content) {
-		this.pressable.append(Ui.Element.create(content));
+		this.pressable.append(content);
 	}
 });
 

@@ -27,10 +27,10 @@ Ui.Container.extend('Ui.Flow',
 		if((content !== undefined) && (typeof(content) == 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.appendChild(Ui.Element.create(content[i]));
+					this.appendChild(content[i]);
 			}
 			else
-				this.appendChild(Ui.Element.create(content));
+				this.appendChild(content);
 		}
 	},
 	
@@ -136,19 +136,22 @@ Ui.Container.extend('Ui.Flow',
 		for(var i = 0; i < this.getChildren().length; i++) {
 			var child = this.getChildren()[i];
 			var size = child.measure(width, height);
-			if((ctx.lineX !== 0) && (ctx.lineX + size.width > width)) {
-				line.width = ctx.lineX - this.spacing;
+			var isFirst = (ctx.lineX === 0);
+			if(!isFirst && (ctx.lineX + size.width + (!isFirst?this.spacing:0) > width)) {
+				line.width = ctx.lineX;
 				line.height = ctx.lineHeight;
 				ctx.lineX = 0;
 				ctx.lineY += ctx.lineHeight + this.spacing;
 				ctx.lineHeight = 0;
-
+				isFirst = true;
 				ctx.lineCount++;
 				line = { pos: ctx.lineCount, y: ctx.lineY, width: 0, height: 0 };
 			}
 			child.flowLine = line;
+			if(!isFirst)
+				ctx.lineX += this.spacing;
 			child.flowLineX = ctx.lineX;
-			ctx.lineX += size.width + this.spacing;
+			ctx.lineX += size.width;
 			if(size.height > ctx.lineHeight)
 				ctx.lineHeight = size.height;
 			if(ctx.lineX > ctx.minWidth)
@@ -157,7 +160,6 @@ Ui.Container.extend('Ui.Flow',
 		ctx.lineY += ctx.lineHeight;
 		line.width = ctx.lineX;
 		line.height = ctx.lineHeight;
-
 		return { width: ctx.minWidth, height: ctx.lineY };
 	},
 

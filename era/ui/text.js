@@ -102,6 +102,21 @@ Ui.Html.extend('Ui.Text', {
 		}
 	},
 
+	getWhiteSpace: function() {
+		if(this.whiteSpace !== undefined)
+			return this.whiteSpace;
+		else
+			return this.getStyleProperty('whiteSpace');
+	},
+
+	setWhiteSpace: function(whiteSpace) {
+		if(this.whiteSpace !== whiteSpace) {
+			this.whiteSpace = whiteSpace;
+			this.getDrawing().style.whiteSpace = this.getWhiteSpace();
+			this.invalidateMeasure();
+		}
+	},
+	
 	setColor: function(color) {
 		if(this.color !== color) {
 			this.color = Ui.Color.create(color);
@@ -141,6 +156,7 @@ Ui.Html.extend('Ui.Text', {
 		fontWeight: 'normal',
 		textAlign: 'left',
 		wordWrap: 'normal',
+		whiteSpace: 'normal',
 		interLine: 1
 	}
 });

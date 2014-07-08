@@ -29,13 +29,17 @@ Ui.LBox.extend('Ui.DropBox',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.addEvents('dragover', 'drop', 'dropfile');
+		this.addEvents('dragover', 'drop', 'dropfile', 'dragenter', 'dragleave');
 
 		this.allowedMimetypes = [];
 
-		this.connect(this.drawing, 'dragenter', this.onDragEnter);
+		//this.connect(this.drawing, 'dragenter', this.onDragEnter);
+		//this.connect(this.drawing, 'dragleave', this.onDragLeave);
 		this.connect(this.drawing, 'dragover', this.onDragOver);
 		this.connect(this.drawing, 'drop', this.onDrop);
+		this.connect(this.drawing, 'localdragover', this.onDragOver);
+		this.connect(this.drawing, 'localdrop', this.onDrop);
+
 	},
 
 	/**
@@ -82,25 +86,34 @@ Ui.LBox.extend('Ui.DropBox',
 		for(var type in data) {
 			for(var i2 = 0; (i2 < this.allowedMimetypes.length); i2++) {
 				if(type.toLowerCase() === this.allowedMimetypes[i2].toLowerCase())
-					return this.allowedMimetypes[i2];
+					return type;
 			}
 		}
 		return undefined;
 	},
 
 	onDragEnter: function(event) {
-//		console.log('onDragEnter mimetype: '+this.dragMimetype(event));
-//		console.log('onDragEnter allowText: '+this.allowText+', allowFiles: '+this.allowFiles);
-		if(this.dragMimetype(event) !== undefined) {
-			// accept the drag
-			event.preventDefault();
+		var mimetype = this.dragMimetype(event);
+		//console.log('onDragEnter mimetype: '+mimetype+', target: '+event.target);
+		if(mimetype !== undefined) {
 			event.stopPropagation();
+			this.fireEvent('dragenter', this, mimetype);
+			return false;
+		}
+	},
+
+	onDragLeave: function(event) {
+		var mimetype = this.dragMimetype(event);
+		//console.log('onDragLeave mimetype: '+mimetype+', target: '+event.target);
+		if(mimetype !== undefined) {
+			event.stopPropagation();
+			this.fireEvent('dragleave', this, mimetype);
 			return false;
 		}
 	},
 
 	onDragOver: function(event) {
-//		console.log(this+'.onDragOver effectAllowed: '+event.dataTransfer.effectAllowed+', mimetype: '+this.dragMimetype(event));
+		//console.log(this+'.onDragOver effectAllowed: '+event.dataTransfer.effectAllowed+', mimetype: '+this.dragMimetype(event));
 		if((event.dataTransfer !== undefined) && (!(!navigator.supportDrag || navigator.supportMimetypeDrag) || (this.dragMimetype(event) !== undefined))) {
 			// accept the drag over
 			var effectAllowed = 'all';
@@ -135,16 +148,17 @@ Ui.LBox.extend('Ui.DropBox',
 
 	onDrop: function(event) {
 		var i; var pos; var mimetype; var data;
-
 		var dropPoint = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
 		// handle files
 		if((event.dataTransfer.files !== undefined) && (event.dataTransfer.files.length > 0)) {
-			// accept the drop
-			event.preventDefault();
-			event.stopPropagation();
-			for(i = 0; i < event.dataTransfer.files.length; i++)
-				this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
+			if(this.allowFiles) {
+				// accept the drop
+				event.preventDefault();
+				event.stopPropagation();
+				for(i = 0; i < event.dataTransfer.files.length; i++)
+					this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
+			}
 		}
 		else {
 			if(!navigator.supportDrag || navigator.supportMimetypeDrag) {
@@ -161,7 +175,7 @@ Ui.LBox.extend('Ui.DropBox',
 				}
 			}
 			else {
-				// TODO: correct this
+				// emulate with Text data
 				var mergedData = event.dataTransfer.getData('Text');
 				data = {};
 				var tmp = mergedData.split(';');

@@ -13,7 +13,7 @@ Ui.Element.extend('Ui.TextArea',
 	 * @extends Ui.Element
 	 */
 	constructor: function(config) {
-		this.addEvents('change', 'scroll');
+		this.addEvents('change');
 		this.setSelectable(true);
 		this.setFocusable(true);
 
@@ -24,8 +24,8 @@ Ui.Element.extend('Ui.TextArea',
 		this.connect(this.getDrawing(), 'paste', this.onPaste);
 
 		// handle keyboard
-		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
 	setFontSize: function(fontSize) {
@@ -140,22 +140,23 @@ Ui.Element.extend('Ui.TextArea',
 	},
 
 	onKeyDown: function(event) {
-		if((event.which == 13) || (event.which == 37) || (event.which == 38) || (event.which == 40) ||
-			(event.which == 39) || (event.which == 36) || (event.which == 35)) {
+		var key = event.which;
+		// keep arrows + Del + Backspace for us only
+		if((key == 37) || (key == 39) || (key == 38) || (key == 40) || (key == 46) || (key == 8))
 			event.stopPropagation();
-		}
 	},
 
 	onKeyUp: function(event) {
-		if(this.getDrawing().value != this.value) {
+		var key = event.which;
+		// keep arrows + Del + Backspace for us only
+		if((key == 37) || (key == 39) || (key == 38) || (key == 40) || (key == 46) || (key == 8))
+			event.stopPropagation();
+		// test if content changed
+		if(this.getDrawing().value !== this.value) {
 			this.value = this.getDrawing().value;
 			this.fireEvent('change', this, this.value);
+			this.invalidateMeasure();
 		}
-		else if((event.which == 13) || (event.which == 37) || (event.which == 38) || (event.which == 40) ||
-				(event.which == 39) || (event.which == 36) || (event.which == 35)) {
-			event.stopPropagation();
-		}
-		this.invalidateMeasure();
 	}
 	/**#@-*/
 }, 

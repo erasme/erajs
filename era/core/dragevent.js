@@ -1,3 +1,12 @@
+
+Ui.DualIcon.extend('Ui.DragEffectIcon', {}, {}, {
+	style: {
+		fill: 'green',
+		stroke: 'white',
+		strokeWidth: 4
+	}
+});
+
 Core.Event.extend('Core.DragEvent', 
 /**@lends Core.DragEvent#*/
 {
@@ -32,6 +41,8 @@ Core.Object.extend('Core.DragDataTransfer',
 {
 	draggable: undefined,
 	image: undefined,
+	imageEffect: undefined,
+	catcher: undefined,
 	startX: 0,
 	startY: 0,
 	startImagePoint: undefined,
@@ -39,6 +50,8 @@ Core.Object.extend('Core.DragDataTransfer',
 	hasStarted: false,
 	types: undefined,
 
+	watcher: undefined,
+	pointer: undefined,
 	pointerId: 0,
 	dropEffect: 'none',
 	data: undefined,
@@ -66,6 +79,10 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.pointerId = config.pointerId;
 			delete(config.pointerId);
 		}
+		this.pointer = config.pointer;
+		delete(config.pointer);
+		this.watcher = this.pointer.watch(window);
+//		this.pointer.capture(this.draggable);
 
 		// prevent native drag and drop if supported
 		if('ondragstart' in this.draggable) {
@@ -82,21 +99,10 @@ Core.Object.extend('Core.DragDataTransfer',
 
 		this.data = {};
 
-		if(this.type === 'mouse') {
-			this.connect(window, 'mouseup', this.onMouseUp, true);
-			this.connect(window, 'mousemove', this.onMouseMove, true);
-		}
-		else if(this.type === 'touch') {
-			this.connect(this.draggable, 'touchmove', this.onTouchMove);
-			this.connect(this.draggable, 'touchend', this.onTouchEnd);
-			this.connect(this.draggable, 'touchcancel', this.onTouchCancel);
-		}
-		else if(this.type === 'pointer') {
-			this.connect(window, 'pointermove', this.onPointerMove);
-			this.connect(window, 'pointerup', this.onPointerUp);
-			this.connect(window, 'pointercancel', this.onPointerCancel);
-		}
-		
+		this.connect(this.watcher, 'move', this.onPointerMove);
+		this.connect(this.watcher, 'up', this.onPointerUp);
+		this.connect(this.watcher, 'cancel', this.onPointerCancel);
+
 		if(this.delayed)
 			this.timer = new Core.DelayedTask({ scope: this, delay: 0.5, callback: this.onTimer });
 	},
@@ -154,6 +160,8 @@ Core.Object.extend('Core.DragDataTransfer',
 			}
 			else {
 				res = element.cloneNode(false);
+				if('style' in res)
+					res.style.webkitUserSelect = 'none';
 				for(i = 0; i < element.childNodes.length; i++) {
 					child = element.childNodes[i];
 					res.appendChild(this.generateImage(child));
@@ -162,6 +170,10 @@ Core.Object.extend('Core.DragDataTransfer',
 			if('setAttribute' in res)
 				res.setAttribute('draggable', false);
 		}
+		res.onselectstart = function(e) {
+			e.preventDefault();
+			return false;
+		};
 		return res;
 	},
 		
@@ -175,7 +187,7 @@ Core.Object.extend('Core.DragDataTransfer',
 		this.timer = undefined;
 
 		var dragEvent = document.createEvent('DragEvent');
-		dragEvent.initDragEvent('dragstart', false, true, window, this, this.startX, this.startY, this.startX, this.startY, false, false, false, false);
+		dragEvent.initDragEvent('localdragstart', false, true, window, this, this.startX, this.startY, this.startX, this.startY, false, false, false, false);
 		this.draggable.dispatchEvent(dragEvent);
 
 		if(this.hasData()) {
@@ -186,31 +198,47 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.image.style.zIndex = 100000;
 			this.image.style.position = 'absolute';
 
+			//console.log(this.image.outerHTML);
+
 			if(navigator.supportOpacity)
 				this.image.style.opacity = 0.8;
 
 			var ofs = this.delayed ? -10 : 0;
 
 			this.startImagePoint = Ui.Element.pointToWindow(this.draggable, { x: 0, y: 0});
+
 			this.image.style.left = (this.startImagePoint.x+ofs)+'px';
 			this.image.style.top = (this.startImagePoint.y+ofs)+'px';
 
+			// avoid IFrame problems for mouse
+			if(this.watcher.pointer.getType() === 'mouse') {
+				this.catcher = document.createElement('div');
+				this.catcher.style.position = 'absolute';
+				this.catcher.style.left = '0px';
+				this.catcher.style.right = '0px';
+				this.catcher.style.top = '0px';
+				this.catcher.style.bottom = '0px';
+				this.catcher.zIndex = 1000;
+				document.body.appendChild(this.catcher);
+			}
+
 			document.body.appendChild(this.image);
+
+//			console.log(this+'.onTimer CAPTURE');
+
+			this.watcher.capture();
 		}
 		else {
-			if(this.type === 'touch')
-				this.onTouchCancel();
-			else if(this.type === 'pointer')
-				this.onPointerCancel();
-			else if(this.type === 'mouse')
-				this.onMouseCancel();
+			this.watcher.cancel();
 		}
 	},
-
+	/*
 	onMove: function(clientX, clientY) {
 		var deltaX; var deltaY; var delta; var dragEvent; var ofs;
 
 		if(this.timer !== undefined) {
+//			console.log('onMove timer');
+
 			deltaX = clientX - this.startX;
 			deltaY = clientY - this.startY;
 			delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -219,6 +247,8 @@ Core.Object.extend('Core.DragDataTransfer',
 				return false;
 		}
 		else if(!this.hasStarted) {
+//			console.log('onMove !hasStarted');
+
 			deltaX = clientX - this.startX;
 			deltaY = clientY - this.startY;
 			delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -239,6 +269,8 @@ Core.Object.extend('Core.DragDataTransfer',
 			deltaX = clientX - this.startX;
 			deltaY = clientY - this.startY;
 			ofs = this.delayed ? -10 : 0;
+
+//			console.log('onMove move delta: '+clientX+','+clientY);
 
 			this.image.style.left = (this.startImagePoint.x + deltaX + ofs)+'px';
 			this.image.style.top = (this.startImagePoint.y + deltaY + ofs)+'px';
@@ -284,108 +316,121 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.draggable.dispatchEvent(dragEvent);
 			return true;
 		}
-	},
+	},*/
 
-	onMouseMove: function(event) {
-		if(this.onMove(event.clientX, event.clientY) === true) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-		else
-			this.onMouseCancel(event);
-	},
+	onPointerMove: function(watcher) {
+		var deltaX; var deltaY; var delta; var dragEvent; var ofs;
+//		console.log('onPointerMove captured: '+watcher.getIsCaptured()+', move: '+watcher.pointer.getIsMove());
 
-	onMouseUp: function(event) {
-		if(event.button !== 0)
-			return;
-		if(!this.onUp(event.clientX, event.clientY))
-			this.onMouseCancel(event);
-		else {
-			event.preventDefault();
-			event.stopPropagation();
+		if(watcher.getIsCaptured()) {
+			var clientX = watcher.pointer.getX();
+			var clientY = watcher.pointer.getY();
 
-			this.disconnect(window, 'mouseup', this.onMouseUp, true);
-			this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		}
-	},
+			document.body.removeChild(this.image);
+			if(this.catcher !== undefined)
+				document.body.removeChild(this.catcher);
 
-	onMouseCancel: function() {
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-	},
-	
-	onTouchMove: function(event) {
-		if(this.onMove(event.changedTouches[0].clientX, event.changedTouches[0].clientY) === true) {
-			// preventDefault (like scrolling) if the drag has started
-			if(this.timer === undefined) {
-				event.preventDefault();
-				event.stopPropagation();
+			var overElement = document.elementFromPoint(clientX, clientY);
+			overElement = Core.Event.cleanTarget(overElement);
+
+			if(this.catcher !== undefined)
+				document.body.appendChild(this.catcher);
+			document.body.appendChild(this.image);
+
+			deltaX = clientX - this.startX;
+			deltaY = clientY - this.startY;
+			ofs = this.delayed ? -10 : 0;
+
+//			console.log('onMove move delta: '+clientX+','+clientY);
+
+			this.image.style.left = (this.startImagePoint.x + deltaX + ofs)+'px';
+			this.image.style.top = (this.startImagePoint.y + deltaY + ofs)+'px';
+//			this.image.stype.webkitTransform = 'translate3d('+(this.startImagePoint.x + deltaX + ofs)+'px,'+(this.startImagePoint.y + deltaY + ofs)+'px'+',0px)';
+
+			if((overElement !== undefined) && (overElement !== null) && (overElement !== document.documentElement)) {
+				dragEvent = document.createEvent('DragEvent');
+				var oldDropEffect = this.dropEffect;
+				if(this.overElement !== overElement)
+					dragEvent.initDragEvent('localdragenter', true, true, window, this,
+						clientX, clientY, clientX, clientY,
+						false, false, false, false);
+				else {
+					this.dropEffect = 'none';
+					dragEvent.initDragEvent('localdragover', true, true, window, this,
+						clientX, clientY, clientX, clientY,
+						false, false, false, false);
+				}
+				overElement.dispatchEvent(dragEvent);
+
+				// handle the drop effect icon feedback
+				if(this.dropEffect !== oldDropEffect) {
+					if(this.imageEffect !== undefined) {
+						this.imageEffect.setIsLoaded(false);
+						this.image.removeChild(this.imageEffect.getDrawing());
+						this.imageEffect = undefined;
+					}
+					if(this.dropEffect !== 'none') {
+						this.imageEffect = new Ui.DragEffectIcon({
+							icon: 'drag'+this.dropEffect//, stroke: 'white'
+						});
+						this.imageEffect.parent = Ui.App.current;
+						this.imageEffect.setIsLoaded(true);
+						this.imageEffect.setParentVisible(true);
+						this.imageEffect.setParentDisabled(false);
+
+						this.imageEffect.measure(32, 32);
+						this.imageEffect.arrange(
+							-48 + (this.startX-this.startImagePoint.x-ofs),
+							-48 + (this.startY-this.startImagePoint.y-ofs), 32, 32);
+						this.image.appendChild(this.imageEffect.getDrawing());
+					}
+				}
+				this.overElement = overElement;
 			}
+			else
+				this.overElement = undefined;
+
 		}
 		else {
-			this.onTouchCancel(event);
+			if(watcher.pointer.getIsMove())
+				watcher.cancel();
 		}
 	},
 
-	onTouchEnd: function(event) {
-		if(this.onUp(event.changedTouches[0].clientX, event.changedTouches[0].clientY) === true) {
-			event.preventDefault();
-			event.stopPropagation();
-			this.disconnect(this.draggable, 'touchmove', this.onTouchMove);
-			this.disconnect(this.draggable, 'touchend', this.onTouchEnd);
-			this.disconnect(this.draggable, 'touchcancel', this.onTouchCancel);
-		}
-		else
-			this.onTouchCancel(event);
-	},
+	onPointerUp: function(watcher) {
+//		console.log('onPointerUp');
+		var dragEvent;
 
-	onTouchCancel: function() {
-		this.disconnect(this.draggable, 'touchmove', this.onTouchMove);
-		this.disconnect(this.draggable, 'touchend', this.onTouchEnd);
-		this.disconnect(this.draggable, 'touchcancel', this.onTouchCancel);
-
-		if(this.timer !== undefined) {
-			this.timer.abort();
-			this.timer = undefined;
-		}
-	},
-
-	onPointerMove: function(event) {
-		if(event.pointerId !== this.pointerId)
-			return;
-		if(this.onMove(event.clientX, event.clientY) === true) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
+		if(!watcher.getIsCaptured())
+			watcher.cancel();
 		else {
-			this.onPointerCancel(event);
+			var clientX = watcher.pointer.getX();
+			var clientY = watcher.pointer.getY();
+
+			document.body.removeChild(this.image);
+
+			if(this.catcher !== undefined) {
+            	document.body.removeChild(this.catcher);
+            	this.catcher = undefined;
+            }
+
+			if(this.overElement !== undefined) {
+				dragEvent = document.createEvent('DragEvent');
+				dragEvent.initDragEvent('localdrop', true, true, window, this,
+					clientX, clientY, clientX, clientY,
+					false, false, false, false);
+				this.overElement.dispatchEvent(dragEvent);
+			}
+
+			dragEvent = document.createEvent('DragEvent');
+			dragEvent.initDragEvent('localdragend', false, true, window, this,
+				clientX, clientY, clientX, clientY,
+				false, false, false, false);
+			this.draggable.dispatchEvent(dragEvent);
 		}
 	},
 
-	onPointerUp: function(event) {
-		if(event.pointerId !== this.pointerId)
-			return;
-
-		if(this.onUp(event.clientX, event.clientY) === true) {
-			event.preventDefault();
-			event.stopPropagation();
-
-			this.disconnect(window, 'pointermove', this.onPointerMove);
-			this.disconnect(window, 'pointerup', this.onPointerUp);
-			this.disconnect(window, 'pointercancel', this.onPointerCancel);
-		}
-		else {
-			this.onPointerCancel(event);
-		}
-	},
-
-	onPointerCancel: function(event) {
-		if((event !== undefined) && (event.pointerId !== this.pointerId))
-			return;
-		this.disconnect(window, 'pointermove', this.onPointerMove);
-		this.disconnect(window, 'pointerup', this.onPointerUp);
-		this.disconnect(window, 'pointercancel', this.onPointerCancel);
-
+	onPointerCancel: function(watcher) {
 		if(this.timer !== undefined) {
 			this.timer.abort();
 			this.timer = undefined;
@@ -405,25 +450,23 @@ Core.Object.extend('Core.DragManager',
 	*/	
 	constructor: function(config) {
 		Core.Event.registerEvent('DragEvent', Core.DragEvent);
-		Core.Event.register('dragstart', Core.DragEvent);
-		Core.Event.register('dragend', Core.DragEvent);
-		Core.Event.register('dragenter', Core.DragEvent);
-		Core.Event.register('dragover', Core.DragEvent);
-		Core.Event.register('drop', Core.DragEvent);
+		Core.Event.register('localdragstart', Core.DragEvent);
+		Core.Event.register('localdragend', Core.DragEvent);
+		Core.Event.register('localdragenter', Core.DragEvent);
+		Core.Event.register('localdragover', Core.DragEvent);
+		Core.Event.register('localdrop', Core.DragEvent);
 
 		this.connect(window, 'load', function() {
-			if((document.body === undefined) || (document.body === null)) {
-				var body = document.createElement('body');
-				document.body = body;
-			}
-			// use PointerEvent (IE)
+			this.connect(window, 'ptrdown', this.onPointerDown, true);
+
+/*			// use PointerEvent (IE)
 			if(window.PointerEvent)
 				this.connect(window, 'pointerdown', this.onPointerDown);
 			// Android, iOS
 			else if('ontouchstart' in document.body)
 				this.connect(document.body, 'touchstart', this.onTouchStart);
 			else
-				this.connect(window, 'mousedown', this.onMouseDown, true);
+				this.connect(window, 'mousedown', this.onMouseDown, true);*/
 		});
 	},
 
@@ -432,7 +475,7 @@ Core.Object.extend('Core.DragManager',
 		var found;
 		var current = element;
 		while((found === undefined) && (current !== undefined) && (current !== window) && (current !== null)) {
-			var draggable = current.getAttribute('draggable');
+			var draggable = current.getAttribute('draggable') || current.getAttribute('localdraggable');
 			if((draggable === 'true') || (draggable === true))
 				found = current;
 			current = current.offsetParent;
@@ -441,32 +484,14 @@ Core.Object.extend('Core.DragManager',
 	},
 
 	onPointerDown: function(event) {
-		var delayed = (event.pointerType === 'touch');
+		//var delayed = (event.pointer.getType() === 'touch');
+		var delayed = true;
+
 		// try to find a draggable element
 		var found = this.findDraggable(event.target);
-		if(found !== undefined) {
-			event.stopPropagation();
-			new Core.DragDataTransfer({ type: 'pointer', draggable: found, x: event.clientX, y: event.clientY, delayed: delayed, pointerId: event.pointerId });
-		}
-	},
 
-	onTouchStart: function(event) {
-		if(event.changedTouches.length !== 1)
-			return;
-		// try to find a draggable element
-		var found = this.findDraggable(event.target);
 		if(found !== undefined) {
-			event.stopPropagation();
-			new Core.DragDataTransfer({ type: 'touch', draggable: found, x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY, delayed: true });
-		}
-	},
-
-	onMouseDown: function(event) {
-		if(event.button !== 0)
-			return;
-		var found = this.findDraggable(event.target);
-		if(found !== undefined) {
-			new Core.DragDataTransfer({ type: 'mouse', draggable: found, x: event.clientX, y: event.clientY, delayed: false });
+			new Core.DragDataTransfer({ type: 'pointer', draggable: found, x: event.clientX, y: event.clientY, delayed: delayed, pointer: event.pointer });
 		}
 	}
 });
@@ -479,5 +504,8 @@ navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
  
 navigator.supportMimetypeDrag = navigator.supportDrag && !navigator.isIE;
 
-if(!navigator.supportDrag)
+//if(!navigator.supportDrag)
 	Core.DragManager.current = new Core.DragManager();
+
+navigator.localDrag = (Core.DragManager.current !== undefined);
+

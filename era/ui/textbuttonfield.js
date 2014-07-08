@@ -1,4 +1,4 @@
-Ui.HBox.extend('Ui.TextButtonField', 
+Ui.Form.extend('Ui.TextButtonField', 
 /**@lends Ui.TextButtonField#*/
 {
 	entry: undefined,
@@ -16,15 +16,18 @@ Ui.HBox.extend('Ui.TextButtonField',
 	 */
 	constructor: function(config) {
 		this.addEvents('change', 'validate', 'buttonpress');
-		
+
+		var hbox = new Ui.HBox();
+		this.setContent(hbox);
+
 		this.entry = new Ui.TextField();
-		this.append(this.entry, true);
+		hbox.append(this.entry, true);
 		
-		this.button = new Ui.Button({ orientation: 'horizontal' });
-		this.append(this.button);
+		this.button = new Ui.DefaultButton({ orientation: 'horizontal' });
+		hbox.append(this.button);
 		
 		this.connect(this.entry, 'change', this.onEntryChange);
-		this.connect(this.entry, 'validate', this.onEntryValidate);
+		this.connect(this, 'submit', this.onFormSubmit);
 
 		this.connect(this.button, 'press', this.onButtonPress);
 	},
@@ -45,24 +48,32 @@ Ui.HBox.extend('Ui.TextButtonField',
 		this.button.setText(text);
 	},
 
-	getValue: function() {
+	getTextValue: function() {
 		return this.entry.getValue();
 	},
 
-	setValue: function(value) {
+	setTextValue: function(value) {
 		this.entry.setValue(value);
+	},
+
+	getValue: function() {
+		return this.getTextValue();
+	},
+
+	setValue: function(value) {
+		this.setTextValue(value);
 	},
 
 	onButtonPress: function() {
 		this.fireEvent('buttonpress', this);
-		this.fireEvent('validate', this);
+		this.fireEvent('validate', this, this.getValue());
 	},
 
 	onEntryChange: function(entry, value) {
 		this.fireEvent('change', this, value);
 	},
 
-	onEntryValidate: function(entry) {
-		this.fireEvent('validate', this);
+	onFormSubmit: function() {
+		this.fireEvent('validate', this, this.getValue());
 	}
 });

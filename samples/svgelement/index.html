@@ -20,7 +20,7 @@ Ui.SVGElement.extend('Sample.MySvg', {
 		this.svgDrawing.style.fill = this.fill;
 	}
 }, {
-	render: function() {
+	renderSVG: function() {
 		this.svgDrawing = document.createElementNS(svgNS, 'path');
 		this.svgDrawing.style.fill = this.fill;
 		this.svgDrawing.style.fillOpacity = '1';

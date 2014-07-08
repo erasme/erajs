@@ -58,10 +58,10 @@ Ui.Container.extend('Ui.Grid',
 		if((content !== undefined) && (typeof(content) === 'object')) {
 			if(content.constructor == Array) {
 				for(var i = 0; i < content.length; i++)
-					this.appendChild(Ui.Element.create(content[i]));
+					this.appendChild(content[i]);
 			}
 			else
-				this.appendChild(Ui.Element.create(content));
+				this.appendChild(content);
 		}
 	},
 

@@ -39,10 +39,6 @@ app.connect(textfield, 'change', function(textfield, value) {
 	logs.log('change: '+value);
 });
 
-app.connect(textfield, 'validate', function(textfield) {
-	logs.log('validate: '+textfield.getValue(), 'green');
-});
-
 var getButton = new Ui.Button({ text: 'get text' });
 hbox.append(getButton);
 

@@ -1,59 +1,55 @@
-Ui.Togglable.extend('Ui.ToggleButton', 
+Ui.Button.extend('Ui.ToggleButton', 
 /**@lends Ui.ToggleButton#*/
 {
-	graphic: undefined,
+	isToggled: false,
 
 	/**
 	 * @constructs
 	 * @class
-	 * @extends Ui.Togglable
+	 * @extends Ui.Button
 	 */
 	constructor: function(config) {
-		this.graphic = new Ui.ButtonGraphic();
-		this.append(this.graphic);
-
-		this.connect(this, 'down', this.onToggleButtonUpdate);
-		this.connect(this, 'up', this.onToggleButtonUpdate);
-		this.connect(this, 'toggle', this.onToggleButtonUpdate);
-		this.connect(this, 'untoggle', this.onToggleButtonUpdate);
-		this.connect(this, 'focus', this.onToggleButtonFocus);
-		this.connect(this, 'blur', this.onToggleButtonBlur);
-	},
-
-	getText: function() {
-		return this.graphic.getText();
-	},
-
-	setText: function(text) {
-		this.graphic.setText(text);
-	},
-
-	getIcon: function() {
-		return this.graphic.getIcon();
-	},
-
-	setIcon: function(icon) {
-		this.graphic.setIcon(icon);
-	},
-
-	getOrientation: function() {
-		return this.graphic.getOrientation();
-	},
-
-	setOrientation: function(orientation) {
-		this.graphic.setOrientation(orientation);
-	},
-
-	onToggleButtonUpdate: function() {
-		this.graphic.setIsDown(this.getIsDown() || this.getIsToggled());
-	},
-
-	onToggleButtonFocus: function() {
-		this.graphic.setHasFocus(true);
+		this.addEvents('toggle', 'untoggle');
+		this.setRole('checkbox');
+		this.getDrawing().setAttribute('aria-checked', 'false');
+		this.connect(this, 'press', this.onToggleButtonPress);
 	},
 	
-	onToggleButtonBlur: function() {
-		this.graphic.setHasFocus(false);
+	getIsToggled: function() {
+		return this.isToggled;
+	},
+
+	onToggleButtonPress: function() {
+		if(!this.isToggled)
+			this.onToggle();
+		else
+			this.onUntoggle();
+	},
+	
+	onToggle: function() {
+		if(!this.isToggled) {
+			this.isToggled = true;
+			this.setIsActive(true);
+			this.getDrawing().setAttribute('aria-checked', 'true');
+			this.fireEvent('toggle', this);
+		}
+	},
+
+	onUntoggle: function() {
+		if(this.isToggled) {
+			this.isToggled = false;
+			this.setIsActive(false);
+			this.getDrawing().setAttribute('aria-checked', 'false');
+			this.fireEvent('untoggle', this);
+		}
+	},
+
+	toggle: function() {
+		this.onToggle();
+	},
+
+	untoggle: function() {
+		this.onUntoggle();
 	}
 });
 

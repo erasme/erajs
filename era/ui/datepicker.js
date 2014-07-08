@@ -34,31 +34,40 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	getIsValid: function() {
 		return this.isValid;
 	},
-
+	
 	getSelectedDate: function() {
 		return this.selectedDate;
 	},
 
 	setSelectedDate: function(date) {
-		this.lastValid = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();
-		this.selectedDate = date;
-		this.setValue(this.lastValid);
+		console.log('setSelectedDate: '+date);
+
+		if(date === undefined) {
+			this.selectedDate = undefined;
+		}
+		else {
+			if(typeof(date) === 'string')
+				throw('STOP HERE');
+
+			this.lastValid = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();
+			this.selectedDate = date;
+			this.setTextValue(this.lastValid);
+		}
 		this.isValid = true;
-		//@temp Don't if I need to put this event here or in Ui.Entry.setValue()
 		this.fireEvent('change', this, this.getValue());
 	},
 
 	onDatePickerButtonPress: function() {
-		var splitDate = this.getValue().match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
+		var splitDate = this.getTextValue().match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
 		if(splitDate !== null) {
 			this.selectedDate = new Date();
 			this.selectedDate.setFullYear(parseInt(splitDate[3]), parseInt(splitDate[2]) - 1, parseInt(splitDate[1]));
 		}
 		this.popup = new Ui.Popup();
 		if(this.selectedDate !== undefined)
-			this.calendar = new Ui.MonthCalendar({ margin: 10, selectedDate: this.selectedDate, date: this.selectedDate });
+			this.calendar = new Ui.MonthCalendar({ horizontalAlign: 'center', margin: 10, selectedDate: this.selectedDate, date: this.selectedDate });
 		else
-			this.calendar = new Ui.MonthCalendar({ margin: 10 });
+			this.calendar = new Ui.MonthCalendar({ horizontalAlign: 'center', margin: 10 });
 		if(this.dayFilter !== undefined)
 			this.calendar.setDayFilter(this.dayFilter);
 		if(this.dateFilter !== undefined)
@@ -72,15 +81,15 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	onDatePickerChange: function() {
 		this.isValid = false;
 		this.selectedDate = undefined;
-		var dateStr = this.getValue();
+		var dateStr = this.getTextValue();
 		if(dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/)) {
-			var splitDate = this.getValue().match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
+			var splitDate = this.getTextValue().match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
 			var date = new Date();
 			date.setFullYear(parseInt(splitDate[3]), parseInt(splitDate[2]) - 1, parseInt(splitDate[1]));
 			var newStr = ((date.getDate() < 10)?'0':'')+date.getDate()+'/'+((date.getMonth() < 9)?'0':'')+(date.getMonth()+1)+'/'+date.getFullYear();			
 			if((parseInt(splitDate[3]) != date.getFullYear()) || (parseInt(splitDate[2]) - 1 != date.getMonth()) || (parseInt(splitDate[1]) != date.getDate())) {
 				this.lastValid = newStr;
-				this.setValue(this.lastValid);
+				this.setTextValue(this.lastValid);
 			}
 			this.selectedDate = date;
 			this.isValid = true;
@@ -92,13 +101,21 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		else if(dateStr.match(/^(\d{0,2})$/))
 			this.lastValid = dateStr;
 		else
-			this.setValue(this.lastValid);
+			this.setTextValue(this.lastValid);
 	},
 
 	onDaySelect: function(monthcalendar, date) {
 		this.setSelectedDate(date);
 		this.popup.hide();
 		this.popup = undefined;
+	}
+}, {
+	getValue: function() {
+		return this.selectedDate;
+	},
+
+	setValue: function(value) {
+		this.setSelectedDate(value);
 	}
 });
 

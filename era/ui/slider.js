@@ -14,11 +14,11 @@ Ui.Container.extend('Ui.Slider',
 	constructor: function(config) {
 		this.addEvents('change');
 
-		this.background = new Ui.Frame({ frameWidth: 2, radius: 4 });
-		this.appendChild(this.background);
-
 		this.bar = new Ui.Rectangle({ margin: 1, height: 4 });
 		this.appendChild(this.bar);
+
+		this.background = new Ui.Frame({ frameWidth: 2, radius: 4 });
+		this.appendChild(this.background);
 
 		this.button = new Ui.Movable({ moveVertical: false });
 		this.appendChild(this.button);
@@ -36,11 +36,15 @@ Ui.Container.extend('Ui.Slider',
 		return this.value;
 	},
 
-	setValue: function(value) {
-		if(this.value != value) {
+	setValue: function(value, dontSignal) {
+		value = Math.min(1, Math.max(0, value));
+		if(this.value !== value) {
 			this.value = value;
+			this.disconnect(this.button, 'move', this.onButtonMove);
 			this.updateValue();
-			this.fireEvent('change', this);
+			this.connect(this.button, 'move', this.onButtonMove);
+			if(dontSignal !== true)
+				this.fireEvent('change', this, this.value);
 		}
 	},
 	
@@ -68,8 +72,8 @@ Ui.Container.extend('Ui.Slider',
 				this.buttonContent = new Ui.SliderVerticalContentDrawing({ marginLeft: 10, marginRight: 2, marginTop: 12, marginBottom: 12});
 				this.button.setContent(this.buttonContent);
 			}
-			this.buttonContent.setFill(this.getButtonColor());
 			this.invalidateMeasure();
+			this.onStyleChange();
 		}
 	},
 
@@ -103,7 +107,7 @@ Ui.Container.extend('Ui.Slider',
 		this.updateValue();
 		this.connect(this.button, 'move', this.onButtonMove);
 		if(oldValue != this.value)
-			this.fireEvent('change', this);
+			this.fireEvent('change', this, this.value);
 	},
 
 	updateValue: function() {
@@ -114,24 +118,44 @@ Ui.Container.extend('Ui.Slider',
 			max = width - 44;
 			this.button.setPosition(max * this.value, 0);
 			var y = (height - 44)/2;
-			this.bar.arrange(18, y + 18, (width - 36) * this.value, 9);
+			this.bar.arrange(18, y + 18, (width - 36) * this.value, 10);
 		}
 		else {		
 			max = height - 44;
 			var x = (width - 44)/2;
 			var size = (height - 36) * this.value;
 			this.button.setPosition(0, (height - max * this.value) - 44);			
-			this.bar.arrange(x + 18, (height - size)-18, 9, size);
+			this.bar.arrange(x + 18, (height - size)-18, 10, size);
 		}
 	},
 
 	getColor: function() {
-		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
+		var yuv = Ui.Color.create(this.getStyleProperty('background')).getYuv();
 		return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
+	},
+	
+	getForeground: function() {
+		return Ui.Color.create(this.getStyleProperty('foreground'));
+	},
+
+	getBackground: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('background')).getYuv();
+		var deltaY = 0;
+		if(this.button.getIsDown())
+			deltaY = -0.30;
+		return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
+	},
+
+	getBackgroundBorder: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('backgroundBorder')).getYuv();
+		var deltaY = 0;
+		if(this.button.getIsDown())
+			deltaY = -0.30;
+		return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
 	},
 
 	getButtonColor: function() {
-		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
+		var yuv = Ui.Color.create(this.getStyleProperty('background')).getYuv();
 
 		var deltaY = 0;
 		if(this.button.getIsDown())
@@ -143,9 +167,10 @@ Ui.Container.extend('Ui.Slider',
 	},
 
 	updateColors: function() {
-		this.bar.setFill(this.getColor());
-		this.background.setFill(this.getColor());
-		this.buttonContent.setFill(this.getButtonColor());
+		this.bar.setFill(this.getForeground());
+		this.background.setFill(this.getBackgroundBorder());
+		this.buttonContent.setBackground(this.getBackground());
+		this.buttonContent.setBackgroundBorder(this.getBackgroundBorder());
 	}
 
 	/**#@-*/
@@ -183,6 +208,9 @@ Ui.Container.extend('Ui.Slider',
 	},
 
 	onStyleChange: function() {
+		this.background.setRadius(this.getStyleProperty('radius'));
+		var borderWidth = this.getStyleProperty('borderWidth');
+		this.background.setFrameWidth(borderWidth);
 		this.updateColors();
 	},
 
@@ -199,7 +227,11 @@ Ui.Container.extend('Ui.Slider',
 /**@lends Ui.Slider*/
 {
 	style: {
-		color: Ui.Color.create('#b1b1b1')
+		radius: 4,
+		borderWidth: 1,
+		background: '#e1e1e1',
+		backgroundBorder: '#919191',
+		foreground: '#b1b1b1'
 	}
 });
 
@@ -207,12 +239,9 @@ Ui.LBox.extend('Ui.SliderHorizontalContentDrawing',
 /**@lends Ui.SliderHorizontalContentDrawing#*/
 {
 	contentDrawing: undefined,
-
 	shadow: undefined,
 	background: undefined,
-
 	radius: 0,
-	fill: 'black',
 
 	/**
 	 * @constructs
@@ -233,13 +262,12 @@ Ui.LBox.extend('Ui.SliderHorizontalContentDrawing',
 		}
 	},
 
-	setFill: function(fill) {
-		if(this.fill != fill) {
-			this.fill = Ui.Color.create(fill);
-			var yuv = this.fill.getYuv();
-			this.background.setFill(this.fill);
-			this.shadow.setFill((new Ui.Color({ y: yuv.y - 0.3, u: yuv.u, v: yuv.v })).getCssHtml());
-		}
+	setBackgroundBorder: function(backgroundBorder) {
+		this.shadow.setFill(backgroundBorder);
+	},
+
+	setBackground: function(background) {
+		this.background.setFill(background);
 	},
 
 	/**@private*/
@@ -262,12 +290,9 @@ Ui.LBox.extend('Ui.SliderVerticalContentDrawing',
 /**@lends Ui.SliderVerticalContentDrawing#*/
 {
 	contentDrawing: undefined,
-
 	shadow: undefined,
 	background: undefined,
-
 	radius: 0,
-	fill: 'black',
 
 	/**
 	 * @constructs
@@ -288,13 +313,12 @@ Ui.LBox.extend('Ui.SliderVerticalContentDrawing',
 		}
 	},
 
-	setFill: function(fill) {
-		if(this.fill != fill) {
-			this.fill = Ui.Color.create(fill);
-			var yuv = this.fill.getYuv();
-			this.background.setFill(this.fill);
-			this.shadow.setFill((new Ui.Color({ y: yuv.y - 0.3, u: yuv.u, v: yuv.v })).getCssHtml());
-		}
+	setBackgroundBorder: function(backgroundBorder) {
+		this.shadow.setFill(backgroundBorder);
+	},
+
+	setBackground: function(background) {
+		this.background.setFill(background);
 	},
 
 	/**@private*/

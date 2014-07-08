@@ -48,13 +48,20 @@ app.connect(button, 'press', function() {
 	listview.selectRow(5);
 });
 
-var hbox = new Ui.HBox();
+var hbox = new Ui.HBox({ spacing: 5 });
 vbox.append(hbox, true);
 
 var scroll = new Ui.ScrollingArea();
 hbox.append(scroll, true);
 
-var listview = new Ui.ListView({ headers: [ { type: 'string', title: 'Data 1', key: 'data1' }, { type: 'string', title: 'Data 2', key: 'data2' } ] });
+var listview = new Ui.ListView({
+	margin: 10,// mode: 'auto',
+	headers: [
+		{ type: 'string', title: 'Data 1', key: 'data1' },
+		{ type: 'string', title: 'Data 2', key: 'data2' },
+		{ type: 'string', title: 'Numbers', key: 'data3' },
+	]
+});
 scroll.setContent(listview);
 
 app.connect(listview, 'select', function(listview, row) {
@@ -63,13 +70,17 @@ app.connect(listview, 'select', function(listview, row) {
 app.connect(listview, 'unselect', function(listview, row) {
 	logs.log('unselect row: '+row);
 });
-app.connect(listview, 'unselect', function(listview, row, colKey) {
+app.connect(listview, 'activate', function(listview, row, colKey) {
 	logs.log('activate row: '+row+', colKey: '+colKey);
 });
 
 
 for(var i = 0; i < 50; i++) {
-	listview.appendData({ data1: 'hi number '+i, data2: 'col 2 '+i });
+	listview.appendData({
+		data1: 'hi number '+i,
+		data2: 'col 2 '+i,
+		data3: Math.random()*50
+	});
 }
 
 var logs = new Test.Logs({ width: 250 });

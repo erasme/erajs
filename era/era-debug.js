@@ -34,7 +34,7 @@ include(eraBaseDirectory+'core/object.js');
 include(eraBaseDirectory+'core/uri.js');
 include(eraBaseDirectory+'core/event.js');
 include(eraBaseDirectory+'core/mouseevent.js');
-include(eraBaseDirectory+'core/dragevent.js');
+include(eraBaseDirectory+'core/pointerevent.js');
 include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');
@@ -92,15 +92,21 @@ include(eraBaseDirectory+'ui/rectangle.js');
 include(eraBaseDirectory+'ui/frame.js');
 include(eraBaseDirectory+'ui/shadow.js');
 include(eraBaseDirectory+'ui/icon.js');
+include(eraBaseDirectory+'ui/dualicon.js');
 include(eraBaseDirectory+'ui/buttongraphic.js');
+
+//
+// Core functions
+//
+include(eraBaseDirectory+'core/dragevent.js');
 
 //
 // Ui text
 //
+include(eraBaseDirectory+'ui/html.js');
 include(eraBaseDirectory+'ui/label.js');
 include(eraBaseDirectory+'ui/text.js');
 include(eraBaseDirectory+'ui/compactlabel.js');
-include(eraBaseDirectory+'ui/html.js');
 include(eraBaseDirectory+'ui/contenteditable.js');
 
 //
@@ -114,9 +120,8 @@ include(eraBaseDirectory+'ui/video.js');
 //
 // Ui logic
 //
+include(eraBaseDirectory+'ui/overable.js');
 include(eraBaseDirectory+'ui/pressable.js');
-include(eraBaseDirectory+'ui/togglable.js');
-include(eraBaseDirectory+'ui/linkable.js');
 include(eraBaseDirectory+'ui/uploadable.js');
 include(eraBaseDirectory+'ui/movablebase.js');
 include(eraBaseDirectory+'ui/movable.js');
@@ -125,20 +130,19 @@ include(eraBaseDirectory+'ui/scrollable.js');
 include(eraBaseDirectory+'ui/draggable.js');
 include(eraBaseDirectory+'ui/dropbox.js');
 include(eraBaseDirectory+'ui/iframe.js');
-include(eraBaseDirectory+'ui/mouseoverable.js');
 include(eraBaseDirectory+'ui/carouselable.js');
+include(eraBaseDirectory+'ui/carouselable2.js');
+include(eraBaseDirectory+'ui/form.js');
+include(eraBaseDirectory+'ui/selection.js');
+include(eraBaseDirectory+'ui/selectionable.js');
 
 //
 // Ui high level element (= drawing + logic + style)
 //
 include(eraBaseDirectory+'ui/separator.js');
-include(eraBaseDirectory+'ui/contextbar.js');
-include(eraBaseDirectory+'ui/popup.js');
-include(eraBaseDirectory+'ui/dialog.js');
 include(eraBaseDirectory+'ui/entry.js');
 include(eraBaseDirectory+'ui/textarea.js');
 include(eraBaseDirectory+'ui/button.js');
-include(eraBaseDirectory+'ui/combo.js');
 include(eraBaseDirectory+'ui/togglebutton.js');
 include(eraBaseDirectory+'ui/uploadbutton.js');
 include(eraBaseDirectory+'ui/linkbutton.js');
@@ -146,6 +150,10 @@ include(eraBaseDirectory+'ui/downloadbutton.js');
 include(eraBaseDirectory+'ui/actionbutton.js');
 include(eraBaseDirectory+'ui/checkboxgraphic.js');
 include(eraBaseDirectory+'ui/checkbox.js');
+include(eraBaseDirectory+'ui/contextbar.js');
+include(eraBaseDirectory+'ui/popup.js');
+include(eraBaseDirectory+'ui/combo.js');
+include(eraBaseDirectory+'ui/dialog.js');
 include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');
 include(eraBaseDirectory+'ui/slider.js');
@@ -173,8 +181,6 @@ include(eraBaseDirectory+'ui/notebook.js');
 include(eraBaseDirectory+'ui/menu.js');
 include(eraBaseDirectory+'ui/segmentbar.js');
 include(eraBaseDirectory+'ui/paned.js');
-include(eraBaseDirectory+'ui/selection.js');
-include(eraBaseDirectory+'ui/selectionable.js');
 include(eraBaseDirectory+'ui/menutoolbar.js');
 include(eraBaseDirectory+'ui/app.js');
 
@@ -182,14 +188,5 @@ include(eraBaseDirectory+'ui/app.js');
 // Ui styles
 //
 include(eraBaseDirectory+'ui/styles.js');
-
-//
-// Form
-//
-include(eraBaseDirectory+'form/field.js');
-include(eraBaseDirectory+'form/fieldcontainer.js');
-include(eraBaseDirectory+'form/panel.js');
-include(eraBaseDirectory+'form/panelcontainer.js');
-include(eraBaseDirectory+'form/dialog.js');
 
 })();

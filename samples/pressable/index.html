@@ -5,33 +5,47 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-var count = 0;
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var vbox = new Ui.VBox({
+			verticalAlign: 'center', horizontalAlign: 'center',
+			spacing: 5
+		});
+		this.setContent(vbox);
 
-var app = new Ui.App({ });
+		var count = 0;
+		var activateCount = 0;
 
-var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
-app.setContent(vbox);
+		var label = new Ui.Label({ text: 'press count: 0' });
+		vbox.append(label);
 
-var label = new Ui.Label({ text: 'press count: 0' });
-vbox.append(label);
+		var label2 = new Ui.Label({ text: 'activate count: 0' });
+		vbox.append(label2);
 
-var pressable = new Ui.Pressable();
-vbox.append(pressable);
+		var pressable = new Ui.Pressable();
+		vbox.append(pressable);
 
-var rectangle = new Ui.Rectangle({ width: 100, height: 100, fill: 'lightblue' });
-pressable.append(rectangle);
-app.connect(pressable, 'press', function() {
-	label.setText('press count: '+(++count));
+		var rectangle = new Ui.Rectangle({
+			width: 100, height: 100, fill: 'lightblue',
+			horizontalAlign: 'center'
+		});
+		pressable.append(rectangle);
+		this.connect(pressable, 'press', function() {
+			label.setText('press count: '+(++count));
+		});
+		this.connect(pressable, 'activate', function() {
+			label2.setText('activate count: '+(++activateCount));
+		});
+		this.connect(pressable, 'down', function() {
+			rectangle.setFill('blue');
+		});
+		this.connect(pressable, 'up', function() {
+			rectangle.setFill('lightblue');
+		});
+	}	
 });
-app.connect(pressable, 'activate', function() {
-	console.log('activate')
-});
-app.connect(pressable, 'down', function() {
-	rectangle.setFill('blue');
-});
-app.connect(pressable, 'up', function() {
-	rectangle.setFill('lightblue');
-});
+
+new Test.App();
 
 </script>
   </head>

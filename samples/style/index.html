@@ -6,85 +6,74 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-var app = new Ui.App();
-
-var content = new Ui.VBox();
-app.setContent(content);
-
-var toolbar = new Ui.ToolBar();
-toolbar.append(new Ui.Button({ text: 'button1' }));
-toolbar.append(new Ui.Spacer(), true);
-toolbar.append(new Ui.Label({ text: 'The Title', fontWeight: 'bold' }));
-toolbar.append(new Ui.Spacer(), true);
-toolbar.append(new Ui.Button({ text: 'button2' }));
-content.append(toolbar);
-
-
-var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 10 });
-content.append(vbox, true);
-
-// the default style
-app.setStyle({
-	"Ui.ButtonGraphic": {
-		background: new Ui.Color({ r: 0.8, g: 0, b: 0.8 })
-	}
-});
-
-var button = new Ui.Button({ text: 'default', width: 200 });
-vbox.append(button);
-app.connect(button, 'press', function() {
-	app.setStyle(undefined);
-});
-
-
-var button = new Ui.Button({ text: 'style0', width: 200 });
-vbox.append(button);
-app.connect(button, 'press', function() {
-	var blueColor = new Ui.Color({ r: 0.11, g: 0.56, b: 1 });
-	app.setStyle({
+var styles = [
+	{
+		"Ui.Button": {
+			foreground: 'rgb(100,0,100)',
+			borderWidth: 2,
+			background: 'rgb(204,0,204)',
+			backgroundBorder: 'rgb(100,0,100)'
+		}
+	},
+	{
 		"Ui.ToolBar": {
-			color: blueColor,
-			"Ui.ButtonGraphic": {
-				background: new Ui.Color({ r: 0.94, g: 0.94, b: 0.94 })
+			"Ui.Button": {
+				background: 'rgb(240,240,240)'
 			}
 		},
-		"Ui.ButtonGraphic": {
-			background: blueColor
+		"Ui.Button": {
+			background: 'rgb(28,142,255)'
 		}
-	});
-});
-
-var button2 = new Ui.Button({ text: 'style1', width: 200 });
-vbox.append(button2);
-app.connect(button2, 'press', function() {
-	app.setStyle({
-		"Ui.ToolBar": {
-			color: new Ui.Color({ r: 0.68, g: 0.68, b: 0.18 })
-		},
-		"Ui.ButtonGraphic": {
+	},
+	{
+		"Ui.Button": {
 			background: new Ui.Color({ r: 1, g: 0.75, b: 0.80 }),
 			radius: 18
 		}
-	});
-});
-
-var button3 = new Ui.Button({ text: 'style2', width: 200 });
-vbox.append(button3);
-app.connect(button3, 'press', function() {
-	app.setStyle({
+	},
+	{
 		"Ui.ToolBar": {
-			color: new Ui.Color({ r: 0.18, g: 0.68, b: 0.18 }),
-			"Ui.ButtonGraphic": {
-				background: new Ui.Color({ r: 0.18, g: 0.68, b: 1 }),
+			"Ui.Button": {
+				background: 'rgb(45,173,255)',
 				radius: 0
 			}
 		},
-
-		"Ui.ButtonGraphic": {
-			background: new Ui.Color({ r: 1, g: 0.68, b: 0.18 })
+		"Ui.Button": {
+			background: 'rgb(255,173,45)'
 		}
-	});
+	}
+];
+
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var content = new Ui.VBox();
+		this.setContent(content);
+
+		var toolbar = new Ui.ToolBar();
+		toolbar.append(new Ui.Button({ text: 'button1' }));
+		toolbar.append(new Ui.Spacer(), true);
+		toolbar.append(new Ui.Label({ text: 'The Title', fontWeight: 'bold' }));
+		toolbar.append(new Ui.Spacer(), true);
+		toolbar.append(new Ui.Button({ text: 'button2' }));
+		content.append(toolbar);
+
+		var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 10 });
+		content.append(vbox, true);
+
+		var button = new Ui.Button({ text: 'default', width: 200 });
+		vbox.append(button);
+		this.connect(button, 'press', function() {
+			this.setStyle(undefined);
+		});
+
+		for(var i = 0; i < styles.length; i++) {
+			var button = new Ui.Button({ text: 'style'+i, width: 200 });
+			vbox.append(button);
+			this.connect(button, 'press', this.setStyle.bind(this, styles[i]) );
+		}
+	}
 });
+new Test.App();
 
 </script>
   </head>

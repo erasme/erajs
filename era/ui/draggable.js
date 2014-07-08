@@ -14,13 +14,13 @@ Ui.Pressable.extend('Ui.Draggable',
 	 * @param {string} dropEffect Give the operation done: [none|copy|link|move]
 	 */
 
-	icon: undefined,
+	draggableIcon: undefined,
 	downloadUrl: undefined,
 	downloadMimetype: undefined,
 	downloadFilename: undefined,
 	allowedMode: 'copyMove',
 	mimetype: undefined,
-	data: undefined,
+	draggableData: undefined,
 	dragDelta: undefined,
 	localkey: undefined,
 
@@ -32,11 +32,18 @@ Ui.Pressable.extend('Ui.Draggable',
 	constructor: function(config) {
 		this.addEvents('dragstart', 'dragend');
 
-		this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
-		this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
+		if(navigator.localDrag) {
+			this.connect(this.getDrawing(), 'localdragstart', this.onDragStart, true);
+			this.connect(this.getDrawing(), 'localdragend', this.onDragEnd, true);
+		}
+		else {
+			this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
+			this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
+		}
+
 
 		// default data is the draggable object itself
-		this.setData(this);
+//		this.setData(this);
 	},
 
 	/**
@@ -53,17 +60,21 @@ Ui.Pressable.extend('Ui.Draggable',
 	/**
 	 * Set the data that we drag & drop
 	 */
-	setData: function(data) {
-		this.data = data;
+	setDraggableData: function(data) {
+		this.draggableData = data;
 		// handle a default mimetype for object
-		if((this.mimetype === undefined) && (typeof(this.data) === 'object')) {
-			if(Core.Object.hasInstance(this.data))
-				this.mimetype = Ui.Draggable.localmimetype+'-'+this.data.classType.toLowerCase();
+		if((this.mimetype === undefined) && (typeof(this.draggableData) === 'object')) {
+			if(Core.Object.hasInstance(this.draggableData))
+				this.mimetype = Ui.Draggable.localmimetype+'-'+this.draggableData.classType.toLowerCase();
 			else
 				this.mimetype = Ui.Draggable.localmimetype;
 		}
-		// allow native drag & drop
-		this.getDrawing().setAttribute('draggable', true);
+		// allow local drag & drop
+		if(navigator.localDrag)
+			this.getDrawing().setAttribute('localdraggable', true);
+		// allow native drag & drop only if not local
+		else
+			this.getDrawing().setAttribute('draggable', true);
 	},
 
 	/**
@@ -79,8 +90,8 @@ Ui.Pressable.extend('Ui.Draggable',
 	 * dragging the element
 	 * Supported by: Firefox, Chrome and Safari on Windows
 	 */
-	setIcon: function(icon) {
-		this.icon = icon;
+	setDraggableIcon: function(icon) {
+		this.draggableIcon = icon;
 	},
 
 	/**
@@ -131,14 +142,14 @@ Ui.Pressable.extend('Ui.Draggable',
 
 		// use Text as data because it is the only thing
 		// that works cross browser. Only Firefox support different mimetypes
-		//event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.data);
+		//event.dataTransfer.setData('Text', this.mimetype+':'+this.dragDelta.x+':'+this.dragDelta.y+':'+this.draggableData);
 
 		var mergedData = '';
-		if(typeof(this.data) === 'object') {
-			this.localkey = Ui.Draggable.addLocalData(this.data);
-			if(Core.Object.hasInstance(this.data)) {
+		if(typeof(this.draggableData) === 'object') {
+			this.localkey = Ui.Draggable.addLocalData(this.draggableData);
+			if(Core.Object.hasInstance(this.draggableData)) {
 				// handle class heritage for Core.Object
-				var current = this.data;
+				var current = this.draggableData;
 				while((current !== undefined) && (current !== null)) {
 					if(!navigator.supportDrag || navigator.supportMimetypeDrag)
 						event.dataTransfer.setData(Ui.Draggable.localmimetype+'-'+current.classType.toLowerCase(), this.localkey);
@@ -156,19 +167,20 @@ Ui.Pressable.extend('Ui.Draggable',
 		}
 		else {
 			if(!navigator.supportDrag || navigator.supportMimetypeDrag)
-				event.dataTransfer.setData(this.mimetype, this.data);
+				event.dataTransfer.setData(this.mimetype, this.draggableData);
 			else
-				mergedData += this.mimetype+':'+data+';';
+				mergedData += this.mimetype+':'+this.draggableData+';';
 		}
+
 		if(!(!navigator.supportDrag || navigator.supportMimetypeDrag))
 			event.dataTransfer.setData('Text', mergedData);
 		
 		this.fireEvent('dragstart', this);
 
-		if(this.icon !== undefined) {
+		if(this.draggableIcon !== undefined) {
 			// TODO: improve this
 			if(event.dataTransfer.setDragImage !== undefined)
-				event.dataTransfer.setDragImage(this.icon.drawing.childNodes[0], 0, 0);
+				event.dataTransfer.setDragImage(this.draggableIcon.drawing.childNodes[0], 0, 0);
 		}
 		return false;
 	},

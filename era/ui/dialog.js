@@ -1,16 +1,32 @@
 
+Ui.Button.extend('Ui.DialogCloseButton', {
+	constructor: function() {
+		this.setIcon('close');
+		this.setText('Fermer');
+	}
+}, {}, {
+	style: {
+		showText: false,
+		background: 'rgba(250,250,250,0)',
+		backgroundBorder: 'rgba(250,250,250,0)',
+		activeBackground: 'rgba(250,250,250,0)',
+		activeBackgroundBorder: 'rgba(250,250,250,0)'
+	}
+});
+
 Ui.CanvasElement.extend('Ui.DialogGraphic', {
 	background: undefined,
 
 	constructor: function() {
 		this.background = Ui.Color.create('#f8f8f8');
-	},
-
+	}
+	
+}, {
 	setBackground: function(color) {
 		this.background = Ui.Color.create(color);
 		this.invalidateDraw();
-	}
-}, {
+	},
+
 	updateCanvas: function(ctx) {	
 		var w = this.getLayoutWidth();
 		var h = this.getLayoutHeight();
@@ -24,28 +40,46 @@ Ui.CanvasElement.extend('Ui.DialogGraphic', {
 	}
 });
 
+Ui.CompactLabel.extend('Ui.DialogTitle', {}, {}, {
+	style: {
+		color: '#666666',
+		textAlign: 'left',
+		fontWeight: 'bold',
+		fontSize: 18,
+		maxLine: 2
+	}
+});
+
 Ui.LBox.extend('Ui.DialogButtonBox', {
 	bg: undefined,
 	actionBox: undefined,
 	cancelBox: undefined,
 	actionButtonsBox: undefined,
+	titleLabel: undefined,
 	
 	constructor: function(config) {
 		this.addEvents('cancel');
 
-		this.bg = new Ui.Rectangle({ fill: '#e8e8e8' });
+		this.bg = new Ui.Rectangle();
 		this.append(this.bg);
 
-		this.actionBox = new Ui.HBox({ margin: 5, spacing: 30 });
+		this.actionBox = new Ui.HBox({ margin: 5, spacing: 10 });
 		this.append(this.actionBox);
 
 		this.cancelBox = new Ui.LBox();
 		this.actionBox.append(this.cancelBox);
 
-		this.actionButtonsBox = new Ui.MenuToolBar({ spacing: 5, itemsAlign: 'right', menuPosition: 'left', uniform: true });
+		this.actionButtonsBox = new Ui.MenuToolBar({ spacing: 5 });
 		this.actionBox.append(this.actionButtonsBox, true);
+
+		this.titleLabel = new Ui.DialogTitle({ width: 50, verticalAlign: 'center' });
+		this.actionButtonsBox.append(this.titleLabel, true);
 	},
-	
+
+	setTitle: function(title) {
+		this.titleLabel.setText(title);
+	},
+
 	setCancelButton: function(button) {
 		var old = this.cancelBox.getFirstChild();
 		if((old !== undefined) && Ui.Pressable.hasInstance(old))
@@ -59,16 +93,33 @@ Ui.LBox.extend('Ui.DialogButtonBox', {
 
 	setActionButtons: function(buttons) {
 		this.actionButtonsBox.setContent(buttons);
+		this.actionButtonsBox.prepend(this.titleLabel, true);
+	},
+
+	getActionButtons: function() {
+		var buttons = [];
+		for(var i = 1; i < this.actionButtonsBox.getLogicalChildren().length; i++)
+			buttons.push(this.actionButtonsBox.getLogicalChildren()[i]);
+		return buttons;
 	},
 
 	onCancelPress: function() {
 		this.fireEvent('cancel', this);
 	}
+}, {
+	onStyleChange: function() {
+		this.bg.setFill(this.getStyleProperty('background'));
+	}
+}, {
+	style: {
+		background: '#e8e8e8'
+	}
 });
 
 Ui.Container.extend('Ui.Dialog', {
 	dialogSelection: undefined,
-	bg: undefined,
+	shadow: undefined,
+	shadowGraphic: undefined,
 	graphic: undefined,
 	lbox: undefined,
 	vbox: undefined,
@@ -79,20 +130,26 @@ Ui.Container.extend('Ui.Dialog', {
 	cancelButton: undefined,
 	buttonsBox: undefined,
 	buttonsVisible: false,
-	preferedWidth: 100,
-	preferedHeight: 100,
+	preferredWidth: 100,
+	preferredHeight: 100,
 	actionBox: undefined,
 	contextBox: undefined,
+	autoClose: true,
 
 	constructor: function(config) {
 		this.addEvents('close');
 
 		this.dialogSelection = new Ui.Selection();
 
-		this.bg = new Ui.Rectangle({ fill: 'rgba(255,255,255,0.7)' });
-		this.appendChild(this.bg);
+		this.shadow = new Ui.Pressable({ focusable: false });
+		this.shadow.getDrawing().style.cursor = 'inherit';
+		this.appendChild(this.shadow);
 
-		this.lbox = new Ui.LBox();
+		this.shadowGraphic = new Ui.Rectangle();
+		this.shadow.setContent(this.shadowGraphic);
+
+		this.lbox = new Ui.Form();
+		this.connect(this.lbox, 'submit', this.onFormSubmit);
 		this.appendChild(this.lbox);
 
 		this.graphic = new Ui.DialogGraphic();
@@ -100,6 +157,13 @@ Ui.Container.extend('Ui.Dialog', {
 
 		this.vbox = new Ui.VBox({ margin: 3 });
 		this.lbox.append(this.vbox);
+
+		this.buttonsBox = new Ui.VBox();
+		var lbox = new Ui.LBox({ height: 32 });
+		this.buttonsBox.append(lbox);
+		this.buttonsBox.append(new Ui.Rectangle({ height: 1, fill: 'rgba(0,0,0,0.2)' }));
+		this.buttonsBox.hide(true);
+		this.vbox.append(this.buttonsBox);
 
 		this.scroll = new Ui.ScrollingArea({ marginLeft: 2, marginTop: 2, marginRight: 2 });
 		this.scroll.setScrollHorizontal(false);
@@ -111,14 +175,6 @@ Ui.Container.extend('Ui.Dialog', {
 		
 		this.contentBox = new Ui.LBox({ margin: 8 });
 		this.contentVBox.append(this.contentBox, true);
-
-		this.buttonsBox = new Ui.VBox();
-		this.buttonsBox.append(new Ui.Rectangle({ height: 1, fill: '#d8d8d8' }));
-
-		var lbox = new Ui.LBox({ height: 32 });
-		this.buttonsBox.append(lbox);
-		this.buttonsBox.hide(true);
-		this.vbox.append(this.buttonsBox);
 
 		this.contextBox = new Ui.ContextBar({ selection: this.dialogSelection });
 		this.contextBox.hide();
@@ -132,6 +188,9 @@ Ui.Container.extend('Ui.Dialog', {
 
 		// handle keyboard		
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
+
+		// handle auto hide
+		this.connect(this.shadow, 'press', this.onShadowPress);
 	},
 
 	// implement a selection handler for Selectionable elements
@@ -139,13 +198,13 @@ Ui.Container.extend('Ui.Dialog', {
 		return this.dialogSelection;
 	},
 
-	setPreferedWidth: function(width) {
-		this.preferedWidth = width;
+	setPreferredWidth: function(width) {
+		this.preferredWidth = width;
 		this.invalidateMeasure();
 	},
 
-	setPreferedHeight: function(height) {
-		this.preferedHeight = height;
+	setPreferredHeight: function(height) {
+		this.preferredHeight = height;
 		this.invalidateMeasure();
 	},
 
@@ -158,13 +217,30 @@ Ui.Container.extend('Ui.Dialog', {
 		this.fireEvent('close', this);
 	},
 
+	getDefaultButton: function() {
+		var buttons = this.actionBox.getActionButtons();
+		var defaultButton;
+		for(var i = 0; (defaultButton === undefined) && (i < buttons.length); i++)
+			if(Ui.DefaultButton.hasInstance(buttons[i]))
+				defaultButton = buttons[i];
+		return defaultButton;
+	},
+
+	defaultAction: function() {
+		var defaultButton = this.getDefaultButton();
+		if(defaultButton !== undefined)
+			defaultButton.press();
+	},
+
 	setFullScrolling: function(fullScrolling) {
 		this.scroll.setScrollHorizontal(fullScrolling);
 		this.scroll.setScrollVertical(fullScrolling);	
 	},
 
 	setTitle: function(title) {
-		this.title = title;
+		this.actionBox.setTitle(title);
+
+/*		this.title = title;
 
 		if(((this.title === '') || (this.title === undefined))  && (this.titleLabel !== undefined)) {
 			this.contentVBox.remove(this.titleLabel);
@@ -176,7 +252,7 @@ Ui.Container.extend('Ui.Dialog', {
 				this.contentVBox.prepend(this.titleLabel);
 			}
 			this.titleLabel.setText(this.title);
-		}
+		}*/
 	},
 
 	updateButtonsBoxVisible: function() {
@@ -213,8 +289,16 @@ Ui.Container.extend('Ui.Dialog', {
 		return this.contentBox.getFirstChild();
 	},
 
+	setAutoClose: function(autoClose) {
+		this.autoClose = autoClose;
+	},
+
 	onCancelPress: function() {
 		this.close();
+	},
+
+	onFormSubmit: function() {
+		this.defaultAction();
 	},
 	
 	onDialogSelectionChange: function(selection) {
@@ -240,18 +324,33 @@ Ui.Container.extend('Ui.Dialog', {
 				}
 			}
 		}
+	},
+
+	onShadowPress: function() {
+		if(this.autoClose)
+			this.close();
 	}
 	
 }, {
 	onStyleChange: function() {
-		this.bg.setFill(this.getStyleProperty('shadow'));
+		this.shadowGraphic.setFill(this.getStyleProperty('shadow'));
 		this.graphic.setBackground(this.getStyleProperty('background'));
 	},
 
+	onChildInvalidateMeasure: function(child, type) {
+		// Ui.Dialog is a layout root and can handle layout (measure/arrange) for its children
+		this.invalidateLayout();
+	},
+
+	onChildInvalidateArrange: function(child) {
+		// Ui.Dialog is a layout root and can handle layout (measure/arrange) for its children
+		this.invalidateLayout();
+	},
+
 	measureCore: function(width, height) {
-		this.bg.measure(width, height);
-		this.lbox.measure((width < this.preferedWidth)?width:this.preferedWidth,
-			(height < this.preferedHeight)?height:this.preferedHeight);
+		this.shadow.measure(width, height);
+		this.lbox.measure((width < this.preferredWidth)?width:this.preferredWidth,
+			(height < this.preferredHeight)?height:this.preferredHeight);
 		return { width: width, height: height };
 	},
 
@@ -259,9 +358,9 @@ Ui.Container.extend('Ui.Dialog', {
 	// Arrange children
 	//
 	arrangeCore: function(width, height) {
-		this.bg.arrange(0, 0, width, height);
-		var usedWidth = Math.max((width < this.preferedWidth)?width:this.preferedWidth, this.lbox.getMeasureWidth());		
-		var usedHeight = Math.max((height < this.preferedHeight)?height:this.preferedHeight, this.lbox.getMeasureHeight());
+		this.shadow.arrange(0, 0, width, height);
+		var usedWidth = Math.max((width < this.preferredWidth)?width:this.preferredWidth, this.lbox.getMeasureWidth());		
+		var usedHeight = Math.max((height < this.preferredHeight)?height:this.preferredHeight, this.lbox.getMeasureHeight());
 		this.lbox.arrange((width-usedWidth)/2, (height-usedHeight)/2, usedWidth, usedHeight);
 	}
 }, {

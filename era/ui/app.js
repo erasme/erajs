@@ -23,6 +23,7 @@ Ui.LBox.extend('Ui.App',
 
 	requireFonts: undefined,
 	testFontTask: undefined,
+	bindedUpdate: undefined,
 
 	/**
 	 * @constructs
@@ -82,6 +83,7 @@ Ui.LBox.extend('Ui.App',
 
 		this.connect(window, 'load', this.onWindowLoad);
 		this.connect(window, 'resize', this.onWindowResize);
+		this.connect(window, 'keyup', this.onWindowKeyUp);
 
 		if('style' in config)
 			this.setStyle(config.style);
@@ -111,7 +113,9 @@ Ui.LBox.extend('Ui.App',
 			this.connect(window, 'orientationchange', this.onOrientationChange);
 
 		// handle messages
-		this.connect(window, 'message', this.onMessage);		
+		this.connect(window, 'message', this.onMessage);
+
+		this.bindedUpdate = this.update.bind(this);
 	},
 		
 	forceInvalidateMeasure: function(element) {
@@ -199,12 +203,12 @@ Ui.LBox.extend('Ui.App',
 				meta.content = 'yes';
 				document.getElementsByTagName("head")[0].appendChild(meta);
 			}
-			// stop the scaling of the page for iOS and Android
-			meta = document.createElement('meta');
-			meta.name = 'viewport';
-			meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-			document.getElementsByTagName("head")[0].appendChild(meta);
 		}
+		// stop the scaling of the page for Safari and Chrome*
+		meta = document.createElement('meta');
+		meta.name = 'viewport';
+		meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+		document.getElementsByTagName("head")[0].appendChild(meta);
 		// hide scroll tap focus (webkit)
 		if(navigator.isWebkit) {
 			style = document.createElement('style');
@@ -216,7 +220,10 @@ Ui.LBox.extend('Ui.App',
 		else if(navigator.isIE && !(navigator.isIE8 || navigator.isIE7)) {
 			style = document.createElement('style');
 			style.type = 'text/css';
-			style.innerHTML = '@-ms-viewport { width: device-width; } body { -ms-content-zooming: none; }';
+			style.innerHTML = 
+				'@-ms-viewport { width: device-width; } '+
+				'body { -ms-content-zooming: none; } '+
+				'* { touch-action: none; } ';
 			document.getElementsByTagName('head')[0].appendChild(style);
 		}
 		this.loaded = true;
@@ -236,11 +243,11 @@ Ui.LBox.extend('Ui.App',
 	/**#@-*/
 	
 	update: function() {
-		if(this.updateCounter === undefined)
-			this.updateCounter = 0;	
-		else
-			this.updateCounter++;
-		var localCounter = this.updateCounter;
+//		if(this.updateCounter === undefined)
+//			this.updateCounter = 0;	
+//		else
+//			this.updateCounter++;
+//		var localCounter = this.updateCounter;
 //		console.log('update START '+localCounter+' task: '+this.updateTask);
 		// clean the updateTask to allow a new one
 		// important to do it first because iOS with its
@@ -249,35 +256,63 @@ Ui.LBox.extend('Ui.App',
 //		this.updateTask = false;
 //		console.log('update task: '+this.updateTask);
 
+//		this.drawing.scrollIntoView();
+
 		// update measure
-		var innerWidth = (window.innerWidth !== undefined) ? window.innerWidth : document.body.clientWidth;
-		var innerHeight = (window.innerHeight !== undefined) ? window.innerHeight : document.body.clientHeight;
+//		var innerWidth = (window.innerWidth !== undefined) ? window.innerWidth : document.body.clientWidth;
+//		var innerHeight = (window.innerHeight !== undefined) ? window.innerHeight : document.body.clientHeight;
+
+		var innerWidth = document.body.clientWidth;
+		var innerHeight = document.body.clientHeight;
+		// to work like Windows 8 and iOS. Take outer size for not
+		// taking care of the virtual keyboard size
+//		if(navigator.Android) {
+//			innerWidth = window.outerWidth;
+//			innerHeight = window.outerHeight;
+//		}
+
+		if(navigator.iOs && navigator.isSafari)
+			innerHeight -= 20;
+
+		if((this.windowWidth !== innerWidth) || (this.windowHeight !== innerHeight)) {
+			this.windowWidth = innerWidth;
+			this.windowHeight = innerHeight;
+			this.fireEvent('resize', this, this.windowWidth, this.windowHeight);
+			this.invalidateLayout();
+		}
+
+		this.layoutWidth = this.windowWidth;
+		this.layoutHeight = this.windowHeight;
 
 		// disable page scroll horizontal that might happened because of focused elements
 		// out of the screen
-		if(navigator.isIE7 || navigator.isIE8)
-			document.body.scrollLeft = '0px';
+//		if(navigator.isIE7 || navigator.isIE8)
+//			document.body.scrollLeft = 0;
+
+//		document.body.scrollLeft = 0;
+//		document.body.scrollTop = 0;
 
 //		var innerWidth = document.body.clientWidth;
 //		var innerHeight = document.body.clientHeight;
 		
-		var size = this.measure(innerWidth, innerHeight);
+//		var size = this.measure(innerWidth, innerHeight);
 //			console.log('update M1 '+localCounter+', task: '+this.updateTask);
 
 //		console.log(this+'.update size: '+this.windowWidth+' x '+this.windowHeight+', child: '+size.width+' x '+size.height);
 
 //		this.arrange(0, 0, Math.max(this.windowWidth * this.windowScale, size.width), Math.max(this.windowHeight * this.windowScale, size.height));
-		this.arrange(0, 0, innerWidth, innerHeight);
+//		this.arrange(0, 0, innerWidth, innerHeight);
 
 //		console.log('update A1 '+localCounter+', task: '+this.updateTask);
 
-		// update arrange
-//		while(this.layoutList !== undefined) {
-//			var next = this.layoutList.layoutNext;
-//			this.layoutList.layoutValid = true;
-//			this.layoutList.layoutNext = undefined;
-//			this.layoutList.updateLayout();
-//			this.layoutList = next;
+		// update measure/arrange
+		while(this.layoutList !== undefined) {
+			var next = this.layoutList.layoutNext;
+			this.layoutList.layoutValid = true;
+			this.layoutList.layoutNext = undefined;
+			this.layoutList.updateLayout();
+			this.layoutList = next;
+		}
 
 		// update draw
 		while(this.drawList !== undefined) {
@@ -289,15 +324,15 @@ Ui.LBox.extend('Ui.App',
 
 //		console.log('update D1 '+localCounter+', task: '+this.updateTask);
 
-		if((this.windowWidth !== innerWidth) || (this.windowHeight !== innerHeight)) {
-			this.windowWidth = innerWidth;
-			this.windowHeight = innerHeight;
-			this.fireEvent('resize', this, this.windowWidth, this.windowHeight);
-		}
-
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
 //		console.log('update STOP '+localCounter+', task: '+this.updateTask);
+
+/*		if('scrollIntoViewIfNeeded' in this.drawing)
+			this.drawing.scrollIntoViewIfNeeded();
+		else
+			this.drawing.scrollIntoView();*/
+
 		this.updateTask = false;
 	},
 
@@ -315,7 +350,7 @@ Ui.LBox.extend('Ui.App',
 			this.dialogs = new Ui.LBox();
 			this.append(this.dialogs);
 		}
-		this.focusStack.push(this.focusElement);
+//		this.focusStack.push(this.focusElement);
 		this.dialogs.append(dialog);
 		this.contentBox.disable();
 		for(var i = 0; i < this.dialogs.getChildren().length - 1; i++)
@@ -336,9 +371,9 @@ Ui.LBox.extend('Ui.App',
 			}
 			else
 				this.dialogs.getLastChild().enable();
-			var focus = this.focusStack.pop();
-			if(focus !== undefined)
-				try { focus.focus(); } catch(e) {}
+//			var focus = this.focusStack.pop();
+//			if(focus !== undefined)
+//				try { focus.focus(); } catch(e) {}
 		}
 	},
 
@@ -355,6 +390,7 @@ Ui.LBox.extend('Ui.App',
 
 	onReady: function() {
 		if(this.loaded) {
+/*
 //			document.documentElement.style.position = 'absolute';
 			document.documentElement.style.padding = '0px';
 			document.documentElement.style.margin = '0px';
@@ -380,15 +416,67 @@ Ui.LBox.extend('Ui.App',
 				document.body.style.top = '0px';
 				document.body.style.bottom = '0px';
 				document.body.appendChild(this.getDrawing());
-//			}
-			
-			// iOS dont handle correctly touch events if they
-			// are rised on scrolling area if no handler are
-			// set on a always visible part (some kind of event
-			// bugged optimisation)
-			if(navigator.iOs)
-				this.connect(document.body, 'touchstart', function(e) {});
-						
+//			}*/
+
+			document.documentElement.style.overflow = 'hidden';
+			//document.documentElement.style.position = 'absolute';
+			//document.documentElement.style.display = 'block';
+			document.documentElement.style.padding = '0px';
+			document.documentElement.style.margin = '0px';
+			document.documentElement.style.border = '0px solid black';
+			document.documentElement.style.width = '100%';
+			document.documentElement.style.height = '100%';
+
+/*			this.connect(window, 'blur', function(e) {
+				if('scrollIntoViewIfNeeded' in this.drawing)
+					this.drawing.scrollIntoViewIfNeeded();
+				else
+					this.drawing.scrollIntoView();
+			}, true);
+
+			this.connect(window, 'focus', function(e) {
+				if('scrollIntoViewIfNeeded' in this.drawing)
+					this.drawing.scrollIntoViewIfNeeded();
+				else
+					this.drawing.scrollIntoView();
+			}, true);*/
+
+/*			this.connect(window, 'scroll', function(e) {
+				e.preventDefault();
+
+				if('scrollIntoViewIfNeeded' in this.drawing)
+					this.drawing.scrollIntoViewIfNeeded();
+				else
+					this.drawing.scrollIntoView();
+//				window.scrollTo(0,0);
+//				console.log('window.onscroll');
+			}, true);*/
+
+			//document.documentElement.style.display = 'block';
+			//document.documentElement.style.position = 'absolute';
+			//document.documentElement.style.top = '0px';
+			//document.documentElement.style.bottom = '0px';
+			//document.documentElement.style.left = '0px';
+			//document.documentElement.style.right = '0px';
+
+			document.body.style.position = 'absolute';
+			document.body.style.overflow = 'hidden';
+			document.body.style.padding = '0px';
+			document.body.style.margin = '0px';
+			document.body.style.border = '0px solid black';
+			document.body.style.outline = 'none';
+//			document.body.style.width = '100%';
+//			document.body.style.height = '100%';
+
+			document.body.style.top = '0px';
+			document.body.style.bottom = '0px';
+			document.body.style.left = '0px';
+			document.body.style.right = '0px';
+
+			document.body.appendChild(this.getDrawing());
+
+			this.handleScrolling(document.body);
+
 //			document.body.appendChild(this.getDrawing());
 
 			if((this.requireFonts !== undefined) && (this.testFontTask === undefined))
@@ -408,6 +496,21 @@ Ui.LBox.extend('Ui.App',
 				if(navigator.iOs)
 					new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.update });
 			}
+		}
+	},
+
+	onWindowKeyUp: function(event) {
+		var key = event.which;
+
+		// escape
+		if((key == 27) && (this.dialogs !== undefined) && (this.dialogs.getChildren().length > 0)) {
+			var dialog = this.dialogs.getChildren()[this.dialogs.getChildren().length-1];
+			if('close' in dialog)
+				dialog.close();
+			else
+				dialog.hide();
+			event.preventDefault();
+			event.stopPropagation();
 		}
 	},
 
@@ -441,34 +544,80 @@ Ui.LBox.extend('Ui.App',
 		element.drawNext = this.drawList;
 		this.drawList = element;
 		if((this.updateTask === false) && this.ready) {
-			var app = this;
 			this.updateTask = true;
-			requestAnimationFrame(function() { app.update(); });
+			requestAnimationFrame(this.bindedUpdate);
 		}
-	}
+	},
 
+	enqueueLayout: function(element) {
+		element.layoutNext = this.layoutList;
+		this.layoutList = element;
+		if((this.updateTask === false) && this.ready) {
+			this.updateTask = true;
+			requestAnimationFrame(this.bindedUpdate);
+		}
+	},
+
+	handleScrolling: function(drawing) {
+		var element = new Core.Object();
+		element.connect(drawing, 'ptrdown', function(event) {
+			var startOffsetX = drawing.scrollLeft;
+			var startOffsetY = drawing.scrollTop;
+			var watcher = event.pointer.watch(drawing);
+			element.connect(watcher, 'move', function() {
+				if(!watcher.getIsCaptured()) {
+					if(watcher.pointer.getIsMove()) {
+						var direction = watcher.getDirection();
+						var allowed = false;
+						if(direction === 'left')
+							allowed = (drawing.scrollLeft + drawing.clientWidth) < drawing.scrollWidth;
+						else if(direction === 'right')
+							allowed = drawing.scrollLeft > 0;
+						else if(direction === 'bottom')
+							allowed = drawing.scrollTop > 0;
+						// if scroll down, allways allow it because of virtual keyboards
+						else if(direction === 'top')
+							allowed = true;// (drawing.scrollTop + drawing.clientHeight) < drawing.scrollHeight;
+						if(allowed)
+							watcher.capture();
+						else
+							watcher.cancel();
+					}
+				}
+				else {
+					var delta = watcher.getDelta();
+					drawing.scrollLeft = startOffsetX - delta.x;
+					drawing.scrollTop = startOffsetY - delta.y;
+				}
+			});
+		});
+	}
+	
 }, {
 	invalidateMeasure: function() {
-		this.invalidateArrange();
-		this.measureValid = false;
-		if((this.updateTask === false) && this.ready) {
-			var app = this;
-			this.updateTask = true;
-			requestAnimationFrame(function() { app.update(); });
-		}
+		// Ui.App is layout root, handle the layout here
+		this.invalidateLayout();
 	},
 
 	invalidateArrange: function() {
-		this.arrangeValid = false;
-		if((this.updateTask === false) && this.ready) {
-			var app = this;
-			this.updateTask = true;
-			requestAnimationFrame(function() { app.update(); });
+		// Ui.App is layout root, handle the layout here
+		this.invalidateLayout();
+	},
+
+	arrangeCore: function(w, h) {
+		// on Android, remove focus of text elements when
+		// the virtual keyboard is closed. Else it will re-open at each touch
+		if(navigator.Android && navigator.isWebkit) {
+			if((this.focusElement !== undefined) && ((this.focusElement.tagName === 'INPUT') || (this.focusElement.tagName === 'TEXTAREA') || (this.focusElement.contenteditable))) {
+				if(h - 100 > this.lastArrangeHeight)
+					this.focusElement.blur();
+			}
 		}
+		this.lastArrangeHeight = h;
+		Ui.App.base.arrangeCore.call(this, w, h);
 	},
 	
 	setContent: function(content) {
-		content = Ui.Element.create(content);
 		if(this.content !== content) {
 			if(this.content !== undefined)
 				this.contentBox.remove(this.content);

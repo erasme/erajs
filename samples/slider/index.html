@@ -48,11 +48,15 @@ app.connect(verticalButton, 'press', function() {
 var vbox2 = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
 vbox.append(vbox2, true);
 
-var label = new Ui.Label({ horizontalAlign: 'center', text: 'Value: 0.00' });
+var label = new Ui.Label({ horizontalAlign: 'center' });
 vbox2.append(label);
 
-var slider = new Ui.Slider({ verticalAlign: 'center', horizontalAlign: 'center', width: 200, height: 200 });
+var slider = new Ui.Slider({
+	verticalAlign: 'center', horizontalAlign: 'center',
+	width: 200, height: 200, value: 0.2
+});
 vbox2.append(slider);
+label.setText('Value: '+slider.getValue());
 
 app.connect(slider, 'change', function() {
 	label.setText('Value: '+slider.getValue().toFixed(2));

@@ -1,63 +1,37 @@
-Ui.Uploadable.extend('Ui.UploadButton', 
+Ui.Button.extend('Ui.UploadButton', 
 /**@lends Ui.UploadButton#*/
 {
-	graphic: undefined,
+	input: undefined,
 
 	/**
 	 * @constructs
 	 * @class
-	 * @extends Ui.Uploadable
+	 * @extends Ui.Button
 	 */
 	constructor: function(config) {
-		this.graphic = new Ui.ButtonGraphic();
-		Ui.UploadButton.base.setContent.call(this, this.graphic);
+		this.addEvents('file');
 
-		this.connect(this, 'down', this.onUploadButtonDown);
-		this.connect(this, 'up', this.onUploadButtonUp);
-		this.connect(this, 'focus', this.onUploadButtonFocus);
-		this.connect(this, 'blur', this.onUploadButtonBlur);
-	},
+		this.input = new Ui.UploadableFileWrapper();
+		if(navigator.supportDrag)
+			this.prepend(this.input);
+		else
+			this.append(this.input);
+		this.connect(this.input, 'file', this.onFile);
+		this.connect(this, 'press', this.onUploadButtonPress);
 
-	getText: function() {
-		return this.graphic.getText();
-	},
-
-	setText: function(text) {
-		this.graphic.setText(text);
+		this.getDropBox().addMimetype('files');
+		this.connect(this.getDropBox(), 'dropfile', this.onFile);
 	},
 
-	getIcon: function() {
-		return this.graphic.getIcon();
+	setDirectoryMode: function(active) {
+		this.input.setDirectoryMode(active);
 	},
 
-	setIcon: function(icon) {
-		this.graphic.setIcon(icon);
+	onUploadButtonPress: function() {
+		this.input.select();
 	},
 
-    /** @return {String} Orientation */
-	getOrientation: function() {
-		return this.graphic.getOrientation();
-	},
-    
-    /** @param {String} orientation can be 'vertical' or 'horizontal' */
-	setOrientation: function(orientation) {
-		this.graphic.setOrientation(orientation);
-	},
-	
-	onUploadButtonDown: function() {
-		this.graphic.setIsDown(true);
-	},
-		
-	onUploadButtonUp: function() {
-		this.graphic.setIsDown(false);
-	},
-		
-	onUploadButtonFocus: function() {
-		this.graphic.setHasFocus(true);
-	},
-		
-	onUploadButtonBlur: function() {
-		this.graphic.setHasFocus(false);
+	onFile: function(fileWrapper, file) {
+		this.fireEvent('file', this, file);
 	}
 });
-

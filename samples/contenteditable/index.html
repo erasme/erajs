@@ -21,7 +21,8 @@ vbox.append(lbox);
 
 lbox.append(new Ui.Rectangle({ fill: 'lightblue' }));
 
-var html = new Ui.ContentEditable({ horizontalAlign: 'center', width: 200, html: '<font style="font-size: 20px; font-family: Sans-Serif; margin: 5px">Have fun with HTML, I <b>hope</b> the text is enough long</font>', margin: 5 });
+var html = new Ui.ContentEditable({ horizontalAlign: 'center', width: 200, html: 'Have fun with HTML, I <b>hope</b> the text is enough long', margin: 5 });
+html.setSelectable(true);
 
 lbox.append(html, false);
 

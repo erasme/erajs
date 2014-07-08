@@ -5,27 +5,27 @@ Ui.Container.extend('Ui.Popup',
 	shadow: undefined,
 	shadowGraphic: undefined,
 	contentBox: undefined,
-	ppContent: undefined,
 	posX: undefined,
 	posY: undefined,
 	attachedElement: undefined,
 	attachedBorder: undefined,
 	lbox: undefined,
 	autoHide: true,
-	expandable: false,
+	preferredWidth: undefined,
+	preferredHeight: undefined,
 
 	/**
      * @constructs
 	 * @class
      * @extends Ui.Container
      * @param {Boolean} [config.autoHide]
-	 * @param {Boolean} [config.expandable]
 	 */
 	constructor: function(config) {
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
 		this.shadow = new Ui.Pressable({ focusable: false });
+		this.shadow.getDrawing().style.cursor = 'inherit';
 		this.appendChild(this.shadow);
 
 		this.shadowGraphic = new Ui.Rectangle();
@@ -34,46 +34,30 @@ Ui.Container.extend('Ui.Popup',
 		this.background = new Ui.PopupBackground({ radius: 0, fill: '#f8f8f8' });
 		this.appendChild(this.background);
 
-		this.contentBox = new Ui.LBox({ padding: 4, paddingLeft: 3 });
+		this.contentBox = new Ui.ScrollingArea({ margin: 2, marginTop: 1 });
+//		this.contentBox = new Ui.LBox({ padding: 2 });
 		this.appendChild(this.contentBox);
 
 		// handle auto hide
 		this.connect(this.shadow, 'press', this.onShadowPress);
-
-		// handle keyboard
-		this.connect(this.getDrawing(), 'keyup', this.onKeyUp);
 	},
 
-	setExpandable: function(expandable) {
-		if(this.expandable != expandable) {
-			this.expandable = expandable;
-			this.invalidateMeasure();
-		}
+	setPreferredWidth: function(width) {
+		this.preferredWidth = width;
+		this.invalidateMeasure();
 	},
 
+	setPreferredHeight: function(height) {
+		this.preferredHeight = height;
+		this.invalidateMeasure();
+	},
+	
 	setAutoHide: function(autoHide) {
 		this.autoHide = autoHide;
 	},
 
 	setContent: function(content) {
-		content = Ui.Element.create(content);
-		if(this.ppContent !== content) {
-			if(this.ppContent !== undefined)
-				this.contentBox.remove(this.ppContent);
-			this.ppContent = content;
-			if(this.ppContent !== undefined)
-				this.contentBox.append(this.ppContent);
-		}
-	},
-
-	onKeyUp: function(event) {
-		var key = event.which;
-		// escape
-		if((key == 27) && (this.autoHide)) {
-			event.preventDefault();
-			event.stopPropagation();
-			this.hide();
-		}
+		this.contentBox.setContent(content);
 	},
 
 	onWindowResize: function() {
@@ -93,7 +77,17 @@ Ui.Container.extend('Ui.Popup',
 
 	onStyleChange: function() {
 		this.background.setFill(this.getStyleProperty('background'));
-		this.shadowGraphic.setFill(this.getStyleProperty('shadowColor'));
+		this.shadowGraphic.setFill(this.getStyleProperty('shadow'));
+	},
+
+	onChildInvalidateMeasure: function(child, type) {
+		// Ui.Popup is a layout root and can handle layout (measure/arrange) for its children
+		this.invalidateLayout();
+	},
+
+	onChildInvalidateArrange: function(child) {
+		// Ui.Popup is a layout root and can handle layout (measure/arrange) for its children
+		this.invalidateLayout();
 	},
 
 	show: function(posX, posY) {
@@ -138,22 +132,18 @@ Ui.Container.extend('Ui.Popup',
 		var constraintWidth = Math.max(width - 40, 0);
 		var constraintHeight = Math.max(height - 40, 0);
 
-//		if((this.posX !== undefined) || (this.attachedElement !== undefined)) {
-//			constraintWidth = 0;
-//			constraintHeight = 0;
-//		}
-		if(!this.expandable) {
-			constraintWidth = 0;
-			constraintHeight = 0;
-		}
-
+		if((this.preferredWidth !== undefined) && (this.preferredWidth < constraintWidth))
+			constraintWidth = this.preferredWidth;
+		if((this.preferredHeight !== undefined) && (this.preferredHeight < constraintHeight))
+			constraintHeight = this.preferredHeight;
+		
 		this.background.measure(constraintWidth, constraintHeight);
 		var size = this.contentBox.measure(constraintWidth, constraintHeight);
 
 //		console.log('contentBox = '+size.width+' x '+size.height);
 
 		if((this.posX !== undefined) || (this.attachedElement !== undefined))
-			return { width: size.width, height: size.height };
+			return { width: Math.max(50, size.width), height: Math.max(50, size.height) };
 		else
 			return { width: Math.max(width, size.width + 40), height: Math.max(height, size.height + 40) };
 	},
@@ -161,7 +151,7 @@ Ui.Container.extend('Ui.Popup',
 	arrangeCore: function(width, height) {
 		var x = 0; var y = 0; var point; var borders; var border; var i;
 
-//		console.log(this+'.arrangeCore('+width+','+height+')');
+		//console.log(this+'.arrangeCore('+width+','+height+')');
 
 		this.shadow.arrange(0, 0, width, height);
 
@@ -265,7 +255,6 @@ Ui.Container.extend('Ui.Popup',
 		}
 		else
 			this.background.setArrowOffset(30);
-		this.shadow.setOpacity(0);
 		this.background.arrange(px - 10, py, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	},
@@ -286,7 +275,6 @@ Ui.Container.extend('Ui.Popup',
 		}
 		else
 			this.background.setArrowOffset(30);
-		this.shadow.setOpacity(0);
 		this.background.arrange(px, py, this.contentBox.getMeasureWidth() + 10, this.contentBox.getMeasureHeight());
 		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	},
@@ -311,7 +299,6 @@ Ui.Container.extend('Ui.Popup',
 		}
 		else
 			this.background.setArrowOffset(30);
-		this.shadow.setOpacity(0);
 		this.background.arrange(px, py - 10, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight() + 10);
 		this.contentBox.arrange(px, py - 10, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	},
@@ -336,7 +323,6 @@ Ui.Container.extend('Ui.Popup',
 		}
 		else
 			this.background.setArrowOffset(30);
-		this.shadow.setOpacity(0);
 		this.background.arrange(px, py - 10, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight() + 10);
 		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	},
@@ -344,25 +330,24 @@ Ui.Container.extend('Ui.Popup',
 	setCenter: function(width, height) {
 		this.background.setArrowBorder('none');
 
-		if(this.expandable) {
+/*		if(this.expandable) {
 			this.background.arrange(20, 20, width-40, height-40);
 			this.shadow.setOpacity(1);
 			this.contentBox.arrange(20, 20, width-40, height-40);
 		}
-		else {
+		else {*/
 			x = (width - this.contentBox.getMeasureWidth())/2;
 			y = (height - this.contentBox.getMeasureHeight())/2;			
 			this.background.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-			this.shadow.setOpacity(1);
 			this.contentBox.arrange(x, y, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
-		}
+//		}
 	}
 }, 
 /**@lends Ui.Popup*/
 {
 	style: {
-		background: Ui.Color.create('#f8f8f8'),
-		shadowColor: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.5 })
+		background: '#f8f8f8',
+		shadow: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.5 })
 	}
 });
 
@@ -474,4 +459,8 @@ Ui.CanvasElement.extend('Ui.PopupBackground',
 		}
 	}
 });
+
+Ui.Popup.extend('Ui.MenuPopup', {});
+
+Ui.Separator.extend('Ui.MenuPopupSeparator', {});
 

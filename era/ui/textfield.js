@@ -13,14 +13,14 @@ Ui.LBox.extend('Ui.TextField',
      * @param {String} [config.value] TextField intial value
      */ 
 	constructor: function(config) {
-		this.addEvents('change', 'validate');
+		this.addEvents('change');
 
 		this.setPadding(3);
 		
 		this.graphic = new Ui.TextBgGraphic();
 		this.append(this.graphic);
 
-		this.textholder = new Ui.Label({ opacity: 0.5, horizontalAlign: 'center', color: new Ui.Color({ r: 0.4, g: 0.4, b: 0.4 }), margin: 3 });
+		this.textholder = new Ui.Label({ opacity: 0.5, horizontalAlign: 'center', margin: 3 });
 		if(!navigator.isIE7 && !navigator.isIE8)
 			this.append(this.textholder);
 
@@ -30,7 +30,6 @@ Ui.LBox.extend('Ui.TextField',
 		this.append(this.entry);
 
 		this.connect(this.entry, 'change', this.onEntryChange);
-		this.connect(this.entry, 'validate', this.onEntryValidate);
 	},
 
 	setTextHolder: function(text) {
@@ -70,10 +69,6 @@ Ui.LBox.extend('Ui.TextField',
 
 	onEntryChange: function(entry, value) {
 		this.fireEvent('change', this, value);
-	},
-
-	onEntryValidate: function(entry) {
-		this.fireEvent('validate', this);
 	}
 	/**#@-*/
 }, 

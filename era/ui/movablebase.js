@@ -155,6 +155,7 @@ Ui.Container.extend('Ui.MovableBase',
 			}
 		});
 		this.connect(watcher, 'up', function() {
+			this.cumulMove = watcher.pointer.getCumulMove();
 			var speed = watcher.getSpeed();
 			this.speedX = speed.x;
 			this.speedY = speed.y;

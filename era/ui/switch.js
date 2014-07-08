@@ -224,7 +224,7 @@ Ui.LBox.extend('Ui.Switch',
 	updateColors: function() {
 		var color = this.getStyleProperty('color');
 
-		if(this.getHasFocus())
+		if(this.getHasFocus() && !this.getIsMouseFocus())
 			color = this.getStyleProperty('focusColor');
 
 		this.switchbox.getSwitchButton().setFill(color);

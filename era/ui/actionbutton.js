@@ -1,7 +1,5 @@
 
-Ui.Pressable.extend('Ui.ActionButton', {
-	dropbox: undefined,
-	graphic: undefined,
+Ui.Button.extend('Ui.ActionButton', {
 	action: undefined,
 	selection: undefined,
 
@@ -11,65 +9,15 @@ Ui.Pressable.extend('Ui.ActionButton', {
 		this.selection = config.selection;
 		delete(config.selection);
 
-		this.dropbox = new Ui.DropBox();
-		this.setContent(this.dropbox);
-
-		this.graphic = new Ui.ButtonGraphic();
-		this.dropbox.setContent(this.graphic);
-
-		this.connect(this, 'down', this.onButtonDown);
-		this.connect(this, 'up', this.onButtonUp);
-		this.connect(this, 'focus', this.onButtonFocus);
-		this.connect(this, 'blur', this.onButtonBlur);
-		this.connect(this, 'press', this.onButtonPressDrop);
-		this.connect(this.dropbox, 'drop', this.onButtonPressDrop);
+		this.connect(this.getDropBox(), 'drop', this.onActionButtonDrop);
+		this.connect(this, 'press', this.onActionButtonDrop);
 	},
 
 	addMimetype: function(mimetype) {
-		this.dropbox.addMimetype(mimetype);
-	},
-
-	getText: function() {
-		return this.graphic.getText();
-	},
-
-	setText: function(text) {
-		this.graphic.setText(text);
-	},
-
-	getIcon: function() {
-		return this.graphic.getIcon();
-	},
-
-	setIcon: function(icon) {
-		this.graphic.setIcon(icon);
+		this.getDropBox().addMimetype(mimetype);
 	},
 	
-	getOrientation: function() {
-		return this.graphic.getOrientation();
-	},
-    
-	setOrientation: function(orientation) {
-		this.graphic.setOrientation(orientation);
-	},
-	
-	onButtonDown: function() {
-		this.graphic.setIsDown(true);
-	},
-	
-	onButtonUp: function() {
-		this.graphic.setIsDown(false);
-	},
-	
-	onButtonFocus: function() {
-		this.graphic.setHasFocus(true);
-	},
-	
-	onButtonBlur: function() {
-		this.graphic.setHasFocus(false);
-	},
-
-	onButtonPressDrop: function() {
+	onActionButtonDrop: function() {
 		var scope = this;
 		if('scope' in this.action)
 			scope = this.action.scope;

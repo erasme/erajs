@@ -1,20 +1,15 @@
 Ui.LBox.extend('Ui.Transformable', 
 /**@lends Ui.Transformable#*/
 {
-	inertia: true,
-	mouseStart: undefined,
+	inertia: false,
+	inertiaClock: undefined,
 	contentBox: undefined,
 
-	speedComputed: false,
-	lastTranslateX: undefined,
-	lastTranslateY: undefined,
-	lastAngle: 0,
 	isDown: false,
-	transformDone: false,
 	transformLock: false,
 
-	finger1: undefined,
-	finger2: undefined,
+	watcher1: undefined,
+	watcher2: undefined,
 
 	angle: 0,
 	scale: 1,
@@ -27,12 +22,13 @@ Ui.LBox.extend('Ui.Transformable',
 	startTranslateY: 0,
 
 	allowScale: true,
+	minScale: 0.1,
+	maxScale: 10,
 	allowRotate: true,
 	allowTranslate: true,
 
 	speedX: 0,
 	speedY: 0,
-	speedAngle: 0,
 
 	/**
 	 * @constructs
@@ -40,28 +36,28 @@ Ui.LBox.extend('Ui.Transformable',
 	 * @extends Ui.LBox
 	 */
 	constructor: function(config) {
-		this.addEvents('down', 'up', 'transform');
+		this.addEvents('down', 'up', 'transform', 'inertiastart', 'inertiaend');
 		this.setFocusable(true);
 
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 
-		this.contentBox.getDrawing().style.cursor = 'move';
+		this.connect(this.getDrawing(), 'ptrdown', this.onPointerDown);
 
-
-		this.connect(this.contentBox.getDrawing(), 'touchstart', this.onTouchStart);
-		this.connect(this.contentBox.getDrawing(), 'touchmove', this.onTouchMove);
-		this.connect(this.contentBox.getDrawing(), 'touchend', this.onTouchEnd);
-		this.connect(this.contentBox.getDrawing(), 'touchcancel', this.onTouchCancel);
-
-//		this.connect(this.contentBox.getDrawing(), 'fingerdown', this.onFingerDown);
-		this.connect(this.contentBox.getDrawing(), 'mousedown', this.onMouseDown);
-		this.connect(this.contentBox.getDrawing(), 'mousewheel', this.onMouseWheel);
-		this.connect(this.contentBox.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
+		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
+		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
 	},
 
 	setAllowScale: function(allow) {
 		this.allowScale = allow;
+	},
+
+	setMinScale: function(minScale)  {
+		this.minScale = minScale;
+	},
+
+	setMaxScale: function(maxScale) {
+		this.maxScale = maxScale;
 	},
 
 	setAllowRotate: function(allow) {
@@ -74,6 +70,10 @@ Ui.LBox.extend('Ui.Transformable',
 
 	getIsDown: function() {
 		return this.isDown;
+	},
+
+	getIsInertia: function() {
+		return this.inertiaClock !== undefined;
 	},
 
 	getAngle: function() {
@@ -119,21 +119,21 @@ Ui.LBox.extend('Ui.Transformable',
 			angle = this.angle;
 
 		var matrix = new Ui.Matrix();
-		matrix.translate(this.getLayoutWidth() / 2, this.getLayoutHeight() / 2);
+		matrix.translate(this.getLayoutWidth() * this.transformOriginX, this.getLayoutHeight()  * this.transformOriginX);
 		matrix.translate(translateX, translateY);
 		matrix.scale(scale, scale);
 		matrix.rotate(angle);
-		matrix.translate(-this.getLayoutWidth() / 2, -this.getLayoutHeight() / 2);
+		matrix.translate(-this.getLayoutWidth() * this.transformOriginX, -this.getLayoutHeight()  * this.transformOriginX);
 		return matrix;
 	},
 
 	getMatrix: function() {
 		var matrix = new Ui.Matrix();
-		matrix.translate(this.getLayoutWidth() / 2, this.getLayoutHeight() / 2);
+		matrix.translate(this.getLayoutWidth() * this.transformOriginX, this.getLayoutHeight()  * this.transformOriginX);
 		matrix.translate(this.translateX, this.translateY);
 		matrix.scale(this.scale, this.scale);
 		matrix.rotate(this.angle);
-		matrix.translate(-this.getLayoutWidth() / 2, -this.getLayoutHeight() / 2);
+		matrix.translate(-this.getLayoutWidth() * this.transformOriginX, -this.getLayoutHeight()  * this.transformOriginX);
 		return matrix;
 	},
 
@@ -167,12 +167,14 @@ Ui.LBox.extend('Ui.Transformable',
 		this.scale = scale;
 		this.angle = angle;
 
-		this.contentBox.setTransformOrigin(0, 0);
-		this.contentBox.setTransform(this.getMatrix());
-
 		if(!this.transformLock) {
 			this.transformLock = true;
 			this.fireEvent('transform', this);
+
+			var testOnly = !(((this.watcher1 === undefined) || this.watcher1.getIsCaptured()) &&
+				((this.watcher2 === undefined) || this.watcher2.getIsCaptured()));
+
+			this.onContentTransform(testOnly);
 			this.transformLock = false;
 		}
 	},
@@ -181,9 +183,15 @@ Ui.LBox.extend('Ui.Transformable',
 	 * @private
 	 */
 
+	 onContentTransform: function(testOnly) {
+	 	if(testOnly !== true) {
+			this.contentBox.setTransformOrigin(0, 0);
+			this.contentBox.setTransform(this.getMatrix());
+		}
+	 },
+
 	onDown: function() {
 		this.isDown = true;
-//		this.transformDone = false;
 		this.fireEvent('down', this);
 	},
 
@@ -191,163 +199,34 @@ Ui.LBox.extend('Ui.Transformable',
 		this.isDown = false;
 		this.fireEvent('up', this);
 	},
-
-	onMouseDown: function(event) {
-		console.log(this+'.onMouseDown');
-
-		if(this.lock || this.getIsDisabled())
-			return;
-
-		if(event.button !== 0)
-			return;
-		
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.onDown();
-
-		this.connect(window, 'mouseup', this.onMouseUp, true);
-		this.connect(window, 'mousemove', this.onMouseMove, true);
-
-		this.mouseStart = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-		this.mouseStartClientX = event.clientX;
-		this.mouseStartClientY = event.clientY;
-		this.mouseStartScreenX = event.screenX;
-		this.mouseStartScreenY = event.screenY;
-
-		this.startAngle = this.angle;
-		this.startScale = this.scale;
-		this.startTranslateX = this.translateX;
-		this.startTranslateY = this.translateY;
-
-//		this.startComputeInertia();
-	},
-
-	onMouseMove: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var point = { x: event.clientX, y: event.clientY };
-		var mousePos = this.pointFromWindow(point);
-		var deltaX = mousePos.x - this.mouseStart.x;
-		var deltaY = mousePos.y - this.mouseStart.y;
-		var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-		this.setContentTransform(this.startTranslateX + deltaX, this.startTranslateY + deltaY, undefined, undefined);
-
-		// if the user move to much without transform success, release the mouse
-/*		if((this.translateX == 0) && (this.translateY == 0) && (this.angle == 0) && (this.scale == 1)) {
-
-			if(!this.transformDone && (delta > 20)) {
-
-				this.disconnect(window, 'mousemove', this.onMouseMove, true);
-				this.disconnect(window, 'mouseup', this.onMouseUp, true);
-
-				this.onUp();
-
-				if('createEvent' in document) {
-					var mouseDownEvent = document.createEvent('MouseEvents');
-					mouseDownEvent.initMouseEvent('mousedown', true, true, window, 1, this.mouseStartScreenX, this.mouseStartScreenY,
-						this.mouseStartClientX, this.mouseStartClientY,
-						event.ctrlKey, event.altKey, event.shiftKey,
-						event.metaKey, 0, event.target);
-					this.getDrawing().offsetParent.dispatchEvent(mouseDownEvent);
-				}
-			}
-		}
-		else
-			this.transformDone = true;*/
-	},
-
-	onMouseUp: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		if(event.button !== 0)
-			return;
-		
-		this.disconnect(window, 'mousemove', this.onMouseMove, true);
-		this.disconnect(window, 'mouseup', this.onMouseUp, true);
-
-//		this.stopComputeInertia();
-//		this.startInertia();
-
-		this.focus();
-		this.onUp();
-	},
-
-	onTouchStart: function(event) {
-//		console.log(this+'.onTouchStart '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
-		if(this.lock || this.getIsDisabled() || (event.changedTouches.length > 2))
-			return;
-		for(var i = 0; i < event.changedTouches.length; i++)
-			this.onFingerDown(event.changedTouches[i].identifier, event.changedTouches[i].clientX, event.changedTouches[i].clientY);
-		
-		if(((this.finger1 !== undefined) && (this.finger2 !== undefined)) ||
-			((this.finger1 !== undefined) && (this.allowTranslate))) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	},
-
-	onTouchMove: function(event) {
-		if(this.finger1 === undefined)
-			return;
-//		console.log(this+'.onTouchMove '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
-		for(var i = 0; i < event.changedTouches.length; i++) {
-			this.onFingerMove(event.changedTouches[i].identifier, event.changedTouches[i].clientX, event.changedTouches[i].clientY);
-		}
-		if(((this.finger1 !== undefined) && (this.finger2 !== undefined)) ||
-			((this.finger1 !== undefined) && (this.allowTranslate))) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	},
-
-	onTouchCancel: function(event) {
-		if(this.finger1 === undefined)
-			return;
-//		console.log(this+'.onTouchCancel '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
-		this.onTouchEnd(event);
-	},
-
-	onTouchEnd: function(event) {
-		if(this.finger1 === undefined)
-			return;
-//		console.log(this+'.onTouchEnd '+event.changedTouches.length+', id: '+event.changedTouches[0].identifier);
-		for(var i = 0; i < event.changedTouches.length; i++) {
-			this.onFingerUp(event.changedTouches[i].identifier, event.changedTouches[i].clientX, event.changedTouches[i].clientY);
-		}
-		if(((this.finger1 !== undefined) && (this.finger2 !== undefined)) ||
-			((this.finger1 !== undefined) && (this.allowTranslate))) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	},
-
-	onFingerDown: function(identifier, x, y) {
-		if(this.finger1 === undefined) {
+	
+	onPointerDown: function(event) {
+		if(this.watcher1 === undefined) {
 			if(this.allowTranslate)
 				this.onDown();
-
-//			console.log('onFingerDown identifier: '+identifier);
-
-			this.finger1 = { identifier: identifier, start: {x: x, y: y }, current: {x: x, y: y } };
+			
+			var watcher = event.pointer.watch(this.getDrawing());
+			this.watcher1 = watcher;
+			this.connect(watcher, 'move', this.onPointerMove);
+			this.connect(watcher, 'up', this.onPointerUp);
+			this.connect(watcher, 'cancel', this.onPointerCancel);
 
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
 			this.startTranslateX = this.translateX;
 			this.startTranslateY = this.translateY;
-
-			this.startComputeInertia();
 		}
-		else if(this.finger2 === undefined) {
+		else if(this.watcher2 === undefined) {
 			if(!this.allowTranslate)
 				this.onDown();
+			
+			this.watcher1.pointer.setInitialPosition(this.watcher1.pointer.getX(), this.watcher1.pointer.getY());
 
-			this.finger1.start = { x: this.finger1.current.x, y: this.finger1.current.y };
-
-			this.finger2 = { identifier: identifier, start: { x: x, y: y }, current: { x: x, y: y } };
+			var watcher = event.pointer.watch(this.getDrawing());
+			this.watcher2 = watcher;
+			this.connect(watcher, 'move', this.onPointerMove);
+			this.connect(watcher, 'up', this.onPointerUp);
+			this.connect(watcher, 'cancel', this.onPointerUp);
 
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
@@ -356,30 +235,22 @@ Ui.LBox.extend('Ui.Transformable',
 		}
 	},
 
-	onFingerMove: function(identifier, x, y) {
+	onPointerMove: function(watcher) {
 		var pos1; var pos2; var start1; var start2;
-//		console.log('onFingerMove identifier: '+identifier+', finger1: '+this.finger1.identifier);
-		// update the fingers positions
-		if((this.finger1 !== undefined) && (this.finger1.identifier === identifier))
-			this.finger1.current = { x: x, y: y };
-		else if((this.finger2 !== undefined) && (this.finger2.identifier === identifier))
-			this.finger2.current = { x: x, y: y };
-		else
-			return;
 							
 		// 2 fingers
-		if((this.finger1 !== undefined) && (this.finger2 !== undefined)) {
-//			console.log('onFingerMove 2 FINGERS INTERACT');
-//			console.log('FINGER1 START: '+this.finger1.start.x+','+this.finger1.start.y+', current: '+
-//				this.finger1.current.x+','+this.finger1.current.y);
-			//console.log(this.finger1.current);
-			//console.log(this.finger2.current);
+		if((this.watcher1 !== undefined) && (this.watcher2 !== undefined)) {
 
-			pos1 = this.pointFromWindow({ x: this.finger1.current.x, y: this.finger1.current.y });
-			pos2 = this.pointFromWindow({ x: this.finger2.current.x, y: this.finger2.current.y });
+			if(!this.watcher1.getIsCaptured() && this.watcher1.pointer.getIsMove())
+				this.watcher1.capture();
+			if(!this.watcher2.getIsCaptured() && this.watcher2.pointer.getIsMove())
+				this.watcher2.capture();
+			
+			pos1 = this.pointFromWindow({ x: this.watcher1.pointer.getX(), y: this.watcher1.pointer.getY() });
+			pos2 = this.pointFromWindow({ x: this.watcher2.pointer.getX(), y: this.watcher2.pointer.getY() });
 
-			start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
-			start2 = this.pointFromWindow({ x: this.finger2.start.x, y: this.finger2.start.y });
+			start1 = this.pointFromWindow({ x: this.watcher1.pointer.getInitialX(), y: this.watcher1.pointer.getInitialY() });
+			start2 = this.pointFromWindow({ x: this.watcher2.pointer.getInitialX(), y: this.watcher2.pointer.getInitialY() });
 
 			var startVector = { x: start2.x - start1.x, y: start2.y - start1.y };
 			var endVector = { x: pos2.x - pos1.x, y: pos2.y - pos1.y };
@@ -399,77 +270,86 @@ Ui.LBox.extend('Ui.Transformable',
 				y: (startVector.y * endVector.x - startVector.x * endVector.y) };
 			var angle = -(Math.atan2(divVector.y, divVector.x) * 180.0) / Math.PI;
 
-//			console.log('lets transform scale: '+scale+', angle: '+angle);
-
-//			console.log('pos1 start: ('+start1.x+','+start1.y+') , current: ('+pos1.x+','+pos1.y+')');
-
 			var deltaMatrix = new Ui.Matrix();
 			deltaMatrix.translate(pos1.x - start1.x, pos1.y - start1.y);
 			deltaMatrix.translate(start1.x, start1.y);
-			deltaMatrix.scale(scale, scale);
-			deltaMatrix.rotate(angle);
+			if(this.allowScale) {
+				if((this.minScale !== undefined) || (this.maxScale !== undefined)) {
+					var totalScale = this.startScale * scale;
+					if((this.minScale !== undefined) && (totalScale < this.minScale))
+						totalScale = this.minScale;
+					if((this.maxScale !== undefined) && (totalScale > this.maxScale))
+						totalScale = this.maxScale;
+					scale = totalScale / this.startScale;
+				}
+				deltaMatrix.scale(scale, scale);
+			}
+			else
+				scale = 1;
+			if(this.allowRotate)
+				deltaMatrix.rotate(angle);
+			else
+				angle = 0;
 			deltaMatrix.translate(-start1.x, -start1.y);
 
-			deltaMatrix.translate(this.getLayoutWidth() / 2, this.getLayoutHeight() / 2);
+			var origin = new Ui.Point({ x: this.getLayoutWidth() * this.transformOriginX, y: this.getLayoutHeight()  * this.transformOriginX });
+			deltaMatrix.translate(origin.x, origin.y);
+
 			deltaMatrix.translate(this.startTranslateX, this.startTranslateY);
 			deltaMatrix.scale(this.startScale, this.startScale);
 			deltaMatrix.rotate(this.startAngle);
-			deltaMatrix.translate(-this.getLayoutWidth() / 2, -this.getLayoutHeight() / 2);
+			deltaMatrix.translate(-origin.x, -origin.y);
 
-			var center = new Ui.Point({ x: this.getLayoutWidth() / 2, y: this.getLayoutHeight() / 2 });
-			center.matrixTransform(deltaMatrix);
+			origin.matrixTransform(deltaMatrix);
 
-			this.setContentTransform(center.x - this.getLayoutWidth() / 2, center.y - this.getLayoutHeight() / 2,
+			this.setContentTransform(origin.x - this.getLayoutWidth() * this.transformOriginX,
+				origin.y - this.getLayoutHeight() * this.transformOriginY,
 				this.startScale * scale, this.startAngle + angle);
 		}
 		// 1 finger
-		else if((this.finger1 !== undefined) && this.allowTranslate) {
-//			console.log('onFingerMove 1 FINGER');
+		else if((this.watcher1 !== undefined) && this.allowTranslate) {
 
+			pos1 = this.pointFromWindow({ x: this.watcher1.pointer.getX(), y: this.watcher1.pointer.getY() });
+			start1 = this.pointFromWindow({ x: this.watcher1.pointer.getInitialX(), y: this.watcher1.pointer.getInitialY() });
 
-			pos1 = this.pointFromWindow({ x: this.finger1.current.x, y: this.finger1.current.y });
-			start1 = this.pointFromWindow({ x: this.finger1.start.x, y: this.finger1.start.y });
+			var deltaX = pos1.x - start1.x;
+			var deltaY = pos1.y - start1.y;
+			var delta = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
 
 			this.setContentTransform(this.startTranslateX + (pos1.x - start1.x), this.startTranslateY + (pos1.y - start1.y),
 				this.startScale, this.startAngle);
+			
+			var takenDeltaX = (this.translateX - this.startTranslateX);
+			var takenDeltaY = (this.translateY - this.startTranslateY);
+			var takenDelta = Math.sqrt(takenDeltaX*takenDeltaX + takenDeltaY*takenDeltaY);
+
+			var test = 0;
+			if(delta > 0)
+				test = (takenDelta/delta);
+
+			if(!this.watcher1.getIsCaptured() && this.watcher1.pointer.getIsMove() && (test > 0.7))
+				this.watcher1.capture();
+			
 		}
-
-		// if the user move to much without transform success, release the finger(s)
-/*		if((this.translateX == 0) && (this.translateY == 0) && (this.angle == 0) && (this.scale == 1)) {
-			var deltaX = this.finger1.finger.getX() - this.finger1.start.x;
-			var deltaY = this.finger1.finger.getY() - this.finger1.start.y;
-			var delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-			console.log(this+'.onFingerMove tranformDone: '+this.transformDone+', delta: '+delta);
-
-			if(!this.transformDone && (delta > 40)) {
-				this.onUp();
-
-				if(this.finger2 !== undefined) {
-					this.disconnect(this.finger2.finger, 'fingermove', this.onFingerMove);
-					this.disconnect(this.finger2.finger, 'fingerup', this.onFingerUp);
-					this.finger2.finger.release();
-					this.finger2 = undefined;
-				}
-				this.disconnect(this.finger1.finger, 'fingermove', this.onFingerMove);
-				this.disconnect(this.finger1.finger, 'fingerup', this.onFingerUp);
-				this.finger1.finger.release();
-				this.finger1 = undefined;
-			}
-		}
-		else
-			this.transformDone = true;*/
 	},
 
-	onFingerUp: function(identifier, x, y) {
-//		console.log('onFingerUp');
+	onPointerCancel: function(watcher) {
+		this.onPointerUp(watcher);
+		this.stopInertia();
 
-		if((this.finger1 !== undefined) && (this.finger1.identifier === identifier)) {
-			this.finger1 = undefined;
-			if(this.finger2 !== undefined) {
-				this.finger1 = this.finger2;
-				this.finger2 = undefined;
-				this.finger1.start = { x: this.finger1.current.x, y: this.finger1.current.y };
+		// revert the changes
+		this.angle = this.startAngle;
+		this.scale = this.startScale;
+		this.translateX = this.startTranslateX;
+		this.translateY = this.startTranslateY;
+	},
+
+	onPointerUp: function(watcher) {
+		if((this.watcher1 !== undefined) && (this.watcher1 === watcher)) {
+			if(this.watcher2 !== undefined) {
+				this.watcher1 = this.watcher2;
+				this.watcher2 = undefined;
+				this.watcher1.pointer.setInitialPosition(this.watcher1.pointer.getX(), this.watcher1.pointer.getY());
 				this.startAngle = this.angle;
 				this.startScale = this.scale;
 				this.startTranslateX = this.translateX;
@@ -480,13 +360,17 @@ Ui.LBox.extend('Ui.Transformable',
 			else {
 				if(this.allowTranslate)
 					this.onUp();
-				this.stopComputeInertia();
+				
+				var speed = this.watcher1.getSpeed();
+				this.speedX = speed.x;
+				this.speedY = speed.y;
+				this.watcher1 = undefined;
 				this.startInertia();
 			}
 		}
-		if((this.finger2 !== undefined) && (this.finger2.identifier === identifier)) {
-			this.finger2 = undefined;
-			this.finger1.start = { x: this.finger1.current.x, y: this.finger1.current.y };
+		if((this.watcher2 !== undefined) && (this.watcher2 === watcher)) {
+			this.watcher2 = undefined;
+			this.watcher1.pointer.setInitialPosition(this.watcher1.pointer.getX(), this.watcher1.pointer.getY());
 			this.startAngle = this.angle;
 			this.startScale = this.scale;
 			this.startTranslateX = this.translateX;
@@ -510,38 +394,69 @@ Ui.LBox.extend('Ui.Transformable',
 		else if(event.detail !== undefined)
 			delta = event.detail * 10;
 		
-		if(event.altKey)
-			this.setAngle(this.angle + delta/5);
-		else if(event.shiftKey)
-			this.setScale(Math.max(0.1, this.scale - delta/120));
+		if(event.altKey) {
+			if(this.allowRotate) {
+				var angle = delta/5;
+
+				var pos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+
+				var deltaMatrix = new Ui.Matrix();
+				deltaMatrix.translate(pos.x, pos.y);
+				deltaMatrix.rotate(angle, angle);
+				deltaMatrix.translate(-pos.x, -pos.y);
+
+				var origin = new Ui.Point({ x: this.getLayoutWidth() * this.transformOriginX, y: this.getLayoutHeight()  * this.transformOriginX });
+
+				deltaMatrix.translate(origin.x, origin.y);
+				deltaMatrix.translate(this.translateX, this.translateY);
+				deltaMatrix.scale(this.scale, this.scale);
+				deltaMatrix.rotate(this.angle);
+				deltaMatrix.translate(-origin.x, -origin.y);
+
+				origin.matrixTransform(deltaMatrix);
+
+				this.setContentTransform(origin.x - this.getLayoutWidth() * this.transformOriginX,
+					origin.y - this.getLayoutHeight() * this.transformOriginY,
+					this.scale, this.angle + angle);
+			}
+		}
+		else if(event.ctrlKey) {
+			if(this.allowScale) {
+				var scale = this.scale - delta/120;
+				if((this.minScale !== undefined) && (scale < this.minScale))
+					scale = this.minScale;
+				if((this.maxScale !== undefined) && (scale > this.maxScale))
+					scale = this.maxScale;
+				
+				var deltaScale = scale / this.scale;
+
+				var pos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+
+				var deltaMatrix = new Ui.Matrix();
+				deltaMatrix.translate(pos.x, pos.y);
+				deltaMatrix.scale(deltaScale, deltaScale);
+				deltaMatrix.translate(-pos.x, -pos.y);
+
+				var origin = new Ui.Point({ x: this.getLayoutWidth() * this.transformOriginX, y: this.getLayoutHeight()  * this.transformOriginX });
+
+				deltaMatrix.translate(origin.x, origin.y);
+				deltaMatrix.translate(this.translateX, this.translateY);
+				deltaMatrix.scale(this.scale, this.scale);
+				deltaMatrix.rotate(this.angle);
+				deltaMatrix.translate(-origin.x, -origin.y);
+
+				origin.matrixTransform(deltaMatrix);
+
+				this.setContentTransform(origin.x - this.getLayoutWidth() * this.transformOriginX,
+					origin.y - this.getLayoutHeight() * this.transformOriginY,
+					scale, this.angle);
+			}
+		}
 		else
 			return;		
 
 		event.preventDefault();
 		event.stopPropagation();
-	},
-
-	measureSpeed: function() {
-		// compute speed
-		var currentTime = (new Date().getTime())/1000;
-		var deltaTime = currentTime - this.lastTime;
-
-		if(deltaTime < 0.025)
-			return;
-
-		var deltaAngle = this.angle - this.lastAngle;
-		var deltaTranslateX = this.translateX - this.lastTranslateX;
-		var deltaTranslateY = this.translateY - this.lastTranslateY;
-		this.speedX = deltaTranslateX / deltaTime;
-		this.speedY = deltaTranslateY / deltaTime;
-		this.speedAngle = deltaAngle / deltaTime;
-
-		this.lastTime = currentTime;
-
-		this.lastAngle = this.angle;
-		this.lastTranslateX = this.translateX;
-		this.lastTranslateY = this.translateY;
-		this.speedComputed = true;
 	},
 
 	getInertia: function() {
@@ -552,46 +467,13 @@ Ui.LBox.extend('Ui.Transformable',
 		this.inertia = inertiaActive;
 	},
 
-	startComputeInertia: function() {
-		this.stopInertia();
-
-		if(this.measureSpeedTimer !== undefined)
-			this.measureSpeedTimer.abort();
-
-		this.lastTranslateX = this.translateX;
-		this.lastTranslateY = this.translateY;
-		this.lastTime = (new Date().getTime())/1000;
-		this.speedX = 0;
-		this.speedY = 0;
-		this.speedAngle = 0;
-		this.speedComputed = false;
-		this.measureSpeedTimer = new Core.Timer({ interval: 0.025, onTimeupdate: this.measureSpeed });
-	},
-
-	stopComputeInertia: function() {
-		if(this.measureSpeedTimer !== undefined) {
-			this.measureSpeedTimer.abort();
-			this.measureSpeedTimer = undefined;
-		}
-		if(!this.speedComputed) {
-			// compute speed
-			var currentTime = (new Date().getTime())/1000;
-			var deltaTime = currentTime - this.lastTime;
-			var deltaAngle = this.angle - this.lastAngle;
-			var deltaTranslateX = this.translateX - this.lastTranslateX;
-			var deltaTranslateY = this.translateY - this.lastTranslateY;
-			this.speedX = deltaTranslateX / deltaTime;
-			this.speedY = deltaTranslateY / deltaTime;
-			this.speedAngle = deltaAngle / deltaTime;
-		}
-	},
-
 	startInertia: function() {
 		if((this.inertiaClock === undefined) && this.inertia) {
 			this.inertiaClock = new Anim.Clock({
 				duration: 'forever', scope: this, target: this, onTimeupdate: this.onTimeupdate
 			});
 			this.inertiaClock.begin();
+			this.fireEvent('inertiastart', this);
 		}
 	},
 
@@ -605,9 +487,7 @@ Ui.LBox.extend('Ui.Transformable',
 		var translateX = this.translateX + (this.speedX * delta);
 		var translateY = this.translateY + (this.speedY * delta);
 
-		var angle = this.angle + (this.speedAngle * delta);
-
-		this.setContentTransform(translateX, translateY, undefined, angle);
+		this.setContentTransform(translateX, translateY, undefined, undefined);
 
 		if((this.translateX == oldTranslateX) && (this.translateY == oldTranslateY)) {
 			this.stopInertia();
@@ -615,8 +495,6 @@ Ui.LBox.extend('Ui.Transformable',
 		}
 		this.speedX -= this.speedX * delta * 3;
 		this.speedY -= this.speedY * delta * 3;
-
-		this.speedAngle -= this.speedAngle * delta * 3;
 
 		if(Math.abs(this.speedX) < 0.1)
 			this.speedX = 0;
@@ -630,6 +508,7 @@ Ui.LBox.extend('Ui.Transformable',
 		if(this.inertiaClock !== undefined) {
 			this.inertiaClock.stop();
 			this.inertiaClock = undefined;
+			this.fireEvent('inertiaend', this);
 		}
 	}
 	/**#@-*/
@@ -640,7 +519,6 @@ Ui.LBox.extend('Ui.Transformable',
 
 	arrangeCore: function(width, height) {
 		Ui.Transformable.base.arrangeCore.apply(this, arguments);
-		this.contentBox.setTransformOrigin(0, 0);
-		this.contentBox.setTransform(this.getMatrix());
+		this.onContentTransform();
 	}
 });

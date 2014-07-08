@@ -1,6 +1,5 @@
 
-Ui.Popup.extend('Ui.MenuToolBarPopup', {
-});
+Ui.MenuPopup.extend('Ui.MenuToolBarPopup', {});
 
 Ui.Button.extend('Ui.MenuToolBarButton', {
 	constructor: function() {
@@ -97,7 +96,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * Set the current element top padding
 	 */
 	setPaddingTop: function(paddingTop) {
-		if(this.paddingTop != paddingTop) {
+		if(this.paddingTop !== paddingTop) {
 			this.paddingTop = paddingTop;
 			this.invalidateMeasure();
 		}
@@ -114,7 +113,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * Set the current element bottom padding
 	 */
 	setPaddingBottom: function(paddingBottom) {
-		if(this.paddingBottom != paddingBottom) {
+		if(this.paddingBottom !== paddingBottom) {
 			this.paddingBottom = paddingBottom;
 			this.invalidateMeasure();
 		}
@@ -131,7 +130,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * Set the current element left padding
 	 */
 	setPaddingLeft: function(paddingLeft) {
-		if(this.paddingLeft != paddingLeft) {
+		if(this.paddingLeft !== paddingLeft) {
 			this.paddingLeft = paddingLeft;
 			this.invalidateMeasure();
 		}
@@ -148,7 +147,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * Set the current element right padding
 	 */
 	setPaddingRight: function(paddingRight) {
-		if(this.paddingRight != paddingRight) {
+		if(this.paddingRight !== paddingRight) {
 			this.paddingRight = paddingRight;
 			this.invalidateMeasure();
 		}
@@ -176,9 +175,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * Append a child at the end of the box
 	 */
 	append: function(child, resizable) {
-		child = Ui.Element.create(child);
-		if(resizable)
-			Ui.MenuToolBar.setResizable(child, true);
+		if(resizable !== undefined)
+			Ui.Box.setResizable(child, resizable === true);
 		this.items.push(child);
 		this.invalidateMeasure();
 	},
@@ -187,9 +185,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 	 * Append a child at the begining of the box
 	 */
 	prepend: function(child, resizable) {
-		child = Ui.Element.create(child);
-		if(resizable)
-			Ui.MenuToolBar.setResizable(child, true);
+		if(resizable !== undefined)
+			Ui.Box.setResizable(child, resizable === true);
 		this.items.unshift(child);
 		this.invalidateMeasure();
 	},
@@ -222,8 +219,11 @@ Ui.Container.extend('Ui.MenuToolBar',
 	},
 	
 	insertAt: function(child, position, resizable) {
-		this.append(child, resizable);
-		this.moveAt(child, position);
+		if(resizable !== undefined)
+			Ui.Box.setResizable(child, resizable === true);
+		position = Math.max(0, Math.min(position, this.items.length));
+		this.items.splice(position, 0, child);
+		this.invalidateMeasure();
 	},
 
 	setContent: function(content) {
@@ -251,16 +251,17 @@ Ui.Container.extend('Ui.MenuToolBar',
 	* @private
 	*/
 	onMenuButtonPress: function() {
-		var dialog = new Ui.MenuToolBarPopup({ expandable: true });
-		var scroll = new Ui.ScrollingArea();
-		dialog.setContent(scroll);
-		//var vbox = new Ui.VBox({ spacing: this.spacing, margin: 10 });
-		var flow = new Ui.Flow({ spacing: this.spacing, margin: 10 });
-		scroll.setContent(flow);
+		var dialog = new Ui.MenuToolBarPopup();
+		var vbox = new Ui.VBox();
+		dialog.setContent(vbox);
+		//var flow = new Ui.Flow({ spacing: this.spacing, margin: 10 });
 		for(var i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
-			if(item.getParent() !== this)
-				flow.append(item);
+			if(item.getParent() !== this) {
+				vbox.append(item);
+				if(i < this.items.length-1)
+					vbox.append(new Ui.MenuPopupSeparator());
+			}
 		}
 		dialog.show(this.menuButton, 'bottom');
 	}
@@ -277,6 +278,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 	},
 
 	measureCore: function(width, height) {
+//		console.log(this+'.measureCore('+width+','+height+')');
+
 		var left = this.getPaddingLeft();
 		var right = this.getPaddingRight();
 		var top = this.getPaddingTop();
@@ -287,9 +290,9 @@ Ui.Container.extend('Ui.MenuToolBar',
 
 //		console.log(this+'.measureCore('+width+','+height+') START');
 
-		this.measureLock = true;
-
 		this.bg.measure(width, height);
+
+		this.measureLock = true;
 
 		// measure the menu button
 		var buttonSize = this.menuButton.measure(0, 0);
@@ -327,14 +330,15 @@ Ui.Container.extend('Ui.MenuToolBar',
 				this.keepItems.unshift(this.items[i]);
 			else
 				this.keepItems.push(this.items[i]);
-			if(Ui.MenuToolBar.getResizable(this.items[i]))
+			if(Ui.Box.getResizable(this.items[i]))
 				countResizable++;
-			else
+			else {
 				minItemsSize += minSize.width;
+				if(minSize.height > maxItemHeight)
+					maxItemHeight = minSize.height;
+			}
 			if(minSize.width > maxItemWidth)
 				maxItemWidth = minSize.width;
-			if(minSize.height > maxItemHeight)
-				maxItemHeight = minSize.height;
 			if(this.menuPosition === 'left')
 				i--;
 			else
@@ -379,8 +383,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 				do {
 					starFound = true;
 					for(i = 0; i < this.keepItems.length; i++) {
-						var child = this.getChildren()[i];
-						if(Ui.MenuToolBar.getResizable(child)) {
+						var child = this.keepItems[i];
+						if(Ui.Box.getResizable(child)) {
 							if(!child.menutoolbarStarDone) {
 								size = child.measure(star, constraintHeight);
 								if(size.height > maxItemHeight)
@@ -418,8 +422,6 @@ Ui.Container.extend('Ui.MenuToolBar',
 		size.width += left + right;
 		size.height += top + bottom;
 		this.measureLock = undefined;
-		
-//		console.log(this+'.measureCore('+width+','+height+') STOP');
 		return size;
 	},
 
@@ -456,7 +458,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 				itemWidth = this.uniformSize;
 			else {
 				itemWidth = item.getMeasureWidth();
-				if(Ui.MenuToolBar.getResizable(item) && (itemWidth < this.star))
+				if(Ui.Box.getResizable(item) && (itemWidth < this.star))
 					itemWidth = this.star;
 			}
 			item.arrange(x, y, itemWidth, height);
@@ -482,25 +484,12 @@ Ui.Container.extend('Ui.MenuToolBar',
 		if(this.measureLock !== true)
 			Ui.MenuToolBar.base.onChildInvalidateMeasure.call(this, child, event);
 	},
-	
+
 	onStyleChange: function() {
 		this.bg.setFill(this.getStyleProperty('background'));
 	}
-	
 }, {
-
-	getResizable: function(child) {
-		return child['Ui.MenuToolBar.resizable']?true:false;
-	},
-
-	setResizable: function(child, resizable) {
-		if(Ui.MenuToolBar.getResizable(child) != resizable) {
-			child['Ui.MenuToolBar.resizable'] = resizable;
-			child.invalidateMeasure();
-		}
-	},
-
 	style: {
-		background: 'rgba(255,255,255,0)'
+		background: 'rgba(250, 250, 250, 0)'
 	}
 });

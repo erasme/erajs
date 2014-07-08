@@ -62,30 +62,30 @@ Core.Object.extend('Core.RemoteDebug',
 
 	onConsoleLog: function(message) {
 		if(this.socketAlive)
-			this.socket.send({ type: 'log', message: message });
+			this.socket.send(JSON.stringify({ type: 'log', message: message }));
 		else
-			this.buffer.push({ type: 'log', message: message });
+			this.buffer.push(JSON.stringify({ type: 'log', message: message }));
 	},
 
 	onConsoleError: function(message) {
 		if(this.socketAlive)
-			this.socket.send({ type: 'error', message: message });
+			this.socket.send(JSON.stringify({ type: 'error', message: message }));
 		else
-			this.buffer.push({ type: 'error', message: message });
+			this.buffer.push(JSON.stringify({ type: 'error', message: message }));
 	},
 
 	onConsoleWarn: function(message) {
 		if(this.socketAlive)
-			this.socket.send({ type: 'warn', message: message });
+			this.socket.send(JSON.stringify({ type: 'warn', message: message }));
 		else
-			this.buffer.push({ type: 'warn', message: message });
+			this.buffer.push(JSON.stringify({ type: 'warn', message: message }));
 	},
 
 	onError: function(message, url, line) {
 		if(this.socketAlive)
-			this.socket.send({ type: 'warn', message: message, url: url, line: line });
+			this.socket.send(JSON.stringify({ type: 'warn', message: message, url: url, line: line }));
 		else
-			this.buffer.push({ type: 'warn', message: message, url: url, line: line });
+			this.buffer.push(JSON.stringify({ type: 'warn', message: message, url: url, line: line }));
 	}
 }, {}, {
 	current: undefined,

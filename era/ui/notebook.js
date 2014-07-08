@@ -355,10 +355,10 @@ Core.Object.extend('Ui.NotebookPage',
 	* set the content visible
 	*/
 	setHeader: function(header) {
-		if(header != this.header) {
+		if(header !== this.header) {
 			if(this.header !== undefined)
 				this.headerBox.removeChild(this.header);
-			this.header = Ui.Element.create(header);
+			this.header = header;
 			if(this.header !== undefined)
 				this.headerBox.appendChild(this.header);
 		}
@@ -375,10 +375,10 @@ Core.Object.extend('Ui.NotebookPage',
 	* Set the content element of the page
 	*/
 	setContent: function(content) {
-		if(content != this.content) {
+		if(content !== this.content) {
 			if(this.content !== undefined)
 				this.contentBox.removeChild(this.content);
-			this.content = Ui.Element.create(content);
+			this.content = content;
 			if(this.content !== undefined)
 				this.contentBox.appendChild(this.content);
 		}

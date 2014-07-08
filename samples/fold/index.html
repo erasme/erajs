@@ -68,7 +68,12 @@ lbox.append(new Ui.Rectangle({ fill: 'red' }));
 var fold = new Ui.Fold({ over: true, mode: 'extend', margin: 5 });
 lbox.append(fold);
 fold.setBackground(new Ui.Rectangle({ fill: 'orange' }));
-fold.setHeader(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue', margin: 3 }));
+var header = new Ui.Pressable();
+header.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightblue', margin: 3 }));
+header.connect(header, 'press', function() {
+	fold.invert();
+});
+fold.setHeader(header);
 fold.setContent(new Ui.Rectangle({ width: 50, height: 50, fill: 'lightgreen', margin: 3 }));
 
 </script>

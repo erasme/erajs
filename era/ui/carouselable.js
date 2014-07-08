@@ -59,15 +59,21 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		return this.items[this.getCurrentPosition()];
 	},
 
-	setCurrentAt: function(position) {
+	setCurrentAt: function(position, noAnimation) {
 		position = Math.min(2*(this.items.length - 1), Math.max(0, position));
-		this.startAnimation(2*(this.pos-position), position);
+		if(noAnimation) {
+			this.pos = position;
+			this.setPosition(-this.pos * this.getLayoutWidth(), undefined);
+			this.onChange();
+		}
+		else
+			this.startAnimation(2*(this.pos-position), position);
 	},
 
-	setCurrent: function(current) {
+	setCurrent: function(current, noAnimation) {
 		for(var i = 0; i < this.items.length; i++) {
 			if(this.items[i] == current) {
-				this.setCurrentAt(i);
+				this.setCurrentAt(i, noAnimation);
 				break;
 			}
 		}
@@ -104,7 +110,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	append: function(child) {
-		this.items.push(Ui.Element.create(child));
+		this.items.push(child);
 		this.onChange();
 	},
 
@@ -129,7 +135,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 			position = 0;
 		if(position >= this.items.length)
 			position = this.items.length;
-		this.items.splice(position, 0, Ui.Element.create(child));
+		this.items.splice(position, 0, child);
 		this.onChange();
 	},
 	
@@ -282,7 +288,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		}
 		else
 			this.animNext = next;
-		if(this.animStart != this.animNext) {
+		if(this.animStart !== this.animNext) {
 			this.alignClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onAlignTick });
 			this.alignClock.begin();
 		}
@@ -359,6 +365,8 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onMove: function(x, y) {
+		if(this.getLayoutWidth() <= 0)
+			return;
 		this.pos = -x / this.getLayoutWidth();
 //		console.log('onMove pos: '+this.pos);
 		if((this.pos < 0) || (this.pos > this.items.length-1)) {
