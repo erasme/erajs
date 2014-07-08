@@ -499,12 +499,14 @@ Core.Object.extend('Core.DragManager',
 // a full drag and drop support is needed. This mean drag and drop
 // with user defined mimetypes and not only Text. This also means
 // a bubbling drag and drop
-navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
-  !navigator.isIE7 && !navigator.isIE8 && !navigator.iPad && !navigator.iPhone && !navigator.Android;
- 
+//navigator.supportDrag = (('ondragstart' in window) || navigator.isGecko) &&
+//  !navigator.isIE7 && !navigator.isIE8 && !navigator.iPad && !navigator.iPhone && !navigator.Android;
+
+navigator.supportDrag = false;
+   
 navigator.supportMimetypeDrag = navigator.supportDrag && !navigator.isIE;
 
-//if(!navigator.supportDrag)
+if(!navigator.supportDrag)
 	Core.DragManager.current = new Core.DragManager();
 
 navigator.localDrag = (Core.DragManager.current !== undefined);
