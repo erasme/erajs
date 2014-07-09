@@ -200,8 +200,10 @@ Core.Object.extend('Core.DragDataTransfer',
 
 			//console.log(this.image.outerHTML);
 
-			if(navigator.supportOpacity)
-				this.image.style.opacity = 0.8;
+			if(navigator.supportOpacity) {
+				this.image.style.opacity = 1;
+				this.image.firstChild.style.opacity = 0.8;
+			}
 
 			var ofs = this.delayed ? -10 : 0;
 
