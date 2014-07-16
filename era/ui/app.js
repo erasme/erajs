@@ -256,8 +256,6 @@ Ui.LBox.extend('Ui.App',
 //		this.updateTask = false;
 //		console.log('update task: '+this.updateTask);
 
-//		this.drawing.scrollIntoView();
-
 		// update measure
 //		var innerWidth = (window.innerWidth !== undefined) ? window.innerWidth : document.body.clientWidth;
 //		var innerHeight = (window.innerHeight !== undefined) ? window.innerHeight : document.body.clientHeight;
@@ -327,11 +325,6 @@ Ui.LBox.extend('Ui.App',
 //		console.log(this+'.update end ('+(new Date()).getTime()+')');
 
 //		console.log('update STOP '+localCounter+', task: '+this.updateTask);
-
-/*		if('scrollIntoViewIfNeeded' in this.drawing)
-			this.drawing.scrollIntoViewIfNeeded();
-		else
-			this.drawing.scrollIntoView();*/
 
 		this.updateTask = false;
 	},
@@ -426,31 +419,6 @@ Ui.LBox.extend('Ui.App',
 			document.documentElement.style.border = '0px solid black';
 			document.documentElement.style.width = '100%';
 			document.documentElement.style.height = '100%';
-
-/*			this.connect(window, 'blur', function(e) {
-				if('scrollIntoViewIfNeeded' in this.drawing)
-					this.drawing.scrollIntoViewIfNeeded();
-				else
-					this.drawing.scrollIntoView();
-			}, true);
-
-			this.connect(window, 'focus', function(e) {
-				if('scrollIntoViewIfNeeded' in this.drawing)
-					this.drawing.scrollIntoViewIfNeeded();
-				else
-					this.drawing.scrollIntoView();
-			}, true);*/
-
-/*			this.connect(window, 'scroll', function(e) {
-				e.preventDefault();
-
-				if('scrollIntoViewIfNeeded' in this.drawing)
-					this.drawing.scrollIntoViewIfNeeded();
-				else
-					this.drawing.scrollIntoView();
-//				window.scrollTo(0,0);
-//				console.log('window.onscroll');
-			}, true);*/
 
 			//document.documentElement.style.display = 'block';
 			//document.documentElement.style.position = 'absolute';
