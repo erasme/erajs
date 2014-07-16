@@ -272,7 +272,7 @@ Core.Object.extend('Core.Pointer',
 				watchers[i].move();
 
 			var target;
-			if(this.captureElement != undefined)
+			if(this.captureElement !== undefined)
 				target = this.captureElement;
 			else
 				target = document.elementFromPoint(this.x, this.y);
