@@ -9,6 +9,14 @@ Core.Object.extend('Ui.Matrix',
 	f: 0,
 
 	/**
+	 * The matrix format is like that
+	 *
+	 * | a | c | e |
+	 * | b | d | f |
+	 * | 0 | 0 | 1 |
+	 */
+
+	/**
 	 * @constructs
 	 * @class
 	 * @extends Core.Object
