@@ -37,6 +37,14 @@ Core.Object.extend('Ui.Color',
 			this.a = Math.min(Math.max(config.a, 0), 1);
 			delete(config.a);
 		}
+		if(isNaN(this.r))
+			this.r = 0;
+		if(isNaN(this.g))
+			this.g = 0;
+		if(isNaN(this.b))
+			this.b = 0;
+		if(isNaN(this.a))
+			this.a = 1;
 	},
 
 	addA: function(a) {
