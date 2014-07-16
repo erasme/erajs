@@ -392,6 +392,7 @@ Ui.Selectionable.extend('Ui.Button',
 				this.text.setMaxLine(this.getStyleProperty('maxLine'));
 				this.text.setWhiteSpace(this.getStyleProperty('whiteSpace'));
 				this.text.setInterLine(this.getStyleProperty('interLine'));
+				this.text.setTextTransform(this.getStyleProperty('textTransform'));
 			}
 		}
 		else if(this.textBox.getParent() !== undefined)
@@ -488,6 +489,7 @@ Ui.Selectionable.extend('Ui.Button',
 		fontFamily: 'Sans-serif',
 		fontWeight: 'normal',
 		textWidth: 70,
+		textTransform: 'none',
 		maxTextWidth: Number.MAX_VALUE,
 		textHeight: 24,
 		interLine: 1,

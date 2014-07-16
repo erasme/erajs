@@ -11,6 +11,7 @@ Core.Object.extend('Ui.CompactLabelContext',
 	drawLine: undefined,
 	whiteSpace: 'pre-line', // [pre-line|nowrap]
 	wordWrap: 'normal', // [normal|break-word]
+	textTransform: 'none', // [none|lowercase|uppercase]
 
 	constructor: function(config) {
 	},
@@ -102,6 +103,23 @@ Core.Object.extend('Ui.CompactLabelContext',
 		return this.fontWeight;
 	},
 
+	getTextTransform: function() {
+		return this.textTransform;
+	},
+
+	setTextTransform: function(textTransform) {
+		this.textTransform = textTransform;
+	},
+
+	getTransformedText: function() {
+		if(this.textTransform === 'lowercase')
+			return this.text.toLowerCase();
+		else if(this.textTransform === 'uppercase')
+			return this.text.toUpperCase();
+		else
+			return this.text;
+	},
+
 	flushLine: function(y, line, width, render, lastLine) {
 		var size = Ui.Label.measureText(line, this.getFontSize(), this.getFontFamily(), this.getFontWeight());
 		if(render) {
@@ -123,6 +141,7 @@ Core.Object.extend('Ui.CompactLabelContext',
 		if(this.text === undefined)
 			return { width: 0, height: 0 };
 
+		var text = this.getTransformedText();
 		var fontSize = this.getFontSize();
 		var fontFamily = this.getFontFamily();
 		var fontWeight = this.getFontWeight();
@@ -133,8 +152,8 @@ Core.Object.extend('Ui.CompactLabelContext',
 		var line = '';
 		var lineCount = 0;
 		var maxWidth = 0;
-		for(var i = 0; i < this.text.length; i++) {
-			var size = Ui.Label.measureText(line+this.text.charAt(i), fontSize, fontFamily, fontWeight);
+		for(var i = 0; i < text.length; i++) {
+			var size = Ui.Label.measureText(line+text.charAt(i), fontSize, fontFamily, fontWeight);
 			if((this.maxLine !== undefined) && (lineCount+1 >= this.maxLine) && (size.width + dotWidth > width)) {
 				y += this.flushLine(y, line+'...', width, render);
 				if(x+dotWidth > maxWidth)
@@ -146,10 +165,10 @@ Core.Object.extend('Ui.CompactLabelContext',
 				lineCount++;
 				if(x > maxWidth)
 					maxWidth = x;
-				line = this.text.charAt(i);
+				line = text.charAt(i);
 			}
 			else
-				line += this.text.charAt(i);
+				line += text.charAt(i);
 			x = size.width;
 		}
 		if(line !== '') {
@@ -165,6 +184,7 @@ Core.Object.extend('Ui.CompactLabelContext',
 			return { width: 0, height: 0 };
 		
 		var i; var lineWidth;
+		var text = this.getTransformedText();
 		var fontSize = this.getFontSize();
 		var fontFamily = this.getFontFamily();
 		var fontWeight = this.getFontWeight();
@@ -174,7 +194,7 @@ Core.Object.extend('Ui.CompactLabelContext',
 		var words = [];
 		var wordsSize = [];
 
-		var tmpWords = this.text.split(' ');
+		var tmpWords = text.split(' ');
 		for(i = 0; i < tmpWords.length; i++) {
 			var word = tmpWords[i];
 			while(true) {
@@ -291,9 +311,10 @@ Core.Object.extend('Ui.CompactLabelContext',
 
 	drawText: function(width, render) {
 		if(this.whiteSpace === 'nowrap') {
-			var size = Ui.Label.measureText(this.text, this.fontSize, this.fontFamily, this.fontWeight);
+			var text = this.getTransformedText();
+			var size = Ui.Label.measureText(text, this.fontSize, this.fontFamily, this.fontWeight);
 			if(render)
-				this.flushLine(0, this.text, width, true, true);
+				this.flushLine(0, text, width, true, true);
 			return size;
 		}
 		else if(this.wordWrap === 'normal')
@@ -323,6 +344,7 @@ Ui.Element.extend('Ui.CompactLabel',
 	textContext: undefined,
 	whiteSpace: undefined,
 	wordWrap: undefined,
+	textTransform: undefined,
 
 	/**
 	 * @constructs
@@ -461,6 +483,22 @@ Ui.Element.extend('Ui.CompactLabel',
 		}
 	},
 
+	getTextTransform: function() {
+		if(this.textTransform !== undefined)
+			return this.textTransform;
+		else
+			return this.getStyleProperty('textTransform');
+	},
+
+	setTextTransform: function(textTransform) {
+		if(this.textTransform !== textTransform) {
+			this.isMeasureValid = false;
+			this.textTransform = textTransform;
+			this.textContext.setTextTransform(this.getTextTransform());
+			this.invalidateMeasure();
+		}
+	},
+
 	setColor: function(color) {
 		if(this.color !== color) {
 			this.color = Ui.Color.create(color);
@@ -515,6 +553,7 @@ Ui.Element.extend('Ui.CompactLabel',
 		this.textContext.setInterLine(this.getInterLine());
 		this.textContext.setWhiteSpace(this.getWhiteSpace());
 		this.textContext.setWordWrap(this.getWordWrap());
+		this.textContext.setTextTransform(this.getTextTransform());
 		this.invalidateMeasure();
 	},
 
@@ -568,7 +607,8 @@ Ui.Element.extend('Ui.CompactLabel',
 		interLine: 1,
 		textAlign: 'left',
 		whiteSpace: 'pre-line',
-		wordWrap: 'normal'
+		wordWrap: 'normal',
+		textTransform: 'none'
 	}
 });
 	
