@@ -12,6 +12,10 @@ Ui.Container.extend('Ui.Scrollable', {
 	showClock: undefined,
 	offsetX: 0,
 	offsetY: 0,
+	viewWidth: 0,
+	viewHeight: 0,
+	contentWidth: 0,
+	contentHeight: 0,
 
 	constructor: function(config) {
 		this.addEvents('scroll');
@@ -321,6 +325,35 @@ Ui.Container.extend('Ui.Scrollable', {
 		movable.setPosition(undefined, offsetY * totalHeight);
 	}
 }, {
+	onScrollIntoView: function(el) {
+		var matrix = Ui.Matrix.createTranslate(this.offsetX, this.offsetY);
+		matrix.multiply(el.transformToElement(this));
+		var p0 = new Ui.Point({ x: 0, y: 0 });
+		p0.matrixTransform(matrix);
+		var p1 = new Ui.Point({ x: el.getLayoutWidth(), y: el.getLayoutHeight() });
+		p1.matrixTransform(matrix);
+
+		// test if scroll vertical is needed
+		if((p0.y < this.offsetY) || (p0.y > this.offsetY + this.viewHeight) ||
+		   (p1.y > this.offsetY + this.viewHeight)) {
+			if(Math.abs(this.offsetY + this.viewHeight - p1.y) < Math.abs(this.offsetY - p0.y))
+				this.setOffset(this.offsetX, p1.y - this.viewHeight, true);
+			else
+				this.setOffset(this.offsetX, p0.y, true);
+			this.contentBox.stopInertia();
+		}
+		// test if scroll horizontal is needed
+		if((p0.x < this.offsetX) || (p0.x > this.offsetX + this.viewWidth) ||
+		   (p1.x > this.offsetX + this.viewWidth)) {
+			if(Math.abs(this.offsetX + this.viewWidth - p1.x) < Math.abs(this.offsetX - p0.x))
+				this.setOffset(p1.x - this.viewWidth, this.offsetY, true);
+			else
+				this.setOffset(p0.x, this.offsetY, true);
+			this.contentBox.stopInertia();
+		}
+		Ui.Scrollable.base.onScrollIntoView.apply(this, arguments);
+	},
+
 	measureCore: function(width, height) {
 		var size = { width: 0, height: 0 };
 

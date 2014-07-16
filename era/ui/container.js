@@ -187,6 +187,21 @@ Ui.Element.extend('Ui.Container',
 		return undefined;
 	},
 
+	elementFromPoint: function(x , y) {
+		var matrix = this.getLayoutTransform();
+		var point = new Ui.Point({ x: x, y: y });
+		point.matrixTransform(matrix);
+
+		if(this.children !== undefined) {
+			for(var i = this.children.length-1; i >= 0; i--) {
+				var found = this.children[i].elementFromPoint(point.x, point.y);
+				if(found !== undefined)
+					return found;
+			}
+		}
+		return Ui.Container.base.elementFromPoint.apply(this, arguments);
+	},
+
 	/**#@+
 	 * @private
 	 */

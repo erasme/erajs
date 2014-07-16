@@ -862,12 +862,50 @@ Core.Object.extend('Ui.Element',
 	},
 
 	/**
+	 * Return the matrix to transform a coordinate from a child to
+	 * the parent coordinate
+	 */
+	getInverseLayoutTransform: function() {
+		var matrix = Ui.Matrix.createTranslate(this.layoutX, this.layoutY);
+		if(this.transform !== undefined) {
+			var originX = this.transformOriginX*this.layoutWidth;
+			var originY = this.transformOriginY*this.layoutHeight;
+			matrix.translate(-originX, -originY);
+			matrix.multiply(this.transform);
+			matrix.translate(originX, originY);
+		}
+		return matrix;
+	},
+
+	/**
+	 * Return the matrix to transform a coordinate from the parent
+	 * to the child coordinate
+	 */
+	getLayoutTransform: function() {
+		var matrix = new Ui.Matrix();
+
+		if(this.transform !== undefined) {
+			var originX = this.transformOriginX*this.layoutWidth;
+			var originY = this.transformOriginY*this.layoutHeight;
+			var transMatrix = new Ui.Matrix();
+			transMatrix.translate(-originX, -originY);
+			transMatrix.multiply(this.transform);
+			transMatrix.translate(originX, originY);
+			transMatrix.inverse();
+			matrix = transMatrix;
+		}
+		matrix.translate(-this.layoutX, -this.layoutY);
+		return matrix;
+	},
+
+	/**
 	 * Return the transform matrix to convert coordinates
 	 * from the current element coordinate system to the page
 	 * coordinate system
 	 */
 	transformToWindow: function() {
-		return Ui.Element.transformToWindow(this.drawing);
+		return Ui.Element.transformToWindow2(this);
+		//return Ui.Element.transformToWindow(this.drawing);
 	},
 
 	/**
@@ -876,7 +914,8 @@ Core.Object.extend('Ui.Element',
 	 * coordinate system
 	 */
 	transformFromWindow: function() {
-		return Ui.Element.transformFromWindow(this.drawing);
+		return  Ui.Element.transformFromWindow2(this);
+		//return Ui.Element.transformFromWindow(this.drawing);
 	},
 
 	/**
@@ -885,9 +924,10 @@ Core.Object.extend('Ui.Element',
 	 * element coordinate system
 	 */
 	transformToElement: function(element) {
-		var matrix = this.transformToWindow();
-		matrix.multiply(element.transformFromWindow());
-		return matrix;
+		var toMatrix = this.transformToWindow();
+		var fromMatrix = element.transformFromWindow();
+		toMatrix.multiply(fromMatrix);
+		return toMatrix;
 	},
 
 	/**
@@ -912,6 +952,13 @@ Core.Object.extend('Ui.Element',
 	 */
 	pointFromElement: function(element, point) {
 		return this.pointFromWindow(element.pointToWindow(point));
+	},
+
+	elementFromPoint: function(x , y) {
+		if((x >= this.layoutX) && (x <= this.layoutX+this.layoutWidth) &&
+		   (y >= this.layoutY) && (y <= this.layoutY+this.layoutHeight))
+			return this;
+		return undefined;
 	},
 
 	/**
@@ -1245,6 +1292,15 @@ Core.Object.extend('Ui.Element',
 		return this.hasFocus;
 	},
 
+	scrollIntoView: function() {
+		this.onScrollIntoView(this);
+	},
+
+	onScrollIntoView: function(el) {
+		if(this.parent !== undefined)
+			this.parent.onScrollIntoView(el);
+	},
+
 	/**#@+
 	* @private
 	*/
@@ -1382,6 +1438,42 @@ Core.Object.extend('Ui.Element',
 	}
 	/**#@-*/
 }, {}, {
+
+	transformToWindow2: function(element) {
+		var matrix = new Ui.Matrix();
+		var current = element;
+		while(current !== undefined) {
+			var layoutMatrix = current.getInverseLayoutTransform();
+			layoutMatrix.multiply(matrix);
+			matrix = layoutMatrix;
+			current = current.parent;
+		}
+		return matrix;
+	},
+
+	transformFromWindow2: function(element) {
+/*		var list = [];
+		var current = element;
+		while(current !== undefined) {
+			list.push(current);
+			current = current.parent;
+		}
+		var matrix = new Ui.Matrix();
+		for(var i = list.length-1; i >= 0; i--) {
+			var layoutMatrix = list[i].getLayoutTransform();
+			layoutMatrix.multiply(matrix);
+			matrix = layoutMatrix;
+		}
+		return matrix;*/
+
+		var matrix = Ui.Element.transformToWindow2(element);
+		matrix.inverse();
+		return matrix;
+	},
+
+	elementFromPoint: function(x, y) {
+		return Ui.App.current.elementFromPoint(x, y);
+	},
 
 	/**
 	* @return Return the transform matrix to convert coordinates
@@ -1547,7 +1639,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	/**
-	* @return the given point converted from the givent element
+	* @return the given point converted from the given element
 	* coordinate system to the page coordinate system
 	*/
 	pointToWindow: function(element, point, win) {
