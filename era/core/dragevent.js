@@ -460,15 +460,6 @@ Core.Object.extend('Core.DragManager',
 
 		this.connect(window, 'load', function() {
 			this.connect(window, 'ptrdown', this.onPointerDown, true);
-
-/*			// use PointerEvent (IE)
-			if(window.PointerEvent)
-				this.connect(window, 'pointerdown', this.onPointerDown);
-			// Android, iOS
-			else if('ontouchstart' in document.body)
-				this.connect(document.body, 'touchstart', this.onTouchStart);
-			else
-				this.connect(window, 'mousedown', this.onMouseDown, true);*/
 		});
 	},
 
