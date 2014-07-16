@@ -12,10 +12,11 @@ Ui.Button.extend('Ui.UploadButton',
 		this.addEvents('file');
 
 		this.input = new Ui.UploadableFileWrapper();
-		if(navigator.supportDrag)
-			this.prepend(this.input);
-		else
+		if(navigator.iOs)
 			this.append(this.input);
+		else
+			this.prepend(this.input);
+
 		this.connect(this.input, 'file', this.onFile);
 		this.connect(this, 'press', this.onUploadButtonPress);
 

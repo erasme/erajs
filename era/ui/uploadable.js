@@ -78,12 +78,6 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 		this.setOpacity(0);
 		this.setClipToBounds(true);
 		this.addEvents('file');
-
-		if(navigator.iOs) {
-			this.connect(this.getDrawing(), 'touchend', function(event) {
-				event.stopPropagation();
-			});
-		}
 	},
 
 	select: function() {
@@ -153,8 +147,6 @@ Ui.Element.extend('Ui.UploadableFileWrapper',
 	},
 
 	onChange: function(event) {
-		console.log(this+'.onChange');
-
 		event.preventDefault();
 		event.stopPropagation();
 
