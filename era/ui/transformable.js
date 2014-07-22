@@ -42,10 +42,9 @@ Ui.LBox.extend('Ui.Transformable',
 		this.contentBox = new Ui.LBox();
 		this.appendChild(this.contentBox);
 
-		this.connect(this.getDrawing(), 'ptrdown', this.onPointerDown);
+		this.connect(this, 'ptrdown', this.onPointerDown);
 
-		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
-		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
+		this.connect(this, 'wheel', this.onWheel);
 	},
 
 	setAllowScale: function(allow) {
@@ -205,7 +204,7 @@ Ui.LBox.extend('Ui.Transformable',
 			if(this.allowTranslate)
 				this.onDown();
 			
-			var watcher = event.pointer.watch(this.getDrawing());
+			var watcher = event.pointer.watch(this);
 			this.watcher1 = watcher;
 			this.connect(watcher, 'move', this.onPointerMove);
 			this.connect(watcher, 'up', this.onPointerUp);
@@ -222,7 +221,7 @@ Ui.LBox.extend('Ui.Transformable',
 			
 			this.watcher1.pointer.setInitialPosition(this.watcher1.pointer.getX(), this.watcher1.pointer.getY());
 
-			var watcher = event.pointer.watch(this.getDrawing());
+			var watcher = event.pointer.watch(this);
 			this.watcher2 = watcher;
 			this.connect(watcher, 'move', this.onPointerMove);
 			this.connect(watcher, 'up', this.onPointerUp);
@@ -380,20 +379,11 @@ Ui.LBox.extend('Ui.Transformable',
 		}
 	},
 
-	onMouseWheel: function(event) {
+	onWheel: function(event) {
 		var delta = 0;
 
-		if((event.wheelDeltaX !== undefined) && (event.wheelDelaY !== undefined)) {
-			delta = Math.sqrt(event.wheelDeltaX * event.wheelDeltaX + event.wheelDelaY * event.wheelDelaY);
-			delta /= 5;
-		}
-		// Opera, Chrome, IE
-		else if(event.wheelDelta !== undefined)
-			delta = -event.wheelDelta / 2;
-		// Firefox
-		else if(event.detail !== undefined)
-			delta = event.detail * 10;
-		
+		delta = event.deltaX + event.deltaY;
+
 		if(event.altKey) {
 			if(this.allowRotate) {
 				var angle = delta/5;
@@ -455,7 +445,6 @@ Ui.LBox.extend('Ui.Transformable',
 		else
 			return;		
 
-		event.preventDefault();
 		event.stopPropagation();
 	},
 

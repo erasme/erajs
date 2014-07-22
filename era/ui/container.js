@@ -188,10 +188,19 @@ Ui.Element.extend('Ui.Container',
 	},
 
 	elementFromPoint: function(x , y) {
+		if(!this.getIsVisible())
+			return undefined;
+		
 		var matrix = this.getLayoutTransform();
 		var point = new Ui.Point({ x: x, y: y });
 		point.matrixTransform(matrix);
 
+		var isInside = ((point.x >= 0) && (point.x <= this.layoutWidth) &&
+		   (point.y >= 0) && (point.y <= this.layoutHeight));
+
+		if(this.getClipToBounds() && !isInside)
+			return undefined;
+		
 		if(this.children !== undefined) {
 			for(var i = this.children.length-1; i >= 0; i--) {
 				var found = this.children[i].elementFromPoint(point.x, point.y);
@@ -199,7 +208,10 @@ Ui.Element.extend('Ui.Container',
 					return found;
 			}
 		}
-		return Ui.Container.base.elementFromPoint.apply(this, arguments);
+		if(isInside)
+			return this;
+		
+		return undefined;
 	},
 
 	/**#@+

@@ -38,8 +38,8 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.scrollbarVerticalBox.setOpacity(0);
 		this.connect(this.getDrawing(), 'mouseover', this.onMouseOver);
 		this.connect(this.getDrawing(), 'mouseout', this.onMouseOut);
-		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
-		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
+
+		this.connect(this, 'wheel', this.onWheel);
 	},
 
 	setContent: function(content) {
@@ -147,35 +147,12 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.overTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.onDelayedMouseOut });
 	},
 
-	onMouseWheel: function(event) {
-		var deltaX = 0;
-		var deltaY = 0;
-
-		if((event.wheelDeltaX != undefined) && (event.wheelDelaY != undefined)) {
-			deltaX = -event.wheelDeltaX / 5;
-			deltaY = -event.wheelDeltaY / 5;
-		}
-		// Opera, Chrome, IE
-		else if(event.wheelDelta != undefined)
-			deltaY = -event.wheelDelta / 2;
-		// Firefox
-		else if(event.detail != undefined)
-			deltaY = event.detail * 20;
-
-		// if Shift is pressed, an horizontal scroll is wanted
-		if(event.shiftKey) {
-			deltaX = deltaY;
-			deltaY = 0;
-		}
-
-		if(this.setOffset(this.contentBox.getOffsetX() + deltaX, this.contentBox.getOffsetY() + deltaY, true)) {
-			event.preventDefault();
+	onWheel: function(event) {
+		if(this.setOffset(this.contentBox.getOffsetX() + event.deltaX, this.contentBox.getOffsetY() + event.deltaY, true)) {
 			event.stopPropagation();
-//			this.showScrollbars();
-//			this.hideTimeoutScrollbars();
 		}
 	},
-	
+
 	onDelayedMouseOut: function(event) {
 		this.isOver = false;
 		this.overTask = undefined;

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		this.connect(this, 'ptrdown', function(event) {
+			console.log('ptrdown at: '+event.pointer.getX()+','+event.pointer.getY()+' found: '+
+				Ui.App.current.elementFromPoint(event.pointer.getX(), event.pointer.getY()));
+		}, true);
+
+		var vbox = new Ui.VBox({ spacing: 10, margin: 10 });
+		this.setContent(vbox);
+
+		vbox.append(new Ui.Button({ text: 'Click me', icon: 'star' }));
+
+		vbox.append(new Ui.Rectangle({ fill: 'purple', height: 100 }));
+
+		vbox.append(new Ui.Text({ text: 'Some text sample' }));
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>

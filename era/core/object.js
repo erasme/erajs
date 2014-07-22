@@ -303,21 +303,20 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	else {
 		var signal = { scope: this, method: method, capture: capture };
 		var eventListeners = obj.events[eventName];
-		if(eventListeners !== undefined) {
-			// insert capture events first
-			if(capture === true) {
-				var pos;
-				for(pos = 0; (pos < eventListeners.length) && (eventListeners[pos].capture === true); pos++) {}
-				pos = (pos === 0)?0:(pos-1);
-				eventListeners.splice(pos, 0, signal);
-			}
-			else
-				eventListeners.push(signal);
-		}
+		if(eventListeners !== undefined)
+			eventListeners.push(signal);
 		else if(DEBUG)
 			throw('Event \''+eventName+'\' not found on ' + obj);
 	}
 	/**#nocode-*/ 
+};
+	
+Core.Object.prototype.getEventHandlers = function(eventName) {
+	var eventListeners = this.events[eventName];
+	if(eventListeners !== undefined)
+		return eventListeners.slice();
+	else
+		return [];
 };
 
 

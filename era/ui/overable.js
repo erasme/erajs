@@ -12,9 +12,9 @@ Ui.LBox.extend('Ui.Overable',
 	constructor: function(config) {
 		this.addEvents('enter', 'leave', 'move');
 
-		this.connect(this.getDrawing(), 'ptrmove', function(event) {
+		this.connect(this, 'ptrmove', function(event) {
 			if(!this.getIsDisabled() && !event.pointer.getIsDown() && (this.watcher === undefined)) {
-				this.watcher = event.pointer.watch(this.getDrawing());
+				this.watcher = event.pointer.watch(this);
 				this.fireEvent('enter', this);
 				this.connect(this.watcher, 'move', function() {
 					if(!this.watcher.getIsInside())

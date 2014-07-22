@@ -32,9 +32,9 @@ include(eraBaseDirectory+'excanvas/excanvas.js');
 include(eraBaseDirectory+'core/util.js');
 include(eraBaseDirectory+'core/object.js');
 include(eraBaseDirectory+'core/uri.js');
-include(eraBaseDirectory+'core/event.js');
-include(eraBaseDirectory+'core/mouseevent.js');
-include(eraBaseDirectory+'core/pointerevent.js');
+//include(eraBaseDirectory+'core/event.js');
+//include(eraBaseDirectory+'core/mouseevent.js');
+//include(eraBaseDirectory+'core/pointerevent.js');
 include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');
@@ -65,6 +65,9 @@ include(eraBaseDirectory+'ui/matrix.js');
 include(eraBaseDirectory+'ui/point.js');
 include(eraBaseDirectory+'ui/color.js');
 include(eraBaseDirectory+'ui/lineargradient.js');
+include(eraBaseDirectory+'ui/event.js');
+include(eraBaseDirectory+'ui/pointerevent.js');
+include(eraBaseDirectory+'ui/wheelevent.js');
 include(eraBaseDirectory+'ui/element.js');
 include(eraBaseDirectory+'ui/container.js');
 include(eraBaseDirectory+'ui/svgparser.js');
@@ -98,7 +101,8 @@ include(eraBaseDirectory+'ui/buttongraphic.js');
 //
 // Core functions
 //
-include(eraBaseDirectory+'core/dragevent.js');
+//include(eraBaseDirectory+'core/dragevent.js');
+include(eraBaseDirectory+'ui/dragevent.js');
 
 //
 // Ui text

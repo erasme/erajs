@@ -29,8 +29,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		this.connect(this, 'down', this.onCarouselableDown);
 		this.connect(this, 'up', this.onCarouselableUp);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
-		this.connect(this.getDrawing(), 'mousewheel', this.onMouseWheel);
-		this.connect(this.getDrawing(), 'DOMMouseScroll', this.onMouseWheel);
+		this.connect(this, 'wheel', this.onWheel);
 	},
 
 	getBufferingSize: function() {
@@ -174,25 +173,10 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		}
 	},
 	
-	onMouseWheel: function(event) {
-		var deltaX = 0;
-		var deltaY = 0;
-
-		if((event.wheelDeltaX !== undefined) && (event.wheelDelaY !== undefined)) {
-			deltaX = -event.wheelDeltaX / 5;
-			deltaY = -event.wheelDeltaY / 5;
-		}
-		// Opera, Chrome, IE
-		else if(event.wheelDelta !== undefined)
-			deltaY = -event.wheelDelta / 2;
-		// Firefox
-		else if(event.detail !== undefined)
-			deltaY = event.detail * 10;
-		
-		if(deltaX !== 0) {
-			event.preventDefault();
+	onWheel: function(event) {
+		if(event.deltaX !== 0) {
 			event.stopPropagation();
-			if(deltaX < 0)
+			if(event.deltaX < 0)
 				this.previous();
 			else
 				this.next();

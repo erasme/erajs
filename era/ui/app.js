@@ -464,6 +464,12 @@ Ui.LBox.extend('Ui.App',
 				if(navigator.iOs)
 					new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.update });
 			}
+
+			// create a WheelManager to handle wheel events
+			new Ui.WheelManager({ app: this });
+
+			// handle pointer events
+			new Ui.PointerManager({ app: this });
 		}
 	},
 
@@ -527,12 +533,11 @@ Ui.LBox.extend('Ui.App',
 	},
 
 	handleScrolling: function(drawing) {
-		var element = new Core.Object();
-		element.connect(drawing, 'ptrdown', function(event) {
+		this.connect(this, 'ptrdown', function(event) {
 			var startOffsetX = drawing.scrollLeft;
 			var startOffsetY = drawing.scrollTop;
-			var watcher = event.pointer.watch(drawing);
-			element.connect(watcher, 'move', function() {
+			var watcher = event.pointer.watch(this);
+			this.connect(watcher, 'move', function() {
 				if(!watcher.getIsCaptured()) {
 					if(watcher.pointer.getIsMove()) {
 						var direction = watcher.getDirection();

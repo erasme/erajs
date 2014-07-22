@@ -37,8 +37,8 @@ Ui.LBox.extend('Ui.DropBox',
 		//this.connect(this.drawing, 'dragleave', this.onDragLeave);
 		this.connect(this.drawing, 'dragover', this.onDragOver);
 		this.connect(this.drawing, 'drop', this.onDrop);
-		this.connect(this.drawing, 'localdragover', this.onDragOver);
-		this.connect(this.drawing, 'localdrop', this.onDrop);
+		this.connect(this, 'localdragover', this.onDragOver);
+		this.connect(this, 'localdrop', this.onDrop);
 
 	},
 

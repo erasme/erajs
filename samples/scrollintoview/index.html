@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	el: undefined,
+
+	constructor: function(config) {
+		var hbox = new Ui.HBox();
+		this.setContent(hbox);
+
+		var button = new Ui.Button({
+			text: 'click for scroll',
+			verticalAlign: 'center',
+			horizontalAlign: 'center'
+		});
+		this.connect(button, 'press', function() {
+			this.el.scrollIntoView();
+		});
+		hbox.append(button, true);
+
+		var scroll = new Ui.ScrollingArea();
+		scroll.contentBox.setMaxScale(4);
+		hbox.append(scroll, true);
+
+		var vbox = new Ui.VBox();
+		scroll.setContent(vbox);
+
+		vbox.append(new Ui.Rectangle({ fill: 'orange', height: 400 }));
+		vbox.append(new Ui.Rectangle({ fill: 'lightgreen', height: 400 }));
+		vbox.append(new Ui.Rectangle({ fill: 'purple', height: 400 }));
+
+		this.el = new Ui.Rectangle({ fill: 'red', width: 50, height: 50, margin: 50 });
+		vbox.append(this.el);
+
+		vbox.append(new Ui.Rectangle({ fill: 'lightblue', height: 400 }));
+		vbox.append(new Ui.Rectangle({ fill: 'pink', height: 400 }));
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>

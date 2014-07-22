@@ -25,7 +25,7 @@ Ui.Container.extend('Ui.MovableBase',
 	 */
 	constructor: function(config) {
 		this.addEvents('down', 'up', 'move');
-		this.connect(this.getDrawing(), 'ptrdown', this.onPointerDown);
+		this.connect(this, 'ptrdown', this.onPointerDown);
 	},
 
 	setLock: function(lock) {
@@ -123,7 +123,7 @@ Ui.Container.extend('Ui.MovableBase',
 
 		this.onDown(false);
 
-		var watcher = event.pointer.watch(this.getDrawing());
+		var watcher = event.pointer.watch(this);
 		this.connect(watcher, 'move', function() {
 			if(!watcher.getIsCaptured()) {
 				if(watcher.pointer.getIsMove()) {

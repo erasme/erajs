@@ -23,6 +23,7 @@ Ui.Pressable.extend('Ui.Draggable',
 	draggableData: undefined,
 	dragDelta: undefined,
 	localkey: undefined,
+	dataTransfer: undefined,
 
 	/**
 	 * @constructs
@@ -32,15 +33,16 @@ Ui.Pressable.extend('Ui.Draggable',
 	constructor: function(config) {
 		this.addEvents('dragstart', 'dragend');
 
-		if(navigator.localDrag) {
-			this.connect(this.getDrawing(), 'localdragstart', this.onDragStart, true);
-			this.connect(this.getDrawing(), 'localdragend', this.onDragEnd, true);
-		}
-		else {
-			this.connect(this.getDrawing(), 'dragstart', this.onDragStart, true);
-			this.connect(this.getDrawing(), 'dragend', this.onDragEnd, true);
-		}
-
+//		if(navigator.localDrag) {
+//			this.connect(this.getDrawing(), 'localdragstart', this.onDragStart, true);
+//			this.connect(this.getDrawing(), 'localdragend', this.onDragEnd, true);
+//		}
+//		else {
+//			this.connect(this, 'dragstart', this.onDragStart);
+//			this.connect(this, 'dragend', this.onDragEnd);
+//		}
+		
+		this.connect(this, 'ptrdown', this.onDraggablePointerDown);
 
 		// default data is the draggable object itself
 //		this.setData(this);
@@ -70,11 +72,11 @@ Ui.Pressable.extend('Ui.Draggable',
 				this.mimetype = Ui.Draggable.localmimetype;
 		}
 		// allow local drag & drop
-		if(navigator.localDrag)
-			this.getDrawing().setAttribute('localdraggable', true);
+//		if(navigator.localDrag)
+//			this.getDrawing().setAttribute('localdraggable', true);
 		// allow native drag & drop only if not local
-		else
-			this.getDrawing().setAttribute('draggable', true);
+//		else
+//			this.getDrawing().setAttribute('draggable', true);
 	},
 
 	/**
@@ -123,20 +125,27 @@ Ui.Pressable.extend('Ui.Draggable',
 	 * @private
 	 */
 
-	onDragStart: function(event) {
+	onDraggablePointerDown: function(event) {
 		if(this.lock || this.getIsDisabled())
 			return;
-		
-		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 
-		event.stopPropagation();
-		event.dataTransfer.effectAllowed = this.allowedMode;
+//		console.log('onPointerDown');
+		this.dataTransfer = new Ui.DragDataTransfer({ type: 'pointer', draggable: this, x: event.clientX, y: event.clientY, delayed: true, pointer: event.pointer });
+		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+		this.connect(this.dataTransfer, 'start', this.onDragStart);
+		this.connect(this.dataTransfer, 'end', this.onDragEnd);
+	},
+
+	onDragStart: function(dataTransfer) {
+//		console.log('onDragStart '+dataTransfer);
+
+		dataTransfer.effectAllowed = this.allowedMode;
 
 		// if the element if downloadable to the destkop,
 		// try to provide the link
 		if(this.downloadUrl !== undefined) {
 			try {
-				event.dataTransfer.setData('DownloadURL', this.downloadMimetype+':'+this.downloadFilename+':'+this.downloadUrl);
+				dataTransfer.setData('DownloadURL', this.downloadMimetype+':'+this.downloadFilename+':'+this.downloadUrl);
 			} catch(e) {}
 		}
 
@@ -152,7 +161,7 @@ Ui.Pressable.extend('Ui.Draggable',
 				var current = this.draggableData;
 				while((current !== undefined) && (current !== null)) {
 					if(!navigator.supportDrag || navigator.supportMimetypeDrag)
-						event.dataTransfer.setData(Ui.Draggable.localmimetype+'-'+current.classType.toLowerCase(), this.localkey);
+						dataTransfer.setData(Ui.Draggable.localmimetype+'-'+current.classType.toLowerCase(), this.localkey);
 					else 
 						mergedData += Ui.Draggable.localmimetype+'-'+current.classType.toLowerCase()+':'+this.localkey+';';
 					current = current.__baseclass__;
@@ -160,35 +169,34 @@ Ui.Pressable.extend('Ui.Draggable',
 			}
 			else {
 				if(!navigator.supportDrag || navigator.supportMimetypeDrag)
-					event.dataTransfer.setData(Ui.Draggable.localmimetype, this.localkey);
+					dataTransfer.setData(Ui.Draggable.localmimetype, this.localkey);
 				else
 					mergedData += Ui.Draggable.localmimetype+':'+this.localkey+';';
 			}
 		}
 		else {
 			if(!navigator.supportDrag || navigator.supportMimetypeDrag)
-				event.dataTransfer.setData(this.mimetype, this.draggableData);
+				dataTransfer.setData(this.mimetype, this.draggableData);
 			else
 				mergedData += this.mimetype+':'+this.draggableData+';';
 		}
 
 		if(!(!navigator.supportDrag || navigator.supportMimetypeDrag))
-			event.dataTransfer.setData('Text', mergedData);
+			dataTransfer.setData('Text', mergedData);
 		
 		this.fireEvent('dragstart', this);
 
 		if(this.draggableIcon !== undefined) {
 			// TODO: improve this
-			if(event.dataTransfer.setDragImage !== undefined)
-				event.dataTransfer.setDragImage(this.draggableIcon.drawing.childNodes[0], 0, 0);
+			if(dataTransfer.setDragImage !== undefined)
+				dataTransfer.setDragImage(this.draggableIcon.drawing.childNodes[0], 0, 0);
 		}
 		return false;
 	},
 
-	onDragEnd: function(event) {
-		event.stopPropagation();
+	onDragEnd: function(dataTransfer) {
 		// dropEffect give the operation done: [none|copy|link|move]
-		this.fireEvent('dragend', this, event.dataTransfer.dropEffect);
+		this.fireEvent('dragend', this, dataTransfer.dropEffect);
 
 		if(this.localkey !== undefined) {
 			Ui.Draggable.removeLocalData(this.localkey);

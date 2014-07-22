@@ -19,7 +19,7 @@ Ui.Overable.extend('Ui.Pressable',
 		this.setRole('button');
 
 		// handle pointers
-		this.connect(this.getDrawing(), 'ptrdown', this.onPointerDown);
+		this.connect(this, 'ptrdown', this.onPointerDown);
 
 		// handle keyboard
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
@@ -79,7 +79,7 @@ Ui.Overable.extend('Ui.Pressable',
 		if(this.getIsDisabled() || this.isDown || this.lock)
 			return;
 		
-		var watcher = event.pointer.watch(this.getDrawing());
+		var watcher = event.pointer.watch(this);
 		this.connect(watcher, 'move', function() {
 			if(watcher.pointer.getIsMove())
 				watcher.cancel();

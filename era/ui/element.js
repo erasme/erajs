@@ -138,8 +138,10 @@ Core.Object.extend('Ui.Element',
 		this.connect(this.drawing, 'blur', this.onBlur);
 		this.setSelectable(false);
 
-		this.addEvents('focus', 'blur',
-			'load', 'unload', 'enable', 'disable', 'visible', 'hidden');
+		this.addEvents('focus', 'blur', 'load', 'unload',
+			'enable', 'disable', 'visible', 'hidden',
+			'ptrdown', 'ptrmove', 'ptrup', 'ptrcancel',
+			'wheel', 'localdrop', 'localdragover');
 	},
 
 	setDisabled: function(disabled) {
@@ -954,11 +956,22 @@ Core.Object.extend('Ui.Element',
 		return this.pointFromWindow(element.pointToWindow(point));
 	},
 
+	getIsInside: function(x, y) {
+		var matrix = this.getLayoutTransform();
+		var point = new Ui.Point({ x: x, y: y });
+		point.matrixTransform(matrix);
+
+		if((point.x >= 0) && (point.x <= this.layoutWidth) &&
+		   (point.y >= 0) && (point.y <= this.layoutHeight))
+			return true;
+		return false;
+	},
+
 	elementFromPoint: function(x , y) {
-		if((x >= this.layoutX) && (x <= this.layoutX+this.layoutWidth) &&
-		   (y >= this.layoutY) && (y <= this.layoutY+this.layoutHeight))
+		if(this.getIsVisible() && this.getIsInside(x, y))
 			return this;
-		return undefined;
+		else
+			return undefined;
 	},
 
 	/**
