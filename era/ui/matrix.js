@@ -115,7 +115,7 @@ Core.Object.extend('Ui.Matrix',
 /**@lends Ui.Matrix#*/
 {
 	toString: function() {
-		return 'matrix('+this.a.toFixed(4)+','+this.b.toFixed(4)+','+this.c.toFixed(4)+','+this.d.toFixed(4)+','+this.e.toFixed(4)+','+this.f.toFixed(4)+')';
+		return 'matrix('+this.a.toFixed(4)+','+this.b.toFixed(4)+','+this.c.toFixed(4)+','+this.d.toFixed(4)+','+this.e.toFixed(0)+','+this.f.toFixed(0)+')';
 	}
 }, 
 /**@lends Ui.Matrix*/
