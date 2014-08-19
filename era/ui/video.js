@@ -269,6 +269,12 @@ Ui.Element.extend('Ui.Video',
 	onVideoUnload: function() {
 		if(this.canplaythrough)
 			this.pause();
+		// to force closing the possible connection to the server
+		// (Chrome BUG: https://code.google.com/p/chromium/issues/detail?id=234779)
+		this.videoDrawing.removeAttribute('src');
+		try {
+			this.videoDrawing.load();
+		} catch(e) {}
 	}
 	/**#@-*/
 }, 
