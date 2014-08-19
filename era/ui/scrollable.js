@@ -7,7 +7,6 @@ Ui.Container.extend('Ui.Scrollable', {
 	scrollbarVerticalBox: undefined,
 	showShadows: false,
 	lock: false,
-	overTask: undefined,
 	isOver: false,
 	showClock: undefined,
 	offsetX: 0,
@@ -16,6 +15,7 @@ Ui.Container.extend('Ui.Scrollable', {
 	viewHeight: 0,
 	contentWidth: 0,
 	contentHeight: 0,
+	overWatcher: undefined,
 
 	constructor: function(config) {
 		this.addEvents('scroll');
@@ -36,8 +36,32 @@ Ui.Container.extend('Ui.Scrollable', {
 		// handle mouse auto-hide bars
 		this.scrollbarHorizontalBox.setOpacity(0);
 		this.scrollbarVerticalBox.setOpacity(0);
-		this.connect(this.getDrawing(), 'mouseover', this.onMouseOver);
-		this.connect(this.getDrawing(), 'mouseout', this.onMouseOut);
+
+		this.connect(this, 'ptrmove', function(event) {
+			if(!this.getIsDisabled() && !event.pointer.getIsDown() && (this.overWatcher === undefined)) {
+				this.overWatcher = event.pointer.watch(this);
+				this.isOver = true;
+				// enter
+				this.autoShowScrollbars();
+
+				this.connect(this.overWatcher, 'move', function() {
+					if(!this.overWatcher.getIsInside())
+						this.overWatcher.cancel();
+				});
+				this.connect(this.overWatcher, 'down', function() {
+					this.overWatcher.cancel();
+				});
+				this.connect(this.overWatcher, 'up', function() {
+					this.overWatcher.cancel();
+				});
+				this.connect(this.overWatcher, 'cancel', function() {
+					this.overWatcher = undefined;
+					this.isOver = false;
+					// leave
+					this.autoHideScrollbars();
+				});
+			}
+		});
 
 		this.connect(this, 'wheel', this.onWheel);
 	},
@@ -131,33 +155,10 @@ Ui.Container.extend('Ui.Scrollable', {
 		return this.relativeOffsetY;
 	},
 
-	onMouseOver: function(event) {
-		if(this.overTask !== undefined) {
-			this.overTask.abort();
-			this.overTask = undefined;
-		}
-		else {
-			this.isOver = true;
-			// enter
-			this.autoShowScrollbars();
-		}
-	},
-
-	onMouseOut: function(event) {
-		this.overTask = new Core.DelayedTask({ delay: 0, scope: this, callback: this.onDelayedMouseOut });
-	},
-
 	onWheel: function(event) {
-		if(this.setOffset(this.contentBox.getOffsetX() + event.deltaX, this.contentBox.getOffsetY() + event.deltaY, true)) {
+		if(this.setOffset(this.contentBox.getOffsetX() + event.deltaX*3, this.contentBox.getOffsetY() + event.deltaY*3, true)) {
 			event.stopPropagation();
 		}
-	},
-
-	onDelayedMouseOut: function(event) {
-		this.isOver = false;
-		this.overTask = undefined;
-		// leave
-		this.autoHideScrollbars();
 	},
 
 	autoShowScrollbars: function() {
@@ -448,169 +449,4 @@ Ui.Transformable.extend('Ui.ScrollableContent', {
 			this.fireEvent('scroll', this);
 	}
 });
-
-/*
-Ui.LBox.extend('Ui.ScrollableContent', {
-	offsetX: 0,
-	offsetY: 0,
-	inertiaClock: undefined,
-	speedX: 0,
-	speedY: 0,
-
-	constructor: function(config) {
-		this.addEvents('scroll');
-		this.getDrawing().style.overflow = 'hidden';
-		this.connect(this.getDrawing(), 'scroll', function(event) {
-			this.offsetX = this.getDrawing().scrollLeft;
-			this.offsetY = this.getDrawing().scrollTop;
-			this.fireEvent('scroll', this, this.getDrawing().scrollLeft, this.getDrawing().scrollTop);
-		});
-//		Ui.ScrollableContent.handleScrolling(this.getDrawing());
-
-		this.connect(this.getDrawing(), 'ptrdown', function(event) {
-			this.stopInertia();
-			var startOffsetX = this.getDrawing().scrollLeft;
-			var startOffsetY = this.getDrawing().scrollTop;
-			var watcher = event.pointer.watch(this.getDrawing());
-			this.connect(watcher, 'move', function() {
-				if(!watcher.getIsCaptured()) {
-					if(watcher.pointer.getIsMove()) {
-						var direction = watcher.getDirection();
-						var allowed = false;
-						if(direction === 'left')
-							allowed = (this.getDrawing().scrollLeft + this.getDrawing().clientWidth) < this.getDrawing().scrollWidth;
-						else if(direction === 'right')
-							allowed = this.getDrawing().scrollLeft > 0;
-						else if(direction === 'bottom')
-							allowed = this.getDrawing().scrollTop > 0;
-						else if(direction === 'top')
-							allowed = (this.getDrawing().scrollTop + this.getDrawing().clientHeight) < this.getDrawing().scrollHeight;
-						if(allowed)
-							watcher.capture();
-						else
-							watcher.cancel();
-					}
-				}
-				else {
-					var delta = watcher.getDelta();
-					this.setOffset(startOffsetX - delta.x, startOffsetY - delta.y);
-				}
-			});
-			this.connect(watcher, 'up', function() {
-				var speed = watcher.getSpeed();
-				this.speedX = -speed.x;
-				this.speedY = -speed.y;
-				this.startInertia();
-			});
-		});
-	},
-
-	startInertia: function() {
-		if(this.inertiaClock === undefined) {
-			this.inertiaClock = new Anim.Clock({
-				duration: 'forever', scope: this, target: this, onTimeupdate: this.onTimeupdate
-			});
-			this.inertiaClock.begin();
-		}
-	},
-
-	onTimeupdate: function(clock, progress, delta) {
-		if(delta === 0)
-			return;
-
-		var oldScrollLeft = this.getDrawing().scrollLeft;
-		var oldScrollTop = this.getDrawing().scrollTop;
-
-		var scrollLeft = oldScrollLeft + (this.speedX * delta);
-		var scrollTop = oldScrollTop + (this.speedY * delta);
-
-		this.getDrawing().scrollLeft = scrollLeft;
-		this.getDrawing().scrollTop = scrollTop;
-
-		if((this.getDrawing().scrollLeft == oldScrollLeft) && (this.getDrawing().scrollTop == oldScrollTop)) {
-			this.stopInertia();
-			return;
-		}
-		this.speedX -= this.speedX * delta * 3;
-		this.speedY -= this.speedY * delta * 3;
-
-		if(Math.abs(this.speedX) < 0.1)
-			this.speedX = 0;
-		if(Math.abs(this.speedY) < 0.1)
-			this.speedY = 0;
-		if((this.speedX === 0) && (this.speedY === 0))
-			this.stopInertia();
-	},
-	
-	stopInertia: function() {
-		if(this.inertiaClock !== undefined) {
-			this.inertiaClock.stop();
-			this.inertiaClock = undefined;
-		}
-	},
-
-	getContentWidth: function() {
-		return this.getFirstChild().getLayoutWidth();
-	},
-
-	getContentHeight: function() {
-		return this.getFirstChild().getLayoutHeight();
-	},
-
-	setOffset: function(offsetX, offsetY) {
-		this.getDrawing().scrollLeft = offsetX;
-		this.getDrawing().scrollTop = offsetY;
-//		this.offsetX = offsetX;
-//		this.offsetY = offsetY;
-//		this.setTransform(Ui.Matrix.createTranslate(-offsetX, -offsetY));
-	},
-
-	getOffsetX: function() {
-//		return this.offsetX;
-		return this.getDrawing().scrollLeft;
-	},
-
-	getOffsetY: function() {
-//		return this.offsetY;
-		return this.getDrawing().scrollTop;
-	}
-}, {
-	arrangeCore: function(width, height) {
-		Ui.ScrollableContent.base.arrangeCore.call(this, Math.max(width, this.getMeasureWidth()), Math.max(height, this.getMeasureHeight()));
-	}
-}, {
-	handleScrolling: function(drawing) {
-		var element = new Core.Object();
-		element.connect(drawing, 'ptrdown', function(event) {
-			var startOffsetX = drawing.scrollLeft;
-			var startOffsetY = drawing.scrollTop;
-			var watcher = event.pointer.watch(drawing);
-			element.connect(watcher, 'move', function() {
-				if(!watcher.getIsCaptured()) {
-					if(watcher.pointer.getIsMove()) {
-						var direction = watcher.getDirection();
-						var allowed = false;
-						if(direction === 'left')
-							allowed = (drawing.scrollLeft + drawing.clientWidth) < drawing.scrollWidth;
-						else if(direction === 'right')
-							allowed = drawing.scrollLeft > 0;
-						else if(direction === 'bottom')
-							allowed = drawing.scrollTop > 0;
-						else if(direction === 'top')
-							allowed = (drawing.scrollTop + drawing.clientHeight) < drawing.scrollHeight;
-						if(allowed)
-							watcher.capture();
-						else
-							watcher.cancel();
-					}
-				}
-				else {
-					var delta = watcher.getDelta();
-					drawing.scrollLeft = startOffsetX - delta.x;
-					drawing.scrollTop = startOffsetY - delta.y;
-				}
-			});
-		});
-	}
-});*/
 	
