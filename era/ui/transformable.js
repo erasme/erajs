@@ -200,6 +200,8 @@ Ui.LBox.extend('Ui.Transformable',
 	},
 	
 	onPointerDown: function(event) {
+		this.stopInertia();
+
 		if(this.watcher1 === undefined) {
 			if(this.allowTranslate)
 				this.onDown();
