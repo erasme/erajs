@@ -1,6 +1,247 @@
-Ui.LBox.extend('Ui.Switch',
-/** @lends Ui.Switch#*/
-{
+Ui.Container.extend('Ui.Switch', {
+	value: false,
+	pos: 0,
+	background: undefined,
+	button: undefined,
+	alignClock: undefined,
+	speed: 0,
+	animNext: 0,
+	animStart: 0,
+	ease: undefined,
+	
+	constructor: function(config) {
+		this.addEvents('change');
+
+		this.background = new Ui.Rectangle({ width: 4, height: 4 });
+		this.appendChild(this.background);
+
+		this.bar = new Ui.Rectangle({ width: 4, height: 4 });
+		this.appendChild(this.bar);
+
+		this.button = new Ui.Movable({ moveVertical: false });
+		this.appendChild(this.button);
+		this.connect(this.button, 'move', this.onButtonMove);
+		this.connect(this.button, 'focus', this.updateColors);
+		this.connect(this.button, 'blur', this.updateColors);
+		this.connect(this.button, 'down', this.onDown);
+		this.connect(this.button, 'up', this.onUp);
+
+		this.buttonContent = new Ui.Rectangle({ radius: 10, width: 20, height: 20, margin: 10 });
+		this.button.setContent(this.buttonContent);
+
+		this.ease = new Anim.PowerEase({ mode: 'out' });
+	},
+
+	setEase: function(ease) {
+		this.ease = Anim.EasingFunction.create(ease);
+	},
+
+	getValue: function() {
+		return this.value;
+	},
+
+	setValue: function(value) {
+		value = (value === true);
+		if(this.value !== value) {
+			this.value = value;
+			if(this.getIsLoaded()) {
+				if(this.value)
+					this.startAnimation(2);
+				else
+					this.startAnimation(-2);
+			}
+			else
+				this.pos = this.value ? 1 : 0;
+		}
+	},
+	
+	onButtonMove: function(button) {
+		var pos = this.button.getPositionX();
+		var size = this.getLayoutWidth();
+		var max = size - this.button.getLayoutWidth();
+
+		if(pos < 0)
+			pos = 0;
+		else if(pos > max)
+			pos = max;
+
+		this.pos = pos / max;
+		this.disconnect(this.button, 'move', this.onButtonMove);
+		this.updatePos();
+		this.connect(this.button, 'move', this.onButtonMove);
+	},
+
+	updatePos: function() {
+		var max;
+		var width = this.getLayoutWidth();
+		var height = this.getLayoutHeight();
+		max = width - this.button.getLayoutWidth();
+		this.button.setPosition(max * this.pos, 0);
+		this.bar.arrange(
+			this.button.getLayoutWidth()/2,
+			(height-this.bar.getMeasureHeight())/2,
+			max * this.pos, this.bar.getMeasureHeight());
+	},
+	
+	getColor: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('background')).getYuv();
+		return new Ui.Color({ y: yuv.y, u: yuv.u, v: yuv.v });
+	},
+	
+	getForeground: function() {
+		return Ui.Color.create(this.getStyleProperty('foreground'));
+	},
+
+	getBackground: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('background')).getYuv();
+		var deltaY = 0;
+		if(this.button.getIsDown())
+			deltaY = -0.30;
+		return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
+	},
+
+	getButtonColor: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('background')).getYuv();
+
+		var deltaY = 0;
+		if(this.button.getIsDown())
+			deltaY = -0.30;
+		else if(this.button.getHasFocus())
+			deltaY = 0.10;
+
+		return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v });
+	},
+
+	updateColors: function() {
+		this.bar.setFill(this.getForeground());
+		this.background.setFill(this.getBackground());
+		this.buttonContent.setFill(this.getForeground());
+	},
+	
+	onDown: function(movable) {
+		this.stopAnimation();
+		this.updateColors();
+	},
+
+	onUp: function(movable, speedX, speedY, deltaX, deltaY, cumulMove, abort) {
+		// if move is very low consider a click and invert the value
+		if(!abort && (cumulMove < 10))
+			this.setValue(!this.value);
+		// else consider a move
+		else {
+			if(this.pos > 0.5)
+				speedX = 1;
+			else
+				speedX = -1;
+			this.startAnimation(speedX);
+		}
+		this.updateColors();
+	},
+	
+	startAnimation: function(speed) {
+		this.stopAnimation();
+		this.speed = speed;
+		this.animStart = this.pos;
+
+		if(this.speed > 0)
+			this.animNext = 1;
+		else
+			this.animNext = 0;
+		
+		if(this.animStart !== this.animNext) {
+			this.alignClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onAlignTick });
+			this.alignClock.begin();
+		}
+		else {
+			if(this.value !== (this.animNext === 1)) {
+				this.value = (this.animNext === 1);
+				this.fireEvent('change', this, this.value);
+			}
+		}
+	},
+
+	stopAnimation: function() {
+		if(this.alignClock !== undefined) {
+			this.alignClock.stop();
+			this.alignClock = undefined;
+		}
+	},
+
+	onAlignTick: function(clock, progress, delta) {
+		if(delta === 0)
+			return;
+
+		var relprogress = (clock.getTime() * this.speed) / (this.animNext - this.animStart);
+		if(relprogress >= 1) {
+			this.alignClock.stop();
+			this.alignClock = undefined;
+			relprogress = 1;
+			this.value = (this.animNext === 1);
+			this.fireEvent('change', this, this.value);
+		}
+		relprogress = this.ease.ease(relprogress);
+		this.pos = (this.animStart + relprogress * (this.animNext - this.animStart));
+		this.updatePos();
+	}
+	
+}, {
+	measureCore: function(width, height) {
+		var buttonSize = this.button.measure(0, 0);
+		var size = buttonSize;
+		var res;
+
+		res = this.background.measure(buttonSize.width * 2, 0);
+		if(res.width > size.width)
+			size.width = res.width;
+		if(res.height > size.height)
+			size.height = res.height;
+		res = this.bar.measure(buttonSize.width * 2, 0);
+		if(res.width > size.width)
+			size.width = res.width;
+		if(res.height > size.height)
+			size.height = res.height;
+		if(buttonSize.width * 2 > size.width)
+			size.width = buttonSize.width * 2;
+		return size;
+	},
+
+	arrangeCore: function(width, height) {	
+		this.button.arrange(0, (height-this.button.getMeasureHeight())/2, this.button.getMeasureWidth(), this.button.getMeasureHeight());
+		this.background.arrange(
+			this.button.getLayoutWidth()/2,
+			(height-this.background.getMeasureHeight())/2,
+			width-this.button.getLayoutWidth(), this.background.getMeasureHeight());
+		this.updatePos();
+	},
+
+	onStyleChange: function() {
+		this.background.setRadius(this.getStyleProperty('radius'));
+		this.bar.setRadius(this.getStyleProperty('radius'));
+		var borderWidth = this.getStyleProperty('borderWidth');
+		this.updateColors();
+	},
+
+	onDisable: function() {
+		Ui.Slider.base.onDisable.call(this);
+		this.button.setOpacity(0.2);
+	},
+
+	onEnable: function() {
+		Ui.Slider.base.onEnable.call(this);
+		this.button.setOpacity(1);
+	}
+}, {
+	style: {
+		radius: 0,
+		borderWidth: 1,
+		background: '#e1e1e1',
+		backgroundBorder: '#919191',
+		foreground: '#00b1b1'
+	}
+});
+	
+/*
+Ui.LBox.extend('Ui.Switch', {
 	value: false,
 	background: undefined,
 	pos: 1,
@@ -13,12 +254,7 @@ Ui.LBox.extend('Ui.Switch',
 	animNext: 0,
 	animStart: 0,
 	ease: undefined,
-
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.LBox
-	 */
+	
 	constructor: function(config) {
 		this.setFocusable(true);
 		this.connect(this, 'focus', this.updateColors);
@@ -76,15 +312,7 @@ Ui.LBox.extend('Ui.Switch',
 	setEase: function(ease) {
 		this.ease = Anim.EasingFunction.create(ease);
 	},
-
-	setTrueContent: function(trueContent) {
-		this.switchbox.setContent1(trueContent);
-	},
-
-	setFalseContent: function(falseContent) {
-		this.switchbox.setContent2(falseContent);
-	},
-
+	
 	getValue: function() {
 		return this.value;
 	},
@@ -98,10 +326,6 @@ Ui.LBox.extend('Ui.Switch',
 				this.startAnimation(-2);
 		}
 	},
-
-	/**#@+
-	* @private
-	*/
 
 	onKeyDown: function(event) {
 		if(this.getIsDisabled())
@@ -213,14 +437,6 @@ Ui.LBox.extend('Ui.Switch',
 		this.updatePos();
 	},
 
-	getGradient: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.LinearGradient({ stops: [
-			{ offset: 0, color: new Ui.Color({ y: yuv.y + 0.10, u: yuv.u, v: yuv.v }) },
-			{ offset: 1, color: new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v }) }
-		] });
-	},
-
 	updateColors: function() {
 		var color = this.getStyleProperty('color');
 
@@ -231,11 +447,7 @@ Ui.LBox.extend('Ui.Switch',
 		this.bg1.setFill(this.getStyleProperty('trueColor'));
 		this.bg2.setFill(this.getStyleProperty('falseColor'));
 	}
-
-	/**#@-*/
-},
-/** @lends Ui.Switch#*/
-{
+}, {
 	arrangeCore: function(width, height) {
 		Ui.Switch.base.arrangeCore.call(this, width, height);
 		this.updatePos();
@@ -265,19 +477,12 @@ Ui.LBox.extend('Ui.Switch',
 	}
 });
 
-Ui.LBox.extend('Ui.SwitchButton', 
-/**@lends Ui.SwitchButton#*/
-{
+Ui.LBox.extend('Ui.SwitchButton', {
 	shadow: undefined,
 	background: undefined,
 	radius: 3,
 	fill: undefined,
 
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.LBox
-	 */
 	constructor: function(config) {
 		this.shadow = new Ui.Rectangle({ radius: 3 });
 		this.append(this.shadow);
@@ -309,18 +514,11 @@ Ui.LBox.extend('Ui.SwitchButton',
 	}
 });
 
-Ui.Container.extend('Ui.SwitchBox', 
-/**@lends Ui.SwitchBox#*/
-{
+Ui.Container.extend('Ui.SwitchBox', {
 	content1Box: undefined,
 	content2Box: undefined,
 	button: undefined,
-
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.Container
-	 */
+	
 	constructor: function() {
 		this.content1Box = new Ui.LBox({ margin: 5 });
 		this.appendChild(this.content1Box);
@@ -367,9 +565,7 @@ Ui.Container.extend('Ui.SwitchBox',
 	getContentWidth: function() {
 		return this.getLayoutWidth() - this.button.getLayoutWidth();
 	}
-}, 
-/**@lends Ui.SwitchBox#*/
-{
+}, {
 	measureCore: function(width, height) {
 		var c1size = this.content1Box.measure(0, 0);
 		var c2size = this.content2Box.measure(0, 0);
@@ -383,5 +579,5 @@ Ui.Container.extend('Ui.SwitchBox',
 		this.content2Box.arrange(contentWidth + this.button.getMeasureWidth(), 0, contentWidth, height);
 		this.button.arrange(contentWidth, 0, this.button.getMeasureWidth(), height);
 	}
-});
+});*/
 
