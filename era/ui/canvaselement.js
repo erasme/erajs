@@ -819,13 +819,13 @@ Core.Object.extend('Core.SVG2DContext', {
 	parseFont: function(font) {
 		var tab = font.split(' ');
 		if(tab.length === 1)
-			return { style: 'default', weight: 'normal', size: '16px', family: tab[0] };
+			return { style: 'default', weight: 'normal', size: 16, family: tab[0] };
 		if(tab.length === 2)
-			return { style: 'default', weight: 'normal', size: tab[0], family: tab[1] };
+			return { style: 'default', weight: 'normal', size: parseInt(tab[0]), family: tab[1] };
 		else if(tab.length === 3)
-			return { style: 'default', weight: tab[0], size: tab[1], family: tab[2] };
+			return { style: 'default', weight: tab[0], size: parseInt(tab[1]), family: tab[2] };
 		else if(tab.length === 4)
-			return { style: tab[0], weight: tab[1], size: tab[2], family: tab[3] };
+			return { style: tab[0], weight: tab[1], size: parseInt(tab[2]), family: tab[3] };
 	},
 
 	roundRectFilledShadow: function(x, y, width, height, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft, inner, shadowWidth, color) {
