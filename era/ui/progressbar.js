@@ -1,15 +1,14 @@
 
-Ui.Container.extend('Ui.ProgressBar', 
-{
+Ui.Container.extend('Ui.ProgressBar', {
 	value: 0,
 	bar: undefined,
-	border: undefined,
+	background: undefined,
 
 	constructor: function(config) {
-		this.bar = new Ui.Rectangle({ margin: 1, height: 4 });
+		this.background = new Ui.Rectangle({ height: 4 });
+		this.appendChild(this.background);
+		this.bar = new Ui.Rectangle({ height: 4 });
 		this.appendChild(this.bar);
-		this.border = new Ui.Frame({ frameWidth: 2 });
-		this.appendChild(this.border);
 	},
 
 	setValue: function(value) {
@@ -39,7 +38,7 @@ Ui.Container.extend('Ui.ProgressBar',
 		minHeight = Math.max(size.height, minHeight);
 		minWidth = Math.max(size.width, minWidth);
 
-		size = this.border.measure(width, height);
+		size = this.background.measure(width, height);
 		minHeight = Math.max(size.height, minHeight);
 		minWidth = Math.max(size.width, minWidth);
 
@@ -47,7 +46,7 @@ Ui.Container.extend('Ui.ProgressBar',
 	},
 
 	arrangeCore: function(width, height) {
-		this.border.arrange(0, 0, width, height);
+		this.background.arrange(0, 0, width, height);
 
 		var barWidth = width * this.value;
 		if(barWidth < 2)
@@ -60,14 +59,15 @@ Ui.Container.extend('Ui.ProgressBar',
 
 	onStyleChange: function() {
 		var radius = this.getStyleProperty('radius');
-		this.bar.setRadius(radius-1);
-		this.bar.setFill(this.getStyleProperty('color'));
-		this.border.setRadius(radius);
-		this.border.setFill(this.getStyleProperty('color'));
+		this.bar.setRadius(radius);
+		this.bar.setFill(this.getStyleProperty('foreground'));
+		this.background.setRadius(radius);
+		this.background.setFill(this.getStyleProperty('background'));
 	}
-}, 
-{
+}, {
 	style: {
+		background: '#999',
+		foreground: '#0cc',
 		color: '#999999',
 		radius: 0
 	}
