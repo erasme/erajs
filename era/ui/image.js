@@ -46,6 +46,13 @@ Ui.Element.extend('Ui.Image',
 		this.naturalHeight = undefined;
 		this.src = src;
 		this.imageDrawing.setAttribute('src', src);
+		if((this.imageDrawing.complete === true) && (this.loaddone !== true)) {
+			this.loaddone = true;
+			this.naturalWidth = this.imageDrawing.naturalWidth;
+			this.naturalHeight = this.imageDrawing.naturalHeight;
+			this.fireEvent('ready', this);
+			this.invalidateMeasure();
+		}
 		this.setSrcLock = false;
 	},
 	
