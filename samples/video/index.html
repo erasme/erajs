@@ -5,64 +5,69 @@
 	<title>Test Video</title>
     <script src='../../era/era-debug.js'></script>
 	<script>
-var app = new Ui.App();
 
-var vbox = new Ui.VBox();
-app.setContent(vbox);
+Ui.App.extend('Test.App', {
 
-var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
-vbox.append(toolbar);
+	constructor: function(config) {
 
-var playButton = new Ui.Button({ text: 'play' });
-toolbar.append(playButton);
-app.connect(playButton, 'press', function() {
-	video.play();
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		var toolbar = new Ui.ToolBar({ verticalAlign: 'top' });
+		vbox.append(toolbar);
+
+		var playButton = new Ui.Button({ text: 'play' });
+		toolbar.append(playButton);
+		this.connect(playButton, 'press', function() {
+			video.play();
+		});
+
+		var pauseButton = new Ui.Button({ text: 'pause' });
+		toolbar.append(pauseButton);
+		this.connect(pauseButton, 'press', function() {
+			video.pause();
+		});
+
+		var stopButton = new Ui.Button({ text: 'stop' });
+		toolbar.append(stopButton);
+		this.connect(stopButton, 'press', function() {
+			video.stop();
+		});
+
+		var delayplayButton = new Ui.Button({ text: 'delay play 1s' });
+		toolbar.append(delayplayButton);
+		this.connect(delayplayButton, 'press', function() {
+			new Core.DelayedTask({ delay: 1, callback: function() {
+				video.play();
+			}});
+		});
+
+		var progressbar = new Ui.ProgressBar({ verticalAlign: 'center' });
+		toolbar.append(progressbar, true);
+
+		var lbox = new Ui.LBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+		vbox.append(lbox, true);
+
+		lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
+
+		var video = new Ui.Video({ margin: 10, width: 512, height: 288, oggSrc: 'video.ogv', mp4Src: 'video.m4v', webmSrc: 'video.webm', volume: 1 });
+		lbox.append(video);
+
+		this.connect(video, 'ready', function() {
+		//	console.log('video ready');
+		});
+
+		this.connect(video, 'ended', function() {
+		//	console.log('video ended');
+		});
+
+		this.connect(video, 'timeupdate', function(v, time) {
+			progressbar.setValue(time/video.getDuration());
+		});
+	}
 });
 
-var pauseButton = new Ui.Button({ text: 'pause' });
-toolbar.append(pauseButton);
-app.connect(pauseButton, 'press', function() {
-	video.pause();
-});
-
-var stopButton = new Ui.Button({ text: 'stop' });
-toolbar.append(stopButton);
-app.connect(stopButton, 'press', function() {
-	video.stop();
-});
-
-var delayplayButton = new Ui.Button({ text: 'delay play 1s' });
-toolbar.append(delayplayButton);
-app.connect(delayplayButton, 'press', function() {
-	new Core.DelayedTask({ delay: 1, callback: function() {
-		video.play();
-	}});
-});
-
-
-var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', height: 20 });
-toolbar.append(progressbar, true);
-
-var lbox = new Ui.LBox({ horizontalAlign: 'center', verticalAlign: 'center' });
-vbox.append(lbox, true);
-
-lbox.append(new Ui.Rectangle({ fill: 'lightgreen' }));
-
-var video = new Ui.Video({ margin: 10, width: 512, height: 288, oggSrc: 'video.ogv', mp4Src: 'video.m4v', webmSrc: 'video.webm', volume: 1 });
-lbox.append(video);
-
-app.connect(video, 'ready', function() {
-//	console.log('video ready');
-});
-
-app.connect(video, 'ended', function() {
-//	console.log('video ended');
-});
-
-app.connect(video, 'timeupdate', function(v, time) {
-//	console.log('video pos: '+time);
-	progressbar.setValue(time/video.getDuration());
-});
+new Test.App();
 
 </script>
   </head>
