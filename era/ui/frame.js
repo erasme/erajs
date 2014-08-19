@@ -112,7 +112,7 @@ Ui.CanvasElement.extend('Ui.Frame', {
 
 		ctx.beginPath();
 		ctx.roundRect(0, 0, w, h, topLeft, topRight, bottomRight, bottomLeft);
-		ctx.roundRect(this.frameWidth, this.frameWidth, w-(this.frameWidth*2), h-(this.frameWidth*2), topLeft, topRight, bottomRight, bottomLeft, true);
+		ctx.roundRect(this.frameWidth, this.frameWidth, w-(this.frameWidth*2), h-(this.frameWidth*2), Math.max(0, topLeft-this.frameWidth), Math.max(0, topRight-this.frameWidth), Math.max(0, bottomRight-this.frameWidth), Math.max(0, bottomLeft-this.frameWidth), true);
 		ctx.closePath();
 		if(Ui.Color.hasInstance(this.fill))
 			ctx.fillStyle = this.fill.getCssRgba();
