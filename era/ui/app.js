@@ -383,49 +383,12 @@ Ui.LBox.extend('Ui.App',
 
 	onReady: function() {
 		if(this.loaded) {
-/*
-//			document.documentElement.style.position = 'absolute';
-			document.documentElement.style.padding = '0px';
-			document.documentElement.style.margin = '0px';
-			document.documentElement.style.border = '0px solid black';
-			document.documentElement.style.overflow = 'hidden';
-//			document.documentElement.style.right = '0px';
-//			document.documentElement.style.left = '0px';
-//			document.documentElement.style.top = '0px';
-//			document.documentElement.style.bottom = '0px';
-//			document.documentElement.style.width = '100%';
-//			document.documentElement.style.height = '100%';
-
-//			if(this.content !== undefined) {
-				document.body.style.padding = '0px';
-				document.body.style.margin = '0px';
-				document.body.style.border = '0px solid black';
-				document.body.style.outline = 'none';
-				document.body.style.overflow = 'hidden';
-
-				document.body.style.position = 'absolute';
-				document.body.style.right = '0px';
-				document.body.style.left = '0px';
-				document.body.style.top = '0px';
-				document.body.style.bottom = '0px';
-				document.body.appendChild(this.getDrawing());
-//			}*/
-
-			document.documentElement.style.overflow = 'hidden';
-			//document.documentElement.style.position = 'absolute';
-			//document.documentElement.style.display = 'block';
+			document.documentElement.style.position = 'absolute';
 			document.documentElement.style.padding = '0px';
 			document.documentElement.style.margin = '0px';
 			document.documentElement.style.border = '0px solid black';
 			document.documentElement.style.width = '100%';
 			document.documentElement.style.height = '100%';
-
-			//document.documentElement.style.display = 'block';
-			//document.documentElement.style.position = 'absolute';
-			//document.documentElement.style.top = '0px';
-			//document.documentElement.style.bottom = '0px';
-			//document.documentElement.style.left = '0px';
-			//document.documentElement.style.right = '0px';
 
 			document.body.style.position = 'absolute';
 			document.body.style.overflow = 'hidden';
@@ -433,19 +396,12 @@ Ui.LBox.extend('Ui.App',
 			document.body.style.margin = '0px';
 			document.body.style.border = '0px solid black';
 			document.body.style.outline = 'none';
-//			document.body.style.width = '100%';
-//			document.body.style.height = '100%';
-
-			document.body.style.top = '0px';
-			document.body.style.bottom = '0px';
-			document.body.style.left = '0px';
-			document.body.style.right = '0px';
+			document.body.style.width = '100%';
+			document.body.style.height = '100%';
 
 			document.body.appendChild(this.getDrawing());
 
 			this.handleScrolling(document.body);
-
-//			document.body.appendChild(this.getDrawing());
 
 			if((this.requireFonts !== undefined) && (this.testFontTask === undefined))
 				this.testRequireFonts();
@@ -458,11 +414,7 @@ Ui.LBox.extend('Ui.App',
 			if((this.updateTask === false) && this.ready) {
 				var app = this;
 				this.updateTask = true;
-//				console.log('onReady set updateTask == true');
 				requestAnimationFrame(function() { app.update(); });
-				// really a bullshit iOS
-				if(navigator.iOs)
-					new Core.DelayedTask({ delay: 0.5, scope: this, callback: this.update });
 			}
 
 			// create a WheelManager to handle wheel events
@@ -519,7 +471,7 @@ Ui.LBox.extend('Ui.App',
 		this.drawList = element;
 		if((this.updateTask === false) && this.ready) {
 			this.updateTask = true;
-			requestAnimationFrame(this.bindedUpdate);
+			setTimeout(this.bindedUpdate, 0);
 		}
 	},
 
@@ -564,9 +516,46 @@ Ui.LBox.extend('Ui.App',
 				}
 			});
 		});
+	},
+
+	getElementsByClassName: function(className) {
+		var res = [];
+		var reqSearch = function(current) {
+			if(current.classType === className)
+				res.push(current);
+			if(current.children !== undefined) {
+				for(var i = 0; i < current.children.length; i++)
+					reqSearch(current.children[i]);
+			}
+		};
+		reqSearch(this);
+		return res;
+	},
+
+	getElementByDrawing: function(drawing) {
+		var reqSearch = function(current) {
+			if(current.drawing === drawing)
+				return current;
+			if(current.children !== undefined) {
+				for(var i = 0; i < current.children.length; i++) {
+					var res = reqSearch(current.children[i]);
+					if(res !== undefined)
+						return res;
+				}
+			}
+		};
+		return reqSearch(this);
 	}
-	
+
 }, {
+	getInverseLayoutTransform: function() {
+		return Ui.Matrix.createTranslate(-document.body.scrollLeft, -document.body.scrollTop).multiply(Ui.App.base.getInverseLayoutTransform());
+	},
+
+	getLayoutTransform: function() {
+		return Ui.App.base.getLayoutTransform().translate(document.body.scrollLeft, document.body.scrollTop);
+	},
+
 	invalidateMeasure: function() {
 		// Ui.App is layout root, handle the layout here
 		this.invalidateLayout();
