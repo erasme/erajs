@@ -191,8 +191,11 @@ Core.Object.extend('Ui.DragDataTransfer',
 			}
 			else {
 				res = element.cloneNode(false);
-				if('style' in res)
+				if('style' in res) {
 					res.style.webkitUserSelect = 'none';
+					// to disable the magnifier in iOS WebApp mode
+					res.style.webkitUserCallout = 'none';
+				}
 				for(i = 0; i < element.childNodes.length; i++) {
 					child = element.childNodes[i];
 					res.appendChild(this.generateImage(child));
@@ -216,8 +219,7 @@ Core.Object.extend('Ui.DragDataTransfer',
 
 	onTimer: function() {
 		this.timer = undefined;
-
-		console.log('onTimer');
+	
 		this.fireEvent('start', this);
 
 		if(this.hasData()) {
@@ -227,9 +229,18 @@ Core.Object.extend('Ui.DragDataTransfer',
 			this.image.style.touchAction = 'none';
 			this.image.style.zIndex = 100000;
 			this.image.style.position = 'absolute';
-
-			//console.log(this.image.outerHTML);
-
+			// remove possible matrix transform
+			if('removeProperty' in this.image.style)
+				this.image.style.removeProperty('transform');
+			if(navigator.isIE && ('removeProperty' in this.image.style))
+				this.image.style.removeProperty('-ms-transform');
+			else if(navigator.isGecko)
+				this.image.style.removeProperty('-moz-transform');
+			else if(navigator.isWebkit)
+				this.image.style.removeProperty('-webkit-transform');
+			else if(navigator.isOpera)
+				this.image.style.removeProperty('-o-transform');
+			
 			if(navigator.supportOpacity) {
 				this.image.style.opacity = 1;
 				this.image.firstChild.style.opacity = 0.8;
@@ -255,8 +266,6 @@ Core.Object.extend('Ui.DragDataTransfer',
 			}
 
 			document.body.appendChild(this.image);
-
-//			console.log(this+'.onTimer CAPTURE');
 
 			this.watcher.capture();
 		}
