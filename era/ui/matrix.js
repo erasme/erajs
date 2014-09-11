@@ -33,17 +33,17 @@ Core.Object.extend('Ui.Matrix',
 	},
 
 	translate: function(x, y) {
-		this.multiply(Ui.Matrix.createTranslate(x, y));
+		return this.multiply(Ui.Matrix.createTranslate(x, y));
 	},
 
 	rotate: function(angle) {
-		this.multiply(Ui.Matrix.createRotate(angle));
+		return this.multiply(Ui.Matrix.createRotate(angle));
 	},
 
 	scale: function(scaleX, scaleY) {
 		if(scaleY === undefined)
 			scaleY = scaleX;
-		this.multiply(Ui.Matrix.createScale(scaleX, scaleY));
+		return this.multiply(Ui.Matrix.createScale(scaleX, scaleY));
 	},
 
 	multiply: function(matrix) {
@@ -56,6 +56,7 @@ Core.Object.extend('Ui.Matrix',
 		var f = matrix.e * this.b + matrix.f * this.d + this.f;
 
 		this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f;
+		return this;
 	},
 
 	getDeterminant: function() {
@@ -76,6 +77,7 @@ Core.Object.extend('Ui.Matrix',
 		var tf = ((this.e * this.b) - (this.a * this.f)) * invd;
 		this.a = ta; this.b = tb; this.c = tc; this.d = td;
 		this.e = te; this.f = tf;
+		return this;
 	},
 
 	setMatrix: function(a, b, c, d, e, f) {
