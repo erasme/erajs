@@ -33,6 +33,12 @@ Core.Object.extend('Ui.PointerWatcher', {
 		delete(config.pointer);
 	},
 
+	getAbsoluteDelta: function() {
+		var initial = { x: this.pointer.getInitialX(), y: this.pointer.getInitialY() };
+		var current = { x: this.pointer.getX(), y: this.pointer.getY() };
+		return { x: current.x - initial.x, y: current.y - initial.y };
+	},
+
 	getDelta: function() {
 		var initial = { x: this.pointer.getInitialX(), y: this.pointer.getInitialY() };
 		var current = { x: this.pointer.getX(), y: this.pointer.getY() };
@@ -48,7 +54,10 @@ Core.Object.extend('Ui.PointerWatcher', {
 
 	getIsInside: function() {
 		var pos = this.getPosition();
-		return this.element.getIsInside(pos.x, pos.y);
+		if((pos.x >= 0) && (pos.x <= this.element.getLayoutWidth()) &&
+		   (pos.y >= 0) && (pos.y <= this.element.getLayoutHeight()))
+			return true;
+		return false;
 	},
 
 	getDirection: function() {
@@ -145,7 +154,6 @@ Core.Object.extend('Ui.Pointer',
 	y: 0,
 	initialX: 0,
 	initialY: 0,
-	captureElement: undefined,
 	type: undefined,
 	start: undefined,
 	cumulMove: 0,
@@ -194,6 +202,10 @@ Core.Object.extend('Ui.Pointer',
 		return this.buttons !== 0;
 	},
 
+	getIsCaptured: function() {
+		return (this.captureWatcher !== undefined);
+	},
+
 	getX: function() {
 		return this.x;
 	},
@@ -228,9 +240,9 @@ Core.Object.extend('Ui.Pointer',
 	},
 
 	move: function(x, y) {
-		if(x == undefined)
+		if(x === undefined)
 			x = this.x;
-		if(y == undefined)
+		if(y === undefined)
 			y = this.y;
 		
 		if((this.x !== x) || (this.y !== y)) {
@@ -251,16 +263,14 @@ Core.Object.extend('Ui.Pointer',
 			var watchers = this.watchers.slice();
 			for(var i = 0; i < watchers.length; i++)
 				watchers[i].move();
-
-			var target;
-			if(this.captureElement !== undefined)
-				target = this.captureElement;
-			else
-				target = Ui.App.current.elementFromPoint(this.x, this.y);
-			if(target !== undefined) {
-				var pointerEvent = new Ui.PointerEvent({ type: 'ptrmove', pointer: this });
-				this.fireEvent('ptrmove', pointerEvent);
-				pointerEvent.dispatchEvent(target);
+			
+			if(this.captureWatcher === undefined) {
+				var target = Ui.App.current.elementFromPoint(this.x, this.y);
+				if(target !== undefined) {
+					var pointerEvent = new Ui.PointerEvent({ type: 'ptrmove', pointer: this });
+					this.fireEvent('ptrmove', pointerEvent);
+					pointerEvent.dispatchEvent(target);
+				}
 			}
 		}
 	},
@@ -281,10 +291,6 @@ Core.Object.extend('Ui.Pointer',
 
 	getIsMove: function() {
 		return this.cumulMove >= Ui.Pointer.MOVE_DELTA;
-	},
-
-	getCaptureElement: function() {
-		return this.captureElement;
 	},
 
 	down: function(x, y, buttons) {
@@ -318,19 +324,17 @@ Core.Object.extend('Ui.Pointer',
 		for(var i = 0; i < watchers.length; i++)
 			watchers[i].up();
 		this.watchers = [];
-		this.captureWatcher = undefined;
 		this.buttons = 0;
 
-		var target;
-		if(this.captureElement !== undefined)
-			target = this.captureElement;
-		else
-			target = Ui.App.current.elementFromPoint(this.x, this.y);
-		if(target !== undefined) {
-			var pointerEvent = new Ui.PointerEvent({ type: 'ptrup', pointer: this });
-			this.fireEvent('ptrup', pointerEvent);
-			pointerEvent.dispatchEvent(target);
+		if(this.captureWatcher === undefined) {
+			var target = Ui.App.current.elementFromPoint(this.x, this.y);
+			if(target !== undefined) {
+				var pointerEvent = new Ui.PointerEvent({ type: 'ptrup', pointer: this });
+				this.fireEvent('ptrup', pointerEvent);
+				pointerEvent.dispatchEvent(target);
+			}
 		}
+		this.captureWatcher = undefined;
 	}
 }, {
 	watch: function(element) {
@@ -358,6 +362,8 @@ Core.Object.extend('Ui.PointerManager',
 {
 	touches: undefined,
 	lastUpdate: undefined,
+	lastTouchX: -1,
+	lastTouchY: -1,
 	mouse: undefined,
 	app: undefined,
 
@@ -407,52 +413,71 @@ Core.Object.extend('Ui.PointerManager',
 			wrapperDblClick.scope = this;
 			wrapperDblClick.callback = this.onIEMouseDblClick;
 			document.attachEvent('ondblclick', wrapperDblClick);
+
+			this.connect(document, 'selectstart', this.onSelectStart);
 		}
 		else {
-			/*this.connect(window, 'mousedown', this.onMouseDown);
+			this.mouse = new Ui.Pointer({ type: 'mouse', id: 0 });
+
+			this.connect(window, 'mousedown', this.onMouseDown);
 			this.connect(window, 'mousemove', this.onMouseMove);
-			this.connect(window, 'mouseup', this.onMouseUp);*/
+			this.connect(window, 'mouseup', this.onMouseUp);
+//			this.connect(document, 'select', function(event) {
+//				console.log('select '+event.target+' START '+this.mouse.getIsCaptured());
+//			});
+			this.connect(document, 'selectstart', this.onSelectStart);
+//			this.connect(document, 'dragstart', function(event) {
+//				console.log('ondragstart');
+//				if(this.mouse !== undefined)
+//					this.mouse.capture(undefined);
+//			}, true);
 
-			if(!navigator.iOs && !navigator.Android) {
-				this.mouse = new Ui.Pointer({ type: 'mouse', id: 0 });
+			this.connect(document, 'contextmenu', function(event) {
+				if(this.mouse !== undefined) {
+					this.mouse.capture(undefined);
+					this.mouse.up();
+				}
+			});
 
-				this.connect(window, 'mousedown', this.onMouseDown);
-				this.connect(window, 'mousemove', this.onMouseMove);
-				this.connect(window, 'mouseup', this.onMouseUp);
-				this.connect(document, 'selectstart', function(event) {
-//					console.log('selectstart '+event.target+' START');
-					var selectable = false;
-					var current = event.target;
-					while((current !== null) && (current !== undefined)) {
-//						console.log('selectstart current '+current+' '+current.selectable);
-						if(current.selectable === true) {
-							selectable = true;
-							break;
-						}
-						current = current.parentNode;
-					}
-					if(!selectable)
-						event.preventDefault();
-					else if(this.mouse !== undefined)
-						this.mouse.capture(undefined);
-//					console.log('selectstart '+event.target+' END, selectable: '+selectable);
-				});
-//				this.connect(document, 'dragstart', function(event) {
-//					console.log('ondragstart');
-//					if(this.mouse !== undefined)
-//						this.mouse.capture(undefined);
-//				}, true);
-			}
-			this.connect(document.body, 'touchstart', this.updateTouches);
-			this.connect(document.body, 'touchmove', this.updateTouches);
-			this.connect(document.body, 'touchend', this.updateTouches);
-			this.connect(document.body, 'touchcancel', this.updateTouches);
+			this.connect(document.body, 'touchstart', this.updateTouches, true);
+			this.connect(document.body, 'touchmove', this.updateTouches, true);
+			this.connect(document.body, 'touchend', this.updateTouches, true);
+			this.connect(document.body, 'touchcancel', this.updateTouches, true);
 
 //			this.connect(document.body, 'touchcancel', function() {	console.log('touchcancel');	});
 		}
 	},
-	
+
+	onSelectStart: function(event) {
+		//console.log('selectstart '+event.target+' START '+this.mouse.getIsCaptured());
+		if(this.mouse.getIsCaptured()) {
+			event.preventDefault();
+			return;
+		}
+
+		var selectable = false;
+		var current = event.target;
+		while((current !== null) && (current !== undefined)) {
+			if(current.selectable === true) {
+				selectable = true;
+				break;
+			}
+			current = current.parentNode;
+		}
+		if(!selectable)
+			event.preventDefault();
+		else if(this.mouse !== undefined)
+			this.mouse.capture(undefined);
+	},
+
 	onMouseDown: function(event) {
+		// avoid emulated mouse event after touch events
+		var deltaTime = (((new Date().getTime())/1000) - this.lastUpdate);
+		var deltaX = (this.lastTouchX - event.clientX);
+		var deltaY = (this.lastTouchY - event.clientY);
+		var deltaPos =  Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		if((deltaTime < 10) && deltaPos < 20)
+			return;
 		var buttons = 0;
 		if(event.button === 0)
 			buttons |= 1;
@@ -469,26 +494,26 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	onMouseMove: function(event) {
+		// avoid emulated mouse event after touch events
+		var deltaTime = (((new Date().getTime())/1000) - this.lastUpdate);
+		var deltaX = (this.lastTouchX - event.clientX);
+		var deltaY = (this.lastTouchY - event.clientY);
+		var deltaPos =  Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		if((deltaTime < 10) && deltaPos < 20)
+			return;
 		this.mouse.move(event.clientX, event.clientY);
 	},
 
 	onMouseUp: function(event) {
+		// avoid emulated mouse event after touch events
+		var deltaTime = (((new Date().getTime())/1000) - this.lastUpdate);
+		var deltaX = (this.lastTouchX - event.clientX);
+		var deltaY = (this.lastTouchY - event.clientY);
+		var deltaPos =  Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		if((deltaTime < 10) && deltaPos < 20)
+			return;
 		this.mouse.move(event.clientX, event.clientY);
-
-		var buttons = 0;
-		if(event.button === 0)
-			buttons |= 1;
-		else if(event.button === 1)
-			buttons |= 2;
-		else if(event.button === 2)
-			buttons |= 4;
-
-		var oldButtons = this.mouse.getButtons();
-	
-		if((oldButtons & ~buttons) === 0)
-			this.mouse.up();
-		else
-			this.mouse.setButtons(oldButtons & ~buttons);
+		this.mouse.up();
 	},
 
 	onIEMouseDown: function(event) {
@@ -511,19 +536,7 @@ Core.Object.extend('Ui.PointerManager',
 
 	onIEMouseUp: function(event) {
 		this.mouse.move(event.clientX, event.clientY);
-
-		var buttons = 0;
-		if(event.button === 4)
-			buttons |= 2;
-		else if(event.button === 2)
-			buttons |= 4;
-
-		var oldButtons = this.mouse.getButtons();
-	
-		if((oldButtons & ~buttons) === 0)
-			this.mouse.up();
-		else
-			this.mouse.setButtons(oldButtons & ~buttons);
+		this.mouse.up();
 	},
 
 	onIEMouseDblClick: function(event) {
@@ -593,6 +606,9 @@ Core.Object.extend('Ui.PointerManager',
 			}
 		}
 		for(var i = 0; i < event.touches.length; i++) {
+			this.lastTouchX = event.touches[i].clientX;
+			this.lastTouchY = event.touches[i].clientY;
+
 			if(this.pointers[event.touches[i].identifier] == undefined) {
 				var pointer = new Ui.Pointer({
 					type: 'touch', id: event.touches[i].identifier
@@ -601,6 +617,10 @@ Core.Object.extend('Ui.PointerManager',
 				pointer.down(event.touches[i].clientX, event.touches[i].clientY, 1);
 			}
 		}
+		// we dont prevent default for all events because we need
+		// default behavious like focus handling, text selection,
+		// virtual keyboard... so we will also need to detect
+		// emulated mouse event to avoid them
 		if(event.type === 'touchmove')
 			event.preventDefault();
 	}
