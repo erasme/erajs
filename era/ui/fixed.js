@@ -82,8 +82,11 @@ Ui.Container.extend('Ui.Fixed',
 	},
 
 	onChildInvalidateMeasure: function(child, event) {
-		if(event !== 'remove')
+		if(event !== 'remove') {
 			child.measure(this.getLayoutWidth(), this.getLayoutHeight());
+			child.arrange(0, 0, child.getMeasureWidth(), child.getMeasureHeight());
+			this.updateItemTransform(child);
+		}
 	},
 
 	onChildInvalidateArrange: function(child) {
