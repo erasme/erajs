@@ -344,6 +344,8 @@ Ui.Container.extend('Ui.MenuToolBar',
 			else
 				i++;
 		}
+		if(totalWidth > 0)
+		 	totalWidth -= this.spacing;
 		this.menuNeeded = this.keepItems.length !== this.items.length;
 
 		var constraintSize = constraintWidth;
