@@ -126,7 +126,7 @@ Ui.Pressable.extend('Ui.Draggable',
 	 */
 
 	onDraggablePointerDown: function(event) {
-		if(this.lock || this.getIsDisabled())
+		if(this.lock || this.getIsDisabled() || (this.draggableData === undefined))
 			return;
 
 //		console.log('onPointerDown');
