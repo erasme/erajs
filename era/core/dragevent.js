@@ -197,7 +197,7 @@ Core.Object.extend('Core.DragDataTransfer',
 			this.image.style.touchAction = 'none';
 			this.image.style.zIndex = 100000;
 			this.image.style.position = 'absolute';
-
+						
 			//console.log(this.image.outerHTML);
 
 			if(navigator.supportOpacity) {
