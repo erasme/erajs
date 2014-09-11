@@ -16,6 +16,7 @@ Ui.Container.extend('Ui.Scrollable', {
 	contentWidth: 0,
 	contentHeight: 0,
 	overWatcher: undefined,
+	scrollLock: false,
 
 	constructor: function(config) {
 		this.addEvents('scroll');
@@ -26,10 +27,14 @@ Ui.Container.extend('Ui.Scrollable', {
 		this.appendChild(this.contentBox);
 
 		this.scrollbarHorizontalBox = new Ui.Movable({ moveVertical: false });
+		this.connect(this.scrollbarHorizontalBox, 'down', this.autoShowScrollbars);
+		this.connect(this.scrollbarHorizontalBox, 'up', this.autoHideScrollbars);
 		this.connect(this.scrollbarHorizontalBox, 'move', this.onScrollbarHorizontalMove);
 		this.appendChild(this.scrollbarHorizontalBox);
 
 		this.scrollbarVerticalBox = new Ui.Movable({ moveHorizontal: false });
+		this.connect(this.scrollbarVerticalBox, 'down', this.autoShowScrollbars);
+		this.connect(this.scrollbarVerticalBox, 'up', this.autoHideScrollbars);
 		this.connect(this.scrollbarVerticalBox, 'move', this.onScrollbarVerticalMove);
 		this.appendChild(this.scrollbarVerticalBox);
 
@@ -64,6 +69,10 @@ Ui.Container.extend('Ui.Scrollable', {
 		});
 
 		this.connect(this, 'wheel', this.onWheel);
+	},
+
+	setMaxScale: function(maxScale) {
+		this.contentBox.setMaxScale(maxScale);
 	},
 
 	setContent: function(content) {
@@ -180,7 +189,8 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	onShowBarsTick: function(clock, progress, delta) {
-		var show = (this.contentBox.getIsDown() || this.contentBox.getIsInertia() || this.isOver);
+		var show = (this.contentBox.getIsDown() || this.contentBox.getIsInertia() || this.isOver ||
+		   this.scrollbarVerticalBox.getIsDown() || this.scrollbarHorizontalBox.getIsDown());
 		var stop = false;
 		var speed = 2;
 
@@ -270,7 +280,7 @@ Ui.Container.extend('Ui.Scrollable', {
 			this.offsetX = 0;
 		}
 
-
+		this.scrollLock = true;
 		if(this.scrollbarHorizontalNeeded) {
 			var relOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
 			if(relOffsetX > 1) {
@@ -287,9 +297,12 @@ Ui.Container.extend('Ui.Scrollable', {
 			}
 			this.scrollbarVerticalBox.setPosition(undefined, (this.viewHeight - this.scrollbarVerticalHeight) * relOffsetY);
 		}
+		this.scrollLock = false;
 	},
 
 	onScrollbarHorizontalMove: function(movable) {
+		if(this.scrollLock)
+			return;
 		var totalWidth = this.viewWidth - this.scrollbarHorizontalBox.getLayoutWidth();
 		var offsetX = Math.min(1, Math.max(0, movable.getPositionX() / totalWidth));
 		this.setOffset(offsetX, undefined);
@@ -297,6 +310,8 @@ Ui.Container.extend('Ui.Scrollable', {
 	},
 
 	onScrollbarVerticalMove: function(movable) {
+		if(this.scrollLock)
+			return;
 		var totalHeight = this.viewHeight - this.scrollbarVerticalBox.getLayoutHeight();
 		var offsetY = Math.min(1, Math.max(0, movable.getPositionY() / totalHeight));
 		this.setOffset(undefined, offsetY);
