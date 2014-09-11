@@ -122,7 +122,7 @@ Function.prototype.extend = function(classType, classDefine, classOverride, clas
 			current[tab[i]] = {};
 		current = current[tab[i]];
 	}
-	var func = eval("( "+classType+" = function(config) { Core.Object.currentScopes.push(this); var nconfig = Core.Util.clone(config); this.constructorHelper.call(this, nconfig); Core.Object.currentScopes.pop(); this.autoConfig(nconfig); } )");
+	var func = eval("( "+classType+" = function(config) { this.constructorHelper.call(this, config); this.autoConfig(config); } )");
 
 	func.prototype = Object.create(this.prototype);
 	func.prototype.constructor = func;
@@ -276,7 +276,8 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	
 	if('addEventListener' in obj) {
 		wrapper = function() {
-			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+			return wrapper.callback.apply(wrapper.scope, arguments);
+			//return arguments.callee.callback.apply(arguments.callee.scope, arguments);
 		};
 		wrapper.scope = this;
 		wrapper.callback = method;
@@ -289,13 +290,34 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 	}
 	else if('attachEvent' in obj) {
 		wrapper = function() {
-			return arguments.callee.callback.apply(arguments.callee.scope, arguments);
+			// correct IE < 9 event diff
+			if(arguments.length === 1) {
+				var newEvent = {};
+				for(var key in arguments[0])
+					newEvent[key] = arguments[0][key];
+				if(('keyCode' in arguments[0]) && !('which' in arguments[0]))
+					newEvent.which = arguments[0].keyCode;
+				newEvent.preventDefault = function() {
+					this.defaultPrevented = true;
+					this.returnValue = false;
+				};
+				newEvent.stopPropagation = function() {
+					this.cancelBubble = true;
+				};
+				newEvent.target = newEvent.srcElement;
+				var res = arguments.callee.callback.call(arguments.callee.scope, newEvent);
+				arguments[0].returnValue = newEvent.returnValue;
+				arguments[0].cancelBubble = newEvent.cancelBubble;
+				return res;
+			}
+			else
+				return wrapper.callback.apply(arguments.callee.scope, arguments);
 		};
 		wrapper.scope = this;
 		wrapper.callback = method;
 		wrapper.eventName = eventName;
 		wrapper.capture = capture;
-		obj.attachEvent(eventName, wrapper);
+		obj.attachEvent('on'+eventName, wrapper);
 		if(obj.events === undefined)
 			obj.events = [];
 		obj.events.push(wrapper);
@@ -346,7 +368,7 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 			if((wrapper.scope === this) && (wrapper.eventName === eventName)) {
 				if((method !== undefined) && (wrapper.callback !== method))
 					continue;
-				obj.detachEvent(wrapper.eventName, wrapper);
+				obj.detachEvent('on'+wrapper.eventName, wrapper);
 				obj.events.splice(i, 1);
 				i--;
 			}
@@ -365,34 +387,12 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 	}
 };
 
-Core.Object.currentScopes = [];
-
 Core.Object.prototype.autoConfig = function(config) {
 	if(config === undefined)
 		return;
-	var scope; var func;
-	var pushScope = false;
+	var func;
 
-	if('scope' in config) {
-		scope = config.scope;
-		Core.Object.currentScopes.push(scope);
-		pushScope = true;
-	}
-	else if(Core.Object.currentScopes.length > 0)
-		scope = Core.Object.currentScopes[Core.Object.currentScopes.length-1];
-	else {
-		scope = this;
-		Core.Object.currentScopes.push(scope);
-		pushScope = true;
-	}
 	for(var prop in config) {
-		// look for name
-		if(prop === 'name') {
-//			console.log(this+'.autoConfig NAME: '+config.name+', SCOPE: '+scope);
-			scope[config.name] = this;
-			delete(config.name);
-			continue;
-		}
 		// look for normal properties
 		func = 'set'+prop.charAt(0).toUpperCase()+prop.substr(1);
 		if((func in this) && (typeof(this[func]) == 'function')) {
@@ -415,26 +415,12 @@ Core.Object.prototype.autoConfig = function(config) {
 			else if(DEBUG)
 				throw('Attached property \''+prop+'\' not found');
 		}
-		else if(prop.indexOf('on') === 0) {
-			var eventName = prop.charAt(2).toLowerCase()+prop.substr(3);
-			if((this.events !== undefined) && (eventName in this.events)) {
-				if(DEBUG && (typeof(config[prop]) !== 'function'))
-					throw('function is need to connect to the \''+eventName+'\' on '+this.classType);
-				scope.connect(this, eventName, config[prop]);
-				delete(config[prop]);
-			}
-			else if(DEBUG)
-				throw('event \''+eventName+'\' not found on '+this.classType);
-		}
-		else if(DEBUG && (prop !== 'scope') && (prop !== 'type'))
+		else if(DEBUG && (prop !== 'type'))
 			throw('Property \''+prop+'\' not found on '+this.classType);
 	}
-	if(pushScope)
-		Core.Object.currentScopes.pop();
 };
 
-
-Core.Object.create = function(element, scope) {
+Core.Object.create = function(element) {
 	if(element === undefined)
 		return undefined;
 	else if(typeof(element) == 'string') {
@@ -446,9 +432,6 @@ Core.Object.create = function(element, scope) {
 	else if(Core.Object.hasInstance(element))
 		return element;
 	else {
-		if(scope !== undefined)
-			Core.Object.currentScopes.push(scope);
-
 		var type = element.type;
 		if(DEBUG && ('type' in element && type === undefined))
 			throw('Cannot create object of type undefined');
@@ -462,11 +445,7 @@ Core.Object.create = function(element, scope) {
 				current = current.base.constructor;
 			}
 		}
-		var res = new type(element);
-
-		if(scope !== undefined)
-			Core.Object.currentScopes.pop();
-		return res;
+		return new type(element);
 	}
 };
 
