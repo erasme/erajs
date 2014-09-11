@@ -40,8 +40,6 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 	},
 
 	setSelectedDate: function(date) {
-		console.log('setSelectedDate: '+date);
-
 		if(date === undefined) {
 			this.selectedDate = undefined;
 		}
