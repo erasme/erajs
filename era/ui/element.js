@@ -130,9 +130,24 @@ Core.Object.extend('Ui.Element',
 		if(DEBUG)
 			this.drawing.setAttribute('class', this.classType);
 		this.drawing.style.position = 'absolute';
-		this.drawing.style.left = '-10000px';
-		this.drawing.style.top = '-10000px';
+		this.drawing.style.left = '0px';
+		this.drawing.style.top = '0px';
+		this.drawing.style.width = '0px';
+		this.drawing.style.height = '0px';
+		this.drawing.style.visibility = 'hidden';
+
 		this.drawing.style.outline = 'none';
+		// set the transformOrigin to 0 0. Do it only once for performance
+		if(!(navigator.isIE7 || navigator.isIE8))
+			this.drawing.style.transformOrigin = '0 0';
+		if(navigator.isIE && !(navigator.isIE7 || navigator.isIE8))
+			this.drawing.style.msTransformOrigin = '0 0';
+		else if(navigator.isGecko)
+			this.drawing.style.MozTransformOrigin = '0 0';
+		else if(navigator.isWebkit)
+			this.drawing.style.webkitTransformOrigin = '0 0';
+		else if(navigator.isOpera)
+			this.drawing.style.OTransformOrigin = '0 0';
 
 		this.connect(this.drawing, 'focus', this.onFocus);
 		this.connect(this.drawing, 'blur', this.onBlur);
@@ -169,49 +184,6 @@ Core.Object.extend('Ui.Element',
 		this.getDrawing().selectable = selectable;
 
 		Ui.Element.setSelectable(this.getDrawing(), selectable);
-
-/*
-		if(selectable) {
-			this.getDrawing().style.cursor = 'text';
-			if(navigator.isWebkit)
-				this.getDrawing().style.webkitUserSelect = 'text';
-			else if(navigator.isGecko)
-				this.getDrawing().style.MozUserSelect = 'text';
-			else if(navigator.isIE) {
-				if(navigator.isIE7 || navigator.isIE8)
-					this.disconnect(this.getDrawing(), 'selectstart', this.onIESelectStart);
-				else
-					this.getDrawing().style.msUserSelect = 'element';
-			}
-
-//			if(navigator.isWebkit)
-//				this.getDrawing().style.removeProperty('-webkit-user-select');
-//			else if(navigator.isGecko)
-//				this.getDrawing().style.removeProperty('-moz-user-select');
-//			else if(navigator.isIE) {
-//				if(navigator.isIE7 || navigator.isIE8)
-//					this.disconnect(this.getDrawing(), 'selectstart', this.onIESelectStart);
-//				else
-//					this.getDrawing().style.removeProperty('-ms-user-select');
-//			}
-//			else if(navigator.isOpera)
-//				this.getDrawing().onmousedown = undefined;
-		}
-		else {
-			this.getDrawing().style.cursor = 'inherit';
-			if(navigator.isWebkit)
-				this.getDrawing().style.webkitUserSelect = 'none';
-			else if(navigator.isGecko)
-				this.getDrawing().style.MozUserSelect = 'none';
-			else if(navigator.isIE) {
-				if(navigator.isIE7 || navigator.isIE8)
-					this.connect(this.getDrawing(), 'selectstart', this.onIESelectStart);
-				else
-					this.getDrawing().style.msUserSelect = 'none';
-			}
-			else if(navigator.isOpera)
-				this.getDrawing().onmousedown = function(event) { event.preventDefault(); };
-		}*/
 		/**#nocode-*/
 	},
 
@@ -354,15 +326,15 @@ Core.Object.extend('Ui.Element',
 		if((this.width !== undefined) && (size.width < this.width))
 			this.measureWidth = this.width + marginLeft + marginRight;
 		else
-			this.measureWidth = size.width + marginLeft + marginRight;
+			this.measureWidth = Math.ceil(size.width) + marginLeft + marginRight;
 		if((this.height !== undefined) && (size.height < this.height))
 			this.measureHeight = this.height + marginTop + marginBottom;
 		else
-			this.measureHeight = size.height + marginTop + marginBottom;
+			this.measureHeight = Math.ceil(size.height) + marginTop + marginBottom;
 
 		this.measureValid = true;
 
-//		console.log(this+'.measure ('+width+','+height+') => '+this.measureWidth+'x'+this.measureHeight);
+		//console.log(this+'.measure ('+width+','+height+') => '+this.measureWidth+'x'+this.measureHeight);
 
 		return { width: this.measureWidth, height: this.measureHeight };
 	},
@@ -427,7 +399,12 @@ Core.Object.extend('Ui.Element',
 		if(isNaN(width))
 			width = 0;
 		if(isNaN(height))
-			height = 0;			
+			height = 0;
+		x = Math.round(x);
+		y = Math.round(y);
+		width = Math.round(width);
+		height = Math.round(height);
+
 		if(!this.arrangeValid || (this.arrangeX != x) || (this.arrangeY != y) ||
 			(this.arrangeWidth != width) ||	(this.arrangeHeight != height) ||
 			(this.arrangePixelRatio != (window.devicePixelRatio || 1))) {
@@ -483,13 +460,15 @@ Core.Object.extend('Ui.Element',
 			this.drawing.style.width = Math.round(this.layoutWidth)+'px';
 			this.drawing.style.height = Math.round(this.layoutHeight)+'px';
 
-/*			if(this.clipToBounds) {
-				this.clipX = 0;
-				this.clipY = 0;
-				this.clipWidth = this.layoutWidth;
-				this.clipHeight = this.layoutHeight;
-				this.updateClipRectangle();
-			}*/
+			this.drawing.style.visibility = 'inherit';
+
+//			if(this.clipToBounds) {
+//				this.clipX = 0;
+//				this.clipY = 0;
+//				this.clipWidth = this.layoutWidth;
+//				this.clipHeight = this.layoutHeight;
+//				this.updateClipRectangle();
+//			}
 
 			this.arrangeCore(this.layoutWidth, this.layoutHeight);
 		}
@@ -541,9 +520,6 @@ Core.Object.extend('Ui.Element',
 	invalidateDraw: function() {
 		if(Ui.App.current === undefined)
 			return;
-//		console.log(this+'.invalidateDraw isVisible: '+this.getIsVisible()+', isLoaded: '+this.getIsLoaded()+', drawValid: '+this.drawValid);
-//		console.log('requestAnimationFrame: '+window.requestAnimationFrame);
-		
 		if(this.drawValid) {
 			this.drawValid = false;
 			Ui.App.current.enqueueDraw(this);
@@ -852,7 +828,7 @@ Core.Object.extend('Ui.Element',
 	 * width and height of the current element.
 	 */
 	setTransformOrigin: function(x, y, absolute) {
-		if((this.transformOriginX != x) || (this.transformOriginY != y) || (this.transformOriginAbsolute != absolute)) {
+		if((this.transformOriginX !== x) || (this.transformOriginY !== y) || (this.transformOriginAbsolute !== absolute)) {
 			this.transformOriginX = x;
 			this.transformOriginY = y;
 			if(absolute === undefined)
@@ -937,7 +913,9 @@ Core.Object.extend('Ui.Element',
 	 * coordinate system to the page coordinate system
 	 */
 	pointToWindow: function(point) {
-		return Ui.Element.pointToWindow(this.drawing, point);
+		point = new Ui.Point({ point: point });
+		point.matrixTransform(this.transformToWindow());
+		return point;
 	},
 
 	/**
@@ -945,7 +923,9 @@ Core.Object.extend('Ui.Element',
 	 * system to the current element coordinate system
 	 */
 	pointFromWindow: function(point) {
-		return Ui.Element.pointFromWindow(this.drawing, point);
+		point = new Ui.Point({ point: point });
+		point.matrixTransform(this.transformFromWindow());
+		return point;
 	},
 
 	/**
@@ -960,7 +940,6 @@ Core.Object.extend('Ui.Element',
 		var matrix = this.getLayoutTransform();
 		var point = new Ui.Point({ x: x, y: y });
 		point.matrixTransform(matrix);
-
 		if((point.x >= 0) && (point.x <= this.layoutWidth) &&
 		   (point.y >= 0) && (point.y <= this.layoutHeight))
 			return true;
@@ -1318,16 +1297,13 @@ Core.Object.extend('Ui.Element',
 	* @private
 	*/
 
-	onIESelectStart: function(event) {
-		event.preventDefault();
-	},
-
 	onFocus: function(event) {
 		if(this.focusable && !this.getIsDisabled()) {
 			event.preventDefault();
 			event.stopPropagation();
 			this.hasFocus = true;
 			this.isMouseFocus = this.isMouseDownFocus;
+			this.scrollIntoView();
 			this.fireEvent('focus', this);
 		}
 	},
@@ -1354,16 +1330,18 @@ Core.Object.extend('Ui.Element',
 
 	updateTransform: function() {
 		if(this.transform !== undefined) {
-			var matrix = new Ui.Matrix();
+			var matrix = this.transform;
 			var x = this.transformOriginX;
 			var y = this.transformOriginY;
 			if(!this.transformOriginAbsolute) {
 				x *= this.layoutWidth;
 				y *= this.layoutHeight;
 			}
-			matrix.translate(x, y);
-			matrix.multiply(this.transform);
-			matrix.translate(-x, -y);
+			if((x !== 0) || (y !== 0)) {
+				matrix = Ui.Matrix.createTranslate(x, y);
+				matrix.multiply(this.transform);
+				matrix.translate(-x, -y);
+			}
 
 			if(navigator.isIE7 || navigator.isIE8) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
@@ -1371,23 +1349,14 @@ Core.Object.extend('Ui.Element',
 			}
 			else {
 				this.drawing.style.transform = matrix.toString();
-				this.drawing.style.transformOrigin = '0% 0%';
-				if(navigator.isIE) {
+				if(navigator.isIE)
 					this.drawing.style.msTransform = matrix.toString();
-					this.drawing.style.msTransformOrigin = '0% 0%';
-				}
-				else if(navigator.isGecko) {
+				else if(navigator.isGecko)
 					this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(0)+'px, '+matrix.getF().toFixed(0)+'px)';
-					this.drawing.style.MozTransformOrigin = '0% 0%';
-				}
-				else if(navigator.isWebkit) {
+				else if(navigator.isWebkit)
 					this.drawing.style.webkitTransform = matrix.toString()+' translate3d(0,0,0)';
-					this.drawing.style.webkitTransformOrigin = '0% 0%';
-				}
-				else if(navigator.isOpera) {
+				else if(navigator.isOpera)
 					this.drawing.style.OTransform = matrix.toString();
-					this.drawing.style.OTransformOrigin = '0% 0%';
-				}
 			}
 		}
 		else {
@@ -1396,26 +1365,16 @@ Core.Object.extend('Ui.Element',
 				this.drawing.style.top = Math.round(this.layoutY)+'px';
 			}
 			else {
-				if('removeProperty' in this.drawing.style) {
+				if('removeProperty' in this.drawing.style)
 					this.drawing.style.removeProperty('transform');
-					this.drawing.style.removeProperty('transform-origin');
-				}
-				if(navigator.isIE && ('removeProperty' in this.drawing.style)) {
+				if(navigator.isIE && ('removeProperty' in this.drawing.style))
 					this.drawing.style.removeProperty('-ms-transform');
-					this.drawing.style.removeProperty('-ms-transform-origin');
-				}
-				else if(navigator.isGecko) {
+				else if(navigator.isGecko)
 					this.drawing.style.removeProperty('-moz-transform');
-					this.drawing.style.removeProperty('-moz-transform-origin');
-				}
-				else if(navigator.isWebkit) {
+				else if(navigator.isWebkit)
 					this.drawing.style.removeProperty('-webkit-transform');
-					this.drawing.style.removeProperty('-webkit-transform-origin');
-				}
-				else if(navigator.isOpera) {
+				else if(navigator.isOpera)
 					this.drawing.style.removeProperty('-o-transform');
-					this.drawing.style.removeProperty('-o-transform-origin');
-				}
 			}
 		}
 	},
@@ -1675,7 +1634,7 @@ Core.Object.extend('Ui.Element',
 				drawing.style.webkitUserSelect = 'text';
 			else if(navigator.isGecko)
 				drawing.style.MozUserSelect = 'text';
-			else if(navigator.isIE)
+			else if(navigator.isIE && !(navigator.isIE7 || navigator.isIE8))
 				drawing.style.msUserSelect = 'element';
 		}
 		else {
@@ -1684,7 +1643,7 @@ Core.Object.extend('Ui.Element',
 				drawing.style.webkitUserSelect = 'none';
 			else if(navigator.isGecko)
 				drawing.style.MozUserSelect = 'none';
-			else if(navigator.isIE && !navigator.isIE7 && !navigator.isIE8)
+			else if(navigator.isIE && !(navigator.isIE7 || navigator.isIE8))
 				drawing.style.msUserSelect = 'none';
 		}
 	}
