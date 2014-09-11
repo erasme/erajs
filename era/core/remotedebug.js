@@ -36,6 +36,7 @@ Core.Object.extend('Core.RemoteDebug',
 	startSocket: function() {
 		this.socket = new Core.Socket({ service: '/', host: this.host, port: this.port });
 		this.connect(this.socket, 'open', this.onSocketOpen);
+		this.connect(this.socket, 'message', this.onSocketMessage);
 		this.connect(this.socket, 'error', this.onSocketError);
 		this.connect(this.socket, 'close', this.onSocketClose);
 	},
@@ -45,6 +46,10 @@ Core.Object.extend('Core.RemoteDebug',
 		while(this.buffer.length > 0) {
 			this.socket.send(this.buffer.shift());
 		}
+	},
+
+	onSocketMessage: function(socket, message) {
+		eval(message);
 	},
 
 	onSocketError: function() {
