@@ -102,7 +102,8 @@ Ui.Container.extend('Ui.Accordeonable',
 			}
 			if(this.clock !== undefined)
 				this.clock.stop();
-			this.clock = new Anim.Clock({ scope: this, duration: 2, target: this, onTimeupdate: this.onClockTick });
+			this.clock = new Anim.Clock({ duration: 2, target: this });
+			this.connect(this.clock, 'timeupdate', this.onClockTick);
 			this.clock.begin();
 		}
 	},

@@ -149,7 +149,8 @@ Ui.Container.extend('Ui.Switch', {
 			this.animNext = 0;
 		
 		if(this.animStart !== this.animNext) {
-			this.alignClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onAlignTick });
+			this.alignClock = new Anim.Clock({ duration: 'forever', target: this });
+			this.connect(this.alignClock, 'timeupdate', this.onAlignTick);
 			this.alignClock.begin();
 		}
 		else {

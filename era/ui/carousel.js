@@ -153,7 +153,8 @@ Ui.Overable.extend('Ui.Carousel',
 		}
 
 		if(this.showClock === undefined) {
-			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onShowTick });
+			this.showClock = new Anim.Clock({ duration: 'forever', target: this });
+			this.connect(this.showClock, 'timeupdate', this.onShowTick);
 			this.showClock.begin();
 		}
 	},
@@ -166,7 +167,8 @@ Ui.Overable.extend('Ui.Carousel',
 		this.showPrevious = false;
 		this.showNext = false;
 		if(this.showClock === undefined) {
-			this.showClock = new Anim.Clock({ duration: 'forever', scope: this, target: this, onTimeupdate: this.onShowTick });
+			this.showClock = new Anim.Clock({ duration: 'forever', target: this });
+			this.connect(this.showClock, 'timeupdate', this.onShowTick);
 			this.showClock.begin();
 		}
 	},

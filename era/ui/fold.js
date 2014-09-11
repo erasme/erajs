@@ -261,7 +261,8 @@ Ui.Container.extend('Ui.Fold',
 		if(!this.isFolded)
 			this.contentBox.show();
 
-		this.clock = new Anim.Clock({ duration: this.animDuration, scope: this, target: this, onTimeupdate: this.onClockTick });
+		this.clock = new Anim.Clock({ duration: this.animDuration, target: this });
+		this.connect(this.clock, 'timeupdate', this.onClockTick);
 		this.clock.begin();
 	},
 

@@ -13,7 +13,8 @@ Ui.LBox.extend('Ui.Loading',
 		this.icon = new Ui.Icon({ icon: 'loading' });
 		this.icon.setTransformOrigin(0.5, 0.5);
 		this.append(this.icon);
-		this.clock = new Anim.Clock({ repeat: 'forever', duration: 2, onTimeupdate: this.onTick, scope: this });
+		this.clock = new Anim.Clock({ repeat: 'forever', duration: 2 });
+		this.connect(this.clock, 'timeupdate', this.onTick);
 	},
 
 	/**@private*/
