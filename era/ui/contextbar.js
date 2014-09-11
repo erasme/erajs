@@ -23,7 +23,7 @@ Ui.LBox.extend('Ui.ContextBar', {
 		var hbox = new Ui.HBox({ spacing: 5 });
 		this.append(hbox);
 		
-		this.closeButton = new Ui.ContextBarCloseButton({ icon: 'close' });
+		this.closeButton = new Ui.ContextBarCloseButton({ icon: 'backarrow' });
 		hbox.append(this.closeButton);
 		this.connect(this.closeButton, 'press', this.onClosePress);
 

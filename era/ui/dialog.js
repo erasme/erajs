@@ -1,7 +1,7 @@
 
 Ui.Button.extend('Ui.DialogCloseButton', {
 	constructor: function() {
-		this.setIcon('close');
+		this.setIcon('backarrow');
 		this.setText('Fermer');
 	}
 }, {}, {
