@@ -40,6 +40,7 @@ Ui.LBox.extend('Ui.Transformable',
 		this.setFocusable(true);
 
 		this.contentBox = new Ui.LBox();
+		this.contentBox.setTransformOrigin(0, 0, true);
 		this.appendChild(this.contentBox);
 
 		this.connect(this, 'ptrdown', this.onPointerDown);
@@ -183,10 +184,8 @@ Ui.LBox.extend('Ui.Transformable',
 	 */
 
 	 onContentTransform: function(testOnly) {
-	 	if(testOnly !== true) {
-			this.contentBox.setTransformOrigin(0, 0);
+	 	if(testOnly !== true)
 			this.contentBox.setTransform(this.getMatrix());
-		}
 	 },
 
 	onDown: function() {
@@ -461,8 +460,9 @@ Ui.LBox.extend('Ui.Transformable',
 	startInertia: function() {
 		if((this.inertiaClock === undefined) && this.inertia) {
 			this.inertiaClock = new Anim.Clock({
-				duration: 'forever', scope: this, target: this, onTimeupdate: this.onTimeupdate
+				duration: 'forever', target: this
 			});
+			this.connect(this.inertiaClock, 'timeupdate', this.onTimeupdate);
 			this.inertiaClock.begin();
 			this.fireEvent('inertiastart', this);
 		}
@@ -471,7 +471,7 @@ Ui.LBox.extend('Ui.Transformable',
 	onTimeupdate: function(clock, progress, delta) {
 		if(delta === 0)
 			return;
-
+		
 		var oldTranslateX = this.translateX;
 		var oldTranslateY = this.translateY;
 
@@ -480,7 +480,7 @@ Ui.LBox.extend('Ui.Transformable',
 
 		this.setContentTransform(translateX, translateY, undefined, undefined);
 
-		if((this.translateX == oldTranslateX) && (this.translateY == oldTranslateY)) {
+		if((this.translateX === oldTranslateX) && (this.translateY === oldTranslateY)) {
 			this.stopInertia();
 			return;
 		}
