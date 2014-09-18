@@ -67,6 +67,6 @@ Ui.LBox.extend('Ui.ContextBar', {
 	}
 }, {
 	style: {
-		background: '#90C0FF'
+		background: '#cdf'
 	}
 });
