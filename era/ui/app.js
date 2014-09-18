@@ -269,9 +269,6 @@ Ui.LBox.extend('Ui.App',
 //			innerHeight = window.outerHeight;
 //		}
 
-		if(navigator.iOs && navigator.isSafari)
-			innerHeight -= 20;
-
 		if((this.windowWidth !== innerWidth) || (this.windowHeight !== innerHeight)) {
 			this.windowWidth = innerWidth;
 			this.windowHeight = innerHeight;
