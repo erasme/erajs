@@ -13,6 +13,20 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			focusColor: '#f6caa2',
 			activeForeground: '#dc6c36'
 		},
+		"Ui.ActionButton": {
+			padding: 10,
+			spacing: 5,
+			color: '#e4e4e4',
+			focusColor: '#f6caa2',
+			borderWidth: 0,
+			radius: 0,
+			background: 'rgba(255,255,255,0)',
+			activeForeground: '#dc6c36'
+		},
+		"Ui.ContextBarCloseButton": {
+			borderWidth: 0,
+			radius: 0
+		},
 		"Ui.DialogCloseButton": {
 			background: 'rgba(240,240,240,0)',
 			backgroundBorder: 'rgba(240,240,240,0)',
@@ -50,6 +64,11 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 			"Ui.Button": {
 				backgroundBorder: 'rgba(240,240,240,0)',
 				background: 'rgba(240,240,240,0)'
+			}
+		},
+		"Ui.Popup": {
+			"Ui.ActionButton": {
+				showText: false
 			}
 		}
 	}
