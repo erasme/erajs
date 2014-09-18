@@ -1,10 +1,13 @@
 Ui.Container.extend('Ui.Popup', 
 /**@lends Ui.Popup#*/
 {
+	popupSelection: undefined,
 	background: undefined,
 	shadow: undefined,
 	shadowGraphic: undefined,
+	contextBox: undefined,
 	contentBox: undefined,
+	scroll: undefined,
 	posX: undefined,
 	posY: undefined,
 	attachedElement: undefined,
@@ -24,6 +27,8 @@ Ui.Container.extend('Ui.Popup',
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
+		this.popupSelection = new Ui.Selection();
+
 		this.shadow = new Ui.Pressable({ focusable: false });
 		this.shadow.getDrawing().style.cursor = 'inherit';
 		this.appendChild(this.shadow);
@@ -34,9 +39,17 @@ Ui.Container.extend('Ui.Popup',
 		this.background = new Ui.PopupBackground({ radius: 0, fill: '#f8f8f8' });
 		this.appendChild(this.background);
 
-		this.contentBox = new Ui.ScrollingArea({ margin: 2, marginTop: 1 });
-//		this.contentBox = new Ui.LBox({ padding: 2 });
+		this.contentBox = new Ui.LBox({ margin: 2, marginTop: 1 });
 		this.appendChild(this.contentBox);
+
+		this.scroll = new Ui.ScrollingArea({ margin: 2, marginTop: 1 });
+		this.contentBox.append(this.scroll);
+
+		this.contextBox = new Ui.ContextBar({ selection: this.popupSelection, verticalAlign: 'top' });
+		this.contextBox.hide(true);
+		this.contentBox.append(this.contextBox);
+
+		this.connect(this.popupSelection, 'change', this.onPopupSelectionChange);
 
 		// handle auto hide
 		this.connect(this.shadow, 'press', this.onShadowPress);
@@ -51,13 +64,18 @@ Ui.Container.extend('Ui.Popup',
 		this.preferredHeight = height;
 		this.invalidateMeasure();
 	},
-	
+
+	// implement a selection handler for Selectionable elements
+	getSelectionHandler: function() {
+		return this.popupSelection;
+	},
+
 	setAutoHide: function(autoHide) {
 		this.autoHide = autoHide;
 	},
 
 	setContent: function(content) {
-		this.contentBox.setContent(content);
+		this.scroll.setContent(content);
 	},
 
 	onWindowResize: function() {
@@ -69,6 +87,13 @@ Ui.Container.extend('Ui.Popup',
 	onShadowPress: function() {
 		if(this.autoHide)
 			this.hide();
+	},
+
+	onPopupSelectionChange: function(selection) {
+		if(selection.getElements().length === 0)
+			this.contextBox.hide(true);
+		else
+			this.contextBox.show();
 	}
 }, 
 /**@lends Ui.Popup#*/
