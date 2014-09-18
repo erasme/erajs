@@ -53,7 +53,7 @@ Ui.CompactLabel.extend('Ui.DialogTitle', {}, {}, {
 Ui.LBox.extend('Ui.DialogButtonBox', {
 	bg: undefined,
 	actionBox: undefined,
-	cancelBox: undefined,
+	cancelButton: undefined,
 	actionButtonsBox: undefined,
 	titleLabel: undefined,
 	
@@ -65,9 +65,6 @@ Ui.LBox.extend('Ui.DialogButtonBox', {
 
 		this.actionBox = new Ui.HBox({ margin: 5, spacing: 10 });
 		this.append(this.actionBox);
-
-		this.cancelBox = new Ui.LBox();
-		this.actionBox.append(this.cancelBox);
 
 		this.actionButtonsBox = new Ui.MenuToolBar({ spacing: 5 });
 		this.actionBox.append(this.actionButtonsBox, true);
@@ -81,14 +78,17 @@ Ui.LBox.extend('Ui.DialogButtonBox', {
 	},
 
 	setCancelButton: function(button) {
-		var old = this.cancelBox.getFirstChild();
-		if((old !== undefined) && Ui.Pressable.hasInstance(old))
-			this.disconnect(old, 'press', this.onCancelPress);
-		
-		this.cancelBox.setContent(button);
-		var newbutton = this.cancelBox.getFirstChild();
-		if((newbutton !== undefined) && Ui.Pressable.hasInstance(newbutton))
-			this.connect(newbutton, 'press', this.onCancelPress);
+		if(this.cancelButton !== undefined) {
+			if(Ui.Pressable.hasInstance(this.cancelButton))
+				this.disconnect(this.cancelButton, 'press', this.onCancelPress);
+			this.actionBox.remove(this.cancelButton);
+		}
+		this.cancelButton = button;
+		if(this.cancelButton !== undefined) {
+			if(Ui.Pressable.hasInstance(this.cancelButton))
+				this.connect(newbutton, 'press', this.onCancelPress);
+			this.actionBox.prepend(this.cancelButton);
+		}
 	},
 
 	setActionButtons: function(buttons) {
