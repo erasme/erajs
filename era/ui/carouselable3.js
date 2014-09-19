@@ -126,6 +126,7 @@ Ui.MovableBase.extend('Ui.Carouselable3', {
 	alignClock: undefined,
 	animNext: undefined,
 	animStart: undefined,
+	animSource: undefined,
 	bufferingSize: 1,
 	loader: undefined,
 
@@ -198,32 +199,36 @@ Ui.MovableBase.extend('Ui.Carouselable3', {
 			this.onChange();
 		}
 		else
-			this.startAnimation(2*(this.pos-position), position);
+			this.startAnimation(2*(this.pos-position), position, 'program');
 	},
 
-	next: function() {
+	next: function(source) {
+		if(source === undefined)
+			source = 'program';
 		if(this.alignClock === undefined) {
 			if(this.pos < this.loader.getMax())
-				this.startAnimation(-2, this.pos + 1);
+				this.startAnimation(-2, this.pos + 1, source);
 		}
 		else {
 			if(this.animNext > this.pos)
-				this.startAnimation(-2 * (this.animNext+1-Math.floor(this.pos)), Math.min(this.animNext + 1, this.loader.getMax()));
+				this.startAnimation(-2 * (this.animNext+1-Math.floor(this.pos)), Math.min(this.animNext + 1, this.loader.getMax()), source);
 			else
-				this.startAnimation(-2, Math.min(Math.ceil(this.pos), this.loader.getMax()));
+				this.startAnimation(-2, Math.min(Math.ceil(this.pos), this.loader.getMax()), source);
 		}
 	},
 
-	previous: function() {
+	previous: function(source) {
+		if(source === undefined)
+			source = 'program';
 		if(this.alignClock === undefined) {
 			if(this.pos > this.loader.getMin())
-				this.startAnimation(2, this.pos - 1);
+				this.startAnimation(2, this.pos - 1, source);
 		}
 		else {
 			if(this.animNext < this.pos)
-				this.startAnimation(2 * (Math.floor(this.pos) - (this.animNext-1)), Math.max(this.animNext - 1, 0));
+				this.startAnimation(2 * (Math.floor(this.pos) - (this.animNext-1)), Math.max(this.animNext - 1, 0), source);
 			else
-				this.startAnimation(2, Math.floor(this.pos));
+				this.startAnimation(2, Math.floor(this.pos), source);
 		}
 	},
 
@@ -299,10 +304,12 @@ Ui.MovableBase.extend('Ui.Carouselable3', {
 				speedX = 800;
 		}
 		if(speedX !== 0)
-			this.startAnimation(speedX / this.getLayoutWidth());
+			this.startAnimation(speedX / this.getLayoutWidth(), undefined, 'user');
 	},
 
-	onChange: function() {
+	onChange: function(source) {
+		if(source === undefined)
+			source = 'program';
 		this.loadItems();
 		this.updateItems();
 //		var current = this.getCurrent();
@@ -313,7 +320,7 @@ Ui.MovableBase.extend('Ui.Carouselable3', {
 //			if((this.lastPosition !== undefined) && (this.items[this.lastPosition] !== undefined))
 //				this.items[this.lastPosition].disable();
 			this.lastPosition = currentPosition;
-			this.fireEvent('change', this, currentPosition);
+			this.fireEvent('change', this, currentPosition, source);
 		}
 	},
 
@@ -330,13 +337,14 @@ Ui.MovableBase.extend('Ui.Carouselable3', {
 		this.pos = (this.animStart + relprogress * (this.animNext - this.animStart));
 		this.setPosition(-this.pos * this.getLayoutWidth(), undefined);
 		if(this.alignClock === undefined)
-			this.onChange();
+			this.onChange(this.animSource);
 	},
 
-	startAnimation: function(speed, next) {
+	startAnimation: function(speed, next, source) {
 		this.stopAnimation();
 		this.speed = speed;
 		this.animStart = this.pos;
+		this.animSource = source;
 		if(next === undefined) {
 			if(this.speed < 0)
 				this.animNext = Math.ceil(this.animStart);

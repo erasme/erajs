@@ -101,13 +101,17 @@ Ui.Overable.extend('Ui.Carousel3',
 		this.carouselable.setBufferingSize(size);
 	},
 
+	getIsDown: function() {
+		return this.carouselable.getIsDown();
+	},
+
 	/**#@+
 	* @private
 	*/
 	
-	onCarouselableChange: function(carouselable, position) {
+	onCarouselableChange: function(carouselable, position, source) {
 		this.showArrows();
-		this.fireEvent('change', this, position);
+		this.fireEvent('change', this, position, source);
 	},
 
 	onCarouselableFocus: function() {
@@ -120,12 +124,12 @@ Ui.Overable.extend('Ui.Carousel3',
 
 	onPreviousPress: function() {
 		this.focus();
-		this.previous();
+		this.previous('user');
 	},
 
 	onNextPress: function() {
 		this.focus();
-		this.next();
+		this.next('user');
 	},
 
 	onMouseEnter: function() {
