@@ -86,7 +86,7 @@ Ui.LBox.extend('Ui.DialogButtonBox', {
 		this.cancelButton = button;
 		if(this.cancelButton !== undefined) {
 			if(Ui.Pressable.hasInstance(this.cancelButton))
-				this.connect(newbutton, 'press', this.onCancelPress);
+				this.connect(this.cancelButton, 'press', this.onCancelPress);
 			this.actionBox.prepend(this.cancelButton);
 		}
 	},
