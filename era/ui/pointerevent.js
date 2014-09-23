@@ -364,6 +364,8 @@ Core.Object.extend('Ui.PointerManager',
 	lastUpdate: undefined,
 	lastTouchX: -1,
 	lastTouchY: -1,
+	lastDownTouchX: -1,
+	lastDownTouchY: -1,
 	mouse: undefined,
 	app: undefined,
 
@@ -476,7 +478,14 @@ Core.Object.extend('Ui.PointerManager',
 		var deltaX = (this.lastTouchX - event.clientX);
 		var deltaY = (this.lastTouchY - event.clientY);
 		var deltaPos =  Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-		if((deltaTime < 10) && deltaPos < 20)
+		// check the delta position with the lastest touchstart event
+		// because iOS8 generate mouse event using the start coordinates
+		// and generate mouse event even after a long move
+		var downDeltaX = this.lastDownTouchX - event.clientX;
+		var downDeltaY = this.lastDownTouchY - event.clientY;
+		var downDeltaPos =  Math.sqrt(downDeltaX * downDeltaX + downDeltaY * downDeltaY);
+
+		if((deltaTime < 1) || ((deltaTime < 10) && ((deltaPos < 20) || (downDeltaPos < 20))))
 			return;
 		var buttons = 0;
 		if(event.button === 0)
@@ -499,7 +508,14 @@ Core.Object.extend('Ui.PointerManager',
 		var deltaX = (this.lastTouchX - event.clientX);
 		var deltaY = (this.lastTouchY - event.clientY);
 		var deltaPos =  Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-		if((deltaTime < 10) && deltaPos < 20)
+		// check the delta position with the lastest touchstart event
+		// because iOS8 generate mouse event using the start coordinates
+		// and generate mouse event even after a long move
+		var downDeltaX = this.lastDownTouchX - event.clientX;
+		var downDeltaY = this.lastDownTouchY - event.clientY;
+		var downDeltaPos =  Math.sqrt(downDeltaX * downDeltaX + downDeltaY * downDeltaY);
+
+		if((deltaTime < 1) || ((deltaTime < 10) && ((deltaPos < 20) || (downDeltaPos < 20))))
 			return;
 		this.mouse.move(event.clientX, event.clientY);
 	},
@@ -510,7 +526,14 @@ Core.Object.extend('Ui.PointerManager',
 		var deltaX = (this.lastTouchX - event.clientX);
 		var deltaY = (this.lastTouchY - event.clientY);
 		var deltaPos =  Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-		if((deltaTime < 10) && deltaPos < 20)
+		// check the delta position with the lastest touchstart event
+		// because iOS8 generate mouse event using the start coordinates
+		// and generate mouse event even after a long move
+		var downDeltaX = this.lastDownTouchX - event.clientX;
+		var downDeltaY = this.lastDownTouchY - event.clientY;
+		var downDeltaPos =  Math.sqrt(downDeltaX * downDeltaX + downDeltaY * downDeltaY);
+
+		if((deltaTime < 1) || ((deltaTime < 10) && ((deltaPos < 20) || (downDeltaPos < 20))))
 			return;
 		this.mouse.move(event.clientX, event.clientY);
 		this.mouse.up();
@@ -591,6 +614,8 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	updateTouches: function(event) {
+		//console.log('updateTouch '+event.type);
+
 		this.lastUpdate = (new Date().getTime())/1000;
 		for(var id in this.pointers) {
 			var found = false;
@@ -615,6 +640,12 @@ Core.Object.extend('Ui.PointerManager',
 				});
 				this.pointers[event.touches[i].identifier] = pointer;
 				pointer.down(event.touches[i].clientX, event.touches[i].clientY, 1);
+			}
+		}
+		if(event.type === 'touchstart') {
+			for(var i = 0; i < event.changedTouches.length; i++) {
+				this.lastDownTouchX = event.changedTouches[i].clientX;
+				this.lastDownTouchY = event.changedTouches[i].clientY;
 			}
 		}
 		// we dont prevent default for all events because we need
