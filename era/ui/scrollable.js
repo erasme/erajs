@@ -11,6 +11,8 @@ Ui.Container.extend('Ui.Scrollable', {
 	showClock: undefined,
 	offsetX: 0,
 	offsetY: 0,
+	relativeOffsetX: 0,
+	relativeOffsetY: 0,
 	viewWidth: 0,
 	viewHeight: 0,
 	contentWidth: 0,
@@ -83,6 +85,14 @@ Ui.Container.extend('Ui.Scrollable', {
 		return this.contentBox.getContent();
 	},
 
+	getInertia: function() {
+		return this.contentBox.getInertia();
+	},
+
+	setInertia: function(inertiaActive) {
+		this.contentBox.setInertia(inertiaActive);
+	},
+
 	getScrollHorizontal: function() {
 		return this.scrollHorizontal;
 	},
@@ -134,9 +144,15 @@ Ui.Container.extend('Ui.Scrollable', {
 			offsetY = 0;
 		else if(this.viewHeight + offsetY > this.contentHeight)
 			offsetY = this.contentHeight - this.viewHeight;
-			
-		this.relativeOffsetX = offsetX / (this.contentWidth - this.viewWidth);
-		this.relativeOffsetY = offsetY / (this.contentHeight - this.viewHeight);
+
+		if(this.contentWidth <= this.viewWidth)
+			this.relativeOffsetX = 0;
+		else
+			this.relativeOffsetX = offsetX / (this.contentWidth - this.viewWidth);
+		if(this.contentHeight <= this.viewHeight)
+			this.relativeOffsetY = 0;
+		else
+			this.relativeOffsetY = offsetY / (this.contentHeight - this.viewHeight);
 
 		if((this.offsetX !== offsetX) || (this.offsetY !== offsetY)) {
 			this.offsetX = offsetX;
@@ -162,6 +178,22 @@ Ui.Container.extend('Ui.Scrollable', {
 	
 	getRelativeOffsetY: function() {
 		return this.relativeOffsetY;
+	},
+
+	getScale: function() {
+		return this.contentBox.getScale();
+	},
+
+	setScale: function(scale) {
+		this.contentBox.setScale(scale);
+	},
+
+	getIsDown: function() {
+		return this.contentBox.getIsDown();
+	},
+
+	getIsInertia: function() {
+		return this.contentBox.getIsInertia();
 	},
 
 	onWheel: function(event) {
@@ -244,8 +276,14 @@ Ui.Container.extend('Ui.Scrollable', {
 //		this.contentWidth = this.contentBox.getDrawing().scrollWidth;
 //		this.contentHeight = this.contentBox.getDrawing().scrollHeight;
 
-		this.relativeOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
-		this.relativeOffsetY = this.offsetY / (this.contentHeight - this.viewHeight);
+		if(this.contentWidth <= this.viewWidth)
+			this.relativeOffsetX = 0;
+		else
+			this.relativeOffsetX = this.offsetX / (this.contentWidth - this.viewWidth);
+		if(this.contentHeight <= this.viewHeight)
+			this.relativeOffsetY = 0;
+		else
+			this.relativeOffsetY = this.offsetY / (this.contentHeight - this.viewHeight);
 
 		if(this.contentHeight > this.viewHeight)
 			this.scrollbarVerticalNeeded = true;
@@ -460,8 +498,9 @@ Ui.Transformable.extend('Ui.ScrollableContent', {
 //		console.log(this+'.onContentTransform '+(this.getLayoutWidth()*scale)+'x'+(this.getLayoutHeight()*scale));
 		this.contentWidth = this.getFirstChild().getLayoutWidth()*scale;
 		this.contentHeight = this.getFirstChild().getLayoutHeight()*scale;
-		if(testOnly !== true)
+		if(testOnly !== true) {
 			this.fireEvent('scroll', this);
+		}
 	}
 });
 	
