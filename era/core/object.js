@@ -247,11 +247,22 @@ Core.Object.prototype.fireEvent = function(eventName) {
 		// copy the listeners because the events handlers might
 		// change the connected events
 		eventListeners = eventListeners.slice();
+		// send capture events first
 		for(i = 0; (i < eventListeners.length) && !handled; i++) {
-			handled = eventListeners[i].method.apply(eventListeners[i].scope, args);
-			if(handled === undefined)
-				handled = false;
+			if(eventListeners[i].capture === true) {
+				handled = eventListeners[i].method.apply(eventListeners[i].scope, args);
+				if(handled === undefined)
+					handled = false;
+			}
 		}
+		for(i = 0; (i < eventListeners.length) && !handled; i++) {
+			if(eventListeners[i].capture !== true) {
+				handled = eventListeners[i].method.apply(eventListeners[i].scope, args);
+				if(handled === undefined)
+					handled = false;
+			}
+		}
+
 	}
 	else if(DEBUG)
 		throw('Event \''+eventName+'\' not found on ' + this);
