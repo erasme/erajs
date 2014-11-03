@@ -366,7 +366,7 @@ Ui.MovableBase.extend('Ui.Carouselable3', {
 			this.alignClock = undefined;
 		}
 	},
-	
+
 	loadItems: function() {
 		if(!this.getIsLoaded())
 			return;
