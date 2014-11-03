@@ -102,7 +102,11 @@ Ui.Element.extend('Ui.Audio',
 	* after the ready event.
 	*/
 	getDuration: function() {
-		return this.audioDrawing.duration;
+		var duration = this.audioDrawing.duration;
+		if((duration === undefined) || isNaN(duration) || (duration === null))
+			return undefined;
+		else
+			return duration;
 	},
 
 	/**
@@ -234,6 +238,12 @@ Ui.Element.extend('Ui.Audio',
 	onAudioUnload: function() {
 		if(this.canplaythrough)
 			this.pause();
+		// to force closing the possible connection to the server
+		// (Chrome BUG: https://code.google.com/p/chromium/issues/detail?id=234779)
+		this.audioDrawing.removeAttribute('src');
+		try {
+			this.audioDrawing.load();
+		} catch(e) {}
 	}
 	/**#@-*/
 }, 
