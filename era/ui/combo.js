@@ -156,5 +156,9 @@ Ui.MenuPopup.extend('Ui.ComboPopup', {
 	}
 });
 
-Ui.Button.extend('Ui.ComboItem');
+Ui.Button.extend('Ui.ComboItem', {}, {}, {
+	style: {
+		borderWidth: 0
+	}
+});
 	
