@@ -147,6 +147,7 @@ Ui.Element.extend('Ui.Image',
 		this.imageDrawing.style.left = '0px';
 		this.imageDrawing.style.width = '0px';
 		this.imageDrawing.style.height = '0px';
+		this.imageDrawing.style.pointerEvents = 'none';
 		this.imageDrawing.setAttribute('draggable', false);
 		if(navigator.isWebkit) {
 			// no text selection
