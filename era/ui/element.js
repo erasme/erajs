@@ -156,7 +156,7 @@ Core.Object.extend('Ui.Element',
 		this.addEvents('focus', 'blur', 'load', 'unload',
 			'enable', 'disable', 'visible', 'hidden',
 			'ptrdown', 'ptrmove', 'ptrup', 'ptrcancel',
-			'wheel', 'localdrop', 'localdragover');
+			'wheel', 'dragover');
 	},
 
 	setDisabled: function(disabled) {
@@ -1223,6 +1223,16 @@ Core.Object.extend('Ui.Element',
 		}
 	},
 
+	getIsChildOf: function(parent) {
+		var current = this;
+		while((current !== undefined) && (current !== null)) {
+			if(current === parent)
+				return true;
+			current = current.getParent();
+		}
+		return false;
+	},
+
 	getParent: function() {
 		return this.parent;
 	},
@@ -1447,6 +1457,16 @@ Core.Object.extend('Ui.Element',
 		return Ui.App.current.elementFromPoint(x, y);
 	},
 
+	getIsDrawingChildOf: function(drawing, parent) {
+		var current = drawing;
+		while((current !== undefined) && (current !== null)) {
+			if(current === parent)
+				return true;
+			current = current.offsetParent;
+		}
+		return false;
+	},
+
 	/**
 	* @return Return the transform matrix to convert coordinates
 	* from the given element coordinate system to the page
@@ -1630,6 +1650,7 @@ Core.Object.extend('Ui.Element',
 		drawing.selectable = selectable;
 		if(selectable) {
 			drawing.style.cursor = 'text';
+			drawing.style.userSelect = 'text';
 			if(navigator.isWebkit)
 				drawing.style.webkitUserSelect = 'text';
 			else if(navigator.isGecko)
@@ -1639,6 +1660,7 @@ Core.Object.extend('Ui.Element',
 		}
 		else {
 			drawing.style.cursor = 'inherit';
+			drawing.style.userSelect = 'none';
 			if(navigator.isWebkit)
 				drawing.style.webkitUserSelect = 'none';
 			else if(navigator.isGecko)
