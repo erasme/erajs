@@ -18,6 +18,10 @@ Core.Object.extend('Ui.Event', {
 		this.stop = true;
 	},
 
+	getIsPropagationStopped: function() {
+		return this.stop || this.cancelBubble;
+	},
+
 	setType: function(type) {
 		this.type = type;
 	},
@@ -63,7 +67,7 @@ Core.Object.extend('Ui.Event', {
 		}
 		else {
 			// capture before
-			var handlers = current.getEventHandlers(this.type);
+			var handlers = this.target.getEventHandlers(this.type);
 			for(var i2 = 0; (i2 < handlers.length) && (!this.stop); i2++) {
 				var handler = handlers[i2];
 				if(handler.capture)
