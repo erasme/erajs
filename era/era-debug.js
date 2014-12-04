@@ -86,6 +86,7 @@ include(eraBaseDirectory+'ui/grid.js');
 include(eraBaseDirectory+'ui/fixed.js');
 include(eraBaseDirectory+'ui/fold.js');
 include(eraBaseDirectory+'ui/accordeonable.js');
+include(eraBaseDirectory+'ui/scalebox.js');
 
 //
 // Ui drawing
@@ -134,6 +135,7 @@ include(eraBaseDirectory+'ui/scrollable.js');
 include(eraBaseDirectory+'ui/vboxscrollable.js');
 include(eraBaseDirectory+'ui/draggable.js');
 include(eraBaseDirectory+'ui/dropbox.js');
+include(eraBaseDirectory+'ui/dropatbox.js');
 include(eraBaseDirectory+'ui/iframe.js');
 include(eraBaseDirectory+'ui/carouselable.js');
 include(eraBaseDirectory+'ui/carouselable2.js');

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var lbox = new Ui.LBox({ margin: 100 });
+		this.setContent(lbox);
+
+		var scalebox = new Ui.ScaleBox({ fixedWidth: 800, fixedHeight: 600 });
+		lbox.setContent(scalebox);
+	
+		var rect = new Ui.Rectangle({ fill: 'orange' });
+		scalebox.append(rect);
+
+		var text = new Ui.TextArea({ margin: 20, fontSize: 40, value: 'Hello World !' });
+		scalebox.append(text);
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>

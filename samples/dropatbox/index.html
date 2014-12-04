@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test DropAtBox</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.Draggable.extend('Test.Item', {
+	constructor: function(config) {
+//		this.setMargin(10);
+
+		var rect = new Ui.Rectangle({ width: 150, height: 150, fill: config.fill });
+		delete(config.fill);
+		this.append(rect);
+
+		this.setDraggableData(this);
+	}
+});
+
+Ui.App.extend('Test.App', {
+	container: undefined,
+
+	constructor: function(config) {
+
+		var scroll = new Ui.ScrollingArea();
+		this.setContent(scroll);
+
+		this.container = new Ui.SFlowDropBox({
+			spacing: 20, margin: 20,
+			stretchMaxRatio: 2, itemAlign: 'stretch'
+		});
+//		this.container = new Ui.VDropBox({ spacing: 20, margin: 20 });
+		this.container.addType(Test.Item, this.onDragEffect);
+		this.container.addType('files', this.onDragEffect);
+		scroll.setContent(this.container);
+		this.connect(this.container, 'dropat', this.onDropAt);
+
+		this.container.append(new Test.Item({ width: 150, height: 150, fill: 'red' }));
+		this.container.append(new Test.Item({ width: 150, height: 150, fill: 'green' }));
+		this.container.append(new Test.Item({ width: 150, height: 150, fill: 'pink' }));
+		this.container.append(new Test.Item({ width: 250, height: 150, fill: 'purple' }));
+		this.container.append(new Test.Item({ width: 150, height: 150, fill: 'brown' }));
+		this.container.append(new Test.Item({ width: 150, height: 150, fill: 'orange' }));
+		this.container.append(new Test.Item({ width: 150, height: 150, fill: 'lightblue' }));
+	},
+
+	onDragEffect: function(data, pos) {
+		console.log('testFunction data: '+data+', pos: '+pos);
+		if((pos === 0) || (pos === 1) || (pos === 7))
+			return 'none';
+		else if(pos === 4)
+			return 'copy';
+		else
+			return 'move';
+	},
+
+	onDropAt: function(dropbox, data, effect, pos, x, y) {
+		console.log('onDropAt data: '+data+', effect: '+effect+', pos: '+pos+', coord: '+x+','+y);
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
