@@ -1,203 +1,161 @@
-Ui.LBox.extend('Ui.DropBox', 
-/**@lends Ui.DropBox#*/
-{
-	/**
-	 * Fires when a draggable object is drop
-	 * @name Ui.DropBox#drop
-	 * @event
-	 * @param {Ui.DropBox} dropbox The dropbox itself
-	 * @param {string} mimetype The dropped object mimetype
-	 * @param {string) data The dropped object linked data (can be a JSON object stringify)
-	 * @param {number} posX The dropped object x position
-	 * @param {number} posY The dropped object y position
-	 */
-	/**
-	 * Fires when a file is drop from the desktop
-	 * @name Ui.DropBox#dropfile
-	 * @event
-	 * @param {Ui.DropBox} dropbox the dropbox itself
-	 * @param {Core.File} file The dropped file
-	 */
 
-	allowedMimetypes: undefined,
-	allowFiles: false,
-	allowedMode: 'all',
+Ui.LBox.extend('Ui.DropBox', {
+	watchers: undefined,
+	allowedTypes: undefined,
 
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.LBox
-	 */
 	constructor: function(config) {
-		this.addEvents('dragover', 'drop', 'dropfile', 'dragenter', 'dragleave');
-
-		this.allowedMimetypes = [];
-
-		//this.connect(this.drawing, 'dragenter', this.onDragEnter);
-		//this.connect(this.drawing, 'dragleave', this.onDragLeave);
-		this.connect(this.drawing, 'dragover', this.onDragOver);
-		this.connect(this.drawing, 'drop', this.onDrop);
-		this.connect(this, 'localdragover', this.onDragOver);
-		this.connect(this, 'localdrop', this.onDrop);
-
+		this.addEvents('drageffect', 'dragenter', 'dragleave', 'drop', 'dropfile');
+		this.watchers = [];
+		this.connect(this, 'dragover', this.onDragOver);
 	},
 
-	/**
-	 * Set the allowed operation. Possible values are:
-	 * [copy|copyLink|copyMove|link|linkMove|move|all]
-	 */
-	setAllowedMode: function(allowedMode) {
-		this.allowedMode = allowedMode;
-	},
-
-	/**
-	 * Add a mimetype allowed to be dropped on the current
-	 * dropbox.
-	 * If the special type 'Files' is provided, the dropbox
-	 * will accept files dragged from the desktop.
-	 */
-	addMimetype: function(mimetype) {
-		if(typeof(mimetype) === 'function')
-			mimetype = Ui.Draggable.localmimetype+'-'+mimetype.prototype.classType;
-		this.allowedMimetypes.push(mimetype);
-		if((typeof(mimetype) === 'string') && mimetype.toLowerCase() == 'files')
-			this.allowFiles = true;
-	},
-
-	/**#@+
-	 * @private
-	 */
-
-	dragMimetype: function(event) {
-		var found;
-		if(event.dataTransfer.types !== undefined) {
-			for(var i = 0; (found === undefined) && (i < event.dataTransfer.types.length); i++) {
-				var type = event.dataTransfer.types[i];
-				for(var i2 = 0; (found === undefined) && (i2 < this.allowedMimetypes.length); i2++) {
-					if(type.toLowerCase() === this.allowedMimetypes[i2].toLowerCase())
-						found = this.allowedMimetypes[i2];
-				}
-			}
-		}
-		return found;
-	},
-
-	dragMergedMimetype: function(data) {
-		for(var type in data) {
-			for(var i2 = 0; (i2 < this.allowedMimetypes.length); i2++) {
-				if(type.toLowerCase() === this.allowedMimetypes[i2].toLowerCase())
-					return type;
-			}
-		}
-		return undefined;
-	},
-
-	onDragEnter: function(event) {
-		var mimetype = this.dragMimetype(event);
-		//console.log('onDragEnter mimetype: '+mimetype+', target: '+event.target);
-		if(mimetype !== undefined) {
-			event.stopPropagation();
-			this.fireEvent('dragenter', this, mimetype);
-			return false;
-		}
-	},
-
-	onDragLeave: function(event) {
-		var mimetype = this.dragMimetype(event);
-		//console.log('onDragLeave mimetype: '+mimetype+', target: '+event.target);
-		if(mimetype !== undefined) {
-			event.stopPropagation();
-			this.fireEvent('dragleave', this, mimetype);
-			return false;
-		}
+	addType: function(type, effect) {
+		if(typeof(type) === 'string')
+			type = type.toLowerCase();
+		if(this.allowedTypes === undefined)
+			this.allowedTypes = [];
+		this.allowedTypes.push({ type: type, effect: effect });
 	},
 
 	onDragOver: function(event) {
-		//console.log(this+'.onDragOver effectAllowed: '+event.dataTransfer.effectAllowed+', mimetype: '+this.dragMimetype(event));
-		if((event.dataTransfer !== undefined) && (!(!navigator.supportDrag || navigator.supportMimetypeDrag) || (this.dragMimetype(event) !== undefined))) {
-			// accept the drag over
-			var effectAllowed = 'all';
-			if(event.dataTransfer.effectAllowed !== undefined)
-				effectAllowed = event.dataTransfer.effectAllowed;
-			if(effectAllowed == 'uninitialized')
-				effectAllowed = 'all';
-			
-			var dropEffect = 'copy';
-			if(((this.allowedMode == 'all') || (this.allowedMode == 'copy') ||  (this.allowedMode == 'copyLink') || (this.allowedMode == 'copyMove')) &&
-				((effectAllowed == 'copy') || (effectAllowed == 'copyLink') || (effectAllowed == 'copyMove') || (effectAllowed == 'all')))
-				dropEffect = 'copy';
-			else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyMove') ||  (this.allowedMode == 'linkMove') || (this.allowedMode == 'move')) &&
-					((effectAllowed == 'all') || (effectAllowed == 'copyMove') || (effectAllowed == 'linkMove') || (effectAllowed == 'move')))
-				dropEffect = 'move';
-			else if(((this.allowedMode == 'all') || (this.allowedMode == 'copyLink') ||  (this.allowedMode == 'link') || (this.allowedMode == 'linkMove')) &&
-					((effectAllowed == 'all') || (effectAllowed == 'copyLink') || (effectAllowed == 'link') || (effectAllowed == 'linkMove')))
-				dropEffect = 'link';
-			else
-				dropEffect = 'none';
-			
-			event.dataTransfer.dropEffect = dropEffect;
-			event.preventDefault();
-			if(!navigator.supportDrag || navigator.supportMimetypeDrag)
-				event.stopPropagation();
+		// test if we already captured this dataTransfer
+		var found = false;
+		for(var i = 0; !found && (i < this.watchers.length); i++)
+			found = (this.watchers[i].getDataTransfer() === event.dataTransfer);
 
-			var point = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-			this.fireEvent('dragover', this, point.x, point.y);
-			return false;
+		if(!found) {
+			// get allowed effect for the given dataTransfer
+			var effect = this.onDragEffect(event.dataTransfer);
+			if((effect !== undefined) && (effect !== 'none')) {
+				// capture the dataTransfer
+				var watcher = event.dataTransfer.capture(this, effect);
+				this.watchers.push(watcher);
+				this.connect(watcher, 'move', this.onWatcherMove);
+				this.connect(watcher, 'drop', this.onWatcherDrop);
+				this.connect(watcher, 'leave', this.onWatcherLeave);
+				event.stopImmediatePropagation();
+
+				this.onWatcherEnter(watcher);
+			}
 		}
+		// we are already interrested
+		else
+			event.stopImmediatePropagation();
 	},
 
-	onDrop: function(event) {
-		var i; var pos; var mimetype; var data;
-		var dropPoint = this.pointFromWindow({ x: event.clientX, y: event.clientY });
+	getWatchers: function() {
+		return this.watchers;
+	},
 
-		// handle files
-		if((event.dataTransfer.files !== undefined) && (event.dataTransfer.files.length > 0)) {
-			if(this.allowFiles) {
-				// accept the drop
-				event.preventDefault();
-				event.stopPropagation();
-				for(i = 0; i < event.dataTransfer.files.length; i++)
-					this.fireEvent('dropfile', this, new Core.File({ fileApi: event.dataTransfer.files[i] }), dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
+	onWatcherEnter: function(watcher) {
+		this.onDragEnter(watcher.getDataTransfer());
+	},
+
+	onWatcherMove: function(watcher) {
+	},
+
+	onWatcherDrop: function(watcher, effect, x, y) {
+		var point = this.pointFromWindow(new Ui.Point({ x: x, y: y }));
+		this.onDrop(watcher.getDataTransfer(), effect, point.getX(), point.getY());
+	},
+
+	onWatcherLeave: function(watcher) {
+		var found = false;
+		var i = 0;
+		for(; !found && (i < this.watchers.length); i++) {
+			found = (this.watchers[i] === watcher);
+		}
+		i--;
+		if(found)
+			this.watchers.splice(i, 1);
+		if(this.watchers.length === 0)
+			this.onDragLeave();
+	},
+
+	getAllowedTypesEffect: function(dataTransfer) {
+		if(this.allowedTypes !== undefined) {
+			var data = dataTransfer.getData();
+			var effect = undefined;
+			for(var i = 0; (effect === undefined) && (i < this.allowedTypes.length); i++) {
+				var type = this.allowedTypes[i];
+				if(typeof(type.type) === 'string') {
+				 	if(Ui.DragNativeData.hasInstance(data)) {
+				 		if((type.type === 'files') && data.hasFiles())
+				 			effect = type.effect;
+				 		else if(((type.type === 'text') || (type.type === 'text/plain')) && data.hasTypes('text/plain', 'text'))
+				 			effect = type.effect;
+				 		else if(data.hasType(type.type))
+							effect = type.effect;
+				 	}
+				}
+				else if(type.type.hasInstance(data))
+					effect = type.effect;
+			}
+			if(typeof(effect) === 'function')
+				effect = this.onDragEffectFunction(dataTransfer, effect);
+			if(effect === undefined)
+				effect = 'none';
+			return effect;
+		}
+		else
+			return 'none';
+	},
+
+	//
+	// Override to allow a drop for the given dataTransfer.
+	// This method return the possible allowed effect [move|copy|link|none]
+	//
+	onDragEffect: function(dataTransfer) {
+		var dragEvent = new Ui.DragEvent({
+			type: 'drageffect', bubbles: false,
+			dataTransfer: dataTransfer
+		});
+		dragEvent.dispatchEvent(this);
+		var effectAllowed = dragEvent.getEffectAllowed();
+		if(effectAllowed !== undefined)
+			return dragEvent.getEffectAllowed();
+		else
+			return this.getAllowedTypesEffect(dataTransfer);
+	},
+
+	onDragEffectFunction: function(dataTransfer, func) {
+		return func(dataTransfer.getData());
+	},
+
+	//
+	// Override to get the drop when it happends. The default
+	// action is to raise the 'drop' event.
+	//
+	onDrop: function(dataTransfer, dropEffect, x, y) {
+		var done = false;
+		if(!this.fireEvent('drop', this, dataTransfer.getData(), dropEffect, x, y)) {
+			var data = dataTransfer.getData();
+			if(Ui.DragNativeData.hasInstance(data) && data.hasFiles()) {
+				var files = data.getFiles();
+				var done = true;
+				for(var i = 0; i < files.length; i++)
+					done &= this.fireEvent('dropfile', this, files[i], dropEffect, x, y);
 			}
 		}
-		else {
-			if(!navigator.supportDrag || navigator.supportMimetypeDrag) {
-				mimetype = this.dragMimetype(event);
-				if(mimetype !== undefined) {
-					data = event.dataTransfer.getData(mimetype);
-					// if this is a local drag and drop, get the local object
-					if(mimetype.indexOf(Ui.Draggable.localmimetype) === 0)
-						data = Ui.Draggable.getLocalData(data);
-					// accept the drop
-					event.preventDefault();
-					event.stopPropagation();
-					this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
-				}
-			}
-			else {
-				// emulate with Text data
-				var mergedData = event.dataTransfer.getData('Text');
-				data = {};
-				var tmp = mergedData.split(';');
-				for(i = 0; i < tmp.length; i++) {
-					pos = tmp[i].indexOf(':');
-					if(pos !== -1)
-						data[tmp[i].substring(0, pos)] = tmp[i].substring(pos+1);
-				}
-				mimetype = this.dragMergedMimetype(data);
-				if(mimetype !== undefined) {
-					// accept the drop
-					event.preventDefault();
-					event.stopPropagation();
-					data = data[mimetype];
-					// if this is a local drag and drop, get the local object
-					if(mimetype.indexOf(Ui.Draggable.localmimetype) === 0)
-						data = Ui.Draggable.getLocalData(data);
-					this.fireEvent('drop', this, mimetype, data, dropPoint.x, dropPoint.y, event.dataTransfer.effectAllowed);
-				}
-			}
-		}
-		return false;
+		else
+			done = true;
+		return done;
+	},
+
+	//
+	// Override to do something when the first allowed drag enter the element.
+	// The default action is to raise the 'dragenter' event
+	//	
+	onDragEnter: function(dataTransfer) {
+		this.fireEvent('dragenter', this, dataTransfer.getData());
+	},
+
+	//
+	// Override to do something when the last allowed drag leave the element.
+	// The default action is to raise the 'dragleave' event
+	//	
+	onDragLeave: function() {
+		this.fireEvent('dragleave', this);
 	}
-	/**#@-*/
 });
+

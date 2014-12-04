@@ -100,7 +100,6 @@ Ui.LBox.extend('Ui.App',
 			this.focusElement = undefined;
 		}, true);
 
-
 		this.connect(window, 'dragstart', function(event) { event.preventDefault(); });
 		this.connect(window, 'dragenter', function(event) {	event.preventDefault();	return false; });
 		this.connect(window, 'dragover', function(event) {
@@ -108,6 +107,7 @@ Ui.LBox.extend('Ui.App',
 			event.preventDefault();	return false;
 		});
 		this.connect(window, 'drop', function(event) { event.preventDefault(); return false; });
+
 
 		if('onorientationchange' in window)
 			this.connect(window, 'orientationchange', this.onOrientationChange);
@@ -127,6 +127,7 @@ Ui.LBox.extend('Ui.App',
 		}
 		element.invalidateMeasure();
 	},
+
 	requireFont: function(fontFamily, fontWeight) {
 		var fontKey = fontFamily+':'+fontWeight;
 	
@@ -419,6 +420,9 @@ Ui.LBox.extend('Ui.App',
 
 			// handle pointer events
 			new Ui.PointerManager({ app: this });
+
+			// handle native drag & drop
+			new Ui.DragNativeManager({ app: this });
 		}
 	},
 

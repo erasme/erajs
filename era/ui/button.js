@@ -157,8 +157,6 @@ Ui.Selectionable.extend('Ui.Button',
 		this.bg = new Ui.ButtonBackground();
 
 		this.dropbox.setContent(this.bg);
-		this.connect(this.dropbox, 'dragenter', this.onDragEnter);
-		this.connect(this.dropbox, 'dragleave', this.onDragLeave);
 
 		this.mainBox = new Ui.HBox();
 		this.dropbox.append(this.mainBox);
@@ -415,14 +413,6 @@ Ui.Selectionable.extend('Ui.Button',
 			else if(this.getIsTextVisible())
 				this.text.setVerticalAlign('center');
 		}
-	},
-
-	onDragEnter: function() {
-		console.log(this+'.onDragEnter BUTTON');
-	},
-
-	onDragLeave: function() {
-		console.log(this+'.onDragLeave BUTTON');
 	},
 
 	updateColors: function() {

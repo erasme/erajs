@@ -13,8 +13,8 @@ Ui.Button.extend('Ui.ActionButton', {
 		this.connect(this, 'press', this.onActionButtonDrop);
 	},
 
-	addMimetype: function(mimetype) {
-		this.getDropBox().addMimetype(mimetype);
+	addType: function(type, effect) {
+		this.getDropBox().addType(type, effect);
 	},
 	
 	onActionButtonDrop: function() {

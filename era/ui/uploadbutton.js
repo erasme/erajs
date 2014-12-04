@@ -20,7 +20,7 @@ Ui.Button.extend('Ui.UploadButton',
 		this.connect(this.input, 'file', this.onFile);
 		this.connect(this, 'press', this.onUploadButtonPress);
 
-		this.getDropBox().addMimetype('files');
+		this.getDropBox().addType('files', 'copy');
 		this.connect(this.getDropBox(), 'dropfile', this.onFile);
 	},
 
