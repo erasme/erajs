@@ -16,7 +16,7 @@ Ui.App.extend('Test.App', {
 
 		vbox.append(new Ui.Rectangle({ fill: 'lightgreen', height: 500 }));
 
-		var draggable = new Ui.Draggable({ mimetype: 'application/x-wonder-data', data: 'hello here', width: 64, height: 64, horizontalAlign: 'center' });
+		var draggable = new Ui.Draggable({ draggableData: 'hello here', width: 64, height: 64, horizontalAlign: 'center' });
 		draggable.append(new Ui.Rectangle({ fill: 'lightblue', radius: 8 }));
 		draggable.append(new Ui.Label({ text: 'drag me', horizontalAlign: 'center', verticalAlign: 'center', margin: 10 }));
 		vbox.append(draggable);

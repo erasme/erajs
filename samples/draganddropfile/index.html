@@ -22,8 +22,7 @@ app.setContent(vbox);
 // Define a DropBox. The DropBox is a possible target for a drag element.
 //
 var dropbox = new Ui.DropBox({ width: 200, height: 200 });
-// allow drop of files
-dropbox.addMimetype('files');
+dropbox.addType('files', 'copy');
 
 // fill with content to see something
 dropbox.append(new Ui.Rectangle({ fill: 'lightgreen', radius: 8 }));

@@ -11,6 +11,8 @@ var app = new Ui.App();
 var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center', spacing: 20 });
 app.setContent(vbox);
 
+Core.Object.extend('Test.Data');
+
 //
 // Define a draggable element. Choose a mimetype for the content. Most of the time
 // use an application specific mimetype. The mimetype is used between a drag element
@@ -20,7 +22,7 @@ app.setContent(vbox);
 //
 // Put some content to see something
 //
-var draggable = new Ui.Draggable({ mimetype: 'application/x-wonder-data', draggableData: 'hello here', width: 64, height: 64, horizontalAlign: 'center' });
+var draggable = new Ui.Draggable({ draggableData: new Test.Data(), width: 64, height: 64, horizontalAlign: 'center' });
 draggable.append(new Ui.Rectangle({ fill: 'lightblue', radius: 8 }));
 draggable.append(new Ui.Label({ text: 'drag me', horizontalAlign: 'center', verticalAlign: 'center', margin: 10 }));
 vbox.append(draggable);
@@ -54,20 +56,34 @@ app.connect(draggable, 'dragend', function(draggable, operation) {
 // Define a DropBox. The DropBox is a possible target for a drag element.
 //
 var dropbox = new Ui.DropBox({ width: 200, height: 200 });
-// add allowed mimetype for this dropbox. Here we allow the mimetype of the drag element
-dropbox.addMimetype('text/uri-list');
-dropbox.addMimetype('application/x-wonder-data');
+dropbox.addType(Test.Data, 'copy');
+dropbox.addType('text/uri-list', 'copy');
+dropbox.addType('text', function(data) { return 'copy'; });
+
 // fill with content to see something
-dropbox.append(new Ui.Rectangle({ fill: 'lightgreen', radius: 8 }));
+dropBg = new Ui.Rectangle({ fill: 'lightgreen', radius: 8 });
+dropbox.append(dropBg);
 var droplabel = new Ui.Label({ text: 'drop here', horizontalAlign: 'center', verticalAlign: 'center', margin: 10 });
 dropbox.append(droplabel);
 vbox.append(dropbox);
+app.connect(dropbox, 'dragenter', function() {
+	dropBg.setFill('orange');
+});
+app.connect(dropbox, 'dragleave', function() {
+	dropBg.setFill('lightgreen');
+});
 
 //
 // Connect to the drop event called when a compatible element is
 // dropped in the box.
 //
-app.connect(dropbox, 'drop', function(dropbox, mimetype, data) {
+app.connect(dropbox, 'drop', function(dropbox, data, effect, x, y) {
+	if(Ui.DragNativeData.hasInstance(data)) {
+		if(data.hasType('text/uri-list'))
+			data = data.getData('text/uri-list');
+		else if(data.hasType('text/plain'))
+			data = data.getData('text/plain');
+	}
 	droplabel.setText('message: '+data);
 	new Core.DelayedTask({ delay: 1, callback: function() {
 		droplabel.setText('drop here');
