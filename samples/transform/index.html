@@ -44,18 +44,17 @@ vbox.append(rect, true);
 var clock = new Anim.ClockGroup({ duration: 4, target: rect });
 
 var clock1 = new Anim.Clock({ duration: 4.0,
-	ease: new Anim.ElasticEase({ mode: 'out' }),
-	onTimeupdate: function(clock, progress) {
-		rect.setTransform(Ui.Matrix.createRotate(progress * 360));
-	}
+	ease: new Anim.ElasticEase({ mode: 'out' })
+});
+app.connect(clock1, 'timeupdate', function(clock, progress) {
+	rect.setTransform(Ui.Matrix.createRotate(progress * 360));
 });
 clock.appendChild(clock1);
 
 
-var clock2 = new Anim.Clock({ duration: 2.0,
-	onTimeupdate: function(clock, progress) {
-		rect.setOpacity(progress);
-	}
+var clock2 = new Anim.Clock({ duration: 2.0 });
+app.connect(clock2, 'timeupdate', function(clock, progress) {
+	rect.setOpacity(progress);
 });
 clock.appendChild(clock2);
 
