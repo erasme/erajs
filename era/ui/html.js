@@ -158,6 +158,7 @@ Ui.Element.extend('Ui.Html',
 		this.getDrawing().style.width = width+'px';
 		//console.log(this+'.measureCore('+width+','+height+') clientWidth: '+this.htmlDrawing.clientWidth+' '+this.drawing.innerHTML);
 		this.htmlDrawing.style.width = '';
+		this.htmlDrawing.style.height = '';
 		// if client width if bigger than the constraint width, set the htmlDrawing
 		// width and test again. This will allow (for ex) word wrap to try to reduce the width
 		if(this.htmlDrawing.clientWidth > width) {
@@ -177,6 +178,8 @@ Ui.Element.extend('Ui.Html',
 	arrangeCore: function(width, height) {
 //		console.log(this+'.arrangeCore('+width+','+height+')');
 //		this.htmlDrawing.style.width = width+'px';// '100%';
+		this.htmlDrawing.style.width = width+'px';
+		this.htmlDrawing.style.height = height+'px';
 	}
 }, {
 	style: {
