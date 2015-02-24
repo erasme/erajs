@@ -154,6 +154,9 @@ Core.Object.extend('Ui.Pointer',
 	y: 0,
 	initialX: 0,
 	initialY: 0,
+	altKey: false,
+	ctrlKey: false,
+	shiftKey: false,
 	type: undefined,
 	start: undefined,
 	cumulMove: 0,
@@ -239,6 +242,36 @@ Core.Object.extend('Ui.Pointer',
 		return this.chainLevel;
 	},
 
+	getAltKey: function() {
+		return this.altKey;
+	},
+
+	setAltKey: function(altKey) {
+		this.altKey = altKey;
+	},
+
+	getCtrlKey: function() {
+		return this.ctrlKey;
+	},
+
+	setCtrlKey: function(ctrlKey) {
+		this.ctrlKey = ctrlKey;
+	},
+
+	getShiftKey: function() {
+		return this.shiftKey;
+	},
+
+	setShiftKey: function(shiftKey) {
+		this.shiftKey = shiftKey;
+	},
+
+	setControls: function(altKey, ctrlKey, shiftKey) {
+		this.altKey = altKey;
+		this.ctrlKey = ctrlKey;
+		this.shiftKey = shiftKey;
+	},
+
 	move: function(x, y) {
 		if(x === undefined)
 			x = this.x;
@@ -259,18 +292,18 @@ Core.Object.extend('Ui.Pointer',
 			while((this.history.length > 2) && (time - this.history[0].time > Ui.Pointer.HISTORY_TIMELAPS)) {
 				this.history.shift();
 			}
+		}
 
-			var watchers = this.watchers.slice();
-			for(var i = 0; i < watchers.length; i++)
-				watchers[i].move();
+		var watchers = this.watchers.slice();
+		for(var i = 0; i < watchers.length; i++)
+			watchers[i].move();
 			
-			if(this.captureWatcher === undefined) {
-				var target = Ui.App.current.elementFromPoint(this.x, this.y);
-				if(target !== undefined) {
-					var pointerEvent = new Ui.PointerEvent({ type: 'ptrmove', pointer: this });
-					this.fireEvent('ptrmove', pointerEvent);
-					pointerEvent.dispatchEvent(target);
-				}
+		if(this.captureWatcher === undefined) {
+			var target = Ui.App.current.elementFromPoint(this.x, this.y);
+			if(target !== undefined) {
+				var pointerEvent = new Ui.PointerEvent({ type: 'ptrmove', pointer: this });
+				this.fireEvent('ptrmove', pointerEvent);
+				pointerEvent.dispatchEvent(target);
 			}
 		}
 	},
@@ -280,7 +313,7 @@ Core.Object.extend('Ui.Pointer',
 	},
 
 	getDelta: function() {
-		var deltaX = this.x - this.initialX;
+		var deltaX = this.x - this.initialX; 
 		var deltaY = this.y - this.initialY;
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	},
@@ -434,6 +467,21 @@ Core.Object.extend('Ui.PointerManager',
 //					this.mouse.capture(undefined);
 //			}, true);
 
+			this.connect(window, 'keydown', function(event) {
+				// if Ctrl, Alt or Shift change signal to the mouse
+				if((event.which === 16) || (event.which === 17) || (event.which === 18)) {
+					this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
+					this.mouse.move();
+				}
+			});
+			this.connect(window, 'keyup', function(event) {
+				// if Ctrl, Alt or Shift change signal to the mouse
+				if((event.which === 16) || (event.which === 17) || (event.which === 18)) {
+					this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
+					this.mouse.move();
+				}
+			});
+
 			this.connect(document, 'contextmenu', function(event) {
 				if(this.mouse !== undefined) {
 					this.mouse.capture(undefined);
@@ -495,6 +543,8 @@ Core.Object.extend('Ui.PointerManager',
 		else if(event.button === 2)
 			buttons |= 4;
 
+		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
+
 		var oldButtons = this.mouse.getButtons();
 		if(oldButtons === 0)
 			this.mouse.down(event.clientX, event.clientY, buttons);
@@ -503,6 +553,7 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	onMouseMove: function(event) {
+		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 		// avoid emulated mouse event after touch events
 		var deltaTime = (((new Date().getTime())/1000) - this.lastUpdate);
 		var deltaX = (this.lastTouchX - event.clientX);
@@ -521,6 +572,7 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	onMouseUp: function(event) {
+		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 		// avoid emulated mouse event after touch events
 		var deltaTime = (((new Date().getTime())/1000) - this.lastUpdate);
 		var deltaX = (this.lastTouchX - event.clientX);
@@ -540,6 +592,7 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	onIEMouseDown: function(event) {
+		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 		var buttons = 0;
 		if(event.button === 4)
 			buttons |= 2;
@@ -554,10 +607,12 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	onIEMouseMove: function(event) {
+		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 		this.mouse.move(event.clientX, event.clientY);
 	},
 
 	onIEMouseUp: function(event) {
+		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 		this.mouse.move(event.clientX, event.clientY);
 		this.mouse.up();
 	},
@@ -593,16 +648,20 @@ Core.Object.extend('Ui.PointerManager',
 			type: type, id: event.pointerId
 		});
 		this.pointers[event.pointerId] = pointer;
+		pointer.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 		pointer.down(event.clientX, event.clientY, 1);
 	},
 
 	onPointerMove: function(event) {
-		if(this.pointers[event.pointerId] !== undefined)
+		if(this.pointers[event.pointerId] !== undefined) {
+			this.pointers[event.pointerId].setControls(event.altKey, event.ctrlKey, event.shiftKey);
 			this.pointers[event.pointerId].move(event.clientX, event.clientY);
+		}
 	},
 
 	onPointerUp: function(event) {
 		if(this.pointers[event.pointerId] !== undefined) {
+			this.pointers[event.pointerId].setControls(event.altKey, event.ctrlKey, event.shiftKey);
 			this.pointers[event.pointerId].up();
 			delete(this.pointers[event.pointerId]);
 		}
@@ -622,10 +681,12 @@ Core.Object.extend('Ui.PointerManager',
 			for(var i = 0; (i < event.touches.length) && !found; i++) {
 				if(id == event.touches[i].identifier) {
 					found = true;
+					this.pointers[id].setControls(event.altKey, event.ctrlKey, event.shiftKey);
 					this.pointers[id].move(event.touches[i].clientX, event.touches[i].clientY);
 				}
 			}
 			if(!found) {
+				this.pointers[id].setControls(event.altKey, event.ctrlKey, event.shiftKey);
 				this.pointers[id].up();
 				delete(this.pointers[id]);
 			}
@@ -639,6 +700,7 @@ Core.Object.extend('Ui.PointerManager',
 					type: 'touch', id: event.touches[i].identifier
 				});
 				this.pointers[event.touches[i].identifier] = pointer;
+				pointer.setControls(event.altKey, event.ctrlKey, event.shiftKey);
 				pointer.down(event.touches[i].clientX, event.touches[i].clientY, 1);
 			}
 		}
@@ -656,4 +718,3 @@ Core.Object.extend('Ui.PointerManager',
 			event.preventDefault();
 	}
 });
-
