@@ -11,9 +11,9 @@ Ui.Scrollable.extend('Ui.ScrollingArea',
      * @extends Ui.Scrollable
 	 */
 	constructor: function(config) {
-		this.horizontalScrollbar = new Ui.Rectangle({ width: 30, height: 4, margin: 5 });
+		this.horizontalScrollbar = new Ui.Rectangle({ width: 30, height: 4, margin: 6 });
 		this.setScrollbarHorizontal(this.horizontalScrollbar);
-		this.verticalScrollbar = new Ui.Rectangle({ width: 4, height: 30, margin: 5 });
+		this.verticalScrollbar = new Ui.Rectangle({ width: 4, height: 30, margin: 6 });
 		this.setScrollbarVertical(this.verticalScrollbar);
 	}
 }, 
