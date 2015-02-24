@@ -60,13 +60,11 @@ Core.Object.extend('Ui.Styles', {}, {}, {
 		"Ui.Separator": {
 			color: '#000000'
 		},
-		"Ui.MenuPopup": {
+		"Ui.Popup": {
 			"Ui.Button": {
 				backgroundBorder: 'rgba(240,240,240,0)',
 				background: 'rgba(240,240,240,0)'
-			}
-		},
-		"Ui.Popup": {
+			},
 			"Ui.ActionButton": {
 				showText: false
 			}
