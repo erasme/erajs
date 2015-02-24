@@ -104,6 +104,7 @@ Ui.Pressable.extend('Ui.CheckBox',
 			this.getDrawing().setAttribute('aria-checked', 'true');
 			this.fireEvent('toggle', this);
 			this.graphic.setIsChecked(true);
+			this.graphic.setColor(this.getStyleProperty('activeColor'));
 			this.fireEvent('change', this, true);
 		}
 	},
@@ -114,6 +115,7 @@ Ui.Pressable.extend('Ui.CheckBox',
 			this.getDrawing().setAttribute('aria-checked', 'false');
 			this.fireEvent('untoggle', this);
 			this.graphic.setIsChecked(false);
+			this.graphic.setColor(this.getStyleProperty('color'));
 			this.fireEvent('change', this, false);
 		}
 	},
@@ -124,7 +126,10 @@ Ui.Pressable.extend('Ui.CheckBox',
 	},
 	
 	onCheckBlur: function() {
-		this.graphic.setColor(this.getStyleProperty('color'));
+		if(this.isToggled)
+			this.graphic.setColor(this.getStyleProperty('activeColor'));
+		else
+			this.graphic.setColor(this.getStyleProperty('color'));
 	},
 
 	onCheckBoxDown: function() {
@@ -141,10 +146,15 @@ Ui.Pressable.extend('Ui.CheckBox',
 	onStyleChange: function() {
 		if(this.getHasFocus())
 			this.graphic.setColor(this.getStyleProperty('focusColor'));
-		else
-			this.graphic.setColor(this.getStyleProperty('color'));
+		else {
+			if(this.isToggled)
+				this.graphic.setColor(this.getStyleProperty('activeColor'));
+			else
+				this.graphic.setColor(this.getStyleProperty('color'));
+		}
 		this.graphic.setCheckColor(this.getStyleProperty('checkColor'));
 		this.graphic.setBorderWidth(this.getStyleProperty('borderWidth'));
+		this.graphic.setRadius(this.getStyleProperty('radius'));
 	},
 
 	setContent: function(content) {
@@ -177,8 +187,10 @@ Ui.Pressable.extend('Ui.CheckBox',
 	style: {
 		borderWidth: 2,
 		color: '#444444',
+		activeColor: '#07a0e5',
 		focusColor: '#21d3ff',
-		checkColor: new Ui.Color({ r: 0.03, g: 0.63, b: 0.9 })
+		checkColor: '#ffffff',
+		radius: 3
 	}
 });
 

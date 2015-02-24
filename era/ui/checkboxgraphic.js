@@ -4,11 +4,14 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 	isChecked: false,
 	color: undefined,
 	checkColor: undefined,
+	activeColor: undefined,
 	borderWidth: 2,
+	radius: 3,
 
 	constructor: function(config) {
 		this.color = new Ui.Color({ r: 1, g: 1, b: 1 });
-		this.checkColor = new Ui.Color({ r: 0.31, g: 0.66, b: 0.31 });
+		this.activeColor = new Ui.Color({ r: 0.31, g: 0.66, b: 0.31 });
+		this.checkColor = new Ui.Color({ r: 1, g: 1, b: 1 });
 	},
 
 	getIsDown: function() {
@@ -32,7 +35,14 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 			this.invalidateDraw();
 		}
 	},
-	
+
+	setRadius: function(radius) {
+		if(this.radius !== radius) {
+			this.radius = radius;
+			this.invalidateDraw();
+		}
+	},
+
 	getColor: function() {
 		return this.color;
 	},
@@ -71,7 +81,9 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 		var h = this.getLayoutHeight();
 		var cx = w/2;
 		var cy = h/2;
-				
+
+		var radius = Math.min(this.radius, 10);
+
 		// background
 		if(this.getIsDown())
 			ctx.globalAlpha = 0.8;
@@ -79,22 +91,24 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 		// handle disable
 		if(this.getIsDisabled())
 			ctx.globalAlpha = 0.2;
-			
-		// border
-		ctx.fillStyle = this.getColor().getCssRgba();
-		ctx.beginPath();
-		ctx.moveTo(cx-10, cy-10);
-		ctx.lineTo(cx-10, cy+10);
-		ctx.lineTo(cx+10, cy+10);
-		ctx.lineTo(cx+10, cy-10);
-		ctx.moveTo(cx-10+this.borderWidth, cy-10+this.borderWidth);
-		ctx.lineTo(cx+10-this.borderWidth, cy-10+this.borderWidth);
-		ctx.lineTo(cx+10-this.borderWidth, cy+10-this.borderWidth);
-		ctx.lineTo(cx-10+this.borderWidth, cy+10-this.borderWidth);
-		ctx.closePath();
-		ctx.fill();
 
-		if(this.isChecked) {
+		if(!this.isChecked) {
+			// border
+			ctx.strokeStyle = this.getColor().getCssRgba();
+			ctx.lineWidth = this.borderWidth;
+			ctx.beginPath();
+			ctx.roundRect(cx-10+this.borderWidth/2, cy-10+this.borderWidth/2, 20-this.borderWidth, 20-this.borderWidth, radius, radius, radius, radius);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		else {
+			// border
+			ctx.fillStyle = this.getColor().getCssRgba();
+			ctx.beginPath();
+			ctx.roundRect(cx-10, cy-10, 20, 20, radius, radius, radius, radius);
+			ctx.closePath();
+			ctx.fill();
+
 			// icon
 			var iconSize = 20;
 			var path = Ui.Icon.getPath('check');
