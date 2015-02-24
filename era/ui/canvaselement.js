@@ -359,6 +359,7 @@ Core.Object.extend('Core.SVG2DContext', {
 	fillStyle: 'black',
 	strokeStyle: 'black',
 	lineWidth: 1,
+	lineDash: undefined,
 	globalAlpha: 1,
 	currentTransform: undefined,
 	font: 'default 10px sans-serif',
@@ -380,6 +381,7 @@ Core.Object.extend('Core.SVG2DContext', {
 		this.g = document.createElementNS(svgNS, 'g');
 		this.currentTransform = this.document.createSVGMatrix();
 		this.states = [];
+		this.lineDash = [];
 
 		this.defs = document.createElementNS(svgNS, 'defs');
 		this.g.appendChild(this.defs);
@@ -449,6 +451,8 @@ Core.Object.extend('Core.SVG2DContext', {
 		svg.style.strokeWidth = this.lineWidth;
 		if(this.clipId !== undefined)
 			svg.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
+		if(this.lineDash.length !== 0)
+			svg.setAttributeNS(null, 'stroke-dasharray', this.lineDash.join(','));
 		svg.setAttributeNS(null, 'pointer-events', 'none');
 		svg.transform.baseVal.initialize(this.document.createSVGTransformFromMatrix(this.currentTransform));
 		this.g.appendChild(svg);
@@ -465,6 +469,14 @@ Core.Object.extend('Core.SVG2DContext', {
 	resetClip: function() {
 		this.clipId = undefined;
 	},
+
+	getLineDash: function() {
+		return this.lineDash;
+	},
+
+	setLineDash: function(lineDash) {
+		this.lineDash = lineDash;
+	},  
 
 	// drawing images
 	drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
@@ -600,6 +612,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			fillStyle: this.fillStyle,
 			strokeStyle: this.strokeStyle,
 			lineWidth: this.lineWidth,
+			lineDash: this.lineDash,
 			globalAlpha: this.globalAlpha,
 			matrix: {
 				a: this.currentTransform.a, b: this.currentTransform.b,
@@ -620,6 +633,7 @@ Core.Object.extend('Core.SVG2DContext', {
 			this.fillStyle = state.fillStyle;
 			this.strokeStyle = state.strokeStyle;
 			this.lineWidth = state.lineWidth;
+			this.lineDash = state.lineDash;
 			this.globalAlpha = state.globalAlpha;
 			this.currentTransform = this.document.createSVGMatrix();
 			this.currentTransform.a = state.matrix.a;
