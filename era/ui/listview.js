@@ -173,7 +173,6 @@ Ui.Container.extend('Ui.ListView',
 		if(position < this.data.length) {
 			if(this.selectedRow === position)
 				this.fireEvent('unselect', this, this.selectedRow);
-			this.data.splice(position, 1);
 			for(var col = 0; col < this.headers.length; col++) {
 				var cell = this.data[position].listViewCells[this.headers[col].key];
 				if(this.selectedRow == position)
@@ -185,6 +184,7 @@ Ui.Container.extend('Ui.ListView',
 				this.rowContainer.removeChild(cell);
 				this.headers[col].rows.splice(position, 1);
 			}
+			this.data.splice(position, 1);
 			if(this.selectedRow !== undefined) {
 				if(this.selectedRow === position)
 					this.selectedRow = undefined;
