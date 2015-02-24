@@ -136,10 +136,11 @@ Ui.LBox.extend('Ui.SegmentBar',
 		var activeBackground = this.getStyleProperty('activeBackground');
 		var activeForeground = this.getStyleProperty('activeForeground');
 
+		this.box.setMargin(borderWidth);
 		this.border.setFill(backgroundBorder);
 		for(var i = 0; i < this.box.getChildren().length; i++) {
 			var child = this.box.getChildren()[i];
-			child.setRadius(radius-borderWidth);
+			child.setRadius(Math.max(0, radius-borderWidth));
 			child.setSpacing(spacing);
 			if(this.current === child) {
 				child.setBackground(activeBackground);
