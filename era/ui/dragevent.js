@@ -118,7 +118,7 @@ Core.Object.extend('Ui.DragNativeData', {
 });
 
 Core.Object.extend('Ui.DragWatcher', {
-	effectAllowed: 'all',
+	effectAllowed: undefined,
 	dataTransfer: undefined,
 	element: undefined,
 	x: 0,
@@ -164,8 +164,8 @@ Core.Object.extend('Ui.DragWatcher', {
 		this.fireEvent('leave', this);
 	},
 
-	drop: function() {
-		this.fireEvent('drop', this, this.effectAllowed, this.x, this.y);
+	drop: function(dropEffect) {
+		this.fireEvent('drop', this, dropEffect, this.x, this.y);
 	},
 
 	release: function() {
@@ -188,10 +188,12 @@ Core.Object.extend('Ui.DragDataTransfer', {
 	overElement: undefined,
 	hasStarted: false,
 
+	effectAllowed: undefined,
 	watcher: undefined,
 	pointer: undefined,
 	pointerId: 0,
-	dropEffect: 'none',
+	dropEffect: undefined,
+	dropEffectIcon: undefined,
 	data: undefined,
 	type: undefined,
 	timer: undefined,
@@ -203,6 +205,8 @@ Core.Object.extend('Ui.DragDataTransfer', {
 	constructor: function(config) {
 		this.addEvents('start', 'end');
 
+		this.dropEffect = [];
+		this.effectAllowed = [];
 		this.draggable = config.draggable;
 		delete(config.draggable);
 		this.startX = config.x;
@@ -406,15 +410,16 @@ Core.Object.extend('Ui.DragDataTransfer', {
 
 			if((overElement !== undefined) && (overElement !== null)) {
 				var dragEvent;
-				var oldDropEffect = this.dropEffect;
-				this.dropEffect = 'none';
+				var oldDropEffectIcon = this.dropEffectIcon;
+				//this.dropEffect = 'none';
 				dragEvent = new Ui.DragEvent({
 					type: 'dragover',  clientX: clientX, clientY: clientY,
 					dataTransfer: this
 				});
+				var effectAllowed = [];
 				dragEvent.dispatchEvent(overElement);
 				if(this.dragWatcher !== undefined)
-					this.dropEffect = this.dragWatcher.getEffectAllowed();
+					effectAllowed = this.dragWatcher.getEffectAllowed();
 
 				if((this.dragWatcher !== undefined) && !overElement.getIsChildOf(this.dragWatcher.getElement())) {
 					this.dragWatcher.leave();
@@ -423,17 +428,28 @@ Core.Object.extend('Ui.DragDataTransfer', {
 
 				if(this.dragWatcher !== undefined)
 					this.dragWatcher.move(clientX, clientY);
+				
+				this.dropEffect = Ui.DragDataTransfer.getMatchingDropEffect(this.effectAllowed, effectAllowed,
+					watcher.pointer.getType(), watcher.pointer.getCtrlKey(), watcher.pointer.getAltKey(),
+					watcher.pointer.getShiftKey());
+
+				if(this.dropEffect.length > 1)
+					this.dropEffectIcon = 'dragchoose';
+				else if(this.dropEffect.length > 0)
+					this.dropEffectIcon = this.dropEffect[0].dragicon;
+				else
+					this.dropEffectIcon = undefined;
 
 				// handle the drop effect icon feedback
-				if(this.dropEffect !== oldDropEffect) {
+				if(this.dropEffectIcon !== oldDropEffectIcon) {
 					if(this.imageEffect !== undefined) {
 						this.imageEffect.setIsLoaded(false);
 						this.image.removeChild(this.imageEffect.getDrawing());
 						this.imageEffect = undefined;
 					}
-					if(this.dropEffect !== 'none') {
+					if(this.dropEffectIcon !== undefined) {
 						this.imageEffect = new Ui.DragEffectIcon({
-							icon: 'drag'+this.dropEffect
+							icon: this.dropEffectIcon
 						});
 						this.imageEffect.parent = Ui.App.current;
 						this.imageEffect.setIsLoaded(true);
@@ -467,8 +483,31 @@ Core.Object.extend('Ui.DragDataTransfer', {
 			if(this.dragWatcher !== undefined) {
 				this.removeImage();
 				this.dragWatcher.leave();
-				this.dragWatcher.drop();
-				this.dragWatcher = undefined;
+				// TODO handle the choice if needed
+				if(this.dropEffect.length === 1)
+					this.dragWatcher.drop(this.dropEffect[0].action);
+				else if(this.dropEffect.length > 1) {
+					// TODO
+					var popup = new Ui.Popup();
+					var vbox = new Ui.VBox();
+					popup.setContent(vbox);
+					for(var i = 0; i < this.dropEffect.length; i++) {
+						var button = new Ui.Button({ text: this.dropEffect[i].text });
+						button['Ui.DragEvent.dropEffect'] = this.dropEffect[i];
+						this.connect(button, 'press', function(b) {
+							this.dragWatcher.drop(b['Ui.DragEvent.dropEffect'].action);
+							popup.hide();
+						});
+						vbox.append(button);
+					}
+
+					//popup.setContent(new Ui.Rectangle({ width: 100, height: 100, fill: 'pink' }));
+					popup.show(this.x, this.y);
+
+
+					//this.dragWatcher.drop(this.dropEffect);
+				}
+				//this.dragWatcher = undefined;
 			}
 			else {
 				// start an animation to return the dragged element to its origin
@@ -507,6 +546,91 @@ Core.Object.extend('Ui.DragDataTransfer', {
 			this.image.style.left = (this.startImagePoint.x + deltaX)+'px';
 			this.image.style.top = (this.startImagePoint.y + deltaY)+'px';
 		}
+	}
+}, {}, {
+	getMergedEffectAllowed: function(effectAllowed1, effectAllowed2) {
+		if(effectAllowed1 === 'all')
+			return effectAllowed2;
+		else {
+			var effectAllowed = [];
+
+			for(var i = 0; i < effectAllowed1.length; i++) {
+				for(var i2 = 0; i2 < effectAllowed2.length; i2++) {
+					if(effectAllowed1[i] === effectAllowed2[i2].action)
+						effectAllowed.push(effectAllowed2[i2]);
+				}
+			}
+			return effectAllowed;
+		}
+	},
+
+	getMatchingDropEffect: function(srcEffectAllowed, dstEffectAllowed, pointerType, ctrlKey, altKey, shiftKey) {
+		// filter with what the source support
+		effectAllowed = Ui.DragDataTransfer.getMergedEffectAllowed(srcEffectAllowed, dstEffectAllowed);
+		var dropEffect = effectAllowed;
+
+		if(effectAllowed.length > 1) {
+			// if the mouse is used let the choice using de keyboard controls
+			if(pointerType === 'mouse') {
+				if(!altKey) {
+					// find the secondary choice if any
+					if(ctrlKey) {
+						for(var i = 0; i < effectAllowed.length; i++) {
+							if(effectAllowed[i].secondary === true)
+								dropEffect = [ effectAllowed[i] ];
+						}
+						// else if possible take the second 
+						if((dropEffect === effectAllowed) && (effectAllowed.length > 1))
+							dropEffect = [ effectAllowed[1] ];
+					}
+					// else find the primary
+					else {
+						for(var i = 0; i < effectAllowed.length; i++) {
+							if(effectAllowed[i].primary === true)
+								dropEffect = [ effectAllowed[i] ];
+						}
+						// else find take the first one
+						if(dropEffect === effectAllowed)
+							dropEffect = [ effectAllowed[0] ];
+					}
+				}
+			}
+		}
+		return dropEffect;
+/*
+		if(effectAllowed === 'copy')
+			dropEffect = 'copy';
+		else if(effectAllowed === 'link')
+			dropEffect = 'link';
+		else if(effectAllowed === 'move')
+			dropEffect = 'move';
+		else if(effectAllowed === 'copyLink') {
+			if(ctrlKey)
+				dropEffect = 'copy';
+			else
+				dropEffect = 'link';
+		}
+		else if(effectAllowed === 'copyMove') {
+			if(ctrlKey)
+				dropEffect = 'copy';
+			else
+				dropEffect = 'move';
+		}
+		else if(effectAllowed === 'linkMove') {
+			if(altKey)
+				dropEffect = 'link';
+			else
+				dropEffect = 'move';
+		}
+		else if(effectAllowed === 'all') {
+			if(ctrlKey)
+				dropEffect = 'copy';
+			else if(altKey)
+				dropEffect = 'link';
+			else
+				dropEffect = 'move';
+		}
+		return dropEffect;*/
 	}
 });
 
@@ -587,15 +711,18 @@ Core.Object.extend('Ui.DragNativeManager', {
 			});
 			dragEvent.dispatchEvent(overElement);
 
-			if((this.dataTransfer.dragWatcher !== undefined) && !overElement.getIsChildOf(this.dataTransfer.dragWatcher.getElement())) {
+			if((this.dataTransfer.dragWatcher !== undefined) &&
+			   !overElement.getIsChildOf(this.dataTransfer.dragWatcher.getElement())) {
 				this.dataTransfer.dragWatcher.leave();
 				this.dataTransfer.dragWatcher = undefined;
 			}
 		}
 
 		if(this.dataTransfer.dragWatcher !== undefined) {
-			event.dataTransfer.dropEffect = this.dataTransfer.dragWatcher.effectAllowed;
+			var dropEffect = Ui.DragDataTransfer.getMergedEffectAllowed(
+				this.nativeToCustom(event.dataTransfer.effectAllowed), this.dataTransfer.dragWatcher.effectAllowed);
 			this.dataTransfer.dragWatcher.move(event.clientX, event.clientY);
+			event.dataTransfer.dropEffect = this.customToNative(dropEffect);
 		}
 		else
 			event.dataTransfer.dropEffect = 'none';
@@ -622,13 +749,63 @@ Core.Object.extend('Ui.DragNativeManager', {
 
 	onDrop: function(event) {
 		this.dataTransfer.setDataTransfer(event.dataTransfer);
-
 		if(this.dataTransfer.dragWatcher !== undefined) {
 			this.dataTransfer.dragWatcher.leave();
-			this.dataTransfer.dragWatcher.drop();
+			var dropEffect = Ui.DragDataTransfer.getMergedEffectAllowed(
+				this.nativeToCustom(event.dataTransfer.effectAllowed), this.dataTransfer.dragWatcher.effectAllowed);
+			event.dataTransfer.dropEffect = this.customToNative(dropEffect);
+			if(dropEffect.length > 0)
+				this.dataTransfer.dragWatcher.drop(dropEffect[0].action);
 			this.dataTransfer.dragWatcher = undefined;
 		}
 		event.stopImmediatePropagation();
 		event.preventDefault();
+	},
+
+	nativeToCustom: function(effectAllowed) {
+		if(effectAllowed === 'copy')
+			return [ 'copy' ];
+		else if(effectAllowed === 'link')
+			return [ 'link' ];
+		else if(effectAllowed === 'move')
+			return [ 'move' ];
+		else if(effectAllowed === 'copyLink')
+			return [ 'copy', 'link' ];
+		else if(effectAllowed === 'copyMove')
+			return [ 'move', 'copy' ];
+		else if(effectAllowed === 'linkMove')
+			return [ 'move', 'link' ];
+		else if(effectAllowed === 'all')
+			return [ 'move', 'copy', 'link' ];
+	},
+
+	customToNative: function(effectAllowed) {
+		var containsLink = false;
+		var containsCopy = false;
+		var containsMove = false;
+		for(var i = 0; i < effectAllowed.length; i++) {
+			if(effectAllowed[i].action === 'link')
+				containsLink = true;
+			else if(effectAllowed[i].action === 'move')
+				containsMove = true;
+			else if(effectAllowed[i].action === 'copy')
+				containsCopy = true;
+		}
+		if(containsLink && containsCopy && containsMove)
+			return 'all';
+		else if(containsLink && containsCopy)
+			return 'copyLink';
+		else if(containsLink && containsMove)
+			return 'linkMove';
+		else if(containsMove && containsCopy)
+			return 'copyMove';
+		else if(containsLink)
+			return 'link';
+		else if(containsMove)
+			return 'move';
+		else if(containsCopy)
+			return 'copy';
+		else
+			return 'none';
 	}
 });

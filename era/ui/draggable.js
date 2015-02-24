@@ -15,7 +15,7 @@ Ui.Pressable.extend('Ui.Draggable',
 	 */
 
 	draggableIcon: undefined,
-	allowedMode: 'copyMove',
+	allowedMode: 'all',
 	draggableData: undefined,
 	dragDelta: undefined,
 	dataTransfer: undefined,
@@ -66,8 +66,10 @@ Ui.Pressable.extend('Ui.Draggable',
 		if(this.lock || this.getIsDisabled() || (this.draggableData === undefined))
 			return;
 
-		this.dataTransfer = new Ui.DragDataTransfer({ type: 'pointer', draggable: this,
-			x: event.clientX, y: event.clientY, delayed: true, pointer: event.pointer });
+		this.dataTransfer = new Ui.DragDataTransfer({
+			type: 'pointer', draggable: this,
+			x: event.clientX, y: event.clientY, delayed: true, pointer: event.pointer
+		});
 		this.dragDelta = this.pointFromWindow({ x: event.clientX, y: event.clientY });
 		this.connect(this.dataTransfer, 'start', this.onDragStart);
 		this.connect(this.dataTransfer, 'end', this.onDragEnd);

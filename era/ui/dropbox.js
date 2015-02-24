@@ -9,15 +9,40 @@ Ui.LBox.extend('Ui.DropBox', {
 		this.connect(this, 'dragover', this.onDragOver);
 	},
 
-	addType: function(type, effect) {
+	addType: function(type, effects) {
 		if(typeof(type) === 'string')
 			type = type.toLowerCase();
 		if(this.allowedTypes === undefined)
 			this.allowedTypes = [];
-		this.allowedTypes.push({ type: type, effect: effect });
+		if(typeof(effects) === 'string')
+			effects = [ effects ];
+		if(typeof(effects) !== 'function') {
+			for(var i = 0; i < effects.length; i++) {
+				var effect = effects[i];
+				if(typeof(effect) === 'string')
+					effect = { action: effect };
+				if(!('text' in effect)) {
+					if(effect.action === 'copy')
+						effect.text = 'Copier';
+					else if(effect.action === 'move')
+						effect.text = 'Déplacer';
+					else if(effect.action === 'link')
+						effect.text = 'Lier';
+					else
+						effect.text = effect.action;
+				}
+				if(!('dragicon' in effect))
+					effect.dragicon = 'drag'+effect.action;
+				effects[i] = effect;
+			}
+		}
+		this.allowedTypes.push({ type: type, effect: effects });
 	},
 
 	onDragOver: function(event) {
+//		console.log(this+'.onDragOver effectAllowed: ');
+//		console.log(event.dataTransfer);
+
 		// test if we already captured this dataTransfer
 		var found = false;
 		for(var i = 0; !found && (i < this.watchers.length); i++)
@@ -26,7 +51,7 @@ Ui.LBox.extend('Ui.DropBox', {
 		if(!found) {
 			// get allowed effect for the given dataTransfer
 			var effect = this.onDragEffect(event.dataTransfer);
-			if((effect !== undefined) && (effect !== 'none')) {
+			if((effect !== undefined) && (effect.length > 0)) {
 				// capture the dataTransfer
 				var watcher = event.dataTransfer.capture(this, effect);
 				this.watchers.push(watcher);
@@ -91,19 +116,44 @@ Ui.LBox.extend('Ui.DropBox', {
 				else if(type.type.hasInstance(data))
 					effect = type.effect;
 			}
-			if(typeof(effect) === 'function')
-				effect = this.onDragEffectFunction(dataTransfer, effect);
+			if(typeof(effect) === 'function') {
+				var effects = this.onDragEffectFunction(dataTransfer, effect);
+
+				for(var i = 0; i < effects.length; i++) {
+					var effect = effects[i];
+					if(typeof(effect) === 'string')
+						effect = { action: effect };
+					if(!('text' in effect)) {
+						if(effect.action === 'copy')
+							effect.text = 'Copier';
+						else if(effect.action === 'move')
+							effect.text = 'Déplacer';
+						else if(effect.action === 'link')
+							effect.text = 'Lier';
+						else if(effect.action === 'run')
+							effect.text = 'Exécuter';
+						else if(effect.action === 'play')
+							effect.text = 'Jouer';
+						else
+							effect.text = effect.action;
+					}
+					if(!('dragicon' in effect))
+						effect.dragicon = 'drag'+effect.action;
+					effects[i] = effect;
+				}
+				effect = effects;
+			}
 			if(effect === undefined)
-				effect = 'none';
+				effect = [];
 			return effect;
 		}
 		else
-			return 'none';
+			return [];
 	},
 
 	//
 	// Override to allow a drop for the given dataTransfer.
-	// This method return the possible allowed effect [move|copy|link|none]
+	// This method return the possible allowed effect [move|copy|link|...] in an array
 	//
 	onDragEffect: function(dataTransfer) {
 		var dragEvent = new Ui.DragEvent({

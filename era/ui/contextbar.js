@@ -49,7 +49,7 @@ Ui.LBox.extend('Ui.ContextBar', {
 				continue;
 			//console.log(this+'.onSelectionChange mimetype: '+this.selection.getElements()[0].getMimetype());
 			var button = new Ui.ActionButton({ icon: action.icon, text: action.text, action: action, selection: this.selection });
-			button.addType(this.selection.getElements()[0].constructor, 'move');
+			button.addType(this.selection.getElements()[0].constructor, [ 'run' ]);
 			this.actionsBox.append(button);
 		}
 	},

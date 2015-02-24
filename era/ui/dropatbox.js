@@ -188,12 +188,18 @@ Ui.DropBox.extend('Ui.DropAtBox', {
 		// get allowed effect for the given dataTransfer
 		var effect = this.onDragEffect(event.dataTransfer);
 
-		if((foundWatcher !== undefined) && (effect !== foundWatcher.getEffectAllowed())) {
-			foundWatcher.release();
-			foundWatcher = undefined;
+		if(foundWatcher !== undefined) {
+			var equal = effect.length === foundWatcher.getEffectAllowed();
+			for(var i = 0; equal && (i < effect.length); i++) {
+				equal = effect[i] === foundWatcher.getEffectAllowed()[i];
+			}
+			if(!equal) {
+				foundWatcher.release();
+				foundWatcher = undefined;
+			}
 		}
 
-		if((effect !== undefined) && (effect !== 'none') && (foundWatcher === undefined)) {
+		if((effect !== undefined) && (effect.length > 0) && (foundWatcher === undefined)) {
 			// capture the dataTransfer
 			var watcher = event.dataTransfer.capture(this, effect);
 			this.watchers.push(watcher);
