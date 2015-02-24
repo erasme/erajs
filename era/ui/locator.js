@@ -140,6 +140,29 @@ Ui.Container.extend('Ui.Locator',
 		else
 			return new Ui.Color({ y: yuv.y + 0.15 + deltaY, u: yuv.u, v: yuv.v });
 	},
+
+	getBackgroundBorder: function() {
+		var color;
+		if(this.isActive) {
+			if(this.getHasFocus() && !this.getIsMouseFocus())
+				color = Ui.Color.create(this.getStyleProperty('focusActiveBackgroundBorder'));
+			else
+				color = Ui.Color.create(this.getStyleProperty('activeBackgroundBorder'));
+		}
+		else {
+			if(this.getHasFocus() && !this.getIsMouseFocus())
+				color = Ui.Color.create(this.getStyleProperty('focusBackgroundBorder'));
+			else
+				color = Ui.Color.create(this.getStyleProperty('backgroundBorder'));
+		}
+		var yuv = color.getYuva();
+		var deltaY = 0;
+//		if(this.getIsDown())
+//			deltaY = -0.20;
+//		else if(this.getIsOver())
+//			deltaY = 0.20;
+		return new Ui.Color({ y: yuv.y + deltaY, u: yuv.u, v: yuv.v, a: yuv.a });
+	},
 	
 	getDownColor: function() {
 		var yuv = this.getColor().getYuv();
@@ -163,8 +186,10 @@ Ui.Container.extend('Ui.Locator',
 	},
 	
 	updateColors: function() {
-		var lightColor = this.getLightColor();		
-		this.border.setFill(this.getDarkColor());
+		var lightColor = this.getColor();// this.getLightColor();
+		//this.border.setFill(this.getDarkColor());
+		this.border.setFill(this.getBackgroundBorder());
+
 		for(var i = 0; i < this.backgrounds.length; i++) {
 			this.backgrounds[i].setFill(lightColor);
 		}
@@ -195,32 +220,35 @@ Ui.Container.extend('Ui.Locator',
 				minWidth += child.getMeasureWidth();
 			}
 			var spacing = this.getStyleProperty('spacing');
-			minWidth += (this.foregrounds.length-1) * (spacing + 1);
-			return { width: minWidth+2, height: minHeight+2 };
+			var borderWidth = this.getStyleProperty('borderWidth');
+			minWidth += (this.foregrounds.length-1) * (spacing + borderWidth);
+			return { width: minWidth+(2*borderWidth), height: minHeight+(2*borderWidth) };
 		}
 	},
 
 	arrangeCore: function(width, height) {
+		var borderWidth = this.getStyleProperty('borderWidth');
 		if(this.foregrounds.length == 1) {
-			this.foregrounds[0].arrange(1, 1, width-2, height-2);
-			this.backgrounds[0].arrange(1, 1, width-2, height-2);
+			this.foregrounds[0].arrange(borderWidth, borderWidth, width-2*borderWidth, height-2*borderWidth);
+			this.backgrounds[0].arrange(borderWidth, borderWidth, width-2*borderWidth, height-2*borderWidth);
 			this.border.arrange(0, 0, width, height);
 			return;
 		}
 		var spacing = this.getStyleProperty('spacing');
-		x = 1;
+
+		x = borderWidth;
 		for(var i = 0; i < this.foregrounds.length; i++) {
 			var bg = this.backgrounds[i];
 			var fg = this.foregrounds[i];
 			var fgWidth = fg.getMeasureWidth();
-			fg.arrange(x+1, 0+1, fgWidth, height-2);
+			fg.arrange(x+1, 0+borderWidth, fgWidth, height-2*borderWidth);
 			if(i === 0)
-				bg.arrange(x, 0+1, fgWidth + spacing, height-2);
+				bg.arrange(x, 0+borderWidth, fgWidth + spacing, height-2*borderWidth);
 			else if(i == this.foregrounds.length -1)
-				bg.arrange(x - spacing, 0+1, fgWidth + spacing, height-2);
+				bg.arrange(x - spacing, 0+borderWidth, fgWidth + spacing, height-2*borderWidth);
 			else
-				bg.arrange(x - spacing, 0+1, fgWidth + spacing*2, height-2);
-			x += fgWidth + spacing + 1;
+				bg.arrange(x - spacing, 0+borderWidth, fgWidth + spacing*2, height-2*borderWidth);
+			x += fgWidth + spacing + borderWidth;
 		}
 		this.border.arrange(0, 0, width, height);
 	},
@@ -228,11 +256,12 @@ Ui.Container.extend('Ui.Locator',
 	onStyleChange: function() {	
 		var spacing = this.getStyleProperty('spacing');
 		var radius = this.getStyleProperty('radius');
+		var borderWidth = this.getStyleProperty('borderWidth');
 		for(var i = 0; i < this.backgrounds.length; i++) {
 			var bg = this.backgrounds[i];
 			if('setArrowLength' in bg)
 				bg.setArrowLength(spacing);
-			bg.setRadius(radius-1);
+			bg.setRadius(radius-borderWidth);
 		}
 		this.border.setRadius(radius);
 		this.updateColors();
@@ -251,10 +280,14 @@ Ui.Container.extend('Ui.Locator',
 	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0.31, g: 0.66, b: 1 }),
+		backgroundBorder: 'rgba(140,140,140,1)',
+		focusBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
+		focusActiveBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
+		color: "#f8f8f8",
 		focusColor: '#f6caa2',
 		radius: 3,
-		spacing: 20
+		spacing: 20,
+		borderWidth: 1
 	}
 });
 
