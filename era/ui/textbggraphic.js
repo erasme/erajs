@@ -75,7 +75,7 @@ Ui.CanvasElement.extend('Ui.TextBgGraphic', {
 	style: {
 		radius: 3,
 		borderWidth: 2,
-		background: '#444444',
-		focusBackground: '#21d3ff'
+		background: 'rgba(120,120,120,0.2)',
+		focusBackground: 'rgba(33,211,255,0.4)'
 	}
 });
