@@ -40,8 +40,8 @@ Ui.LBox.extend('Ui.DropBox', {
 	},
 
 	onDragOver: function(event) {
-//		console.log(this+'.onDragOver effectAllowed: ');
-//		console.log(event.dataTransfer);
+		//console.log(this+'.onDragOver');
+		//console.log(event.dataTransfer.draggable);
 
 		// test if we already captured this dataTransfer
 		var found = false;
@@ -104,7 +104,9 @@ Ui.LBox.extend('Ui.DropBox', {
 			for(var i = 0; (effect === undefined) && (i < this.allowedTypes.length); i++) {
 				var type = this.allowedTypes[i];
 				if(typeof(type.type) === 'string') {
-				 	if(Ui.DragNativeData.hasInstance(data)) {
+					if(type.type === 'all')
+						effect = type.effect;
+					else if(Ui.DragNativeData.hasInstance(data)) {
 				 		if((type.type === 'files') && data.hasFiles())
 				 			effect = type.effect;
 				 		else if(((type.type === 'text') || (type.type === 'text/plain')) && data.hasTypes('text/plain', 'text'))
@@ -169,7 +171,7 @@ Ui.LBox.extend('Ui.DropBox', {
 	},
 
 	onDragEffectFunction: function(dataTransfer, func) {
-		return func(dataTransfer.getData());
+		return func(dataTransfer.getData(), dataTransfer);
 	},
 
 	//
@@ -178,7 +180,7 @@ Ui.LBox.extend('Ui.DropBox', {
 	//
 	onDrop: function(dataTransfer, dropEffect, x, y) {
 		var done = false;
-		if(!this.fireEvent('drop', this, dataTransfer.getData(), dropEffect, x, y)) {
+		if(!this.fireEvent('drop', this, dataTransfer.getData(), dropEffect, x, y, dataTransfer)) {
 			var data = dataTransfer.getData();
 			if(Ui.DragNativeData.hasInstance(data) && data.hasFiles()) {
 				var files = data.getFiles();
