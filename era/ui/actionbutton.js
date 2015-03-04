@@ -11,12 +11,24 @@ Ui.Button.extend('Ui.ActionButton', {
 
 		this.connect(this.getDropBox(), 'drop', this.onActionButtonDrop);
 		this.connect(this, 'press', this.onActionButtonDrop);
+
+		this.getDropBox().addType('all', this.onActionButtonEffect.bind(this));
 	},
 
-	addType: function(type, effect) {
-		this.getDropBox().addType(type, effect);
+	onActionButtonEffect: function(data, dataTransfer) {
+		if('draggable' in dataTransfer) {
+			var elements = this.selection.getElements();
+			var found = undefined;
+			for(var i = 0; (found === undefined) && (i < elements.length); i++) {
+				if(elements[i] === dataTransfer.draggable)
+					found = elements[i];
+			}
+			if(found !== undefined)
+				return [ 'run' ];
+		}
+		return [];
 	},
-	
+
 	onActionButtonDrop: function() {
 		var scope = this;
 		if('scope' in this.action)
