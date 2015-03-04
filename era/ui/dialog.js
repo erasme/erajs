@@ -135,6 +135,8 @@ Ui.Container.extend('Ui.Dialog', {
 	actionBox: undefined,
 	contextBox: undefined,
 	autoClose: true,
+	openClock: undefined,
+	isClosed: true,
 
 	constructor: function(config) {
 		this.addEvents('close');
@@ -206,12 +208,55 @@ Ui.Container.extend('Ui.Dialog', {
 	},
 
 	open: function() {
-		Ui.App.current.appendDialog(this);
+		if(this.isClosed) {
+			Ui.App.current.appendDialog(this);
+			this.isClosed = false;
+
+			if(this.openClock === undefined) {
+				this.openClock = new Anim.Clock({ duration: 1, target: this, speed: 5 });
+				this.openClock.setEase(new Anim.PowerEase({ mode: 'out' }));
+				this.connect(this.openClock, 'timeupdate', this.onOpenTick);
+				// set the initial state
+				this.onOpenTick(this.openClock, 0, 0);
+				// the start of the animation is delayed to the next arrange
+			}
+		}
 	},
 
 	close: function() {
-		Ui.App.current.removeDialog(this);
-		this.fireEvent('close', this);
+		if(!this.isClosed) {
+			// the removal of the dialog is delayed to the end of the animation
+			this.fireEvent('close', this);
+
+			this.isClosed = true;
+			this.lbox.disable();
+
+			if(this.openClock === undefined) {
+				this.openClock = new Anim.Clock({ duration: 1, target: this, speed: 5 });
+				this.openClock.setEase(new Anim.PowerEase({ mode: 'out' }));
+				this.connect(this.openClock, 'timeupdate', this.onOpenTick);
+				this.openClock.begin();
+			}
+		}
+	},
+
+	onOpenTick: function(clock, progress, delta) {
+		var end = (progress >= 1);
+
+		if(this.isClosed)
+			progress = 1 - progress;
+		this.shadow.setOpacity(progress);
+		this.lbox.setOpacity(progress);
+		this.lbox.setTransform(Ui.Matrix.createTranslate(0, -20 * (1-progress)));
+
+		if(end) {
+			this.openClock.stop();
+			this.openClock = undefined;
+			if(this.isClosed) {
+				Ui.App.current.removeDialog(this);
+				this.lbox.enable();
+			}
+		}
 	},
 
 	getDefaultButton: function() {
@@ -236,20 +281,6 @@ Ui.Container.extend('Ui.Dialog', {
 
 	setTitle: function(title) {
 		this.actionBox.setTitle(title);
-
-/*		this.title = title;
-
-		if(((this.title === '') || (this.title === undefined))  && (this.titleLabel !== undefined)) {
-			this.contentVBox.remove(this.titleLabel);
-			this.titleLabel = undefined;
-		}
-		else {
-			if(this.titleLabel === undefined) {
-				this.titleLabel = new Ui.Label({ horizontalAlign: 'left', margin: 10, fontWeight: 'bold', fontSize: 18, color: '#666666' });
-				this.contentVBox.prepend(this.titleLabel);
-			}
-			this.titleLabel.setText(this.title);
-		}*/
 	},
 
 	updateButtonsBoxVisible: function() {
@@ -355,6 +386,10 @@ Ui.Container.extend('Ui.Dialog', {
 	// Arrange children
 	//
 	arrangeCore: function(width, height) {
+		// the delayed open animation
+		if((this.openClock !== undefined) && !this.openClock.getIsActive())
+			this.openClock.begin();
+
 		this.shadow.arrange(0, 0, width, height);
 		var usedWidth = Math.max((width < this.preferredWidth)?width:this.preferredWidth, this.lbox.getMeasureWidth());		
 		var usedHeight = Math.max((height < this.preferredHeight)?height:this.preferredHeight, this.lbox.getMeasureHeight());
@@ -362,7 +397,7 @@ Ui.Container.extend('Ui.Dialog', {
 	}
 }, {
 	style: {
-		shadow: 'rgba(255,255,255,0.7)',
+		shadow: 'rgba(255,255,255,0.1)',
 		background: '#f8f8f8'
 	}
 });

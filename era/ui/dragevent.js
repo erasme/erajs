@@ -187,6 +187,7 @@ Core.Object.extend('Ui.DragDataTransfer', {
 	startImagePoint: undefined,
 	overElement: undefined,
 	hasStarted: false,
+	dragDelta: undefined,
 
 	effectAllowed: undefined,
 	watcher: undefined,
@@ -225,6 +226,7 @@ Core.Object.extend('Ui.DragDataTransfer', {
 		delete(config.pointer);
 		this.watcher = this.pointer.watch(Ui.App.current);
 
+		this.dragDelta = this.draggable.pointFromWindow({ x: this.startX, y: this.startY });
 		this.data = {};
 
 		this.connect(this.watcher, 'move', this.onPointerMove);
@@ -249,6 +251,10 @@ Core.Object.extend('Ui.DragDataTransfer', {
 
 	getPosition: function() {
 		return new Ui.Point({ x: this.x, y: this.y });
+	},
+
+	getDragDelta: function() {
+		return this.dragDelta;
 	},
 
 	generateImage: function(element) {
@@ -496,13 +502,13 @@ Core.Object.extend('Ui.DragDataTransfer', {
 						button['Ui.DragEvent.dropEffect'] = this.dropEffect[i];
 						this.connect(button, 'press', function(b) {
 							this.dragWatcher.drop(b['Ui.DragEvent.dropEffect'].action);
-							popup.hide();
+							popup.close();
 						});
 						vbox.append(button);
 					}
 
 					//popup.setContent(new Ui.Rectangle({ width: 100, height: 100, fill: 'pink' }));
-					popup.show(this.x, this.y);
+					popup.open(this.x, this.y);
 
 
 					//this.dragWatcher.drop(this.dropEffect);

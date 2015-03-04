@@ -13,15 +13,17 @@ Ui.Container.extend('Ui.Popup',
 	attachedElement: undefined,
 	attachedBorder: undefined,
 	lbox: undefined,
-	autoHide: true,
+	autoClose: true,
 	preferredWidth: undefined,
 	preferredHeight: undefined,
+	openClock: undefined,
+	isClosed: true,
 
 	/**
      * @constructs
 	 * @class
      * @extends Ui.Container
-     * @param {Boolean} [config.autoHide]
+     * @param {Boolean} [config.autoClose]
 	 */
 	constructor: function(config) {
 		this.setHorizontalAlign('stretch');
@@ -37,9 +39,11 @@ Ui.Container.extend('Ui.Popup',
 		this.shadow.setContent(this.shadowGraphic);
 
 		this.background = new Ui.PopupBackground({ radius: 0, fill: '#f8f8f8' });
+		this.background.setTransformOrigin(0, 0);
 		this.appendChild(this.background);
 
 		this.contentBox = new Ui.LBox({ margin: 2, marginTop: 1 });
+		this.contentBox.setTransformOrigin(0, 0);
 		this.appendChild(this.contentBox);
 
 		this.scroll = new Ui.ScrollingArea({ margin: 2, marginTop: 1 });
@@ -70,8 +74,8 @@ Ui.Container.extend('Ui.Popup',
 		return this.popupSelection;
 	},
 
-	setAutoHide: function(autoHide) {
-		this.autoHide = autoHide;
+	setAutoClose: function(autoClose) {
+		this.autoClose = autoClose;
 	},
 
 	setContent: function(content) {
@@ -79,14 +83,76 @@ Ui.Container.extend('Ui.Popup',
 	},
 
 	onWindowResize: function() {
-		if(this.visible && this.autoHide && (this.posX !== undefined)) {
-			this.hide();
-		}
+		if(this.autoClose && (this.posX !== undefined))
+			this.close();
 	},
 
 	onShadowPress: function() {
-		if(this.autoHide)
-			this.hide();
+		if(this.autoClose)
+			this.close();
+	},
+
+	onOpenTick: function(clock, progress, delta) {
+		var end = (progress >= 1);
+
+		if(this.isClosed)
+			progress = 1 - progress;
+		
+		this.setOpacity(progress);
+
+		var arrowBorder = this.background.getArrowBorder();
+		var arrowOffset = this.background.getArrowOffset();
+
+		/*var atX = 0; var atY = 0;
+		if(arrowBorder === 'left') {
+			atX = 0;
+			atY = arrowOffset;
+		}
+		else if(arrowBorder === 'right') {
+			atX = this.background.getLayoutWidth();
+			atY = arrowOffset;
+		}
+		else if(arrowBorder === 'top') {
+			atX = arrowOffset;
+			atY = 0;
+		}
+		else if(arrowBorder === 'bottom') {
+			console.log(this+'.onOpenTick bottom');
+			atX = arrowOffset;
+			atY = this.background.getLayoutHeight();
+		}
+		else if(arrowBorder === 'none') {
+			atX = this.background.getLayoutWidth() / 2;
+			atY = this.background.getLayoutHeight() / 2;
+		}
+		this.background.setTransform(Ui.Matrix.createScaleAt(progress, progress, atX, atY));
+		this.contentBox.setTransform(Ui.Matrix.createScaleAt(progress, progress, atX, atY));*/
+
+		if(arrowBorder === 'right') {
+			this.background.setTransform(Ui.Matrix.createTranslate(20 * (1-progress), 0));
+			this.contentBox.setTransform(Ui.Matrix.createTranslate(20 * (1-progress), 0));
+		}
+		else if(arrowBorder === 'left') {
+			this.background.setTransform(Ui.Matrix.createTranslate(-20 * (1-progress), 0));
+			this.contentBox.setTransform(Ui.Matrix.createTranslate(-20 * (1-progress), 0));
+		}
+		else if((arrowBorder === 'top') || (arrowBorder === 'none')) {
+			this.background.setTransform(Ui.Matrix.createTranslate(0, -20 * (1-progress)));
+			this.contentBox.setTransform(Ui.Matrix.createTranslate(0, -20 * (1-progress)));
+		}
+		else if(arrowBorder === 'bottom') {
+			this.background.setTransform(Ui.Matrix.createTranslate(0, 20 * (1-progress)));
+			this.contentBox.setTransform(Ui.Matrix.createTranslate(0, 20 * (1-progress)));
+		}
+
+		if(end) {
+			this.openClock.stop();
+			this.openClock = undefined;
+			if(this.isClosed) {
+				Ui.App.current.removeDialog(this);
+				this.enable();
+			}
+		}
 	},
 
 	onPopupSelectionChange: function(selection) {
@@ -98,8 +164,6 @@ Ui.Container.extend('Ui.Popup',
 }, 
 /**@lends Ui.Popup#*/
 {
-	visible: false,
-
 	onStyleChange: function() {
 		this.background.setFill(this.getStyleProperty('background'));
 		this.shadowGraphic.setFill(this.getStyleProperty('shadow'));
@@ -115,15 +179,15 @@ Ui.Container.extend('Ui.Popup',
 		this.invalidateLayout();
 	},
 
-	show: function(posX, posY) {
-		var oldVisible = this.getIsVisible();
-		Ui.Popup.base.show.call(this);
+	open: function(posX, posY) {
+		if(this.isClosed) {
+			Ui.App.current.appendDialog(this);
+			this.isClosed = false;
 
-		this.attachedElement = undefined;
-		this.posX = undefined;
-		this.posY = undefined;
+			this.attachedElement = undefined;
+			this.posX = undefined;
+			this.posY = undefined;
 
-		if(!oldVisible) {
 			if((typeof(posX) == 'object') && (Ui.Element.hasInstance(posX))) {
 				this.attachedElement = posX;
 				if((posY !== undefined) && (typeof(posY) === 'string'))
@@ -140,15 +204,35 @@ Ui.Container.extend('Ui.Popup',
 				this.posX = undefined;
 				this.posY = undefined;
 			}
+			if(this.openClock === undefined) {
+				this.openClock = new Anim.Clock({ duration: 1, target: this, speed: 5 });
+				this.openClock.setEase(new Anim.PowerEase({ mode: 'out' }));
+				this.connect(this.openClock, 'timeupdate', this.onOpenTick);
+				// set the initial state
+				this.setOpacity(0);
+				// the start of the animation is delayed to the next arrange
+			}
+
 			this.invalidateArrange();
-			Ui.App.current.appendDialog(this);
 			this.connect(window, 'resize', this.onWindowResize);
 		}
 	},
 
-	onHidden: function() {
-		Ui.App.current.removeDialog(this);
-		this.disconnect(window, 'resize', this.onWindowResize);
+	close: function() {
+		if(!this.isClosed) {
+			this.isClosed = true;
+
+			//Ui.App.current.removeDialog(this);
+			this.disconnect(window, 'resize', this.onWindowResize);
+
+			this.disable();
+			if(this.openClock === undefined) {
+				this.openClock = new Anim.Clock({ duration: 1, target: this, speed: 5 });
+				this.openClock.setEase(new Anim.PowerEase({ mode: 'out' }));
+				this.connect(this.openClock, 'timeupdate', this.onOpenTick);
+				this.openClock.begin();
+			}
+		}
 	},
 
 	measureCore: function(width, height) {
@@ -174,6 +258,10 @@ Ui.Container.extend('Ui.Popup',
 	},
 
 	arrangeCore: function(width, height) {
+		// the delayed open animation
+		if((this.openClock !== undefined) && !this.openClock.getIsActive())
+			this.openClock.begin();
+
 		var x = 0; var y = 0; var point; var borders; var border; var i;
 
 		//console.log(this+'.arrangeCore('+width+','+height+')');
@@ -192,15 +280,15 @@ Ui.Container.extend('Ui.Popup',
 			for(i = 0; i < borders.length; i++) {
 				border = borders[i];
 				if(border === 'left') {
-					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
-					if(this.contentBox.getMeasureWidth() + point.x + 10 < width) {
+					point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
+					if(this.contentBox.getMeasureWidth() + 10 < point.x) {
 						this.setLeft(point.x, point.y, width, height);
 						break;
 					}
 				}
 				else if(border === 'right') {
-					point = this.attachedElement.pointToWindow({ x: 0, y: this.attachedElement.getLayoutHeight()/2 });
-					if(this.contentBox.getMeasureWidth() + 10 < point.x) {
+					point = this.attachedElement.pointToWindow({ x: this.attachedElement.getLayoutWidth(), y: this.attachedElement.getLayoutHeight()/2 });
+					if(this.contentBox.getMeasureWidth() + point.x + 10 < width) {
 						this.setRight(point.x, point.y, width, height);
 						break;
 					}
@@ -227,19 +315,19 @@ Ui.Container.extend('Ui.Popup',
 		}
 		// handle open at a position
 		else {
-			borders = ['left', 'right', 'top', 'bottom', 'center'];
+			borders = ['right', 'left', 'top', 'bottom', 'center'];
 			if(this.attachedBorder !== undefined)
 				borders.unshift(this.attachedBorder);
 			for(i = 0; i < borders.length; i++) {
 				border = borders[i];
 				if(border === 'left') {				
-					if(this.contentBox.getMeasureWidth() + this.posX + 10 < width) {
+					if(this.contentBox.getMeasureWidth() + 10 < this.posX) {
 						this.setLeft(this.posX, this.posY, width, height);
 						break;
 					}
 				}
 				else if(border === 'right') {
-					if(this.contentBox.getMeasureWidth() + 10 < this.posX) {
+					if(this.contentBox.getMeasureWidth() + this.posX + 10 < width) {
 						this.setRight(this.posX, this.posY, width, height);
 						break;
 					}
@@ -264,7 +352,7 @@ Ui.Container.extend('Ui.Popup',
 		}
 	},
 
-	setLeft: function(x, y, width, height) {
+	setRight: function(x, y, width, height) {
 		var px = x + 10;
 		var py = y - 30;
 
@@ -284,7 +372,7 @@ Ui.Container.extend('Ui.Popup',
 		this.contentBox.arrange(px, py, this.contentBox.getMeasureWidth(), this.contentBox.getMeasureHeight());
 	},
 
-	setRight: function(x, y, width, height) {
+	setLeft: function(x, y, width, height) {
 		var px = x - (10 + this.contentBox.getMeasureWidth());
 		var py = y - 30;
 
@@ -372,7 +460,7 @@ Ui.Container.extend('Ui.Popup',
 {
 	style: {
 		background: '#f8f8f8',
-		shadow: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.5 })
+		shadow: new Ui.Color({ r: 1, g: 1, b: 1, a: 0.1 })
 	}
 });
 
@@ -381,7 +469,7 @@ Ui.CanvasElement.extend('Ui.PopupBackground',
 {
 	radius: 8,
 	fill: 'black',
-	// [left|right|top|bottom]
+	// [left|right|top|bottom|none]
 	arrowBorder: 'left',
 	arrowOffset: 30,
 	arrowSize: 10,
@@ -394,11 +482,19 @@ Ui.CanvasElement.extend('Ui.PopupBackground',
 	constructor: function(config) {
 	},
 
+	getArrowBorder: function() {
+		return this.arrowBorder;
+	},
+
 	setArrowBorder: function(arrowBorder) {
 		if(this.arrowBorder != arrowBorder) {
 			this.arrowBorder = arrowBorder;
 			this.invalidateArrange();
 		}
+	},
+
+	getArrowOffset: function() {
+		return this.arrowOffset;
 	},
 
 	setArrowOffset: function(offset) {

@@ -99,7 +99,7 @@ Ui.Button.extend('Ui.Combo', {
 		if(this.position !== -1)
 			popup.setCurrentAt(this.position);
 		this.connect(popup, 'item', this.onItemPress);
-		popup.show(this);
+		popup.open(this);
 	},
 
 	updateColors: function() {
@@ -116,7 +116,7 @@ Ui.MenuPopup.extend('Ui.ComboPopup', {
 
 	constructor: function(config) {
 		this.addEvents('item');
-		this.setAutoHide(true);
+		this.setAutoClose(true);
 
 		this.list = new Ui.VBox();
 		this.setContent(this.list);

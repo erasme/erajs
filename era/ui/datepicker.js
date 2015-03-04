@@ -73,7 +73,7 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 		this.popup.setContent(this.calendar);
 		this.connect(this.calendar, 'dayselect', this.onDaySelect);
 
-		this.popup.show(this);
+		this.popup.open(this);
 	},
 
 	onDatePickerChange: function() {
@@ -104,7 +104,7 @@ Ui.TextButtonField.extend('Ui.DatePicker',
 
 	onDaySelect: function(monthcalendar, date) {
 		this.setSelectedDate(date);
-		this.popup.hide();
+		this.popup.close();
 		this.popup = undefined;
 	}
 }, {

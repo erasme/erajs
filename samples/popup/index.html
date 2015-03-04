@@ -21,14 +21,14 @@ selectable.append(new Ui.Label({ text: 'click' }));
 
 app.connect(selectable, 'press', function(item, x, y) {
 	console.log('open the menu: '+x+'x'+y);
-	popup.show(x, y);
-//	popup.show(selectable);
+	popup.open(x, y);
+//	popup.open(selectable);
 });
 
 var button = new Ui.Button({ text: 'open popup' });
 vbox.append(button);
 app.connect(button, 'press', function() {
-	popup.show();
+	popup.open();
 });
 
 var popup;
@@ -46,17 +46,17 @@ vbox2.append(new Ui.Separator());
 button = new Ui.Button({ text: 'popup' });
 vbox2.append(button);
 app.connect(button, 'press', function() {
-	var newPopup = new Ui.Popup({ autoHide: true });
+	var newPopup = new Ui.Popup({ autoClose: true });
 	var button = new Ui.Button({ text: 'click' });
 	newPopup.setContent(button);
-	newPopup.show();
+	newPopup.open();
 });
 
 button = new Ui.Button({ text: 'close popup' });
 vbox.append(button);
 
 app.connect(button, 'press', function() {
-	popup.hide();
+	popup.close();
 });
 
 var selectable2 = new Ui.Pressable();
@@ -67,7 +67,7 @@ selectable2.append(new Ui.Label({ text: 'click' }));
 
 app.connect(selectable2, 'press', function(item, x, y) {
 	console.log('open the menu at element');
-	popup.show(item);
+	popup.open(item, 'bottom');
 });
 
 </script>

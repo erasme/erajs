@@ -62,10 +62,9 @@ app.connect(slider, 'change', function() {
 	label.setText('Value: '+slider.getValue().toFixed(2));
 });
 
-var clock = new Anim.Clock({ duration: 4.0,
-	onTimeupdate: function(clock, progress) {
-		slider.setValue(progress);
-	}
+var clock = new Anim.Clock({ duration: 4.0 });
+app.connect(clock, 'timeupdate', function(clock, progress) {
+	slider.setValue(progress);
 });
 
 </script>

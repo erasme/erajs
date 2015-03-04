@@ -112,7 +112,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 		else
 			throw('element property is NEEDED for Ui.MenuDialog');
 		
-		this.setAutoHide(true);
+		this.setAutoClose(true);
 
 		this.content = new Ui.VBox();
 		this.setContent(this.content);
