@@ -32,6 +32,7 @@ include(eraBaseDirectory+'excanvas/excanvas.js');
 include(eraBaseDirectory+'core/util.js');
 include(eraBaseDirectory+'core/object.js');
 include(eraBaseDirectory+'core/uri.js');
+include(eraBaseDirectory+'core/doublelinkedlist.js');
 //include(eraBaseDirectory+'core/event.js');
 //include(eraBaseDirectory+'core/mouseevent.js');
 //include(eraBaseDirectory+'core/pointerevent.js');
