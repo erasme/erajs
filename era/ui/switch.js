@@ -12,10 +12,10 @@ Ui.Container.extend('Ui.Switch', {
 	constructor: function(config) {
 		this.addEvents('change');
 
-		this.background = new Ui.Rectangle({ width: 4, height: 4 });
+		this.background = new Ui.Rectangle({ width: 4, height: 14, radius: 7 });
 		this.appendChild(this.background);
 
-		this.bar = new Ui.Rectangle({ width: 4, height: 4 });
+		this.bar = new Ui.Rectangle({ width: 4, height: 14, radius: 7 });
 		this.appendChild(this.bar);
 
 		this.button = new Ui.Movable({ moveVertical: false });
@@ -46,9 +46,9 @@ Ui.Container.extend('Ui.Switch', {
 			this.value = value;
 			if(this.getIsLoaded()) {
 				if(this.value)
-					this.startAnimation(2);
+					this.startAnimation(4);
 				else
-					this.startAnimation(-2);
+					this.startAnimation(-4);
 			}
 			else
 				this.pos = this.value ? 1 : 0;
@@ -113,7 +113,7 @@ Ui.Container.extend('Ui.Switch', {
 	},
 
 	updateColors: function() {
-		this.bar.setFill(this.getForeground());
+		this.bar.setFill(this.getForeground().addA(-0.6));
 		this.background.setFill(this.getBackground());
 		this.buttonContent.setFill(this.getForeground());
 	},
@@ -191,18 +191,18 @@ Ui.Container.extend('Ui.Switch', {
 		var size = buttonSize;
 		var res;
 
-		res = this.background.measure(buttonSize.width * 2, 0);
+		res = this.background.measure(buttonSize.width * 1.75, 0);
 		if(res.width > size.width)
 			size.width = res.width;
 		if(res.height > size.height)
 			size.height = res.height;
-		res = this.bar.measure(buttonSize.width * 2, 0);
+		res = this.bar.measure(buttonSize.width * 1.75, 0);
 		if(res.width > size.width)
 			size.width = res.width;
 		if(res.height > size.height)
 			size.height = res.height;
-		if(buttonSize.width * 2 > size.width)
-			size.width = buttonSize.width * 2;
+		if(buttonSize.width * 1.75 > size.width)
+			size.width = buttonSize.width * 1.75;
 		return size;
 	},
 
@@ -216,8 +216,8 @@ Ui.Container.extend('Ui.Switch', {
 	},
 
 	onStyleChange: function() {
-		this.background.setRadius(this.getStyleProperty('radius'));
-		this.bar.setRadius(this.getStyleProperty('radius'));
+//		this.background.setRadius(this.getStyleProperty('radius'));
+//		this.bar.setRadius(this.getStyleProperty('radius'));
 		var borderWidth = this.getStyleProperty('borderWidth');
 		this.updateColors();
 	},
