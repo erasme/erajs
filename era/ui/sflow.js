@@ -156,9 +156,9 @@ Core.Object.extend('Ui.SFlowState', {
 			if(this.align === 'right')
 				xpos += (zone.xend - zone.xstart)-(this.drawWidth+this.drawSpaceWidth);
 			else if(this.align === 'center')
-				xpos += ((zone.xend - zone.xstart)-(this.drawWidth+this.drawSpaceWidth))/2;
+				xpos += Math.floor(((zone.xend - zone.xstart)-(this.drawWidth+this.drawSpaceWidth))/2);
 			else if(this.align === 'stretch')
-				widthBonus = ((zone.xend - zone.xstart)-(this.drawWidth+this.drawSpaceWidth))/this.drawCmd.length;
+				widthBonus = Math.floor(((zone.xend - zone.xstart)-(this.drawWidth+this.drawSpaceWidth))/this.drawCmd.length);
 			
 			for(var i = 0; i < this.drawCmd.length; i++) {
 				var cmd = this.drawCmd[i];
