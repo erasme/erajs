@@ -18,9 +18,15 @@ Core.Object.extend('Anim.AnimationManager',
 	},
 
 	add: function(clock) {	
-		this.clocks.push(clock);
-		if(this.clocks.length == 1)
-			requestAnimationFrame(this.onTickBind);
+		var found = false;
+		for(var i = 0; !found && (i < this.clocks.length); i++) {
+			found = this.clocks[i] === clock;
+		}
+		if(!found) {
+			this.clocks.push(clock);
+			if(this.clocks.length == 1)
+				requestAnimationFrame(this.onTickBind);
+		}
 	},
 
 	remove: function(clock) {

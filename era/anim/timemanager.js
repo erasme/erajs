@@ -17,10 +17,16 @@ Core.Object.extend('Anim.TimeManager',
 	},
 
 	add: function(clock) {
-		this.clocks.push(clock);
-		if(this.clocks.length === 1) {
-			this.timer = new Core.Timer({ interval: 1/60 });
-			this.connect(this.timer, 'timeupdate', this.onTick);
+		var found = false;
+		for(var i = 0; !found && (i < this.clocks.length); i++) {
+			found = this.clocks[i] === clock;
+		}
+		if(!found) {
+			this.clocks.push(clock);
+			if(this.clocks.length === 1) {
+				this.timer = new Core.Timer({ interval: 1/60 });
+				this.connect(this.timer, 'timeupdate', this.onTick);
+			}
 		}
 	},
 
