@@ -170,31 +170,30 @@ Ui.Container.extend('Ui.MovableBase',
 
 	startInertia: function() {
 		if(this.inertiaClock === undefined) {
-			this.inertiaClock = new Anim.Clock({ duration: 'forever', scope: this, target: this,
-				onTimeupdate: function(clock, progress, delta) {
-					if(delta === 0)
-						return;
+			this.inertiaClock = new Anim.Clock({ duration: 'forever', target: this });
+			this.connect(this.inertiaClock, 'timeupdate', function(clock, progress, delta) {
+				if(delta === 0)
+					return;
 
-					var oldPosX = this.posX;
-					var oldPosY = this.posY;
+				var oldPosX = this.posX;
+				var oldPosY = this.posY;
 
-					var posX = this.posX + (this.speedX * delta);
-					var posY = this.posY + (this.speedY * delta);
-					this.setPosition(posX, posY);
+				var posX = this.posX + (this.speedX * delta);
+				var posY = this.posY + (this.speedY * delta);
+				this.setPosition(posX, posY);
 
-					if((this.posX == oldPosX) && (this.posY == oldPosY)) {
-						this.stopInertia();
-						return;
-					}
-					this.speedX -= this.speedX * delta * 3;
-					this.speedY -= this.speedY * delta * 3;
-					if(Math.abs(this.speedX) < 0.1)
-						this.speedX = 0;
-					if(Math.abs(this.speedY) < 0.1)
-						this.speedY = 0;
-					if((this.speedX === 0) && (this.speedY === 0))
-						this.stopInertia();
+				if((this.posX == oldPosX) && (this.posY == oldPosY)) {
+					this.stopInertia();
+					return;
 				}
+				this.speedX -= this.speedX * delta * 3;
+				this.speedY -= this.speedY * delta * 3;
+				if(Math.abs(this.speedX) < 0.1)
+					this.speedX = 0;
+				if(Math.abs(this.speedY) < 0.1)
+					this.speedY = 0;
+				if((this.speedX === 0) && (this.speedY === 0))
+					this.stopInertia();
 			});
 			this.inertiaClock.begin();
 		}
