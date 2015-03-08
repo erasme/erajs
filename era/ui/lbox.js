@@ -126,6 +126,10 @@ Ui.Container.extend('Ui.LBox',
 		this.prependChild(child);
 	},
 
+	insertBefore: function(child, beforeChild) {
+		this.insertChildBefore(child, beforeChild);
+	},
+
 	//
 	// Remove a child from the layers
 	//
@@ -179,3 +183,29 @@ Ui.Container.extend('Ui.LBox',
 	/**#@-*/
 });
 
+Ui.LBox.extend('Ui.LPBox', {}, {
+	//
+	// Append a child on the top of all other layers
+	//
+	append: function(child, layer) {
+		if(layer === undefined)
+			layer = 1;
+		child['Ui.LPBox.layer'] = layer;
+		var i = 0;
+		for(; (i < this.getChildren().length) && (this.getChildren()[i]['Ui.LPBox.layer'] <= layer); i++) {}
+		this.insertChildAt(child, i);
+	},
+
+	//
+	// Append a child on the bottom of all other layers
+	//
+	prepend: function(child, layer) {
+		if(layer === undefined)
+			layer = 1;
+		child['Ui.LPBox.layer'] = layer;
+		var i = 0;
+		for(; (i < this.getChildren().length) && (this.getChildren()[i]['Ui.LPBox.layer'] < layer); i++) {}
+		i = Math.max(0, i);
+		this.insertChildAt(child, i);
+	}
+});
