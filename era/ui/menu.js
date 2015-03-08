@@ -75,11 +75,11 @@ Ui.Pressable.extend('Ui.Menu',
 	},
 
 	open: function() {
-		this.dialog.show();
+		this.dialog.open();
 	},
 
 	close: function() {
-		this.dialog.hide();
+		this.dialog.close();
 	},
 
 	onItemPress: function(dialog, item) {
@@ -142,7 +142,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 	onItemPress: function(menuitem) {
 		var item = menuitem.getContent();
 		this.fireEvent('item', this, item);
-		this.hide();
+		this.close();
 	},
 
 	onKeyDown: function(event) {
@@ -152,7 +152,7 @@ Ui.Popup.extend('Ui.MenuDialog',
 		if(key == 27) {
 			event.preventDefault();
 			event.stopPropagation();
-			this.hide();
+			this.close();
 		}
 		// arrow down
 		else if(key == 40) {
@@ -192,9 +192,9 @@ Ui.Popup.extend('Ui.MenuDialog',
 }, 
 /**@lends Ui.MenuDialog#*/
 {
-	show: function() {
+	open: function() {
 		var oldVisible = this.getIsVisible();
-		Ui.MenuDialog.base.show.call(this, this.element, 'bottom');
+		Ui.MenuDialog.base.open.call(this, this.element, 'bottom');
 	}
 });
 
