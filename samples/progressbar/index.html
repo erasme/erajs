@@ -6,30 +6,31 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-var app = new Ui.App();
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
 
-var vbox = new Ui.VBox();
-app.setContent(vbox);
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
 
-var toolbar = new Ui.ToolBar();
-vbox.append(toolbar);
+		var beginButton = new Ui.Button({ text: 'begin' });
+		toolbar.append(beginButton);
+		this.connect(beginButton, 'press', function() {
+			clock.begin();
+		});
 
-var beginButton = new Ui.Button({ text: 'begin' });
-toolbar.append(beginButton);
-app.connect(beginButton, 'press', function() {
-	clock.begin();
-});
+		var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', horizontalAlign: 'center', width: 200 });
 
-var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', horizontalAlign: 'center', width: 200 });
+		vbox.append(progressbar, true);
 
-vbox.append(progressbar, true);
-
-var clock = new Anim.Clock({ duration: 4.0,
-	onTimeupdate: function(clock, progress) {
-		progressbar.setValue(progress);
+		var clock = new Anim.Clock({ duration: 4.0 });
+		this.connect(clock, 'timeupdate', function(clock, progress) {
+			progressbar.setValue(progress);
+		});
 	}
 });
-
+new Test.App();
 </script>
   </head>
 </html>
