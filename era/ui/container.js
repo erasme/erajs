@@ -86,6 +86,10 @@ Ui.Element.extend('Ui.Container',
 		this.onChildInvalidateMeasure(child, 'add');
 	},
 
+	insertChildBefore: function(child, beforeChild) {
+		this.insertChildAt(child, this.getChildPosition(beforeChild));
+	},
+
 	/**
 	 * Move a child from its current position to
 	 * the given position. Negative value allow
@@ -208,7 +212,7 @@ Ui.Element.extend('Ui.Container',
 					return found;
 			}
 		}
-		if(isInside)
+		if(!this.getEventsHidden() && isInside)
 			return this;
 		
 		return undefined;
