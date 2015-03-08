@@ -29,7 +29,7 @@ Core.Object.extend('Anim.Clock',
 	speed: 1,
 	// [forever|automatic|nbsec]
 	duration: 'forever',
-	// [none|active|paused|resumed|stopped|none]
+	// [none|active|paused|resumed|stopped]
 	pendingState: 'none',
 
 	autoReverse: false,
@@ -105,7 +105,7 @@ Core.Object.extend('Anim.Clock',
 	},
 
 	getIsActive: function() {
-		return this.isActive;
+		return this.isActive || (this.pendingState === 'active');
 	},
 
 	getTime: function() {
@@ -121,6 +121,9 @@ Core.Object.extend('Anim.Clock',
 	},
 
 	begin: function() {
+		if(this.getIsActive())
+			return;
+
 		// if this clock is the root clock, add to the TimeManager
 		if(this.parent === undefined) {
 			if(this.animation)
