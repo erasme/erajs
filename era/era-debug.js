@@ -192,6 +192,7 @@ include(eraBaseDirectory+'ui/menu.js');
 include(eraBaseDirectory+'ui/segmentbar.js');
 include(eraBaseDirectory+'ui/paned.js');
 include(eraBaseDirectory+'ui/menutoolbar.js');
+include(eraBaseDirectory+'ui/toast.js');
 include(eraBaseDirectory+'ui/app.js');
 
 //

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Toast</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
+
+		var textfield = new Ui.TextField({ verticalAlign: 'center', margin: 40, value: 'Hello World !' });
+		vbox.append(textfield);
+
+		var button = new Ui.Button({ text: 'Send toast' });
+		this.connect(button, 'press', function() {
+			Ui.Toast.send(textfield.getValue());
+		});
+		toolbar.append(button);
+
+		var delayButton = new Ui.Button({ text: 'Send delayed toast' });
+		this.connect(delayButton, 'press', function() {
+			new Core.DelayedTask({ delay: 2, callback: function() {
+				Ui.Toast.send(textfield.getValue()+' DELAY');
+			}});
+		});
+		toolbar.append(delayButton);
+
+		var dialogButton = new Ui.Button({ text: 'Open dialog' });
+		this.connect(dialogButton, 'press', function() {
+			var dialog = new Ui.Dialog({ title: 'Dialog box', preferredWidth: 600, preferredHeight: 600 });
+			dialog.setCancelButton(new Ui.DialogCloseButton());
+			var sendButton = new Ui.Button({ text: 'Send toast', verticalAlign: 'center', horizontalAlign: 'center' });
+			dialog.setContent(sendButton);
+			this.connect(sendButton, 'press', function() {
+				Ui.Toast.send('Dialog toast');
+			});
+			dialog.open();
+		});
+		toolbar.append(dialogButton);
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
