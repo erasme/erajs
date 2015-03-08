@@ -74,6 +74,7 @@ Core.Object.extend('Ui.Element',
 	/** handle visible*/
 	visible: undefined,
 	parentVisible: undefined,
+	eventsHidden: false,
 
 	/** whether or not the current element can get focus*/
 	focusable: false,
@@ -457,8 +458,15 @@ Core.Object.extend('Ui.Element',
 			this.drawing.style.top = Math.round(this.layoutY)+'px';
 			if(this.transform !== undefined)
 				this.updateTransform();
-			this.drawing.style.width = Math.round(this.layoutWidth)+'px';
-			this.drawing.style.height = Math.round(this.layoutHeight)+'px';
+
+			if(this.eventsHidden) {
+				this.drawing.style.width ='0px';
+				this.drawing.style.height = '0px';
+			}
+			else {
+				this.drawing.style.width = Math.round(this.layoutWidth)+'px';
+				this.drawing.style.height = Math.round(this.layoutHeight)+'px';
+			}
 
 			this.drawing.style.visibility = 'inherit';
 
@@ -946,8 +954,17 @@ Core.Object.extend('Ui.Element',
 		return false;
 	},
 
+	setEventsHidden: function(eventsHidden) {
+		this.eventsHidden = eventsHidden;
+		this.invalidateArrange();
+	},
+
+	getEventsHidden: function() {
+		return this.eventsHidden;
+	},
+
 	elementFromPoint: function(x , y) {
-		if(this.getIsVisible() && this.getIsInside(x, y))
+		if(!this.eventsHidden && this.getIsVisible() && this.getIsInside(x, y))
 			return this;
 		else
 			return undefined;
