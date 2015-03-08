@@ -99,7 +99,7 @@ Ui.Button.extend('Ui.Combo', {
 		if(this.position !== -1)
 			popup.setCurrentAt(this.position);
 		this.connect(popup, 'item', this.onItemPress);
-		popup.open(this);
+		popup.open(this, 'right');
 	},
 
 	updateColors: function() {
@@ -152,7 +152,7 @@ Ui.MenuPopup.extend('Ui.ComboPopup', {
 			}
 		}
 		this.fireEvent('item', this, item, position);
-		this.hide();
+		this.close();
 	}
 });
 
