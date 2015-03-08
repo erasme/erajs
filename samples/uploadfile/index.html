@@ -28,7 +28,7 @@ app.setContent(vbox);
 //
 var dropbox = new Ui.DropBox({ width: 200, height: 200 });
 // allow drop of files
-dropbox.addMimetype('files');
+dropbox.addType('files', [ 'copy' ]);
 
 // fill with content to see something
 dropbox.append(new Ui.Rectangle({ fill: 'lightgreen', radius: 8 }));
