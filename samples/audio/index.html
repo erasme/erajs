@@ -50,7 +50,7 @@ app.connect(delayplayButton, 'press', function() {
 });
 
 
-var progressbar = new Ui.ProgressBar({ verticalAlign: 'center', height: 20 });
+var progressbar = new Ui.ProgressBar({ verticalAlign: 'center' });
 toolbar.append(progressbar, true);
 
 var audio = new Ui.Audio({ oggSrc: 'sound.ogg', mp3Src: 'sound.mp3', wavSrc: 'sound.wav', volume: 1 });
