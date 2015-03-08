@@ -20,6 +20,7 @@ Ui.LBox.extend('Ui.App',
 	content: undefined,
 
 	dialogs: undefined,
+	topLayers: undefined,
 
 	requireFonts: undefined,
 	testFontTask: undefined,
@@ -337,9 +338,12 @@ Ui.LBox.extend('Ui.App',
 
 	appendDialog: function(dialog) {
 		if(this.dialogs === undefined) {
-			this.focusStack = [];
-			this.dialogs = new Ui.LBox();
-			this.append(this.dialogs);
+//			this.focusStack = [];
+			this.dialogs = new Ui.LBox({ eventsHidden: true });
+			if(this.topLayers !== undefined)
+				this.insertBefore(this.dialogs, this.topLayers);
+			else
+				this.append(this.dialogs);
 		}
 //		this.focusStack.push(this.focusElement);
 		this.dialogs.append(dialog);
@@ -365,6 +369,24 @@ Ui.LBox.extend('Ui.App',
 //			var focus = this.focusStack.pop();
 //			if(focus !== undefined)
 //				try { focus.focus(); } catch(e) {}
+		}
+	},
+
+	appendTopLayer: function(layer) {
+		if(this.topLayers === undefined) {
+			this.topLayers = new Ui.LBox({ eventsHidden: true });
+			this.append(this.topLayers);
+		}
+		this.topLayers.append(layer);
+	},
+
+	removeTopLayer: function(layer) {
+		if(this.topLayers !== undefined) {
+			this.topLayers.remove(layer);
+			if(this.topLayers.getChildren().length === 0) {
+				this.remove(this.topLayers);
+				this.topLayers = undefined;
+			}
 		}
 	},
 
