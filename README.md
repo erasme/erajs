@@ -8,14 +8,14 @@ ERAjs keyfeatures are :
 - Advanced layout : Since it does not relly on HTML ERAjs offers advanced layout functionnality similar to a native toolkit (GTK+, Qt...). Such features are VBox, HBox, Grid, Flow etc.
 - Responsive design : An ERAjs app automatically resize it self to fit the screen, an depending on the layout, elements can reorganize themself to avoid horizontal scrolling. And hence it's pure JS, you can easilly write specific behavior on resize.
 - Widget based system : ERAjs allows you to manipulate highlevel widgets and style them as you like. Widget can be combine together to form more highlevel components.
-- Same experience everywhere : ERAjs garanties that your application will look and behave the same regardless your browser or your device without any modification. Multitouch device (smart phones, tablets), keyboard only navigation (for accessibility), multitouch screens (with a built-in virtual keyborad !) and of course classical desktop browsing.
+- Same experience everywhere : ERAjs garanties that your application will look and behave the same regardless your browser or your device without any modification. Multitouch device (smart phones, tablets), keyboard only navigation (for accessibility), multitouch screens and of course classical desktop browsing.
 
 ERAjs is not :
 
-- Extremly fast : as it doesn't relly on html layout system, ERAjs is not as fast as other library, but on a decent browser (ie Firefox 4+, Chrome) it works flowlessly :).
+- Extremly fast : as it doesn't relly on HTML layout system, ERAjs is not as fast as other library, but on a decent browser (ie Firefox 4+, Chrome) it works flowlessly :).
 - Tiny : minified, era.js size is less than 440Kb which is not the tiniest js library you've seen, but considered the fact that it can do everything you need for an application and that it doesn't depends on other libraries and that you don't have CSS, it's not so big. Compare that with a jQuery+jQueryUI+jQueryMobile+Whateverplugins+CSS solution and it'll feel very small !
 - For static web page : HTML + CSS will always be better to build beautifull and fast static web page, even if you add a bit of JS, it's not ERAjs work. ERAjs is only good for building javascript only rich web apps.
-- Similar to jQueryUi/SproutCore/TwitterBootstrap : it's philosophy is totally different and does not aim to "dynamise" static web page but build web app up to the ground. It can be compared to Sencha Touch/ExtJs but with a more straightforward -but less mature- API.
+- Similar to jQueryUi/SproutCore/TwitterBootstrap : it's philosophy is totally different and does not aim to "dynamise" static web page but build web app up to the ground. It can be compared to Sencha Touch/ExtJs but with a more straightforward API.
 
 # Use ERAjs
 
@@ -42,13 +42,7 @@ No need to add CSS, no need to write more HTML, everything is done by ERAjs.
 # Hello World application
 
     var app = new Ui.App();
-    app.setContent(new Ui.Label({text: "You know what ? I'm happy."}));
-
-> Note that all our example are written using explicitely ERAjs API, you can also create ERAjs objects using a JSON style object creation. While it may seems shorter and clearer, we found it less straightforward when it comes to learn an API. Here is what the hello world sample looks like in JSON style object creation :
-
-    var app = new Ui.App({
-      content: {type: Ui.Label, text: "You know what ? I'm happy."}
-    });
+    app.setContent(new Ui.Label({ text: "You know what ? I'm happy." }));
 
 # Containers
 
@@ -72,8 +66,8 @@ There can only be one instance of it and you can access this singleton via "Ui.A
 It manages onReady event, the windowOrientationChange, url arguments and proper iframe integration.
 
     var app = new Ui.App();
-    var lbl = new Ui.Label({text: 'Here are my arguments : ' + JSON.stringify(app.arguments)});
-    app.setContent(lbl);
+    var label = new Ui.Label({ text: 'Here are my arguments : ' + JSON.stringify(app.arguments) });
+    app.setContent(label);
 
 ### VBox & HBox
 
@@ -81,43 +75,33 @@ Probably the most used containers, they allow you to stack elements, either vert
 
 Let's play with boxes orientation :
 
-    var app = new Ui.App({
-      content: {
-        type: Ui.Box, orientation: 'vertical',
-        horizontalAlign: 'center', verticalAlign: 'center',
-        content: [
-          {type: Ui.Label, text: 'Up'},
-          {
-            type: Ui.Button, text: 'Change orientation',
-            onPress: function(){
-              var orientation = this.content.getOrientation() === 'vertical' ? 'horizontal' : 'vertical';
-              this.content.setOrientation(orientation);
-            }
-          },
-          {type: Ui.Label, text: 'Down'}
-        ]
-      }
+    var app = new Ui.App();
+    var box = new Ui.Box({
+        orientation: 'vertical',
+        horizontalAlign: 'center', verticalAlign: 'center'
     });
+    app.setContent(box);
+    box.append(new Ui.Label({ text: 'Up'}));
+    var button = new Ui.Button({ text: 'Change orientation' });
+    app.connect(button, 'press', function() {
+        var orientation = this.content.getOrientation() === 'vertical' ? 'horizontal' : 'vertical';
+        box.setOrientation(orientation);
+    });
+    box.append(button);
+    box.append(new Ui.Label({ text: 'Down'}));
 
 As you can see a Box can change it's orientation dynamically. Damned practical when you have a mobile device with giroscope !
 
 Boxes have some very interesting properties such as "uniform" :
 
-    var app = new Ui.App({
-      content: {
-        type: Ui.HBox,
-        horizontalAlign: 'center', verticalAlign: 'center',
-        content: [
-          {type: Ui.Button, text: 'Tiny text'},
-          {type: Ui.Button, text: 'Very loooooooooooonnnnng text'},
-          {
-            type: Ui.Button, text: 'Make them uniform !',
-            onPress: function(){
-              this.getContent().setUniform(!this.getContent().getUniform());
-            }
-          }
-        ]
-      }
+    var app = new Ui.App();
+    var hbox = new Ui.HBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+    app.setContent(hbox);
+    hbox.append(new Ui.Button({ text: 'Tiny text'}));
+    hbox.append(new Ui.Button({ text: 'Very loooooooooooonnnnng text'}));
+    var button = new Ui.Button({ text: 'Make them uniform !' });
+    app.connect(button, 'press', function() {
+      hbox.setUniform(!hbox.getUniform());
     });
 
 Elements in the box can have "attached properties" like "resizable :
@@ -195,14 +179,15 @@ Elements in the box can have "attached properties" like "resizable :
 
 ### Button
 
-    var app = new Ui.App({
-      content: {
-        type: Ui.Button, text: 'Hit me !',
-        horizontalAlign: 'center', verticalAlign: 'center',
-        onPress: function(){
-          alert('Hello World !');
-        }
-      }});
+    var app = new Ui.App();
+    var button = new Ui.Button({
+        text: 'Hit me !',
+        horizontalAlign: 'center', verticalAlign: 'center'
+    });
+    app.connect('press', button, function() {
+        alert('Hello World !');
+    });
+    app.setContent(button);
 
 ### Download Button
 
@@ -264,8 +249,6 @@ Elements in the box can have "attached properties" like "resizable :
 
 ## Locator
 
-## VirtualKeyboard
-
 ## Menu
 
 ## Form
@@ -292,8 +275,6 @@ Elements in the box can have "attached properties" like "resizable :
 
 # Manual VS Automatic UI creation
 
-# Work with CoffeeScript
-
 # Generate API documentation
 
 You can generate the documentation using JSDoc :
@@ -306,6 +287,7 @@ You can generate the documentation using JSDoc :
 # Licence
 
 Copyright (c) Departement du Rhone Erasme <support@erasme.org>
+Copyright (c) Metropole de Lyon Erasme <support@erasme.org>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
