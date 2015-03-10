@@ -1,8 +1,7 @@
-Ui.LBox.extend('Ui.ToolBar', 
+Ui.ScrollingArea.extend('Ui.ToolBar', 
 /**@lends Ui.ToolBar*/
 {
 	hbox: undefined,
-	scroll: undefined,
 
 	/**
 	 * @constructs
@@ -10,14 +9,10 @@ Ui.LBox.extend('Ui.ToolBar',
 	 * @extends Ui.VBox
 	 */
 	constructor: function(config) {
-		var content = new Ui.LBox();
-		Ui.ToolBar.base.append.call(this, content);
-
-		this.scroll = new Ui.ScrollingArea({ scrollVertical: false, verticalAlign: 'center' });
-		content.append(this.scroll);
-
-		this.hbox = new Ui.HBox();
-		this.scroll.setContent(this.hbox);
+		this.setVerticalAlign('center');
+		this.setScrollVertical(false);
+		this.hbox = new Ui.HBox({ eventsHidden: true });
+		Ui.ToolBar.base.setContent.call(this, this.hbox);
 	}
 }, 
 /**@lends Ui.ToolBar#*/
@@ -47,4 +42,3 @@ Ui.LBox.extend('Ui.ToolBar',
 		spacing: 3
 	}
 });
-
