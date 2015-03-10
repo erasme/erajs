@@ -37,4 +37,13 @@ Ui.Button.extend('Ui.ActionButton', {
 		// clear the selection after the action done
 		this.selection.clear();
 	}
+}, {}, {
+	style: {
+		textTransform: 'uppercase',
+		radius: 0,
+		borderWidth: 0,
+		background: 'rgba(250,250,250,0)',
+		backgroundBorder: 'rgba(250,250,250,0)',
+		focusColor: '#f6caa2'
+	}
 });
