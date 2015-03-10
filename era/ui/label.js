@@ -319,7 +319,7 @@ Ui.Element.extend('Ui.Label',
 	},
 
 	style: {
-		color: new Ui.Color({ r: 0, g: 0, b: 0 }),
+		color: '#444444',
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
 		fontWeight: 'normal'
