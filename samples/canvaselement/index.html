@@ -4,7 +4,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Test CanvasElement</title>
 	<script src='../../era/era-debug.js'></script>
-	<!--script src='../../era/era.js'></script-->
 <script>
 
 Ui.CanvasElement.extend('Sample.MyCanvas', {
@@ -43,29 +42,35 @@ Ui.CanvasElement.extend('Sample.MyCanvas', {
 });
 
 
-var app = new Ui.App();
+Ui.App.extend('Test.App', {
+	canvas: undefined,
+	
+	constructor: function(config) {
 
-var vbox = new Ui.VBox();
-app.setContent(vbox);
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
 
-var toolbar = new Ui.ToolBar();
-vbox.append(toolbar);
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
 
-var button = new Ui.Button({ text: 'color1' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	mycanvas.setFill('orange');
+		var button = new Ui.Button({ text: 'color1' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			this.canvas.setFill('orange');
+		});
+
+		button = new Ui.Button({ text: 'color2' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			this.canvas.setFill('pink');
+		});
+
+		this.canvas = new Sample.MyCanvas({ verticalAlign: 'center', horizontalAlign: 'center' });
+		vbox.append(this.canvas, true);
+	}
 });
 
-button = new Ui.Button({ text: 'color2' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	mycanvas.setFill('pink');
-});
-
-var mycanvas = new Sample.MyCanvas({ verticalAlign: 'center', horizontalAlign: 'center' });
-vbox.append(mycanvas, true);
-
+new Test.App();
 
 </script>
 	</head>
