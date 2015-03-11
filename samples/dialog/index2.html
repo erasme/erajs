@@ -9,7 +9,7 @@
 Ui.App.extend('Test.App', {
 
 	constructor: function(config) {
-
+		
 		var vbox = new Ui.VBox();
 		this.setContent(vbox);
 
@@ -19,18 +19,31 @@ Ui.App.extend('Test.App', {
 		tb.append(new Ui.Button({ text: 'test 1' }));
 		tb.append(new Ui.Button({ text: 'test 2' }));
 
-		var button = new Ui.Button({
-			text: 'Open dialog', verticalAlign: 'center', horizontalAlign: 'center'
-		});
+		var button = new Ui.Button({ text: 'open', verticalAlign: 'center', horizontalAlign: 'center' });
 		vbox.append(button, true);
 
 		this.connect(button, 'press', function() {
+
+			var defaultButton = new Ui.DefaultButton({ text: 'Connect'});
+
 			var dialog = new Ui.Dialog({
-				title: 'Test Dialogue',
-				cancelButton: new Ui.DialogCloseButton({ text: 'Annuler' }),
-				actionButtons: [ new Ui.Button({ text: 'Previous'}), new Ui.DefaultButton({ text: 'Next'}) ]
+				title: 'Test Dialogue with title',
+				preferredWidth: 400,
+				content: new Ui.VBox({
+					content: [
+						new Ui.TextField(),
+						new Ui.TextAreaField()
+					]
+				}),
+				cancelButton: new Ui.DialogCloseButton({ text: 'Abort' }),
+				actionButtons: [ new Ui.Button({ text: 'Previous'}), defaultButton ]
 			});
-			dialog.setContent(new Ui.Rectangle({ fill: 'lightgreen', width: 350, height: 200 }));
+
+			this.connect(defaultButton, 'press', function() {
+				console.log('default pressed');
+				dialog.close();
+			});
+
 			dialog.open();
 		});
 	}

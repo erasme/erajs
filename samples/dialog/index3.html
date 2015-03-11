@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Dialog</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.Button.extend('Test.SelectItem', {
+	constructor: function() {
+		this.setDraggableData(this);
+	},
+
+	onAction: function() {
+	}
+}, {
+	getSelectionActions: function() {
+		return {
+			edit: {
+				text: 'Properties', icon: 'edit',
+				scope: this, callback: this.onAction, multiple: false
+			},
+			open: {
+				"default": true,
+				text: 'Open', icon: 'eye',
+				scope: this, callback: this.onAction, multiple: false
+			}
+		};
+	},
+
+	onPress: function() {
+		if(this.getIsSelected())
+			this.unselect();
+		else
+			this.select();
+	}
+});
+
+Ui.App.extend('Test.App', {
+
+	constructor: function(config) {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		var button = new Ui.Button({ text: 'Open dialog', verticalAlign: 'center', horizontalAlign: 'center' });
+		vbox.append(button, true);
+
+		this.connect(button, 'press', function() {
+			var defaultButton = new Ui.DefaultButton({ text: 'Connect'});
+
+			var dialog = new Ui.Dialog({
+				title: 'Title',
+				preferredWidth: 400,
+				cancelButton: new Ui.DialogCloseButton({ text: 'Abort' })
+			});
+
+			this.connect(defaultButton, 'press', function() {
+				console.log('default pressed');
+				dialog.close();
+			});
+
+			var button = new Test.SelectItem({ text: 'selectme' });
+			dialog.setContent(button);
+			dialog.open();
+		});
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
