@@ -263,7 +263,7 @@ Ui.Container.extend('Ui.MenuToolBar',
 					vbox.append(new Ui.MenuPopupSeparator());
 			}
 		}
-		dialog.show(this.menuButton, 'bottom');
+		dialog.open(this.menuButton, 'bottom');
 	}
 	/**#@-*/
 }, 
