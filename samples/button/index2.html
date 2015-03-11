@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Button 2</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.App.extend('Test.App', {
+
+	constructor: function(config) {
+		var iconName = 'exit';
+
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
+
+		var verticalButton = new Ui.Button({ text: 'vertical' });
+		toolbar.append(verticalButton);
+		this.connect(verticalButton, 'press', function() {
+			button.setOrientation('vertical');
+		});
+
+		var horizontalButton = new Ui.Button({ text: 'horizontal' });
+		toolbar.append(horizontalButton);
+		this.connect(horizontalButton, 'press', function() {
+			button.setOrientation('horizontal');
+		});
+
+		var textButton = new Ui.Button({ text: 'text' });
+		toolbar.append(textButton);
+		this.connect(textButton, 'press', function() {
+			button.setText('click me');
+			button.setIcon(undefined);
+		});
+
+		var iconButton = new Ui.Button({ text: 'icon' });
+		toolbar.append(iconButton);
+		this.connect(iconButton, 'press', function() {
+			button.setText(undefined);
+			button.setIcon(iconName);
+		});
+
+		var textIconButton = new Ui.Button({ text: 'text + icon' });
+		toolbar.append(textIconButton);
+		this.connect(textIconButton, 'press', function() {
+			button.setText('click me');
+			button.setIcon(iconName);
+		});
+
+		var enableButton = new Ui.Button({ text: 'enable' });
+		toolbar.append(enableButton);
+		this.connect(enableButton, 'press', function() {
+			button.enable();
+		});
+
+		var disableButton = new Ui.Button({ text: 'disable' });
+		toolbar.append(disableButton);
+		this.connect(disableButton, 'press', function() {
+			button.disable();
+		});
+
+		var badgeButton = new Ui.Button({ text: 'badge' });
+		toolbar.append(badgeButton);
+		this.connect(badgeButton, 'press', function() {
+			button.setBadge('12');
+		});
+
+
+		var markerButton = new Ui.Button({ text: 'marker' });
+		toolbar.append(markerButton);
+		this.connect(markerButton, 'press', function() {
+			button.setMarker(new Ui.Icon({
+				verticalAlign: 'center', horizontalAlign: 'center',
+				icon: 'arrowbottom', width: 16, height: 16, marginRight: 5
+			}));
+		});
+
+		var toolbar2 = new Ui.ToolBar();
+		vbox.append(toolbar2);
+
+		var defaultButton = new Ui.Button({ text: 'default' });
+		defaultButton.setStyle(undefined);
+		toolbar2.append(defaultButton);
+		this.connect(defaultButton, 'press', function() {
+			button.setStyle(undefined);
+			toolbar2.setStyle(undefined);
+		});
+
+		for(var i = 0; i < Test.App.buttonStyles.length; i++) {
+			var style = Test.App.buttonStyles[i];
+			var styleButton = new Ui.Button({ text : style.name });
+			styleButton['Test.App.styleDef'] = { "Ui.Button": style.style };
+			styleButton.setStyle(styleButton['Test.App.styleDef']);
+			this.connect(styleButton, 'press', function(b) {
+				button.setStyle(b['Test.App.styleDef']);
+			});
+			toolbar2.append(styleButton);
+		};
+
+		var button = new Ui.Button({
+			icon: 'exit', text: 'click me', orientation: 'horizontal',
+			verticalAlign: 'center', horizontalAlign: 'center'
+		});
+		vbox.append(button, true);
+
+		this.connect(button, 'press', function() {
+			console.log('button pressed');
+			Ui.Toast.send('button pressed');
+		});
+	}
+}, {}, {
+	buttonStyles: [
+		{
+			name: 'blue',
+			style: {
+				background: new Ui.Color({ h: 225, s: 0.76, l: 1 }),
+				backgroundBorder: new Ui.Color({ h: 225, s: 0.76, l: 0.5 }),
+				foreground: new Ui.Color({ h: 225, s: 0.76, l: 3 })
+			}
+		},
+		{
+			name: 'green',
+			style: {
+				background: new Ui.Color({ h: 109, s: 0.76, l: 1 }),
+				backgroundBorder: new Ui.Color({ h: 109, s: 0.76, l: 0.5 }),
+				foreground: new Ui.Color({ h: 109, s: 0.76, l: 0.4 })
+			}
+		},
+		{
+			name: 'red',
+			style: {
+				background: new Ui.Color({ h: 2, s: 0.76, l: 0.8 }),
+				backgroundBorder: new Ui.Color({ h: 2, s: 0.76, l: 0.4 }),
+				foreground: new Ui.Color({ h: 2, s: 0.76, l: 5 })
+			}
+		},
+		{
+			name: 'white',
+			style: {
+				background: new Ui.Color({ r: 1, g: 1, b: 1 })
+			}
+		},
+		{
+			name: 'black',
+			style: {
+				background: new Ui.Color({ h: 0, s: 0, l: 0.5 }),
+				backgroundBorder: new Ui.Color({ h: 0, s: 0, l: 0 }),
+				foreground: new Ui.Color({ h: 0, s: 0, l: 0.9 })
+			}
+		},
+		{
+			name: 'laclasse',
+			style: {
+				background: new Ui.Color({ h: 197, s: 1, l: 0.87 }),
+				backgroundBorder: new Ui.Color({ h: 197, s: 1, l: 0.4 }),
+				foreground: new Ui.Color({ h: 197, s: 1, l: 10 })
+			}
+		},
+		{
+			name: 'dark blue',
+			style: {
+				background: new Ui.Color({ h: 225, s: 0.81, l: 0.45 }),
+				backgroundBorder: new Ui.Color({ h: 225, s: 0.81, l: 0.1 }),
+				foreground: new Ui.Color({ h: 225, s: 0.4, l: 1 })
+			}
+		},
+		{
+			name: 'transparent',
+			style: {
+				background: new Ui.Color({ h: 0, s: 0, l: 1, a: 0 }),
+				backgroundBorder: new Ui.Color({ h: 0, s: 0, l: 1, a: 0 }),
+				foreground: new Ui.Color({ h: 0, s: 0, l: 0.4 })
+			}
+		}
+	]
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
