@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test LPBox</title>
+    <script src='../../era/era-debug.js'></script>
+<style>
+</style>
+<script>
+
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var lbox = new Ui.LPBox();
+		this.setContent(lbox);
+
+		lbox.prepend(new Ui.Rectangle({ fill: 'orange', marginLeft: 40, marginTop: 40, marginBottom: 120, marginRight: 120 }));
+		lbox.prepend(new Ui.Rectangle({ fill: 'pink', marginLeft: 60, marginTop: 60, marginBottom: 100, marginRight: 100 }), 2);
+		lbox.prepend(new Ui.Rectangle({ fill: 'green', marginLeft: 80, marginTop: 80, marginBottom: 80, marginRight: 80 }));
+		lbox.prepend(new Ui.Rectangle({ fill: 'purple', marginLeft: 100, marginTop: 100, marginBottom: 60, marginRight: 60 }), 2);
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
