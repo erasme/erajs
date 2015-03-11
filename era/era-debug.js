@@ -163,8 +163,8 @@ include(eraBaseDirectory+'ui/contextbar.js');
 include(eraBaseDirectory+'ui/popup.js');
 include(eraBaseDirectory+'ui/combo.js');
 include(eraBaseDirectory+'ui/dialog.js');
-include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/scrollingarea.js');
+include(eraBaseDirectory+'ui/toolbar.js');
 include(eraBaseDirectory+'ui/slider.js');
 include(eraBaseDirectory+'ui/progressbar.js');
 include(eraBaseDirectory+'ui/loading.js');
@@ -184,7 +184,6 @@ include(eraBaseDirectory+'ui/accordeon.js');
 include(eraBaseDirectory+'ui/carousel.js');
 include(eraBaseDirectory+'ui/carousel3.js');
 include(eraBaseDirectory+'ui/switch.js');
-//include(eraBaseDirectory+'ui/embed.js');
 include(eraBaseDirectory+'ui/monthcalendar.js');
 include(eraBaseDirectory+'ui/datepicker.js');
 include(eraBaseDirectory+'ui/notebook.js');
@@ -194,10 +193,5 @@ include(eraBaseDirectory+'ui/paned.js');
 include(eraBaseDirectory+'ui/menutoolbar.js');
 include(eraBaseDirectory+'ui/toast.js');
 include(eraBaseDirectory+'ui/app.js');
-
-//
-// Ui styles
-//
-include(eraBaseDirectory+'ui/styles.js');
 
 })();
