@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Test Dialog</title>
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.Selectionable.extend('Test.Selectionable', {
+	selectedMark: undefined,
+
+	constructor: function(config) {
+		this.setContent(new Ui.Rectangle({ fill: 'orange' }));
+		this.selectedMark = new Ui.Icon({
+			icon: 'check', fill: '#40d9f1', width: 24, height: 24,
+			verticalAlign: 'top', horizontalAlign: 'right'
+		});
+		this.selectedMark.hide();
+		this.append(this.selectedMark);
+		this.setDraggableData(this);
+	},
+
+	onItemDelete: function() {
+		Ui.Toast.send('Item deleted');
+	},
+
+	onItemEdit: function() {
+		Ui.Toast.send('Item edited');
+	}
+}, {
+	onPress: function() {
+		if(this.getIsSelected())
+			this.unselect();
+		else
+			this.select();
+	},
+
+	onSelect: function() {
+		this.selectedMark.show();
+	},
+	
+	onUnselect: function() {
+		this.selectedMark.hide();
+	},
+
+	getSelectionActions: function() {
+		return {
+			remove: { 
+				text: 'Remove', icon: 'trash',
+				scope: this, callback: this.onItemDelete, multiple: false
+			},
+			edit: {
+				"default": true,
+				text: 'Edit', icon: 'edit',
+				scope: this, callback: this.onItemEdit, multiple: false
+			}
+		};
+	}
+});
+
+Ui.App.extend('Test.App', {
+	selection: undefined,
+	contextBar: undefined,
+
+	constructor: function(config) {
+		this.selection = new Ui.Selection();
+		this.connect(this.selection, 'change', function() {
+			if(this.selection.getElements().length === 0)
+				this.contextBar.hide();
+			else
+				this.contextBar.show();
+		});
+
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		this.contextBar = new Ui.ContextBar({ selection: this.selection });
+		this.contextBar.hide();
+		vbox.append(this.contextBar);
+
+		var selectionable = new Test.Selectionable({
+			width: 50, height: 50,
+			verticalAlign: 'center', horizontalAlign: 'center'
+		});
+		vbox.append(selectionable, true);
+	},
+
+	// implement a selection handler for Selectionable elements
+	getSelectionHandler: function() {	
+		return this.selection;
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
