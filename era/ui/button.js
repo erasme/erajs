@@ -123,7 +123,6 @@ Ui.CanvasElement.extend('Ui.ButtonIcon', {
 	}
 });
 
-//Ui.Pressable.extend('Ui.Button', 
 Ui.Selectionable.extend('Ui.Button', 
 /** @lends Ui.Button# */
 {
@@ -464,7 +463,7 @@ Ui.Selectionable.extend('Ui.Button',
 		foreground: '#444444',
 		activeBackground: 'rgba(250,250,250,1)',
 		activeBackgroundBorder: 'rgba(140,140,140,1)',
-		activeForeground: 'rgb(33,211,255)',
+		activeForeground: '#dc6c36',
 		focusBackground: 'rgb(33,211,255)',
 		focusBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
 		focusForeground: '#222222',
@@ -473,7 +472,7 @@ Ui.Selectionable.extend('Ui.Button',
 		focusActiveForeground: 'white',
 		radius: 3,
 		spacing: 5,
-		padding: 5,
+		padding: 10,
 		iconSize: 24,
 		fontSize: 16,
 		fontFamily: 'Sans-serif',
@@ -490,6 +489,13 @@ Ui.Selectionable.extend('Ui.Button',
 	}
 });
 
-Ui.Button.extend('Ui.DefaultButton', {});
+Ui.Button.extend('Ui.DefaultButton', {}, {}, {
+	style: {
+		borderWidth: 0,
+		background: '#444444',
+		backgroundBorder: '#444444',
+		foreground: 'rgba(250,250,250,1)'
+	}
+});
 
 
