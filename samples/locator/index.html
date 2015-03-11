@@ -8,26 +8,23 @@
 </style>
 <script>
 
-var app = new Ui.App();
-app.setStyle({
-	"Ui.Locator": {
-		backgroundBorder: '#555555',
-		radius: 3,
-		spacing: 8,
-		borderWidth: 2
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+
+		var locator = new Ui.Locator({
+			path: '/Fun/Apps/Here/There/Everywhere',
+			verticalAlign: 'center', horizontalAlign: 'center'
+		});
+		this.setContent(locator);
+
+		this.connect(locator, 'change', function(locator, path) {
+			console.log('path change: '+path);
+			Ui.Toast.send('path change: '+path);
+		});
 	}
 });
 
-var locator = new Ui.Locator({
-	path: '/Fun/Apps/Here/There/Everywhere',
-	verticalAlign: 'center', horizontalAlign: 'center'
-});
-app.setContent(locator);
-
-app.connect(locator, 'change', function(locator, path) {
-	console.log('path change: '+path);
-});
-
+new Test.App();
 
 </script>
   </head>
