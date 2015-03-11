@@ -164,7 +164,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 		activeBackground: 'rgba(33,211,255,1)',
 		activeForeground: 'rgba(250,250,250,1)',
 		radius: 3,
-		spacing: 5
+		spacing: 10
 	}
 });
 
