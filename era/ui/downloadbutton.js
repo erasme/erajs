@@ -18,5 +18,9 @@ Ui.LinkButton.extend('Ui.DownloadButton',
 	onLinkPress: function() {
 		this.fireEvent('download', this);
 	}
+}, {}, {
+	style: {
+			background: '#a4f4a4'
+	}
 });
 
