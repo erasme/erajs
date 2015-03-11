@@ -10,6 +10,7 @@ Ui.App.extend('Test.App', {
 		this.connect(this, 'ptrdown', function(event) {
 			console.log('ptrdown at: '+event.pointer.getX()+','+event.pointer.getY()+' found: '+
 				Ui.App.current.elementFromPoint(event.pointer.getX(), event.pointer.getY()));
+			Ui.Toast.send(Ui.App.current.elementFromPoint(event.pointer.getX(), event.pointer.getY()).toString());
 		}, true);
 
 		var vbox = new Ui.VBox({ spacing: 10, margin: 10 });
