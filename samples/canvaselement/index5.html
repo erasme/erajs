@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test CanvasElement</title>
+	<script src='../../era/era-debug.js'></script>
+	<!--script src='../../era/era.js'></script-->
+<script>
+
+Ui.CanvasElement.extend('Sample.MyCanvas', {
+	fill: 'black',
+
+	constructor: function(config) {
+		if('fill' in config) {
+			this.setFill(config.fill);
+			delete(config.fill);
+		}
+		else
+			this.setFill(this.fill);
+	},
+
+	setFill: function(fill) {
+		this.fill = Ui.Color.create(fill);
+		this.invalidateDraw();
+	}
+}, {
+	updateCanvas: function(ctx) {
+		var radius = 3;
+
+		ctx.strokeStyle = this.fill.getCssRgba();
+		ctx.lineWidth = 2;
+		ctx.setLineDash([10,5]);
+		ctx.beginPath();
+		ctx.roundRect(10, 10, 80, 80, radius, radius, radius, radius);
+		ctx.closePath();
+		ctx.stroke();
+	},
+
+	measureCore: function(width, height) {
+		return { width: 100, height: 100 };
+	}
+});
+
+Ui.App.extend('Test.App', {
+	canvas: undefined,
+
+	constructor: function(config) {
+
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
+
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
+
+		var button = new Ui.Button({ text: 'color1' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			this.canvas1.setFill('orange');
+			this.canvas2.setFill('orange');
+		});
+
+		button = new Ui.Button({ text: 'color2' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			this.canvas1.setFill('pink');
+			this.canvas2.setFill('pink');
+		});
+
+		var hbox = new Ui.HBox({ spacing: 10, verticalAlign: 'center', horizontalAlign: 'center' });
+		vbox.append(hbox, true);
+
+		this.canvas1 = new Sample.MyCanvas({ canvasEngine: 'canvas' });
+		hbox.append(this.canvas1);
+
+		this.canvas2 = new Sample.MyCanvas({ canvasEngine: 'svg' });
+		hbox.append(this.canvas2);
+	}
+});
+
+new Test.App();
+
+</script>
+	</head>
+</html>
