@@ -86,11 +86,6 @@ Ui.LBox.extend('Ui.App',
 		this.connect(window, 'resize', this.onWindowResize);
 		this.connect(window, 'keyup', this.onWindowKeyUp);
 
-		if('style' in config)
-			this.setStyle(config.style);
-		else
-			this.setStyle(Ui.Styles['default']);
-		
 		this.connect(window, 'focus', function(event) {
 			if((event.target === undefined) || (event.target === null))
 				return;
