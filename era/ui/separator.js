@@ -20,7 +20,7 @@ Ui.Rectangle.extend('Ui.Separator',
 /** @lends Ui.Separator */
 {
 	style: {
-		color: new Ui.Color({ r: 0, g: 0, b: 0 })
+		color: '#444444'
 	}
 });
 
