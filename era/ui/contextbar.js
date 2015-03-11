@@ -2,6 +2,7 @@
 Ui.Button.extend('Ui.ContextBarCloseButton', {}, {}, {
 	style: {
 		textWidth: 5,
+		radius: 0,
 		borderWidth: 0,
 		background: 'rgba(250,250,250,0)'
 	}
@@ -46,7 +47,6 @@ Ui.LBox.extend('Ui.ContextBar', {
 			var action = actions[actionName];
 			if(action.hidden === true)
 				continue;
-			//console.log(this+'.onSelectionChange mimetype: '+this.selection.getElements()[0].getMimetype());
 			var button = new Ui.ActionButton({ icon: action.icon, text: action.text, action: action, selection: this.selection });
 			this.actionsBox.append(button);
 		}
@@ -57,6 +57,6 @@ Ui.LBox.extend('Ui.ContextBar', {
 	}
 }, {
 	style: {
-		background: '#cdf'
+		background: '#60e9f1'
 	}
 });
