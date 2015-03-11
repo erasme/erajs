@@ -9,17 +9,25 @@
 // Play with Ui.Button, the normal looking button
 //
 
-var app = new Ui.App();
+Ui.App.extend('Test.App', {
 
-var button1 = new Ui.Button({
-	text: 'hello world',
-	verticalAlign: 'center',
-	horizontalAlign: 'center'
+	constructor: function(config) {
+	
+		var button = new Ui.Button({
+			text: 'hello world',
+			verticalAlign: 'center',
+			horizontalAlign: 'center'
+		});
+		this.setContent(button);
+		this.connect(button, 'press', function() {
+			console.log('button pressed');
+			Ui.Toast.send('button pressed');
+		});
+	}
 });
-app.setContent(button1);
-app.connect(button1, 'press', function() { console.log('button pressed') });
+
+new Test.App();
 
 </script>
   </head>
-	<body></body>
 </html>
