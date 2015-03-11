@@ -30,9 +30,16 @@ Ui.App.extend('Test.App', {
 			this.carousel.next();
 		});
 
+		var scroll = new Ui.ScrollingArea();
+		vbox.append(scroll, true);
+
+		var vbox2 = new Ui.VBox({ spacing: 10 });
+		scroll.setContent(vbox2);
+
+		vbox2.append(new Ui.Rectangle({ fill: 'lightgreen', height: 400 }));
 
 		var lbox = new Ui.LBox({ verticalAlign: 'center', horizontalAlign: 'center', width: 400, height: 400 });
-		vbox.append(lbox, true);
+		vbox2.append(lbox);
 
 		lbox.append(new Ui.Frame({ fill: 'orange', frameWidth: 4, radius: 8 }));
 
@@ -72,6 +79,8 @@ Ui.App.extend('Test.App', {
 		}));
 
 		this.carousel.append(new Ui.Rectangle({ fill: 'green' }));
+
+		vbox2.append(new Ui.Rectangle({ fill: 'lightblue', height: 400 }));
 	}
 });
 
