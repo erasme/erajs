@@ -755,7 +755,7 @@ Ui.VBoxScrollable.extend('Ui.VBoxScrollingArea', {
 	}
 }, {
 	style: {
-		color: new Ui.Color({ r: 0, g: 0.62, b: 0.88 }),
-		radius: 3
+		color: '#999999',
+		radius: 0
 	}
 });
