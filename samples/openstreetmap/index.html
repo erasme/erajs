@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test OpenStreetMap</title>
+	<script src='../../era/era-debug.js'></script>
+	<script src='../../extras/openstreetmap/openstreetmap.js'></script>
+	<script type="text/javascript">
+
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+
+		var osm = new Extra.OpenStreetMap();
+		this.append(osm);
+
+		var vbox = new Ui.VBox({ eventsHidden: true });
+		this.append(vbox);
+
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
+
+		var combo = new Ui.Combo({ field: 'name' });
+		var data = Extra.OpenStreetMapCanvas.tilesSources;
+		combo.setData(data);
+		combo.setCurrentAt(0);
+		toolbar.append(combo);
+		this.connect(combo, 'change', function(combo, val, position) {
+			osm.setTilesSource(val);
+		});
+
+		var combo = new Ui.Combo({ field: 'name' });
+		var data = [
+			{ name: 'Paris', latitude: 48.858405, longitude: 2.294823, zoom: 13 },
+			{ name: 'Lyon', latitude: 45.76, longitude: 4.84, zoom: 16 }
+		];
+		combo.setData(data);
+		toolbar.append(combo);
+		this.connect(combo, 'change', function(combo, val, position) {
+			osm.setView(val.latitude, val.longitude, val.zoom);
+		});
+		combo.setCurrentAt(0);
+
+		toolbar.append(new Ui.Spacer(), true);
+
+		var button = new Ui.Button({ text: 'Position' });
+		this.connect(button, 'press', function() {
+			Ui.Toast.send(osm.getLatitude()+'° '+osm.getLongitude()+'°');
+		});
+		toolbar.append(button);
+
+		var button = new Ui.Button({ text: '-' });
+		this.connect(button, 'press', function() {
+			console.log('current Zoom: '+osm.getZoom());
+			osm.setZoom(osm.getZoom() - 1);
+		});
+		toolbar.append(button);
+
+		var button = new Ui.Button({ text: '+' });
+		this.connect(button, 'press', function() {
+			osm.setZoom(osm.getZoom() + 1);
+		});
+		toolbar.append(button);
+
+	}
+});
+
+new Test.App();
+
+</script>
+	</head>	
+</html>
+	
+
