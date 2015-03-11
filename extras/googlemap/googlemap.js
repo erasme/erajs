@@ -19,14 +19,14 @@
  * @namespace Namespace for all the Google element that are bind with Era
  */
 
-Ui.Fixed.extend('Extras.Ui.Google.Map',  
-                /** @lends Extras.Ui.Google.Map# */
+Ui.Fixed.extend('Extras.Google.Map',  
+                /** @lends Extras.Google.Map# */
 {
 	map: undefined,
 
     /**
      * @constructs
-     * @class Extras.Ui.Google.Map lets you embed a GoogleMap in an
+     * @class Extras.Google.Map lets you embed a GoogleMap in an
      * application.
      * @extends Ui.Fixed
      * @param {Object} config Configuration object, see fields breakout below
@@ -45,6 +45,10 @@ Ui.Fixed.extend('Extras.Ui.Google.Map',
 		var latlng = new google.maps.LatLng(0, 0);
 		var zoom = 10;
         var maptype = google.maps.MapTypeId.ROADMAP;
+		if('maptype' in config) {
+			maptype = config.maptype;
+			delete(config.maptype);
+		}
 
 		if(('latitude' in config) && ('longitude' in config)) {
 			latlng = new google.maps.LatLng(config.latitude, config.longitude);
@@ -90,7 +94,6 @@ Ui.Fixed.extend('Extras.Ui.Google.Map',
      * @param {Boolean} val Set to true to show tool, false to hide.
      */
     showAllTools: function(val) {
-        console.log('showallTools:' + val);
         this.showPanControl(val);
         this.showZoomControl(val);
         this.showStreetViewControl(val);
@@ -197,7 +200,7 @@ Ui.Fixed.extend('Extras.Ui.Google.Map',
 	}
 }, 
 {},
-/** @lends Extras.Ui.Google.Map*/
+/** @lends Extras.Google.Map */
 {
     /** 
 	 * @description Static constructor, called after this js file has been loaded
