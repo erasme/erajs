@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Test CanvasElement</title>
+	<script src='../../era/era-debug.js'></script>
+	<!--script src='../../era/era.js'></script-->
+<script>
+
+Ui.CanvasElement.extend('Test.Canvas', {
+	constructor: function() {
+	}
+}, {
+	canvasEngine: 'svg',
+
+	updateCanvas: function(ctx) {
+		var w = this.getLayoutWidth();
+		var h = this.getLayoutHeight();
+
+		ctx.fillStyle = 'pink';
+		ctx.fillRect(0, 0, w, h);
+
+//		Ui.Icon.drawIcon(ctx, 'star', w, 'black');
+		Ui.Icon.drawIconAndBadge(ctx, 'star', w, 'black', '120', w/3, 'red', 'white');
+	}
+});
+
+var app = new Ui.App();
+app.setContent(new Test.Canvas({
+	width: 400, height: 400,
+	verticalAlign: 'center',
+	horizontalAlign: 'center'
+}));
+
+
+</script>
+	</head>
+</html>
