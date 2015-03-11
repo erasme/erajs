@@ -28,5 +28,9 @@ Ui.Button.extend('Ui.LinkButton', {
 		else
 			window.location = this.link;
 	}
+}, {}, {
+	style: {
+		background: '#a4f4f4'
+	}
 });
 
