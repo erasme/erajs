@@ -4,17 +4,31 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<script src='../../era/era-debug.js'></script>
 <script>
-//
-// Very simple application. Only create the main part.
-//
 
-var app = new Ui.App({
-	content: new Ui.Rectangle({
-		fill: 'pink',
-		width: 100, height: 100,
-		horizontalAlign: 'center', verticalAlign: 'center'
-	})
+Ui.App.extend('Test.App', {
+	label: undefined,
+
+	constructor: function() {
+		var lbox = new Ui.LBox();
+		this.setContent(lbox);
+
+		lbox.append(new Ui.Frame({ frameWidth: 4, fill: 'red' }));
+
+		this.label = new Ui.Text({ verticalAlign: 'center', textAlign: 'center' });
+		lbox.append(this.label);
+
+		this.connect(this, 'resize', this.onAppResize);
+	},
+
+	onAppResize: function(app, w, h) {
+		this.label.setText('size: '+w+'x'+h+', '+
+			'inner: '+window.innerWidth+'x'+window.innerHeight+', '+
+			'client: '+document.body.clientWidth+'x'+document.body.clientHeight+', '
+		);
+	}
 });
+
+new Test.App();
 
 </script>
   </head>
