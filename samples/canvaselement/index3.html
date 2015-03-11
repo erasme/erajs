@@ -53,46 +53,52 @@ Ui.CanvasElement.extend('Test.CanvasTextBaseline', {
 	}
 });
 
-var app = new Ui.App();
-var scroll = new Ui.ScrollingArea();
-app.setContent(scroll);
+Ui.App.extend('Test.App', {
 
-var vbox = new Ui.VBox({
-	spacing: 10,
-	verticalAlign: 'center', horizontalAlign: 'center'
+	constructor: function(config) {
+		
+		var scroll = new Ui.ScrollingArea();
+		this.setContent(scroll);
+
+		var vbox = new Ui.VBox({
+			spacing: 10,
+			verticalAlign: 'center', horizontalAlign: 'center'
+		});
+		scroll.setContent(vbox);
+
+		var hbox = new Ui.HBox({ spacing: 10 });
+		vbox.append(hbox);
+		hbox.append(new Ui.Label({ text: 'SVG', width: 200 }));
+		hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
+		hbox.append(new Ui.Label({ text: 'CANVAS', width: 200 }));
+		vbox.append(new Ui.Rectangle({ height: 2, fill: 'black' }));
+
+		// test textAlign
+		var hbox = new Ui.HBox({ spacing: 10 });
+		vbox.append(hbox);
+		hbox.append(new Test.CanvasTextAlign({
+			width: 200, height: 200, canvasEngine: 'svg'
+		}));
+		hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
+		hbox.append(new Test.CanvasTextAlign({
+			width: 200, height: 200, canvasEngine: 'canvas'
+		}));
+		vbox.append(new Ui.Rectangle({ height: 2, fill: 'black' }));
+
+		// test textBaseline
+		var hbox = new Ui.HBox({ spacing: 10 });
+		vbox.append(hbox);
+		hbox.append(new Test.CanvasTextBaseline({
+			width: 200, height: 240, canvasEngine: 'svg'
+		}));
+		hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
+		hbox.append(new Test.CanvasTextBaseline({
+			width: 200, height: 240, canvasEngine: 'canvas'
+		}));
+	}
 });
-scroll.setContent(vbox);
 
-var hbox = new Ui.HBox({ spacing: 10 });
-vbox.append(hbox);
-hbox.append(new Ui.Label({ text: 'SVG', width: 200 }));
-hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
-hbox.append(new Ui.Label({ text: 'CANVAS', width: 200 }));
-vbox.append(new Ui.Rectangle({ height: 2, fill: 'black' }));
-
-// test textAlign
-var hbox = new Ui.HBox({ spacing: 10 });
-vbox.append(hbox);
-hbox.append(new Test.CanvasTextAlign({
-	width: 200, height: 200, canvasEngine: 'svg'
-}));
-hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
-hbox.append(new Test.CanvasTextAlign({
-	width: 200, height: 200, canvasEngine: 'canvas'
-}));
-vbox.append(new Ui.Rectangle({ height: 2, fill: 'black' }));
-
-// test textBaseline
-var hbox = new Ui.HBox({ spacing: 10 });
-vbox.append(hbox);
-hbox.append(new Test.CanvasTextBaseline({
-	width: 200, height: 240, canvasEngine: 'svg'
-}));
-hbox.append(new Ui.Rectangle({ width: 2, fill: 'black' }));
-hbox.append(new Test.CanvasTextBaseline({
-	width: 200, height: 240, canvasEngine: 'canvas'
-}));
-
+new Test.App();
 
 </script>
 	</head>
