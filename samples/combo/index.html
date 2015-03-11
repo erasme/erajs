@@ -5,21 +5,28 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
-var app = new Ui.App();
+Ui.App.extend('Test.App', {
 
-var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
-app.setContent(vbox);
+	constructor: function(config) {
 
-var combo = new Ui.Combo({ field: 'text', placeHolder: 'choice...' });
-var data = [];
-for(var i = 0; i < 25; i++)
-	data.push({ text: 'item '+i, id: i });
-combo.setData(data);
-vbox.append(combo);
+		var vbox = new Ui.VBox({ verticalAlign: 'center', horizontalAlign: 'center' });
+		this.setContent(vbox);
 
-app.connect(combo, 'change', function(combo, val, position) {
-	console.log('Combo change: '+val.text);
+		var combo = new Ui.Combo({ field: 'text', placeHolder: 'choice...' });
+		var data = [];
+		for(var i = 0; i < 25; i++)
+			data.push({ text: 'item '+i, id: i });
+		combo.setData(data);
+		vbox.append(combo);
+
+		this.connect(combo, 'change', function(combo, val, position) {
+			console.log('Combo change: '+val.text);
+			Ui.Toast.send(val.text);
+		});
+	}
 });
+
+new Test.App();
 
 </script>
   </head>
