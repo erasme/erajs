@@ -6,6 +6,7 @@ Ui.Container.extend('Ui.Locator',
 	foregrounds: undefined,
 	backgrounds: undefined,
 	border: undefined,
+	focusedPart: undefined,
 
 	/**
 	 * @constructs
@@ -21,7 +22,8 @@ Ui.Container.extend('Ui.Locator',
 	setPath: function(path) {
 		var spacing = this.getStyleProperty('spacing');
 		var radius = this.getStyleProperty('radius');
-	
+		var padding = this.getStyleProperty('padding');
+
 		this.path = path;
 		// remove all children
 		while(this.getChildren().length > 0)
@@ -40,17 +42,18 @@ Ui.Container.extend('Ui.Locator',
 			this.backgrounds.push(bg);
 			this.appendChild(bg);
 
-			fg = new Ui.Pressable();
+			fg = new Ui.Pressable({ padding: padding });
 			fg.locatorPath = '/';
 			fg.locatorPos = 0;
 			this.connect(fg, 'press', this.onPathPress);
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
+			this.connect(fg, 'focus', this.onPathFocus);
+			this.connect(fg, 'blur', this.onPathBlur);
 
-			home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
+			home = new Ui.Icon({ icon: 'home', width: 24, height: 24 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
-			home.setMargin(5);
 			fg.appendChild(home);
 
 			this.foregrounds.push(fg);
@@ -80,17 +83,18 @@ Ui.Container.extend('Ui.Locator',
 			}
 
 			// handle pressable parts
-			fg = new Ui.Pressable();
+			fg = new Ui.Pressable({ padding: padding });
 			fg.locatorPath = currentPath;
 			fg.locatorPos = 0;
 			this.connect(fg, 'press', this.onPathPress);
 			this.connect(fg, 'down', this.onPathDown);
 			this.connect(fg, 'up', this.onPathUp);
+			this.connect(fg, 'focus', this.onPathFocus);
+			this.connect(fg, 'blur', this.onPathBlur);
 
-			home = new Ui.Icon({ icon: 'home', width: 25, height: 25 });
+			home = new Ui.Icon({ icon: 'home', width: 24, height: 24 });
 			home.setVerticalAlign('center');
 			home.setHorizontalAlign('center');
-			home.setMargin(5);
 			fg.locatorPos = 0;
 			fg.locatorPath = '/';
 			fg.appendChild(home);
@@ -100,13 +104,15 @@ Ui.Container.extend('Ui.Locator',
 			var currentPath = '/';
 			for(i = 0; i < paths.length; i++) {
 				currentPath += paths[i];	
-				fg = new Ui.Pressable();
+				fg = new Ui.Pressable({ padding: padding });
 				fg.locatorPos = i+1;
 				this.connect(fg, 'press', this.onPathPress);
 				this.connect(fg, 'down', this.onPathDown);
 				this.connect(fg, 'up', this.onPathUp);
+				this.connect(fg, 'focus', this.onPathFocus);
+				this.connect(fg, 'blur', this.onPathBlur);
 				fg.locatorPath = currentPath;
-				fg.appendChild(new Ui.Label({ text: paths[i], margin: 5, verticalAlign: 'center' }));
+				fg.appendChild(new Ui.Label({ text: paths[i], verticalAlign: 'center' }));
 				this.foregrounds.push(fg);
 				this.appendChild(fg);
 				currentPath += '/';
@@ -119,21 +125,12 @@ Ui.Container.extend('Ui.Locator',
 		return this.path;
 	},
 
-	getColor: function() {
-		return Ui.Color.create(this.getStyleProperty('color'));
+	getBackground: function() {
+		return Ui.Color.create(this.getStyleProperty('background'));
 	},
-	
-	getDarkColor: function() {
-		var yuv = this.getColor().getYuv();
-		var deltaY = 0;
-		if(yuv.y < 0.4)
-			return new Ui.Color({ y: yuv.y - 0.60 + deltaY, u: yuv.u, v: yuv.v, a: 0.8 });
-		else
-			return new Ui.Color({ y: yuv.y - 0.40 + deltaY, u: yuv.u, v: yuv.v, a: 0.4 });
-	},
-	
+
 	getLightColor: function() {
-		var yuv = this.getColor().getYuv();
+		var yuv = this.getBackground().getYuv();
 		var deltaY = 0;
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y - 0.15 + deltaY, u: yuv.u, v: yuv.v });
@@ -143,18 +140,10 @@ Ui.Container.extend('Ui.Locator',
 
 	getBackgroundBorder: function() {
 		var color;
-		if(this.isActive) {
-			if(this.getHasFocus() && !this.getIsMouseFocus())
-				color = Ui.Color.create(this.getStyleProperty('focusActiveBackgroundBorder'));
-			else
-				color = Ui.Color.create(this.getStyleProperty('activeBackgroundBorder'));
-		}
-		else {
-			if(this.getHasFocus() && !this.getIsMouseFocus())
-				color = Ui.Color.create(this.getStyleProperty('focusBackgroundBorder'));
-			else
-				color = Ui.Color.create(this.getStyleProperty('backgroundBorder'));
-		}
+		if((this.focusedPart !== undefined) && !this.focusedPart.getIsMouseFocus())
+			color = Ui.Color.create(this.getStyleProperty('focusBackgroundBorder'));
+		else
+			color = Ui.Color.create(this.getStyleProperty('backgroundBorder'));
 		var yuv = color.getYuva();
 		var deltaY = 0;
 //		if(this.getIsDown())
@@ -165,7 +154,7 @@ Ui.Container.extend('Ui.Locator',
 	},
 	
 	getDownColor: function() {
-		var yuv = this.getColor().getYuv();
+		var yuv = this.getBackground().getYuv();
 		var deltaY = -0.20;
 		if(yuv.y < 0.4)
 			return new Ui.Color({ y: yuv.y - 0.15 + deltaY, u: yuv.u, v: yuv.v });
@@ -184,14 +173,34 @@ Ui.Container.extend('Ui.Locator',
 	onPathUp: function(pathItem) {
 		this.backgrounds[pathItem.locatorPos].setFill(this.getLightColor());
 	},
+
+	onPathFocus: function(pressable) {
+		this.focusedPart = pressable;
+		this.updateColors();
+	},
+
+	onPathBlur: function(pressable) {
+		this.focusedPart = undefined;
+		this.updateColors();
+	},
 	
 	updateColors: function() {
-		var lightColor = this.getColor();// this.getLightColor();
-		//this.border.setFill(this.getDarkColor());
+		var backgroundColor = this.getBackground();
+		var focusBackgroundColor = Ui.Color.create(this.getStyleProperty('focusBackground'));
 		this.border.setFill(this.getBackgroundBorder());
 
+		var focusPos = -1;
+		if(this.focusedPart !== undefined) {
+			for(var i = 0; (focusPos === -1) && (i < this.foregrounds.length); i++)
+				if(this.foregrounds[i] === this.focusedPart)
+					focusPos = i;
+		}
+
 		for(var i = 0; i < this.backgrounds.length; i++) {
-			this.backgrounds[i].setFill(lightColor);
+			if(i === focusPos)
+				this.backgrounds[i].setFill(focusBackgroundColor);
+			else
+				this.backgrounds[i].setFill(backgroundColor);
 		}
 	}
 }, 
@@ -255,7 +264,9 @@ Ui.Container.extend('Ui.Locator',
 	
 	onStyleChange: function() {	
 		var spacing = this.getStyleProperty('spacing');
+		var padding = this.getStyleProperty('padding');
 		var radius = this.getStyleProperty('radius');
+
 		var borderWidth = this.getStyleProperty('borderWidth');
 		for(var i = 0; i < this.backgrounds.length; i++) {
 			var bg = this.backgrounds[i];
@@ -263,6 +274,8 @@ Ui.Container.extend('Ui.Locator',
 				bg.setArrowLength(spacing);
 			bg.setRadius(radius-borderWidth);
 		}
+		for(var i = 0; i < this.foregrounds.length; i++)
+			this.foregrounds[i].setPadding(padding);
 		this.border.setRadius(radius);
 		this.updateColors();
 	},
@@ -280,13 +293,14 @@ Ui.Container.extend('Ui.Locator',
 	}
 }, {
 	style: {
+		background: 'rgba(250,250,250,1)',
 		backgroundBorder: 'rgba(140,140,140,1)',
+		focusBackground: 'rgb(33,211,255)',
 		focusBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
 		focusActiveBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
-		color: "#f8f8f8",
-		focusColor: '#f6caa2',
 		radius: 3,
-		spacing: 20,
+		spacing: 10,
+		padding: 10,
 		borderWidth: 1
 	}
 });
