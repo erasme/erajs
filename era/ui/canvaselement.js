@@ -670,7 +670,7 @@ Core.Object.extend('Core.SVG2DContext', {
 		mulMatrix.d = d;
 		mulMatrix.e = e;
 		mulMatrix.f = f;
-		this.currentTransform.multiply(mulMatrix);
+		this.currentTransform = this.currentTransform.multiply(mulMatrix);
 	},
 
 	setTransform: function(a, b, c, d, e, f) {

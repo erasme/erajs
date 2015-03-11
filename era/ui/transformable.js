@@ -118,32 +118,28 @@ Ui.LBox.extend('Ui.Transformable',
 		if(angle === undefined)
 			angle = this.angle;
 
-		var matrix = new Ui.Matrix();
-		matrix.translate(this.getLayoutWidth() * this.transformOriginX, this.getLayoutHeight()  * this.transformOriginX);
-		matrix.translate(translateX, translateY);
-		matrix.scale(scale, scale);
-		matrix.rotate(angle);
-		matrix.translate(-this.getLayoutWidth() * this.transformOriginX, -this.getLayoutHeight()  * this.transformOriginX);
-		return matrix;
+		return Ui.Matrix.createTranslate(this.getLayoutWidth() * this.transformOriginX, this.getLayoutHeight()  * this.transformOriginX).
+			translate(translateX, translateY).
+			scale(scale, scale).
+			rotate(angle).
+			translate(-this.getLayoutWidth() * this.transformOriginX, -this.getLayoutHeight()  * this.transformOriginX);
 	},
 
 	getMatrix: function() {
-		var matrix = new Ui.Matrix();
-		matrix.translate(this.getLayoutWidth() * this.transformOriginX, this.getLayoutHeight()  * this.transformOriginX);
-		matrix.translate(this.translateX, this.translateY);
-		matrix.scale(this.scale, this.scale);
-		matrix.rotate(this.angle);
-		matrix.translate(-this.getLayoutWidth() * this.transformOriginX, -this.getLayoutHeight()  * this.transformOriginX);
-		return matrix;
+		return Ui.Matrix.createTranslate(this.getLayoutWidth() * this.transformOriginX, this.getLayoutHeight()  * this.transformOriginX).
+			translate(this.translateX, this.translateY).
+			scale(this.scale, this.scale).
+			rotate(this.angle).
+			translate(-this.getLayoutWidth() * this.transformOriginX, -this.getLayoutHeight()  * this.transformOriginX);
 	},
 
 	getBoundaryBox: function(matrix) {
 		if(matrix === undefined)
 			matrix = this.getMatrix();
-		var p1 = (new Ui.Point({ x: 0, y: 0 })).matrixTransform(matrix);
-		var p2 = (new Ui.Point({ x: this.getLayoutWidth(), y: 0 })).matrixTransform(matrix);
-		var p3 = (new Ui.Point({ x: this.getLayoutWidth(), y: this.getLayoutHeight() })).matrixTransform(matrix);
-		var p4 = (new Ui.Point({ x: 0, y: this.getLayoutHeight() })).matrixTransform(matrix);
+		var p1 = (new Ui.Point({ x: 0, y: 0 })).multiply(matrix);
+		var p2 = (new Ui.Point({ x: this.getLayoutWidth(), y: 0 })).multiply(matrix);
+		var p3 = (new Ui.Point({ x: this.getLayoutWidth(), y: this.getLayoutHeight() })).multiply(matrix);
+		var p4 = (new Ui.Point({ x: 0, y: this.getLayoutHeight() })).multiply(matrix);
 
 		var minX = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
 		var minY = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
@@ -270,9 +266,7 @@ Ui.LBox.extend('Ui.Transformable',
 				y: (startVector.y * endVector.x - startVector.x * endVector.y) };
 			var angle = -(Math.atan2(divVector.y, divVector.x) * 180.0) / Math.PI;
 
-			var deltaMatrix = new Ui.Matrix();
-			deltaMatrix.translate(pos1.x - start1.x, pos1.y - start1.y);
-			deltaMatrix.translate(start1.x, start1.y);
+			var deltaMatrix = Ui.Matrix.createTranslate(pos1.x - start1.x, pos1.y - start1.y).translate(start1.x, start1.y);
 			if(this.allowScale) {
 				if((this.minScale !== undefined) || (this.maxScale !== undefined)) {
 					var totalScale = this.startScale * scale;
@@ -282,25 +276,24 @@ Ui.LBox.extend('Ui.Transformable',
 						totalScale = this.maxScale;
 					scale = totalScale / this.startScale;
 				}
-				deltaMatrix.scale(scale, scale);
+				deltaMatrix = deltaMatrix.scale(scale, scale);
 			}
 			else
 				scale = 1;
 			if(this.allowRotate)
-				deltaMatrix.rotate(angle);
+				deltaMatrix = deltaMatrix.rotate(angle);
 			else
 				angle = 0;
-			deltaMatrix.translate(-start1.x, -start1.y);
+			deltaMatrix = deltaMatrix.translate(-start1.x, -start1.y);
 
 			var origin = new Ui.Point({ x: this.getLayoutWidth() * this.transformOriginX, y: this.getLayoutHeight()  * this.transformOriginX });
-			deltaMatrix.translate(origin.x, origin.y);
-
-			deltaMatrix.translate(this.startTranslateX, this.startTranslateY);
-			deltaMatrix.scale(this.startScale, this.startScale);
-			deltaMatrix.rotate(this.startAngle);
-			deltaMatrix.translate(-origin.x, -origin.y);
-
-			origin.matrixTransform(deltaMatrix);
+			deltaMatrix = deltaMatrix.translate(origin.x, origin.y).
+				translate(this.startTranslateX, this.startTranslateY).
+				scale(this.startScale, this.startScale).
+				rotate(this.startAngle).
+				translate(-origin.x, -origin.y);
+			
+			origin = origin.multiply(deltaMatrix);
 
 			this.setContentTransform(origin.x - this.getLayoutWidth() * this.transformOriginX,
 				origin.y - this.getLayoutHeight() * this.transformOriginY,
@@ -390,21 +383,18 @@ Ui.LBox.extend('Ui.Transformable',
 				var angle = delta/5;
 
 				var pos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-
-				var deltaMatrix = new Ui.Matrix();
-				deltaMatrix.translate(pos.x, pos.y);
-				deltaMatrix.rotate(angle, angle);
-				deltaMatrix.translate(-pos.x, -pos.y);
-
 				var origin = new Ui.Point({ x: this.getLayoutWidth() * this.transformOriginX, y: this.getLayoutHeight()  * this.transformOriginX });
 
-				deltaMatrix.translate(origin.x, origin.y);
-				deltaMatrix.translate(this.translateX, this.translateY);
-				deltaMatrix.scale(this.scale, this.scale);
-				deltaMatrix.rotate(this.angle);
-				deltaMatrix.translate(-origin.x, -origin.y);
+				var deltaMatrix = Ui.Matrix.createTranslate(pos.x, pos.y).
+					rotate(angle, angle).
+					translate(-pos.x, -pos.y).
+					translate(origin.x, origin.y).
+					translate(this.translateX, this.translateY).
+					scale(this.scale, this.scale).
+					rotate(this.angle).
+					translate(-origin.x, -origin.y);
 
-				origin.matrixTransform(deltaMatrix);
+				origin = origin.multiply(deltaMatrix);
 
 				this.setContentTransform(origin.x - this.getLayoutWidth() * this.transformOriginX,
 					origin.y - this.getLayoutHeight() * this.transformOriginY,
@@ -413,7 +403,7 @@ Ui.LBox.extend('Ui.Transformable',
 		}
 		else if(event.ctrlKey) {
 			if(this.allowScale) {
-				var scale = this.scale - delta/120;
+				var scale = Math.pow(2, (Math.log(this.scale) / Math.log(2)) - delta/60);
 				if((this.minScale !== undefined) && (scale < this.minScale))
 					scale = this.minScale;
 				if((this.maxScale !== undefined) && (scale > this.maxScale))
@@ -422,21 +412,18 @@ Ui.LBox.extend('Ui.Transformable',
 				var deltaScale = scale / this.scale;
 
 				var pos = this.pointFromWindow({ x: event.clientX, y: event.clientY });
-
-				var deltaMatrix = new Ui.Matrix();
-				deltaMatrix.translate(pos.x, pos.y);
-				deltaMatrix.scale(deltaScale, deltaScale);
-				deltaMatrix.translate(-pos.x, -pos.y);
-
 				var origin = new Ui.Point({ x: this.getLayoutWidth() * this.transformOriginX, y: this.getLayoutHeight()  * this.transformOriginX });
 
-				deltaMatrix.translate(origin.x, origin.y);
-				deltaMatrix.translate(this.translateX, this.translateY);
-				deltaMatrix.scale(this.scale, this.scale);
-				deltaMatrix.rotate(this.angle);
-				deltaMatrix.translate(-origin.x, -origin.y);
-
-				origin.matrixTransform(deltaMatrix);
+				var deltaMatrix = Ui.Matrix.createTranslate(pos.x, pos.y).
+					scale(deltaScale, deltaScale).
+					translate(-pos.x, -pos.y).
+					translate(origin.x, origin.y).
+					translate(this.translateX, this.translateY).
+					scale(this.scale, this.scale).
+					rotate(this.angle).
+					translate(-origin.x, -origin.y);
+				
+				origin = origin.multiply(deltaMatrix);
 
 				this.setContentTransform(origin.x - this.getLayoutWidth() * this.transformOriginX,
 					origin.y - this.getLayoutHeight() * this.transformOriginY,

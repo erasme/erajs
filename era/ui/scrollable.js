@@ -357,12 +357,9 @@ Ui.Container.extend('Ui.Scrollable', {
 	}
 }, {
 	onScrollIntoView: function(el) {
-		var matrix = Ui.Matrix.createTranslate(this.offsetX, this.offsetY);
-		matrix.multiply(el.transformToElement(this));
-		var p0 = new Ui.Point({ x: 0, y: 0 });
-		p0.matrixTransform(matrix);
-		var p1 = new Ui.Point({ x: el.getLayoutWidth(), y: el.getLayoutHeight() });
-		p1.matrixTransform(matrix);
+		var matrix = Ui.Matrix.createTranslate(this.offsetX, this.offsetY).multiply(el.transformToElement(this));
+		var p0 = (new Ui.Point({ x: 0, y: 0 })).multiply(matrix);
+		var p1 = (new Ui.Point({ x: el.getLayoutWidth(), y: el.getLayoutHeight() })).multiply(matrix);
 
 		// test if scroll vertical is needed
 		if((p0.y < this.offsetY) || (p0.y > this.offsetY + this.viewHeight) ||
@@ -483,19 +480,7 @@ Ui.Transformable.extend('Ui.ScrollableContent', {
 		this.translateY = Math.max(this.translateY, -(this.contentHeight - viewHeight));
 
 		Ui.ScrollableContent.base.onContentTransform.apply(this, arguments);
-		//var content = this.scroll.getContent();
-//		this.transformableContent.setTransform(Ui.Matrix.createScale(this.getScale(), this.getScale()));
-//		// apply the translation part to the scrolling area
-//		// this is possible because the 2D transform change the scrollWidth and scrollHeight
-//		// but be carefull, 3D transform dont change the layout and the scroll size
-//		// will not be update so this will not work.
-//		// (-webkit-backface-visibility: hidden also break this).
-//		this.scroll.setOffset(-this.getTranslateX(), -this.getTranslateY(), true);
-//		this.scroll.updateOffset();
-//		this.translateX = -this.scroll.getOffsetX();
-//		this.translateY = -this.scroll.getOffsetY();
 
-//		console.log(this+'.onContentTransform '+(this.getLayoutWidth()*scale)+'x'+(this.getLayoutHeight()*scale));
 		this.contentWidth = this.getFirstChild().getLayoutWidth()*scale;
 		this.contentHeight = this.getFirstChild().getLayoutHeight()*scale;
 		if(testOnly !== true) {

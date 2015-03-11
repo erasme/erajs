@@ -20,6 +20,50 @@ Core.Object.extend('Ui.Point',
 		return this;
 	},
 
+	multiply: function(value) {
+		var res = this;
+		if(typeof(value) === 'number')
+			res = new Ui.Point({ x: this.x * value, y: this.y * value });
+		else if(Ui.Matrix.hasInstance(value))
+			res = new Ui.Point({
+				x: this.x * value.a + this.y * value.c + value.e,
+				y: this.x * value.b + this.y * value.d + value.f
+			});
+		return res;
+	},
+
+	divide: function(value) {
+		var res = this;
+		if(typeof(value) === 'number')
+			res = new Ui.Point({ x: this.x / value, y: this.y / value });
+		else if(Ui.Matrix.hasInstance(value)) {
+			value = value.inverse();
+			res = new Ui.Point({
+				x: this.x * value.a + this.y * value.c + value.e,
+				y: this.x * value.b + this.y * value.d + value.f
+			});
+		}
+		return res;
+	},
+
+	add: function(value) {
+		var res = this;
+		if(typeof(value) === 'number')
+			res = new Ui.Point({ x: this.x + value, y: this.y + value });
+		else if(Ui.Point.hasInstance(value))
+			res = new Ui.Point({ x: this.x + value.x, y: this.y + value.y });
+		return res;
+	},
+
+	substract: function(value) {
+		var res = this;
+		if(typeof(value) === 'number')
+			res = new Ui.Point({ x: this.x - value, y: this.y - value });
+		else if(Ui.Point.hasInstance(value))
+			res = new Ui.Point({ x: this.x - value.x, y: this.y - value.y });
+		return res;
+	},
+
 	setPoint: function(point) {
 		this.x = point.x;
 		this.y = point.y;
@@ -39,6 +83,10 @@ Core.Object.extend('Ui.Point',
 
 	setY: function(y) {
 		this.y = y;
+	},
+
+	getLength: function() {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
 	},
 
 	clone: function() {

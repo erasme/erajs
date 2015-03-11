@@ -856,9 +856,7 @@ Core.Object.extend('Ui.Element',
 		if(this.transform !== undefined) {
 			var originX = this.transformOriginX*this.layoutWidth;
 			var originY = this.transformOriginY*this.layoutHeight;
-			matrix.translate(-originX, -originY);
-			matrix.multiply(this.transform);
-			matrix.translate(originX, originY);
+			matrix = matrix.translate(-originX, -originY).multiply(this.transform).translate(originX, originY);
 		}
 		return matrix;
 	},
@@ -873,15 +871,12 @@ Core.Object.extend('Ui.Element',
 		if(this.transform !== undefined) {
 			var originX = this.transformOriginX*this.layoutWidth;
 			var originY = this.transformOriginY*this.layoutHeight;
-			var transMatrix = new Ui.Matrix();
-			transMatrix.translate(-originX, -originY);
-			transMatrix.multiply(this.transform);
-			transMatrix.translate(originX, originY);
-			transMatrix.inverse();
-			matrix = transMatrix;
+			matrix = Ui.Matrix.createTranslate(-originX, -originY).
+				multiply(this.transform).
+				translate(originX, originY).
+				inverse();
 		}
-		matrix.translate(-this.layoutX, -this.layoutY);
-		return matrix;
+		return matrix.translate(-this.layoutX, -this.layoutY);
 	},
 
 	/**
@@ -912,8 +907,7 @@ Core.Object.extend('Ui.Element',
 	transformToElement: function(element) {
 		var toMatrix = this.transformToWindow();
 		var fromMatrix = element.transformFromWindow();
-		toMatrix.multiply(fromMatrix);
-		return toMatrix;
+		return toMatrix.multiply(fromMatrix);
 	},
 
 	/**
@@ -921,9 +915,7 @@ Core.Object.extend('Ui.Element',
 	 * coordinate system to the page coordinate system
 	 */
 	pointToWindow: function(point) {
-		point = new Ui.Point({ point: point });
-		point.matrixTransform(this.transformToWindow());
-		return point;
+		return (new Ui.Point({ point: point })).multiply(this.transformToWindow());
 	},
 
 	/**
@@ -931,9 +923,7 @@ Core.Object.extend('Ui.Element',
 	 * system to the current element coordinate system
 	 */
 	pointFromWindow: function(point) {
-		point = new Ui.Point({ point: point });
-		point.matrixTransform(this.transformFromWindow());
-		return point;
+		return (new Ui.Point({ point: point })).multiply(this.transformFromWindow());
 	},
 
 	/**
@@ -945,9 +935,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	getIsInside: function(x, y) {
-		var matrix = this.getLayoutTransform();
-		var point = new Ui.Point({ x: x, y: y });
-		point.matrixTransform(matrix);
+		var point = (new Ui.Point({ x: x, y: y })).multiply(this.getLayoutTransform());
 		if((point.x >= 0) && (point.x <= this.layoutWidth) &&
 		   (point.y >= 0) && (point.y <= this.layoutHeight))
 			return true;
@@ -1364,12 +1352,9 @@ Core.Object.extend('Ui.Element',
 				x *= this.layoutWidth;
 				y *= this.layoutHeight;
 			}
-			if((x !== 0) || (y !== 0)) {
-				matrix = Ui.Matrix.createTranslate(x, y);
-				matrix.multiply(this.transform);
-				matrix.translate(-x, -y);
-			}
-
+			if((x !== 0) || (y !== 0))
+				matrix = Ui.Matrix.createTranslate(x, y).multiply(this.transform).translate(-x, -y);
+			
 			if(navigator.isIE7 || navigator.isIE8) {
 				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
 				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
@@ -1442,9 +1427,7 @@ Core.Object.extend('Ui.Element',
 		var matrix = new Ui.Matrix();
 		var current = element;
 		while(current !== undefined) {
-			var layoutMatrix = current.getInverseLayoutTransform();
-			layoutMatrix.multiply(matrix);
-			matrix = layoutMatrix;
+			matrix = current.getInverseLayoutTransform().multiply(matrix);
 			current = current.parent;
 		}
 		return matrix;
@@ -1465,9 +1448,7 @@ Core.Object.extend('Ui.Element',
 		}
 		return matrix;*/
 
-		var matrix = Ui.Element.transformToWindow2(element);
-		matrix.inverse();
-		return matrix;
+		return Ui.Element.transformToWindow2(element).inverse();
 	},
 
 	elementFromPoint: function(x, y) {
@@ -1513,12 +1494,9 @@ Core.Object.extend('Ui.Element',
 					}
 					var cssMatrix = new WebKitCSSMatrix(trans);
 					localMatrix = Ui.Matrix.createMatrix(cssMatrix.a, cssMatrix.b, cssMatrix.c, cssMatrix.d, cssMatrix.e, cssMatrix.f);
-					matrix.translate(-originX, -originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
+					matrix = matrix.translate(-originX, -originY).multiply(localMatrix).translate(originX, originY);
 				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				matrix.translate(-current.scrollLeft, -current.scrollTop);
+				matrix = matrix.translate(current.offsetLeft, current.offsetTop).translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 		}
@@ -1544,12 +1522,9 @@ Core.Object.extend('Ui.Element',
 						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
 					localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(-originX, -originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
+					matrix = matrix.translate(-originX, -originY).multiply(localMatrix).translate(originX, originY);
 				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				matrix.translate(-current.scrollLeft, -current.scrollTop);
+				matrix = matrix.translate(current.offsetLeft, current.offsetTop).translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 		}
@@ -1574,13 +1549,11 @@ Core.Object.extend('Ui.Element',
 						originX = parseFloat(origins[0].replace(/px$/, ''));
 						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
-					localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(-originX, -originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
+					matrix = matrix.translate(-originX, -originY).
+						multiply(Ui.Matrix.createMatrix(a, b, c, d, e, f)).
+						translate(originX, originY);
 				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				matrix.translate(-current.scrollLeft, -current.scrollTop);
+				matrix = matrix.translate(current.offsetLeft, current.offsetTop).translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 		}
@@ -1609,13 +1582,11 @@ Core.Object.extend('Ui.Element',
 						originX = parseFloat(origins[0].replace(/px$/, ''));
 						originY = parseFloat(origins[1].replace(/px$/, ''));
 					}
-					localMatrix = Ui.Matrix.createMatrix(a, b, c, d, e, f);
-					matrix.translate(-originX, -originY);
-					matrix.multiply(localMatrix);
-					matrix.translate(originX, originY);
+					matrix = matrix.translate(-originX, -originY).
+						multiply(Ui.Matrix.createMatrix(a, b, c, d, e, f)).
+						translate(originX, originY);
 				}
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				matrix.translate(-current.scrollLeft, -current.scrollTop);
+				matrix = matrix.translate(current.offsetLeft, current.offsetTop).translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 		}
@@ -1623,8 +1594,7 @@ Core.Object.extend('Ui.Element',
 			matrix = new Ui.Matrix();
 			current = element;
 			while((current !== undefined) && (current !== null) && (current !== window)) {
-				matrix.translate(current.offsetLeft, current.offsetTop);
-				matrix.translate(-current.scrollLeft, -current.scrollTop);
+				matrix = matrix.translate(current.offsetLeft, current.offsetTop).translate(-current.scrollLeft, -current.scrollTop);
 				current = current.offsetParent;
 			}
 		}
@@ -1642,9 +1612,7 @@ Core.Object.extend('Ui.Element',
 	},
 
 	transformFromWindow: function(element, win) {
-		var matrix = Ui.Element.transformToWindow(element, win);
-		matrix.inverse();
-		return matrix;
+		return Ui.Element.transformToWindow(element, win).inverse();
 	},
 
 	/**
@@ -1652,15 +1620,11 @@ Core.Object.extend('Ui.Element',
 	* coordinate system to the page coordinate system
 	*/
 	pointToWindow: function(element, point, win) {
-		point = new Ui.Point({ point: point });
-		point.matrixTransform(Ui.Element.transformToWindow(element, win));
-		return point;
+		return (new Ui.Point({ point: point })).multiply(Ui.Element.transformToWindow(element, win));
 	},
 
 	pointFromWindow: function(element, point, win) {
-		point = new Ui.Point({ point: point });
-		point.matrixTransform(Ui.Element.transformFromWindow(element, win));
-		return point;
+		return (new Ui.Point({ point: point })).multiply(Ui.Element.transformFromWindow(element, win));
 	},
 
 	setSelectable: function(drawing, selectable) {

@@ -55,8 +55,7 @@ Core.Object.extend('Ui.Matrix',
 		var d = matrix.c * this.b + matrix.d * this.d;
 		var f = matrix.e * this.b + matrix.f * this.d + this.f;
 
-		this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f;
-		return this;
+		return Ui.Matrix.createMatrix(a, b, c, d, e, f);
 	},
 
 	getDeterminant: function() {
@@ -75,9 +74,7 @@ Core.Object.extend('Ui.Matrix',
 		var td =  this.a * invd;
 		var te = ((this.c * this.f) - (this.e * this.d)) * invd;
 		var tf = ((this.e * this.b) - (this.a * this.f)) * invd;
-		this.a = ta; this.b = tb; this.c = tc; this.d = td;
-		this.e = te; this.f = tf;
-		return this;
+		return new Ui.Matrix.createMatrix(ta, tb, tc, td, te, tf);
 	},
 
 	setMatrix: function(a, b, c, d, e, f) {

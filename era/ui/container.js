@@ -195,9 +195,7 @@ Ui.Element.extend('Ui.Container',
 		if(!this.getIsVisible())
 			return undefined;
 		
-		var matrix = this.getLayoutTransform();
-		var point = new Ui.Point({ x: x, y: y });
-		point.matrixTransform(matrix);
+		var point = (new Ui.Point({ x: x, y: y })).multiply(this.getLayoutTransform());
 
 		var isInside = ((point.x >= 0) && (point.x <= this.layoutWidth) &&
 		   (point.y >= 0) && (point.y <= this.layoutHeight));
