@@ -251,6 +251,24 @@ Ui.CanvasElement.extend('Extra.OpenStreetMapCanvas', {
 			name: 'Mapbox labelled Satellite', 
 			url: 'https://{s}.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/{z}/{x}/{y}.png',
 			subdomains: 'abc'
+		},
+		{
+			key: 'googleroadmap', minZoom: 1, maxZoom: 19,
+			name: 'Google Map Road', 
+			url: 'http://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+			subdomains: '123'
+		},
+		{
+			key: 'googlesatmap', minZoom: 1, maxZoom: 19,
+			name: 'Google Map Satelitte', 
+			url: 'http://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+			subdomains: '123'
+		},
+		{
+			key: 'googletraficmap', minZoom: 5, maxZoom: 19,
+			name: 'Google Map Trafic', 
+			url: 'http://mt{s}.google.com/mapstt?zoom={z}&x={x}&y={y}&client=google',
+			subdomains: '123'
 		}
 	]
 });
