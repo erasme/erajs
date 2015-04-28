@@ -73,6 +73,10 @@ Ui.LBox.extend('Ui.DialogButtonBox', {
 		this.actionButtonsBox.append(this.titleLabel, true);
 	},
 
+	getTitle: function() {
+		return this.titleLabel.getText();
+	},
+
 	setTitle: function(title) {
 		this.titleLabel.setText(title);
 	},
@@ -277,6 +281,10 @@ Ui.Container.extend('Ui.Dialog', {
 	setFullScrolling: function(fullScrolling) {
 		this.scroll.setScrollHorizontal(fullScrolling);
 		this.scroll.setScrollVertical(fullScrolling);	
+	},
+
+	getTitle: function() {
+		return this.actionBox.getTitle();
 	},
 
 	setTitle: function(title) {
