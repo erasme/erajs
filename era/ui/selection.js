@@ -24,15 +24,31 @@ Core.Object.extend('Ui.Selection', {
 			found = (this.elements[i] === element);
 		if(!found) {
 			var hasMultiple = false;
-			for(var actionName in element.getSelectionActions()) {			
-				if(element.getSelectionActions()[actionName].multiple === true)
+			var actions = this.getElementActions(element);
+			for(var actionName in actions) {
+				if(actions[actionName].multiple === true)
 					hasMultiple = true;
 			}
-			// test compatibility with other element
+			// test compatibility with other elements
 			if(this.elements.length > 0) {
 				var compat = true;
-				for(i = 0; compat && (i < this.elements.length); i++)
-					compat = (this.elements[i].getSelectionActions() === element.getSelectionActions());
+				for(i = 0; compat && (i < this.elements.length); i++) {
+					var otherCompat = false;
+					var otherActions = this.getElementActions(this.elements[i]);
+					for(var actionKey in actions) {
+						var action = actions[actionKey];
+						if(action.multiple === true) {
+							for(var otherActionKey in otherActions) {
+								var otherAction = otherActions[otherActionKey];
+								if((otherAction.multiple === true) && (otherAction.callback === action.callback)) {
+									otherCompat = true;
+									break;
+								}
+							}
+						}
+					}
+					compat = compat && otherCompat;
+				}
 				// if not compatible, remove old selection
 				if(!compat || !hasMultiple) {
 					for(i = 0; i < this.elements.length; i++)
@@ -64,7 +80,19 @@ Core.Object.extend('Ui.Selection', {
 		// the elements list
 		return this.elements.slice();
 	},
-	
+
+	getElementActions: function(element) {
+		var actions = Core.Util.clone(element.getSelectionActions());
+		// handle parent context actions
+		var current = element.getParent();
+		while((current !== null) && (current !== undefined)) {
+			if('getContextActions' in current)
+				actions = current.getContextActions(element, actions);
+			current = current.getParent();
+		}
+		return actions;
+	},
+
 	getActions: function() {
 		var actions; var allActions; var actionName; var action;
 		if(this.elements.length === 0)
@@ -72,7 +100,7 @@ Core.Object.extend('Ui.Selection', {
 		else {
 			if(this.elements.length === 1) {
 				actions = {};
-				allActions = this.elements[0].getSelectionActions();
+				allActions = this.getElementActions(this.elements[0]);
 				for(actionName in allActions) {
 					action = allActions[actionName];
 					if(!('testRight' in action) || action.testRight.call(this.elements[0]))
@@ -83,19 +111,34 @@ Core.Object.extend('Ui.Selection', {
 			// return only actions that support multiple element
 			else {
 				actions = {};
-				allActions = this.elements[0].getSelectionActions();
+				allActions = this.getElementActions(this.elements[0]);
 				for(actionName in allActions) {
 					action = allActions[actionName];
 					if(action.multiple === true) {
-						var allowed = true;
-						// test rights for all elements
-						if('testRight' in action) {
-							for(var i = 0; allowed && (i < this.elements.length); i++) {
-								allowed &= action.testRight.call(this.elements[i]);
+						var compat = true;
+						for(i = 1; compat && (i < this.elements.length); i++) {
+							var otherCompat = false;
+							var otherActions = this.getElementActions(this.elements[i]);
+							for(var otherActionKey in otherActions) {
+								var otherAction = otherActions[otherActionKey];
+								if((otherAction.multiple === true) && (otherAction.callback === action.callback)) {
+									otherCompat = true;
+									break;
+								}
 							}
+							compat = compat && otherCompat;
 						}
-						if(allowed)
-							actions[actionName] = allActions[actionName];
+						if(compat) {
+							var allowed = true;
+							// test rights for all elements
+							if('testRight' in action) {
+								for(var i = 0; allowed && (i < this.elements.length); i++) {
+									allowed &= action.testRight.call(this.elements[i]);
+								}
+							}
+							if(allowed)
+								actions[actionName] = allActions[actionName];
+						}
 					}
 				}
 				return actions;
