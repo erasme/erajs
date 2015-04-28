@@ -300,7 +300,7 @@ Ui.Container.extend('Ui.Locator',
 		focusActiveBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
 		radius: 3,
 		spacing: 10,
-		padding: 10,
+		padding: 8,
 		borderWidth: 1
 	}
 });
