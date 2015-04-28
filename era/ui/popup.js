@@ -274,7 +274,7 @@ Ui.Container.extend('Ui.Popup',
 		}
 		// handle open at an element
 		else if(this.attachedElement !== undefined) {
-			borders = ['left', 'right', 'top', 'bottom', 'center'];
+			borders = ['right', 'left', 'top', 'bottom', 'center'];
 			if(this.attachedBorder !== undefined)
 				borders.unshift(this.attachedBorder);
 			for(i = 0; i < borders.length; i++) {
