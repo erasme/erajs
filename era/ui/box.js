@@ -259,8 +259,6 @@ Ui.Container.extend('Ui.Box',
 			else
 				loop = false;
 		}
-		if((countResizable > 0) && (uniformSize * this.getChildren().length < constraintSize))
-			uniformSize = Math.floor(constraintSize / this.getChildren().length);
 
 		this.uniformSize = uniformSize;
 		var minSize = this.uniformSize * this.getChildren().length;
