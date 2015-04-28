@@ -90,7 +90,7 @@ Ui.Overable.extend('Ui.Pressable',
 
 			// test for activate signal
 			var currentTime = (new Date().getTime())/1000;
-			if((this.lastTime !== undefined) && (currentTime - this.lastTime < 0.5))
+			if((this.lastTime !== undefined) && (currentTime - this.lastTime < 0.30))
 				this.onActivate(event.pointer.getX(), event.pointer.getY());
 			this.lastTime = currentTime;
 
