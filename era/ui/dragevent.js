@@ -555,7 +555,7 @@ Core.Object.extend('Ui.DragDataTransfer', {
 	}
 }, {}, {
 	getMergedEffectAllowed: function(effectAllowed1, effectAllowed2) {
-		if(effectAllowed1 === 'all')
+		if((effectAllowed1 === undefined) || (effectAllowed1 === 'all'))
 			return effectAllowed2;
 		else {
 			var effectAllowed = [];
