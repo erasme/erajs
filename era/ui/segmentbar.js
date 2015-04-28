@@ -120,6 +120,7 @@ Ui.LBox.extend('Ui.SegmentBar',
 }, {
 	onStyleChange: function() {
 		var spacing = this.getStyleProperty('spacing');
+		var padding = this.getStyleProperty('padding');
 		var radius = this.getStyleProperty('radius');
 		var borderWidth = this.getStyleProperty('borderWidth');
 		this.border.setRadius(radius);
@@ -135,13 +136,17 @@ Ui.LBox.extend('Ui.SegmentBar',
 		}
 		var activeBackground = this.getStyleProperty('activeBackground');
 		var activeForeground = this.getStyleProperty('activeForeground');
+		var textHeight = this.getStyleProperty('textHeight');
+		var textTransform = this.getStyleProperty('textTransform');
 
 		this.box.setMargin(borderWidth);
 		this.border.setFill(backgroundBorder);
 		for(var i = 0; i < this.box.getChildren().length; i++) {
 			var child = this.box.getChildren()[i];
 			child.setRadius(Math.max(0, radius-borderWidth));
-			child.setSpacing(spacing);
+			child.setSpacing(padding-borderWidth);
+			child.setTextHeight(textHeight);
+			child.setTextTransform(textTransform);
 			if(this.current === child) {
 				child.setBackground(activeBackground);
 				child.setForeground(activeForeground);
@@ -164,11 +169,15 @@ Ui.LBox.extend('Ui.SegmentBar',
 		activeBackground: 'rgba(33,211,255,1)',
 		activeForeground: 'rgba(250,250,250,1)',
 		radius: 3,
-		spacing: 10
+		textHeight: 26,
+		spacing: 10,
+		padding: 7,
+		textTransform: 'uppercase'
 	}
 });
 
 Ui.Pressable.extend('Ui.SegmentButton', {
+	textBox: undefined,
 	label: undefined,
 	bg: undefined,
 	mode: undefined,
@@ -179,10 +188,16 @@ Ui.Pressable.extend('Ui.SegmentButton', {
 		this.setFocusable(false);
 		this.bg = new Ui.Rectangle();
 		this.append(this.bg);
-		this.label = new Ui.Label({ margin: 7 });
-		this.append(this.label);
+		this.textBox = new Ui.LBox();
+		this.append(this.textBox);
+		this.label = new Ui.CompactLabel({ verticalAlign: 'center', whiteSpace: 'nowrap', textAlign: 'center' });
+		this.textBox.setContent(this.label);
 	},
-	
+
+	setTextTransform: function(textTransform) {
+		this.label.setTextTransform(textTransform);
+	},
+
 	setForeground: function(color) {
 		this.label.setColor(color);
 	},
@@ -197,6 +212,10 @@ Ui.Pressable.extend('Ui.SegmentButton', {
 
 	setText: function(text) {
 		this.label.setText(text);
+	},
+
+	setTextHeight: function(height) {
+		this.textBox.setHeight(height);
 	},
 
 	setMode: function(mode) {
@@ -239,7 +258,7 @@ Ui.Pressable.extend('Ui.SegmentButton', {
 	},
 
 	setSpacing: function(spacing) {
-		this.label.setMargin(spacing);
+		this.textBox.setMargin(spacing);
 	},
 
 	setBackground: function(color) {
