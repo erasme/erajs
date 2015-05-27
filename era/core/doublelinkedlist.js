@@ -121,4 +121,18 @@ Core.Object.extend('Core.DoubleLinkedList', {
 	clear: function() {
 		this.root = undefined;
 	}
+}, {}, {
+	moveNext: function(node) {
+		if(node !== undefined)
+			return node.next;
+		else
+			return undefined;
+	},
+
+	isLast: function(node) {
+		if(node === undefined)
+			return true;
+		else
+			return node.next === this.root;
+	}
 });
