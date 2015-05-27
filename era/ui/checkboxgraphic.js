@@ -87,10 +87,10 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 		// background
 		if(this.getIsDown())
 			ctx.globalAlpha = 0.8;
-		
+
 		// handle disable
 		if(this.getIsDisabled())
-			ctx.globalAlpha = 0.2;
+			ctx.globalAlpha = 0.4;
 
 		if(!this.isChecked) {
 			// border
@@ -108,6 +108,8 @@ Ui.CanvasElement.extend('Ui.CheckBoxGraphic', {
 			ctx.roundRect(cx-10, cy-10, 20, 20, radius, radius, radius, radius);
 			ctx.closePath();
 			ctx.fill();
+
+			ctx.globalAlpha = 1;
 
 			// icon
 			var iconSize = 20;
