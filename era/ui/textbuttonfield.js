@@ -1,3 +1,5 @@
+Ui.DefaultButton.extend('Ui.TextFieldButton');
+
 Ui.Form.extend('Ui.TextButtonField', 
 /**@lends Ui.TextButtonField#*/
 {
@@ -23,7 +25,7 @@ Ui.Form.extend('Ui.TextButtonField',
 		this.entry = new Ui.TextField();
 		hbox.append(this.entry, true);
 		
-		this.button = new Ui.DefaultButton({ orientation: 'horizontal' });
+		this.button = new Ui.TextFieldButton({ orientation: 'horizontal' });
 		hbox.append(this.button);
 		
 		this.connect(this.entry, 'change', this.onEntryChange);
