@@ -491,6 +491,10 @@ Ui.LBox.extend('Ui.Transformable',
 	}
 	/**#@-*/
 }, {
+	getContent: function(content) {
+		return this.contentBox.getFirstChild();
+	},
+
 	setContent: function(content) {
 		this.contentBox.setContent(content);
 	},
