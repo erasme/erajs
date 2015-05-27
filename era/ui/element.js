@@ -1242,6 +1242,16 @@ Core.Object.extend('Ui.Element',
 		return this.parent;
 	},
 
+	getParentByClass: function(classFunc) {
+		var current = this.getParent();
+		while(current !== undefined) {
+			if(classFunc.hasInstance(current))
+				return current;
+			current = current.getParent();
+		}
+		return undefined;
+	},
+
 	setParentStyle: function(parentStyle) {
 		if(this.parentStyle !== parentStyle)
 			this.parentStyle = parentStyle;
