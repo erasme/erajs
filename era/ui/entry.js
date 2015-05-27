@@ -151,14 +151,14 @@ Ui.Element.extend('Ui.Entry',
 	onKeyDown: function(event) {
 		var key = event.which;
 		// keep arrows + Del + Backspace for us only
-		if((key == 37) || (key == 39) || (key == 38) || (key == 40) || (key == 46) || (key == 8))
+		if((key == 37) || (key == 39) || (key == 46) || (key == 8))
 			event.stopPropagation();
 	},
 
 	onKeyUp: function(event) {
 		var key = event.which;
 		// keep arrows + Del + Backspace for us only
-		if((key == 37) || (key == 39) || (key == 38) || (key == 40) || (key == 46) || (key == 8))
+		if((key == 37) || (key == 39) || (key == 46) || (key == 8))
 			event.stopPropagation();
 		// check if value changed
 		if(this.getDrawing().value !== this.value) {
