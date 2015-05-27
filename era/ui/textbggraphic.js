@@ -64,11 +64,6 @@ Ui.CanvasElement.extend('Ui.TextBgGraphic', {
 	},
 
 	onStyleChange: function() {
-		this.spacing = Math.max(0, this.getStyleProperty('spacing'));
-		this.iconSize = Math.max(0, this.getStyleProperty('iconSize'));
-		this.fontFamily = this.getStyleProperty('fontFamily');
-		this.fontSize = Math.max(0, this.getStyleProperty('fontSize'));
-		this.fontWeight = this.getStyleProperty('fontWeight');
 		this.invalidateDraw();
 	}
 }, {
