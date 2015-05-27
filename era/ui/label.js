@@ -156,7 +156,7 @@ Ui.Element.extend('Ui.Label',
 			this.textWidth = size.width;
 			this.textHeight = size.height;
 		}
-		if(this.orientation == 'vertical')
+		if(this.orientation === 'vertical')
 			return { width: this.textHeight, height: this.textWidth };
 		else
 			return { width: this.textWidth, height: this.textHeight };
