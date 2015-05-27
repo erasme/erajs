@@ -70,8 +70,18 @@ Core.Object.extend('Ui.SFlowState', {
 
 	append: function(el) {
 		var zone; var isstart; var isstartline; var isendline;
+
+		var flushVal = Ui.SFlow.getFlush(el);
+		if(flushVal === 'flush')
+			this.flush();
+		else if(flushVal === 'flushleft')
+			this.flushLeft();
+		else if(flushVal === 'flushright')
+			this.flushRight();
+		else if(flushVal === 'newline')
+			this.nextLine();
+
 		var floatVal = Ui.SFlow.getFloat(el);
-//		console.log(this+'.append('+el+') float: '+floatVal);
 		if(floatVal === 'none') {
 			var	size;
 			if(this.uniform) {
@@ -271,19 +281,38 @@ Core.Object.extend('Ui.SFlowState', {
 	},
 
 	flush: function() {
-//		console.log('flush');
 		// if some draw command have not been done, flush the current line
 		if(this.drawCount !== 0) this.nextLine();
 		while(true) {
 			var zone = this.zones[this.currentZone];
-			if((zone.xstart === this.xpos) &&  (zone.xend === this.xpos+this.width)) {
-//				console.log('flush free zone found');
+			if((zone.xstart === 0) &&  (zone.xend === this.width))
 				break;
-			}
-			else {
-//				console.log('flush nextZone xstart: '+zone.xstart+', xend: '+zone.xend);
+			else
 				this.nextZone();
-			}
+		}
+	},
+
+	flushLeft: function() {
+		// if some draw command have not been done, flush the current line
+		if(this.drawCount !== 0) this.nextLine();
+		while(true) {
+			var zone = this.zones[this.currentZone];
+			if(zone.xstart === 0)
+				break;
+			else
+				this.nextZone();
+		}
+	},
+
+	flushRight: function() {
+		// if some draw command have not been done, flush the current line
+		if(this.drawCount !== 0) this.nextLine();
+		while(true) {
+			var zone = this.zones[this.currentZone];
+			if(zone.xend === this.width)
+				break;
+			else
+				this.nextZone();
 		}
 	},
 
@@ -456,28 +485,34 @@ Ui.Container.extend('Ui.SFlow',
 	/**
 	 * Append a child at the end of the flow
 	 */
-	append: function(child, floatVal) {
+	append: function(child, floatVal, flushVal) {
 		this.appendChild(child);
-		if(floatVal)
+		if(floatVal !== undefined)
 			Ui.SFlow.setFloat(child, floatVal);
+		if(flushVal !== undefined)
+			Ui.SFlow.setFlush(child, flushVal);
 	},
 
 	/**
 	 * Append a child at the begining of the flow
 	 */
-	prepend: function(child, floatVal) {
+	prepend: function(child, floatVal, flushVal) {
 		this.prependChild(child);
-		if(floatVal)
+		if(floatVal !== undefined)
 			Ui.SFlow.setFloat(child, floatVal);
+		if(flushVal !== undefined)
+			Ui.SFlow.setFlush(child, flushVal);
 	},
 
 	/**
 	 * Append a child at the given position
 	 */
-	insertAt: function(child, position, floatVal) {
+	insertAt: function(child, position, floatVal, flushVal) {
 		this.insertChildAt(child, position);
-		if(floatVal)
+		if(floatVal !== undefined)
 			Ui.SFlow.setFloat(child, floatVal);
+		if(flushVal !== undefined)
+			Ui.SFlow.setFlush(child, flushVal);
 	},
 
 	/*
@@ -553,8 +588,19 @@ Ui.Container.extend('Ui.SFlow',
 	},
 
 	setFloat: function(child, floatVal) {
-		if(Ui.SFlow.getFloat(child) != floatVal) {
+		if(Ui.SFlow.getFloat(child) !== floatVal) {
 			child['Ui.SFlow.float'] = floatVal;
+			child.invalidateMeasure();
+		}
+	},
+
+	getFlush: function(child) {
+		return child['Ui.SFlow.flush']?child['Ui.SFlow.flush']:'none';
+	},
+
+	setFlush: function(child, flushVal) {
+		if(Ui.SFlow.getFloat(child) !== flushVal) {
+			child['Ui.SFlow.flush'] = flushVal;
 			child.invalidateMeasure();
 		}
 	}
