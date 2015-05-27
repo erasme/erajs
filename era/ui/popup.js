@@ -26,6 +26,8 @@ Ui.Container.extend('Ui.Popup',
      * @param {Boolean} [config.autoClose]
 	 */
 	constructor: function(config) {
+		this.addEvents('close');
+
 		this.setHorizontalAlign('stretch');
 		this.setVerticalAlign('stretch');
 
@@ -76,6 +78,10 @@ Ui.Container.extend('Ui.Popup',
 
 	setAutoClose: function(autoClose) {
 		this.autoClose = autoClose;
+	},
+
+	getContent: function() {
+		return this.scroll.getContent();
 	},
 
 	setContent: function(content) {
@@ -221,6 +227,8 @@ Ui.Container.extend('Ui.Popup',
 	close: function() {
 		if(!this.isClosed) {
 			this.isClosed = true;
+
+			this.fireEvent('close', this);
 
 			//Ui.App.current.removeDialog(this);
 			this.disconnect(window, 'resize', this.onWindowResize);
