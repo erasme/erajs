@@ -67,7 +67,7 @@ selectable2.append(new Ui.Label({ text: 'click' }));
 
 app.connect(selectable2, 'press', function(item, x, y) {
 	console.log('open the menu at element');
-	popup.open(item, 'bottom');
+	popup.open(item);
 });
 
 </script>
