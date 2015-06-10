@@ -81,7 +81,7 @@ Ui.Element.extend('Ui.Html',
 			for(var i = 0; i < lines.length; i++) {
 				if(lines[i] !== '') {
 					if(content2 !== '')
-						content2 += "<br><br>";
+						content2 += "<br>";
 					content2 += lines[i];
 				}
 			}
