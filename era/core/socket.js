@@ -41,6 +41,9 @@ Core.Object.extend('Core.Socket',
 			this.secure = config.secure;
 			delete(config.secure);
 		}
+		else {
+			this.secure = (document.location.protocol === 'https:');
+		}
 		if('port' in config) {
 			this.port = config.port;
 			delete(config.port);
