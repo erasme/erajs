@@ -5,6 +5,7 @@ Ui.Container.extend('Ui.Slider',
 	background: undefined,
 	button: undefined,
 	orientation: 'horizontal',
+	updateLock: undefined,
 
 	/**
 	 * @constructs
@@ -76,27 +77,32 @@ Ui.Container.extend('Ui.Slider',
 	 */
 
 	onButtonMove: function(button) {
-		var pos;
-		var size;
-		var max;
-		
-		if(this.orientation === 'horizontal') {
-			pos = this.button.getPositionX();
-			size = this.getLayoutWidth();
-			max = size - this.button.getLayoutWidth();
-		}
-		else {
-			size = this.getLayoutHeight();
-			max = size - this.button.getLayoutHeight();
-			pos = max - this.button.getPositionY();
-		}
-		if(pos < 0)
-			pos = 0;
-		else if(pos > max)
-			pos = max;
-
 		var oldValue = this.value;
-		this.value = pos / max;
+
+		// get the new value only if its a user move
+		if(this.updateLock !== true) {
+			var pos;
+			var size;
+			var max;
+		
+			if(this.orientation === 'horizontal') {
+				pos = this.button.getPositionX();
+				size = this.getLayoutWidth();
+				max = size - this.button.getLayoutWidth();
+			}
+			else {
+				size = this.getLayoutHeight();
+				max = size - this.button.getLayoutHeight();
+				pos = max - this.button.getPositionY();
+			}
+			if(pos < 0)
+				pos = 0;
+			else if(pos > max)
+				pos = max;
+
+			this.value = pos / max;
+		}
+
 		this.disconnect(this.button, 'move', this.onButtonMove);
 		this.updateValue();
 		this.connect(this.button, 'move', this.onButtonMove);
@@ -105,6 +111,8 @@ Ui.Container.extend('Ui.Slider',
 	},
 
 	updateValue: function() {
+		this.updateLock = true;
+
 		var max;
 		var width = this.getLayoutWidth();
 		var height = this.getLayoutHeight();
@@ -126,6 +134,8 @@ Ui.Container.extend('Ui.Slider',
 				this.button.getLayoutHeight()/2 + max * (1 - this.value),
 				this.bar.getMeasureWidth(), max * this.value);
 		}
+
+		delete(this.updateLock);
 	},
 
 	getColor: function() {
