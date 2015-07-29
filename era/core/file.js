@@ -558,7 +558,6 @@ Core.Object.extend('Core.File',
 		if(pos === -1)
 			return 'application/octet-stream';
 		var extension = fileName.substring(pos+1).toLowerCase();
-		console.log(extension);
 		var mimetype = Core.File.types[extension];
 		if(mimetype === undefined)
 			return "application/octet-stream";
