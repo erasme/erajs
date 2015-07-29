@@ -65,12 +65,12 @@ Ui.Overable.extend('Ui.Carousel3',
 		this.carouselable.setAutoPlay(delay);
 	},
 
-	next: function() {
-		this.carouselable.next();
+	next: function(source) {
+		this.carouselable.next(source);
 	},
 
-	previous: function() {
-		this.carouselable.previous();
+	previous: function(source) {
+		this.carouselable.previous(source);
 	},
 
 	getLogicalChildren: function() {
