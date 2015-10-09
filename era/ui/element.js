@@ -1374,7 +1374,7 @@ Core.Object.extend('Ui.Element',
 				if(navigator.isIE)
 					this.drawing.style.msTransform = matrix.toString();
 				else if(navigator.isGecko)
-					this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(0)+'px, '+matrix.getF().toFixed(0)+'px)';
+					this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(4)+'px, '+matrix.getF().toFixed(4)+'px)';
 				else if(navigator.isWebkit)
 					this.drawing.style.webkitTransform = matrix.toString()+' translate3d(0,0,0)';
 				else if(navigator.isOpera)
