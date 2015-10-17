@@ -8,11 +8,12 @@ Core.Object.extend('Ui.Selection', {
 	},
 
 	clear: function() {	
-		for(var i = 0; i < this.elements.length; i++) {
-			this.elements[i].setIsSelected(false);
-			this.connect(this.elements[i], 'unload', this.onElementUnload);
-		}
+		var currentElements = this.elements;
 		this.elements = [];
+		for(var i = 0; i < currentElements.length; i++) {
+			this.connect(currentElements[i], 'unload', this.onElementUnload);
+			currentElements[i].setIsSelected(false);
+		}
 		this.fireEvent('change', this);
 	},
 
