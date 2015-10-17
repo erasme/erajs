@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	socket: undefined,
+	scroll: undefined,
+	logs: undefined,
+	sendField: undefined,
+	openButton: undefined,
+	closeButton: undefined,
+	clearButton: undefined,
+	history: undefined,
+	historyPos: 0,
+
+	constructor: function(config) {
+		this.history = [ '' ];
+
+		var vbox = new Ui.VBox({ spacing: 10 });
+		this.setContent(vbox);
+
+		var tb = new Ui.ToolBar();
+		vbox.append(tb);
+
+		this.openButton = new Ui.Button({ text: 'Open' });
+		this.connect(this.openButton, 'press', function() {
+			this.socket = new Core.Socket({ port: 3333, service: '/cloud/resource' });
+			this.connect(this.socket, 'open', this.onSocketOpen);
+			this.connect(this.socket, 'message', this.onMessageReceived);
+			this.connect(this.socket, 'error', this.onSocketError);
+			this.connect(this.socket, 'close', this.onSocketClose);
+		});
+		tb.append(this.openButton);
+
+		this.closeButton = new Ui.Button({ text: 'Close', disabled: true });
+		this.connect(this.closeButton, 'press', function() {
+			this.socket.close();
+		});
+		tb.append(this.closeButton);
+
+		this.clearButton = new Ui.Button({ text: 'Clear' });
+		this.connect(this.clearButton, 'press', function() {
+			this.logs.clear();
+		});
+		tb.append(this.clearButton);
+
+		this.scroll = new Ui.ScrollingArea();
+		vbox.append(this.scroll, true);
+
+		this.logs = new Ui.VBox({ spacing: 10, margin: 10 });
+		this.scroll.setContent(this.logs);
+
+		this.sendField = new Ui.TextButtonField({ buttonIcon: 'arrowright', disabled: true });
+		this.connect(this.sendField, 'validate', this.onSendFieldValidate);
+		this.connect(this.sendField.getDrawing(), 'keydown', this.onSendFieldKeyDown);
+		vbox.append(this.sendField);
+	},
+	
+	appendLog: function(text, color) {
+		if(color === undefined)
+			color = '#000000';
+		this.logs.append(new Ui.Text({ text: text, color: color }));
+		this.scroll.setOffset(undefined, 1, false);
+	},
+
+	onSendFieldKeyDown: function(event) {
+		// up
+		if((event.which === 38) && (this.historyPos > 0)) {
+			this.sendField.setValue(this.history[--this.historyPos]);
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		// down
+		else if((event.which === 40) && (this.historyPos < this.history.length - 1)) {
+			this.sendField.setValue(this.history[++this.historyPos]);
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+
+	onSendFieldValidate: function() {
+		var value = this.sendField.getValue();
+		this.appendLog(value, 'orange');
+		this.socket.send(value);
+		this.sendField.setValue('');
+		this.history[this.history.length - 1] = value;
+		this.history.push('');
+		this.historyPos = this.history.length - 1;
+	},
+
+	onSocketOpen: function() {
+		this.appendLog('onSocketOpen', 'green');
+		this.closeButton.enable();
+		this.sendField.enable();
+	},
+
+	onMessageReceived: function(socket, msg) {
+		this.appendLog(msg, 'blue');
+	},
+
+	onSocketError: function() {
+		this.appendLog('onSocketError', 'red');
+	},
+
+	onSocketClose: function() {
+		this.appendLog('onSocketClose', 'green');
+		this.socket = undefined;
+		this.closeButton.disable();
+		this.sendField.disable();		
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
