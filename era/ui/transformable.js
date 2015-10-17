@@ -486,6 +486,10 @@ Ui.LBox.extend('Ui.Transformable',
 		if(this.inertiaClock !== undefined) {
 			this.inertiaClock.stop();
 			this.inertiaClock = undefined;
+			// align to the nearest translate integer position
+			// to avoid fuzzy graphics. Might be a bad idea when scale is used
+			this.setContentTransform(Math.round(this.translateX), Math.round(this.translateY), undefined, undefined);
+
 			this.fireEvent('inertiaend', this);
 		}
 	}
