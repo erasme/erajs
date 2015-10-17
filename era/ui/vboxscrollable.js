@@ -89,6 +89,14 @@ Ui.Container.extend('Ui.VBoxScrollable', {
 		this.connect(this, 'wheel', this.onWheel);
 	},
 
+	reload: function() {
+		this.contentBox.reload();
+	},
+
+	getActiveItems: function() {
+		return this.contentBox.getActiveItems();
+	},
+
 	setLoader: function(loader) {
 		this.contentBox.setLoader(loader);
 	},
@@ -432,6 +440,10 @@ Ui.Transformable.extend('Ui.VBoxScrollableContent', {
 				this.connect(this.loader, 'change', this.onLoaderChange);
 			this.reload();
 		}
+	},
+
+	getActiveItems: function() {
+		return this.activeItems;
 	},
 
 	getOffsetX: function() {
