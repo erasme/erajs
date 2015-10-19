@@ -7,12 +7,12 @@
 
 var app = new Ui.App({ });
 
-var fbox = new Ui.Flow({ margin: 40, uniform: true });
+var fbox = new Ui.Flow({ margin: 40, spacing: 20, uniform: true });
 app.setContent(fbox);
 
 var colors = ['lightblue', 'pink', 'lightgreen' ];
 for(var i = 0; i < Ui.Icon.getNames().length; i++) {
-	var vbox = new Ui.VBox();
+	var vbox = new Ui.VBox({ spacing: 5 });
 	vbox.append(new Ui.Icon({ icon: Ui.Icon.getNames()[i], horizontalAlign: 'center', width: 48, height: 48, fill: colors[i % colors.length] }))
 	vbox.append(new Ui.Label({ horizontalAlign: 'center', text: Ui.Icon.getNames()[i] }));
 	fbox.append(vbox);
