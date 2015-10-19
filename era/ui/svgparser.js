@@ -8,10 +8,7 @@ Core.Object.extend('Ui.SvgParser', {
 	end: false,
 
 	constructor: function(config) {	
-		if(navigator.isIE7 || navigator.isIE8)
-			this.path = config.path.split('');
-		else
-			this.path = config.path;
+		this.path = config.path;
 		delete config.path;
 	},
 

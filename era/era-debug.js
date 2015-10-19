@@ -22,11 +22,6 @@ function include(fileName) {
 }
 
 //
-// Emulated canvas for IE < 9
-//
-include(eraBaseDirectory+'excanvas/excanvas.js');
-
-//
 // Core functions
 //
 include(eraBaseDirectory+'core/util.js');
@@ -34,8 +29,6 @@ include(eraBaseDirectory+'core/object.js');
 include(eraBaseDirectory+'core/uri.js');
 include(eraBaseDirectory+'core/doublelinkedlist.js');
 //include(eraBaseDirectory+'core/event.js');
-//include(eraBaseDirectory+'core/mouseevent.js');
-//include(eraBaseDirectory+'core/pointerevent.js');
 include(eraBaseDirectory+'core/delayedtask.js');
 include(eraBaseDirectory+'core/timer.js');
 include(eraBaseDirectory+'core/httprequest.js');

@@ -214,7 +214,7 @@ Ui.LBox.extend('Ui.App',
 			document.getElementsByTagName('head')[0].appendChild(style);
 		}
 		// disable page zoom and auto scale for IE
-		else if(navigator.isIE && !(navigator.isIE8 || navigator.isIE7)) {
+		else if(navigator.isIE) {
 			style = document.createElement('style');
 			style.type = 'text/css';
 			style.innerHTML = 
@@ -278,8 +278,6 @@ Ui.LBox.extend('Ui.App',
 
 		// disable page scroll horizontal that might happened because of focused elements
 		// out of the screen
-//		if(navigator.isIE7 || navigator.isIE8)
-//			document.body.scrollLeft = 0;
 
 //		document.body.scrollLeft = 0;
 //		document.body.scrollTop = 0;

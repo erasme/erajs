@@ -139,9 +139,8 @@ Core.Object.extend('Ui.Element',
 
 		this.drawing.style.outline = 'none';
 		// set the transformOrigin to 0 0. Do it only once for performance
-		if(!(navigator.isIE7 || navigator.isIE8))
-			this.drawing.style.transformOrigin = '0 0';
-		if(navigator.isIE && !(navigator.isIE7 || navigator.isIE8))
+		this.drawing.style.transformOrigin = '0 0';
+		if(navigator.isIE)
 			this.drawing.style.msTransformOrigin = '0 0';
 		else if(navigator.isGecko)
 			this.drawing.style.MozTransformOrigin = '0 0';
@@ -786,15 +785,7 @@ Core.Object.extend('Ui.Element',
 	setOpacity: function(opacity) {
 		if(this.opacity !== opacity) {
 			this.opacity = opacity;
-//			if(navigator.isIE7 || navigator.isIE8) {
-//				if(opacity >= 0.99)
-//					this.drawing.style.filter = null;
-//				else
-//					this.drawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity='+(Math.round(opacity * 100))+')';
-//			}
-//			else
-			if(navigator.supportOpacity)
-				this.drawing.style.opacity = this.opacity;
+			this.drawing.style.opacity = this.opacity;
 		}
 	},
 
@@ -1045,8 +1036,7 @@ Core.Object.extend('Ui.Element',
 //		console.log(this.classType+'.onInternalVisible');
 		// DEBUG
 //		this.checkVisible();
-//		if(navigator.isIE8 || navigator.isIE7)
-//		this.invalidateDraw();
+
 		this.onVisible();
 		this.fireEvent('visible', this);
 	},
@@ -1365,39 +1355,27 @@ Core.Object.extend('Ui.Element',
 			if((x !== 0) || (y !== 0))
 				matrix = Ui.Matrix.createTranslate(x, y).multiply(this.transform).translate(-x, -y);
 			
-			if(navigator.isIE7 || navigator.isIE8) {
-				this.drawing.style.left = Math.round(this.layoutX + (isNaN(matrix.getE())?0:matrix.getE()))+'px';
-				this.drawing.style.top = Math.round(this.layoutY +(isNaN(matrix.getF())?0:matrix.getF()))+'px';
-			}
-			else {
-				this.drawing.style.transform = matrix.toString();
-				if(navigator.isIE)
-					this.drawing.style.msTransform = matrix.toString();
-				else if(navigator.isGecko)
-					this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(4)+'px, '+matrix.getF().toFixed(4)+'px)';
-				else if(navigator.isWebkit)
-					this.drawing.style.webkitTransform = matrix.toString()+' translate3d(0,0,0)';
-				else if(navigator.isOpera)
-					this.drawing.style.OTransform = matrix.toString();
-			}
+			this.drawing.style.transform = matrix.toString();
+			if(navigator.isIE)
+				this.drawing.style.msTransform = matrix.toString();
+			else if(navigator.isGecko)
+				this.drawing.style.MozTransform = 'matrix('+matrix.getA().toFixed(4)+', '+matrix.getB().toFixed(4)+', '+matrix.getC().toFixed(4)+', '+matrix.getD().toFixed(4)+', '+matrix.getE().toFixed(4)+'px, '+matrix.getF().toFixed(4)+'px)';
+			else if(navigator.isWebkit)
+				this.drawing.style.webkitTransform = matrix.toString()+' translate3d(0,0,0)';
+			else if(navigator.isOpera)
+				this.drawing.style.OTransform = matrix.toString();
 		}
 		else {
-			if(navigator.isIE7 || navigator.isIE8) {
-				this.drawing.style.left = Math.round(this.layoutX)+'px';
-				this.drawing.style.top = Math.round(this.layoutY)+'px';
-			}
-			else {
-				if('removeProperty' in this.drawing.style)
-					this.drawing.style.removeProperty('transform');
-				if(navigator.isIE && ('removeProperty' in this.drawing.style))
-					this.drawing.style.removeProperty('-ms-transform');
-				else if(navigator.isGecko)
-					this.drawing.style.removeProperty('-moz-transform');
-				else if(navigator.isWebkit)
-					this.drawing.style.removeProperty('-webkit-transform');
-				else if(navigator.isOpera)
-					this.drawing.style.removeProperty('-o-transform');
-			}
+			if('removeProperty' in this.drawing.style)
+				this.drawing.style.removeProperty('transform');
+			if(navigator.isIE && ('removeProperty' in this.drawing.style))
+				this.drawing.style.removeProperty('-ms-transform');
+			else if(navigator.isGecko)
+				this.drawing.style.removeProperty('-moz-transform');
+			else if(navigator.isWebkit)
+				this.drawing.style.removeProperty('-webkit-transform');
+			else if(navigator.isOpera)
+				this.drawing.style.removeProperty('-o-transform');
 		}
 	},
 
@@ -1646,7 +1624,7 @@ Core.Object.extend('Ui.Element',
 				drawing.style.webkitUserSelect = 'text';
 			else if(navigator.isGecko)
 				drawing.style.MozUserSelect = 'text';
-			else if(navigator.isIE && !(navigator.isIE7 || navigator.isIE8))
+			else if(navigator.isIE)
 				drawing.style.msUserSelect = 'element';
 		}
 		else {
@@ -1656,7 +1634,7 @@ Core.Object.extend('Ui.Element',
 				drawing.style.webkitUserSelect = 'none';
 			else if(navigator.isGecko)
 				drawing.style.MozUserSelect = 'none';
-			else if(navigator.isIE && !(navigator.isIE7 || navigator.isIE8))
+			else if(navigator.isIE)
 				drawing.style.msUserSelect = 'none';
 		}
 	}

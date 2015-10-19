@@ -299,40 +299,6 @@ Core.Object.prototype.connect = function(obj, eventName, method, capture) {
 			obj.events = [];
 		obj.events.push(wrapper);
 	}
-	else if('attachEvent' in obj) {
-		wrapper = function() {
-			// correct IE < 9 event diff
-			if(arguments.length === 1) {
-				var newEvent = {};
-				for(var key in arguments[0])
-					newEvent[key] = arguments[0][key];
-				if(('keyCode' in arguments[0]) && !('which' in arguments[0]))
-					newEvent.which = arguments[0].keyCode;
-				newEvent.preventDefault = function() {
-					this.defaultPrevented = true;
-					this.returnValue = false;
-				};
-				newEvent.stopPropagation = function() {
-					this.cancelBubble = true;
-				};
-				newEvent.target = newEvent.srcElement;
-				var res = arguments.callee.callback.call(arguments.callee.scope, newEvent);
-				arguments[0].returnValue = newEvent.returnValue;
-				arguments[0].cancelBubble = newEvent.cancelBubble;
-				return res;
-			}
-			else
-				return wrapper.callback.apply(arguments.callee.scope, arguments);
-		};
-		wrapper.scope = this;
-		wrapper.callback = method;
-		wrapper.eventName = eventName;
-		wrapper.capture = capture;
-		obj.attachEvent('on'+eventName, wrapper);
-		if(obj.events === undefined)
-			obj.events = [];
-		obj.events.push(wrapper);
-	}
 	else {
 		var signal = { scope: this, method: method, capture: capture };
 		var eventListeners = obj.events[eventName];
@@ -368,18 +334,6 @@ Core.Object.prototype.disconnect = function(obj, eventName, method) {
 				if((method !== undefined) && (wrapper.callback !== method))
 					continue;
 				obj.removeEventListener(wrapper.eventName, wrapper, wrapper.capture);
-				obj.events.splice(i, 1);
-				i--;
-			}
-		}
-	}
-	else if('detachEvent' in obj) {
-		for(i = 0; (obj.events !== undefined) && (i < obj.events.length); i++) {
-			wrapper = obj.events[i];
-			if((wrapper.scope === this) && (wrapper.eventName === eventName)) {
-				if((method !== undefined) && (wrapper.callback !== method))
-					continue;
-				obj.detachEvent('on'+wrapper.eventName, wrapper);
 				obj.events.splice(i, 1);
 				i--;
 			}

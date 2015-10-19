@@ -259,51 +259,42 @@ Core.Object.extend('Ui.DragDataTransfer', {
 
 	generateImage: function(element) {
 		var res; var key; var child; var i;
-		if(navigator.isIE7 || navigator.isIE8) {
-			var div = document.createElement('div');
-			div.style.position = 'absolute';
-			div.style.left = '-10000px';
-			div.style.top = '-10000px';
-			div.style.outline = '0px';
-			div.innerHTML = element.outerHTML;
-			res = div.childNodes[0];
+
+		if(('tagName' in element) && (element.tagName.toUpperCase() == 'IMG')) {
+			res = element.cloneNode(false);
+			res.oncontextmenu = function(e) { e.preventDefault(); };
+		}
+		else if(('tagName' in element) && (element.tagName.toUpperCase() == 'CANVAS')) {
+			res = document.createElement('img');
+			res.oncontextmenu = function(e) { e.preventDefault(); };
+			// copy styles (position)
+			for(key in element.style)
+				res.style[key] = element.style[key];
+			res.setAttribute('src', element.toDataURL('image/png'));
+		}
+		else if(!navigator.isFirefox && (element.toDataURL !== undefined)) {
+			res = document.createElement('img');
+			res.oncontextmenu = function(e) { e.preventDefault(); };
+			// copy styles (position)
+			for(key in element.style)
+				res.style[key] = element.style[key];
+			res.setAttribute('src', element.toDataURL('image/png'));
 		}
 		else {
-			if(('tagName' in element) && (element.tagName.toUpperCase() == 'IMG')) {
-				res = element.cloneNode(false);
-				res.oncontextmenu = function(e) { e.preventDefault(); };
+			res = element.cloneNode(false);
+			if('style' in res) {
+				res.style.webkitUserSelect = 'none';
+				// to disable the magnifier in iOS WebApp mode
+				res.style.webkitUserCallout = 'none';
 			}
-			else if(('tagName' in element) && (element.tagName.toUpperCase() == 'CANVAS')) {
-				res = document.createElement('img');
-				res.oncontextmenu = function(e) { e.preventDefault(); };
-				// copy styles (position)
-				for(key in element.style)
-					res.style[key] = element.style[key];
-				res.setAttribute('src', element.toDataURL('image/png'));
+			for(i = 0; i < element.childNodes.length; i++) {
+				child = element.childNodes[i];
+				res.appendChild(this.generateImage(child));
 			}
-			else if(!navigator.isFirefox && (element.toDataURL !== undefined)) {
-				res = document.createElement('img');
-				res.oncontextmenu = function(e) { e.preventDefault(); };
-				// copy styles (position)
-				for(key in element.style)
-					res.style[key] = element.style[key];
-				res.setAttribute('src', element.toDataURL('image/png'));
-			}
-			else {
-				res = element.cloneNode(false);
-				if('style' in res) {
-					res.style.webkitUserSelect = 'none';
-					// to disable the magnifier in iOS WebApp mode
-					res.style.webkitUserCallout = 'none';
-				}
-				for(i = 0; i < element.childNodes.length; i++) {
-					child = element.childNodes[i];
-					res.appendChild(this.generateImage(child));
-				}
-			}
-			if('setAttribute' in res)
-				res.setAttribute('draggable', false);
 		}
+		if('setAttribute' in res)
+			res.setAttribute('draggable', false);
+
 		res.onselectstart = function(e) {
 			e.preventDefault();
 			return false;

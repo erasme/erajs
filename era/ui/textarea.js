@@ -175,12 +175,8 @@ Ui.Element.extend('Ui.TextArea',
 		drawing.style.margin = '0px';
 		drawing.style.padding = '0px';
 		drawing.style.outline = 'none';
-		if(navigator.isIE) {
-			if(navigator.isIE7 || navigator.isIE8)
-				drawing.style.backgroundColor = 'transparent';
-			else
-				drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
-		}
+		if(navigator.isIE)
+			drawing.style.backgroundColor = 'rgba(255,255,255,0.01)';
 		else
 			drawing.style.background = 'none';
 		if(navigator.isWebkit)

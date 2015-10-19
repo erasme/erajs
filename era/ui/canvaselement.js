@@ -4,8 +4,6 @@ Ui.Container.extend('Ui.CanvasElement',
 	canvasEngine: 'svg',
 	context: undefined,
 	svgDrawing: undefined,
-	vmlDrawing: undefined,
-	eventCatcher: undefined,
 	dpiRatio: 1,
 
 	/**
@@ -21,7 +19,7 @@ Ui.Container.extend('Ui.CanvasElement',
 	 * Call this method when the canvas need to be redraw
 	 */
 	update: function() {
-		if((this.canvasEngine === 'canvas') || (this.canvasEngine === 'vml')) {
+		if(this.canvasEngine === 'canvas') {
 			this.context.clearRect(0, 0, Math.ceil(this.getLayoutWidth() * this.dpiRatio), Math.ceil(this.getLayoutHeight() * this.dpiRatio));
 			this.context.save();
 			if(this.dpiRatio !== 1)
@@ -74,63 +72,15 @@ Ui.Container.extend('Ui.CanvasElement',
 			delete(config.canvasEngine);
 		}
 		// verify compatibility with the browser
-		if((this.canvasEngine === 'canvas') && !navigator.supportCanvas) {
-			if(navigator.supportSVG)
-				this.canvasEngine = 'svg';
-			else
-				this.canvasEngine = 'vml';
-		}
-		if((this.canvasEngine === 'svg') && !navigator.supportSVG) {
-			if(navigator.supportCanvas)
-				this.canvasEngine = 'canvas';
-			else
-				this.canvasEngine = 'vml';
-		}
-		if((this.canvasEngine === 'vml') && !navigator.supportVML) {
-			if(navigator.supportCanvas)
-				this.canvasEngine = 'canvas';
-			else
-				this.canvasEngine = 'svg';
-		}
-
+		if((this.canvasEngine === 'canvas') && !navigator.supportCanvas)
+			this.canvasEngine = 'svg';
+		if((this.canvasEngine === 'svg') && !navigator.supportSVG)
+			this.canvasEngine = 'canvas';
+		
 		var drawing; var resourceDrawing;
 		if(this.canvasEngine === 'canvas') {
 			drawing = document.createElement('canvas');
 			this.context = drawing.getContext('2d');
-		}
-		else if(this.canvasEngine === 'vml') {
-			drawing = document.createElement('div');
-			resourceDrawing = document.createElement('div');
-			resourceDrawing.style.width = '0px';
-			resourceDrawing.style.height = '0px';
-			resourceDrawing.style.visibility = 'hidden';
-			drawing.appendChild(resourceDrawing);
-			this.setContainerDrawing(resourceDrawing);
-
-			// use excanvas
-			this.vmlDrawing = document.createElement('canvas');
-			this.vmlDrawing = G_vmlCanvasManager.initElement(this.vmlDrawing);
-			this.vmlDrawing.style.position = 'absolute';
-			this.vmlDrawing.style.top = '0px';
-			this.vmlDrawing.style.left = '0px';
-			this.context = this.vmlDrawing.getContext('2d');
-			this.context.roundRect = Core.SVG2DPath.prototype.roundRect;
-			this.context.svgPath = Core.SVG2DContext.prototype.svgPath;
-			this.context.roundRectFilledShadow = Core.SVG2DContext.prototype.roundRectFilledShadow;
-			drawing.appendChild(this.vmlDrawing);
-
-			// create an event catcher because if a VML element is the target of 
-			// a mousedown event and then the VML element is remove before the
-			// mouseup event, click event will never rise. This cant happend with
-			// real canvas. Like pointer-events none dont exist for IE 7 & 8, no
-			// other choice
-			this.eventCatcher = document.createElement('div');
-			this.eventCatcher.style.position = 'absolute';
-			this.eventCatcher.style.top = '0px';
-			this.eventCatcher.style.left = '0px';
-			this.eventCatcher.style.background = 'red';
-			this.eventCatcher.style.filter = 'alpha(opacity=0)';
-			drawing.appendChild(this.eventCatcher);
 		}
 		else {
 			drawing = document.createElement('div');
@@ -170,16 +120,6 @@ Ui.Container.extend('Ui.CanvasElement',
 		this.dpiRatio = devicePixelRatio / backingStoreRatio;
 		this.getDrawing().setAttribute('width', Math.ceil(width * this.dpiRatio), null);
 		this.getDrawing().setAttribute('height', Math.ceil(height * this.dpiRatio), null);
-
-		if(this.canvasEngine === 'vml') {
-			this.vmlDrawing.style.width = width+'px';
-			this.vmlDrawing.style.height = height+'px';
-			this.vmlDrawing.setAttribute('width', Math.ceil(width), null);
-			this.vmlDrawing.setAttribute('height', Math.ceil(height), null);
-
-			this.eventCatcher.style.width = width+'px';
-			this.eventCatcher.style.height = height+'px';
-		}
 
 		if(this.getIsVisible() && this.getIsLoaded())
 			this.update();

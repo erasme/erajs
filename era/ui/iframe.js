@@ -67,19 +67,6 @@ Ui.Element.extend('Ui.IFrame',
 
 	arrangeCore: function(w, h) {
 		this.iframeDrawing.style.width = w+'px';
-	},
-	
-	onVisible: function() {
-		// IE < 9 dont fire resize event when display: none some where
-		// when visible, reading clientWidth and clientHeight force
-		// to fire the resize event
-		if(navigator.isIE7 || navigator.isIE8) {
-			var cWin = this.iframeDrawing.contentWindow;
-			if(cWin.document.body !== undefined) {
-				cWin.document.body.clientWidth;
-				cWin.document.body.clientHeight;
-			}
-		}
 	}
 });
 

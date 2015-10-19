@@ -16,15 +16,8 @@ Ui.Pressable.extend('Ui.Uploadable',
 		this.setRole('button');
 
 		this.addEvents('file');
-
-//		if(navigator.isOpera || navigator.isFirefox3 || navigator.isIE7 || navigator.isIE8) {
-//			this.input = new Ui.UploadableWrapper();
-//			console.log('UploadableWrapper');
-//		}
-//		if(navigator.iOs)
-//			this.input = new Ui.UploadableWrapper();
-//		else
-			this.input = new Ui.UploadableFileWrapper();
+		
+		this.input = new Ui.UploadableFileWrapper();
 		this.append(this.input);
 		this.connect(this.input, 'file', this.onFile);
 	},
@@ -244,8 +237,6 @@ Ui.Element.extend('Ui.UploadableWrapper',
 		this.inputDrawing.style.top = '0px';
 		this.inputDrawing.style.width = this.getLayoutWidth()+'px';
 		this.inputDrawing.style.height = this.getLayoutHeight()+'px';
-		if(navigator.isIE7 || navigator.isIE8)
-			this.inputDrawing.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(Opacity=0)';
 		this.formDrawing.appendChild(this.inputDrawing);
 
 		this.connect(this.inputDrawing, 'change', this.onChange);

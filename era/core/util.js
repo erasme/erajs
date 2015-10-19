@@ -340,8 +340,6 @@ if(!Function.prototype.bind) {
 	};
 }
 
-navigator.supportVML = false;
-
 /**#nocode+ Avoid Jsdoc warnings...*/
 // correct IE specific bugs
 if(navigator.isIE) {
@@ -375,97 +373,6 @@ if(navigator.isIE) {
 			return this.getCharNumAtPositionHelper(x, middle+1, end);
 		};
 	}
-	// else, add support for VML
-	else {
-		if(!document.namespaces.vml) {
-			if(navigator.isIE8)
-				document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml', '#default#VML');
-			else
-				document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml');
-		}
-		var styleSheet = (document.styleSheets.length > 0) ? document.styleSheets[0] : document.createStyleSheet();
-		styleSheet.addRule('vml\\:shape', 'behavior:url(#default#VML)');
-		styleSheet.addRule('vml\\:fill', 'behavior:url(#default#VML)');
-		styleSheet.addRule('vml\\:rect', 'behavior:url(#default#VML)');
-		styleSheet.addRule('vml\\:roundrect', 'behavior:url(#default#VML)');
-		navigator.supportVML = true;
-	}
-	// re-write elementFromPoint for IE7 & IE8 when in iframe because it dont work
-	if((navigator.isIE7 || navigator.isIE8) && (window.parent != window)) {
-		document.elementFromPoint = function(x, y, el) {
-			if(el === undefined)
-				el = document.body;
-			if(!(('childNodes' in el) && ('offsetLeft' in el) && ('offsetTop' in el)))
-				return undefined;
-			for(var i = 0; i < el.childNodes.length; i++) {
-				var res = document.elementFromPoint(x - el.offsetLeft, y - el.offsetTop, el.childNodes[i]);
-				if(res !== undefined)
-					return res;
-			}
-			if((x >= el.offsetLeft) && (y >= el.offsetTop) && (x - el.offsetLeft <= el.clientWidth) && (y - el.offsetTop <= el.clientHeight))
-				return el;
-			return undefined;
-		};
-	}
-	if((navigator.isIE7 || navigator.isIE8) && !('DOMParser' in window)) {
-		window.DOMParser = function() {
-			this.parseFromString = function(str) {
-				var xmlDocument = new ActiveXObject('Microsoft.XMLDOM');
-				xmlDocument.async = false;
-				xmlDocument.loadXML(str);
-				return xmlDocument;
-			};
-		};
-	}
-}
-
-if(window.JSON === undefined) {
-	var json = {};
-	json.parse = function(json) {
-		return eval('('+json+')');
-	};
-	json.stringify = function(object) {
-		var res = '';
-		var first = true;
-		var isArray = (object.constructor.toString().indexOf('function Array()') != -1);
-		for(var prop in object) {
-			try {
-				var propValue = object[prop];
-				if((typeof(propValue) != 'number') && (typeof(propValue) != 'string') && (typeof(propValue) != 'object') && (typeof(propValue) != 'boolean'))
-					continue;
-				if(first)
-					first = false;
-				else
-					res += ", ";
-				if(!isArray)
-					res += '"'+prop+'": ';
-				if(propValue === null)
-					res += 'null';
-				else if(typeof(propValue) == 'object')
-					res += JSON.stringify(propValue);
-				else if(typeof(propValue) == 'number')
-					res += propValue;
-				else if(typeof(propValue) == 'string')
-					res += '"'+propValue.replace('"','\\"')+'"';
-				else if(typeof(propValue) == 'boolean')
-					res += propValue?"true":"false";
-			} catch(err) {}
-		}
-		if(isArray)
-			res = '[ '+res+' ]';
-		else
-			res = '{ '+res+' }';
-		return res;
-	};
-	window.JSON = json;
-}
-	
-if(window.console === undefined) {
-	window.console = {
-		log: function() {},
-		error: function() {},
-		warn: function() {}
-	};
 }
 
 if(Object.create === undefined) {

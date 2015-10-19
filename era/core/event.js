@@ -139,42 +139,6 @@ Core.Object.extend('Core.Event',
 		}
 		else if(this.__addEventListener !== undefined)
 			return this.__addEventListener(eventName, callback, capture);
-		/**#nocode+ Avoid Jsdoc warnings...*/
-		else if(this.attachEvent !== undefined) {
-			var wrapper = function() {
-				// correct IE < 9 event diff
-				if(arguments.length === 1) {
-					var newEvent = {};
-					for(var key in arguments[0])
-						newEvent[key] = arguments[0][key];
-					if(('keyCode' in arguments[0]) && !('which' in arguments[0]))
-						newEvent.which = arguments[0].keyCode;
-					newEvent.preventDefault = function() {
-						this.defaultPrevented = true;
-						this.returnValue = false;
-					};
-					newEvent.stopPropagation = function() {
-						this.cancelBubble = true;
-					};
-					newEvent.target = newEvent.srcElement;
-					var res = arguments.callee.callback.call(arguments.callee.scope, newEvent);
-					arguments[0].returnValue = newEvent.returnValue;
-					arguments[0].cancelBubble = newEvent.cancelBubble;
-					return res;
-				}
-				else
-					return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-			};
-			wrapper.scope = this;
-			wrapper.callback = callback;
-			wrapper.eventName = eventName;
-			wrapper.capture = capture;
-			this.attachEvent('on'+eventName, wrapper);
-			if(this.__ieevents === undefined)
-				this.__ieevents = [];
-			this.__ieevents.push(wrapper);
-		}
-		/**#nocode-*/
 	},
 
 	removeEventListener: function(eventName, callback, capture) {
@@ -203,18 +167,6 @@ Core.Object.extend('Core.Event',
 		}
 		else if(this.__removeEventListener !== undefined)
 			return this.__removeEventListener(eventName, callback, capture);
-		else if(this.detachEvent !== undefined) {
-			for(i = 0; i < this.__ieevents.length; i++) {
-				var wrapper = this.__ieevents[i];
-				if((wrapper.scope === this) && (wrapper.eventName === eventName)) {
-					if((callback !== undefined) && (wrapper.callback !== callback))
-						continue;
-					this.detachEvent(wrapper.eventName, wrapper);
-					this.__ieevents.splice(i, 1);
-					i--;
-				}
-			}
-		}
 	},
 
 	createEvent: function(eventName) {

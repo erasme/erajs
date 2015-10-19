@@ -418,39 +418,6 @@ Core.Object.extend('Ui.PointerManager',
 			this.connect(window, 'pointerup', this.onPointerUp);
 			this.connect(window, 'pointercancel', this.onPointerCancel);
 		}
-		else if(('attachEvent' in window) && (navigator.isIE7 || navigator.isIE8)) {
-			this.mouse = new Ui.Pointer({ type: 'mouse', id: 0 });
-
-			var wrapperDown = function() {
-				return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-			};
-			wrapperDown.scope = this;
-			wrapperDown.callback = this.onIEMouseDown;
-			document.attachEvent('onmousedown', wrapperDown);
-
-			var wrapperMove = function() {
-				return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-			};
-			wrapperMove.scope = this;
-			wrapperMove.callback = this.onIEMouseMove;
-			document.attachEvent('onmousemove', wrapperMove);
-
-			var wrapperUp = function() {
-				return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-			};
-			wrapperUp.scope = this;
-			wrapperUp.callback = this.onIEMouseUp;
-			document.attachEvent('onmouseup', wrapperUp);
-
-			var wrapperDblClick = function() {
-				return arguments.callee.callback.apply(arguments.callee.scope, arguments);
-			};
-			wrapperDblClick.scope = this;
-			wrapperDblClick.callback = this.onIEMouseDblClick;
-			document.attachEvent('ondblclick', wrapperDblClick);
-
-			this.connect(document, 'selectstart', this.onSelectStart);
-		}
 		else {
 			this.mouse = new Ui.Pointer({ type: 'mouse', id: 0 });
 
@@ -589,37 +556,6 @@ Core.Object.extend('Ui.PointerManager',
 			return;
 		this.mouse.move(event.clientX, event.clientY);
 		this.mouse.up();
-	},
-
-	onIEMouseDown: function(event) {
-		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
-		var buttons = 0;
-		if(event.button === 4)
-			buttons |= 2;
-		else if(event.button === 2)
-			buttons |= 4;
-
-		var oldButtons = this.mouse.getButtons();
-		if(oldButtons === 0)
-			this.mouse.down(event.clientX, event.clientY, buttons);
-		else
-			this.mouse.setButtons(oldButtons | buttons);
-	},
-
-	onIEMouseMove: function(event) {
-		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
-		this.mouse.move(event.clientX, event.clientY);
-	},
-
-	onIEMouseUp: function(event) {
-		this.mouse.setControls(event.altKey, event.ctrlKey, event.shiftKey);
-		this.mouse.move(event.clientX, event.clientY);
-		this.mouse.up();
-	},
-
-	onIEMouseDblClick: function(event) {
-		this.onIEMouseDown(event);
-		this.onIEMouseUp(event);
 	},
 
 	onWindowLoad: function() {

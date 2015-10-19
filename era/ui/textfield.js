@@ -21,8 +21,7 @@ Ui.LBox.extend('Ui.TextField',
 		this.append(this.graphic);
 
 		this.textholder = new Ui.Label({ opacity: 0.5, horizontalAlign: 'center', margin: 3 });
-		if(!navigator.isIE7 && !navigator.isIE8)
-			this.append(this.textholder);
+		this.append(this.textholder);
 
 		this.entry = new Ui.Entry({ margin: 4, fontSize: 16 });
 		this.connect(this.entry, 'focus', this.onEntryFocus);
