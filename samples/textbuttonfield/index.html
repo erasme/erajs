@@ -29,7 +29,7 @@ var app = new Ui.App();
 var vbox = new Ui.VBox({ padding: 50, spacing: 10 });
 app.setContent(vbox);
 
-var textbuttonfield = new Ui.TextButtonField({ buttonIcon: 'search' });
+var textbuttonfield = new Ui.TextButtonField({ buttonIcon: 'search', textHolder: 'Search' });
 vbox.append(textbuttonfield);
 
 app.connect(textbuttonfield, 'change', function(textbuttonfield, value) {
