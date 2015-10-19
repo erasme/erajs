@@ -259,9 +259,6 @@ Core.Object.extend('Core.SVG2DPath', {
 	},
 
 	ellipse: function(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
-		// TODO
-//		console.log('ellipse('+x+', '+y+', '+radiusX+', '+radiusY+', '+rotation+', '+startAngle+', '+endAngle+', '+anticlockwise+')');
-
 		// special case, full ellipse
 		if((rotation === 0) && (startAngle === 0) && (endAngle === Math.PI*2)) {
 			this.moveTo(x, y+radiusY);
@@ -271,13 +268,18 @@ Core.Object.extend('Core.SVG2DPath', {
 			this.arcTo(x-radiusX, y+radiusY, x, y+radiusY, radiusX, radiusY, Math.PI/2);
 		}
 		else {
-			// TODO
-			this.moveTo(x, y);
-			this.lineTo(x, y+radiusY);
-//			this.arcTo(x+radiusX, y+radiusY, x+radiusX, y, radiusX, radiusY, Math.PI*2);
+			var startX = x + Math.cos(startAngle) * radiusX;
+			var startY = y + Math.sin(startAngle) * radiusY;
+			var endX = x + Math.cos(endAngle) * radiusX;
+			var endY = y + Math.sin(endAngle) * radiusY;
 
-//			this.path.pathSegList.appendItem(this.path.createSVGPathSegArcAbs(x, y, radiusX, radiusY, (endAngle-startAngle)*Math.PI/180, 1, 1));
-//			this.x = x; this.y = y;
+			this.moveTo(startX, startY);
+			var largeArc = (((endAngle-startAngle) + Math.PI * 2) % (Math.PI * 2)) > Math.PI;
+			if(anticlockwise)
+				largeArc = !largeArc;
+
+			this.path.pathSegList.appendItem(this.path.createSVGPathSegArcAbs(endX, endY, radiusX, radiusY, (endAngle-startAngle)*Math.PI/180, largeArc, !anticlockwise));
+			this.x = endX; this.y = endY;
 		}
 	},
 	
