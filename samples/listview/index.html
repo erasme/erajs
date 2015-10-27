@@ -25,66 +25,72 @@ Ui.VBox.extend('Test.Logs', {
 	}
 });
 
-var app = new Ui.App();
+Ui.App.extend('Test.App', {
+	constructor: function(config) {
+		var vbox = new Ui.VBox();
+		this.setContent(vbox);
 
-var vbox = new Ui.VBox();
-app.setContent(vbox);
+		var toolbar = new Ui.ToolBar();
+		vbox.append(toolbar);
 
-var toolbar = new Ui.ToolBar();
-vbox.append(toolbar);
+		var checkbox = new Ui.CheckBox({ text: 'show headers', value: true });
+		toolbar.append(checkbox);
+		this.connect(checkbox, 'change', function(checkbox, value) {
+			if(value)
+				listview.showHeaders();
+			else
+				listview.hideHeaders();
+		});
 
-var checkbox = new Ui.CheckBox({ text: 'show headers', value: true });
-toolbar.append(checkbox);
-app.connect(checkbox, 'change', function(checkbox, value) {
-	if(value)
-		listview.showHeaders();
-	else
-		listview.hideHeaders();
+		var button = new Ui.Button({ text: 'select row 5', verticalAlign: 'center' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			listview.selectRow(5);
+		});
+
+		var hbox = new Ui.HBox({ spacing: 5 });
+		vbox.append(hbox, true);
+
+		var scroll = new Ui.ScrollingArea();
+		hbox.append(scroll, true);
+
+		var listview = new Ui.ListView({
+			margin: 0,// mode: 'auto',
+			scrolled: false,
+			headers: [
+				{ type: 'string', title: 'Data 1', key: 'data1' },
+				{ type: 'string', title: 'Data 2', key: 'data2' },
+				{ type: 'string', title: 'Numbers', key: 'data3' },
+			]
+		});
+		scroll.setContent(listview);
+
+		this.connect(listview, 'select', function(listview, row) {
+			logs.log('select row: '+row);
+		});
+		this.connect(listview, 'unselect', function(listview, row) {
+			logs.log('unselect row: '+row);
+		});
+		this.connect(listview, 'activate', function(listview, row) {
+			logs.log('activate row: '+row);
+		});
+
+
+		for(var i = 0; i < 50; i++) {
+			listview.appendData({
+				data1: 'hi number '+i,
+				data2: 'col 2 '+i,
+				data3: Math.random()*50
+			});
+		}
+
+		var logs = new Test.Logs({ width: 250 });
+		hbox.append(logs);
+	}
 });
 
-var button = new Ui.Button({ text: 'select row 5', verticalAlign: 'center' });
-toolbar.append(button);
-app.connect(button, 'press', function() {
-	listview.selectRow(5);
-});
+var app = new Test.App();
 
-var hbox = new Ui.HBox({ spacing: 5 });
-vbox.append(hbox, true);
-
-var scroll = new Ui.ScrollingArea();
-hbox.append(scroll, true);
-
-var listview = new Ui.ListView({
-	margin: 10,// mode: 'auto',
-	headers: [
-		{ type: 'string', title: 'Data 1', key: 'data1' },
-		{ type: 'string', title: 'Data 2', key: 'data2' },
-		{ type: 'string', title: 'Numbers', key: 'data3' },
-	]
-});
-scroll.setContent(listview);
-
-app.connect(listview, 'select', function(listview, row) {
-	logs.log('select row: '+row);
-});
-app.connect(listview, 'unselect', function(listview, row) {
-	logs.log('unselect row: '+row);
-});
-app.connect(listview, 'activate', function(listview, row, colKey) {
-	logs.log('activate row: '+row+', colKey: '+colKey);
-});
-
-
-for(var i = 0; i < 50; i++) {
-	listview.appendData({
-		data1: 'hi number '+i,
-		data2: 'col 2 '+i,
-		data3: Math.random()*50
-	});
-}
-
-var logs = new Test.Logs({ width: 250 });
-hbox.append(logs);
 
 </script>
   </head>

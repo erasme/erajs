@@ -59,11 +59,9 @@ Ui.Selectionable.extend('Test.Selectionable', {
 });
 
 Ui.App.extend('Test.App', {
-	selection: undefined,
 	contextBar: undefined,
 
 	constructor: function(config) {
-		this.selection = new Ui.Selection();
 		this.connect(this.selection, 'change', function() {
 			if(this.selection.getElements().length === 0)
 				this.contextBar.hide();
@@ -83,11 +81,6 @@ Ui.App.extend('Test.App', {
 			verticalAlign: 'center', horizontalAlign: 'center'
 		});
 		vbox.append(selectionable, true);
-	},
-
-	// implement a selection handler for Selectionable elements
-	getSelectionHandler: function() {	
-		return this.selection;
 	}
 });
 
