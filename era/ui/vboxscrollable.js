@@ -404,6 +404,7 @@ Ui.Transformable.extend('Ui.VBoxScrollableContent', {
 	activeItemsPos: 0,
 	activeItemsY: 0,
 	activeItemsHeight: 0,
+	reloadNeeded: false,
 
 	constructor: function(config) {
 		this.addEvents('scroll');
@@ -649,13 +650,18 @@ Ui.Transformable.extend('Ui.VBoxScrollableContent', {
 	},
 
 	onLoaderChange: function() {
-		this.reload();
+		this.reloadNeeded = true;
+		this.invalidateMeasure();
 	}
 }, {
 	measureCore: function(width, height)  {
 //		console.log(this+'.measureCore('+width+','+height+')');
 //		Ui.VBoxScrollableContent.base.measureCore.call(this, width, height);
 
+		if(this.reloadNeeded) {
+			this.reloadNeeded = false;
+			this.reload();
+		}
 
 		var y = 0;
 		for(var i = 0; i < this.activeItems.length; i++) {
