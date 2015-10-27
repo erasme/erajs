@@ -922,6 +922,7 @@ Ui.VBox.extend('Ui.ListView',
 				this.remove(this.scroll);
 				this.vbox = new Ui.VBox();
 				this.append(this.vbox, true);
+				this.updateData(this.data);
 			}
 		}
 	},
