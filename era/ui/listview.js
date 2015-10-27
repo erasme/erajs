@@ -1,36 +1,301 @@
-Ui.Container.extend('Ui.ListView', 
- /** @lends Ui.ListView#*/
+Ui.Pressable.extend('Ui.ListViewHeader', 
+/** @lends Ui.ListViewHeader#*/
 {
-	/**
-	 * Fires when a row in the listView is selected
-	 * @name Ui.ListView#select
-	 * @event
-	 * @param {Ui.ListView} listview The listview itself
-	 * @param {number} row The selected row position.
-	 */
-	/**
-	 * Fires when a row in the listView is unselected
-	 * @name Ui.ListView#unselect
-	 * @event
-	 * @param {Ui.ListView} listview The listview itself
-	 * @param {number} row The row position that has been unselect.
-	 */
-	/**
-	 * Fires when a cell is activate (ie double-click)
-	 * @name Ui.ListView#activate
-	 * @event
-	 * @param {Ui.ListView} listview The listview itself
-	 * @param {number} row The cell's row position.
-	 * @param {string} key The cell's key 
-	 */
-	/**
-	 * Fires when a header is selected
-	 * @name Ui.ListView#header
-	 * @event
-	 * @param {Ui.ListView} listview The listview itself
-	 * @param {string} key The header's key 
-	 */
+	title: undefined,
+	uiTitle: undefined,
+	background: undefined,
 
+	/**
+	 * @constructs
+	 * @class
+	 * @extends Ui.Pressable
+	 */
+	constructor: function(config) {
+		this.background = new Ui.Rectangle({ verticalAlign: 'bottom', height: 4 });
+		this.append(this.background);
+		this.uiTitle = new Ui.Label({ margin: 8, fontWeight: 'bold' });
+		this.append(this.uiTitle);
+
+		this.connect(this, 'down', this.onListViewHeaderDown);
+		this.connect(this, 'up', this.onListViewHeaderUp);
+	},
+
+	getTitle: function() {
+		return this.title;
+	},
+
+	setTitle: function(title) {
+		if(this.title !== title) {
+			this.title = title;
+			this.uiTitle.setText(title);
+		}
+	},
+
+	/**#@+ 
+	 * @private 
+	 */
+	getColor: function() {
+		return Ui.Color.create(this.getStyleProperty('color'));
+	},
+
+	getColorDown: function() {
+		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
+		return new Ui.Color({ y: yuv.y + 0.40, u: yuv.u, v: yuv.v });
+	},
+	
+	onListViewHeaderDown: function() {
+		this.background.setFill(this.getColorDown());
+	},
+
+	onListViewHeaderUp: function() {
+		this.background.setFill(this.getColor());
+	}
+	/**#@-*/
+}, 
+/** @lends Ui.ListViewHeader#*/
+{
+	onStyleChange: function() {
+		this.background.setFill(this.getStyleProperty('color'));
+		var spacing = this.getStyleProperty('spacing');
+		this.uiTitle.setMargin(spacing + 2);
+	}
+}, 
+/** @lends Ui.ListViewHeader*/
+{
+	style: {
+		color: '#444444',
+		spacing: 5
+	}
+});
+
+Ui.Container.extend('Ui.ListViewHeadersBar', {
+	headers: undefined,
+	sortColKey: undefined,
+	sortInvert: false,
+	sortArrow: undefined,
+	cols: undefined,
+
+	constructor: function(config) {
+		this.addEvents('header');
+
+		this.headers = config.headers;
+		delete(config.headers);
+
+		this.sortArrow = new Ui.Icon({ icon: 'sortarrow', width: 10, height: 10, margin: 4 });
+		this.appendChild(this.sortArrow);
+
+		this.cols = [];
+
+		for(i = 0; i < this.headers.length; i++) {
+			var header = this.headers[i];
+			header.ui = new Ui.ListViewHeader({ title: header.title, width: header.width });
+			this.connect(header.ui, 'press', this.onHeaderPress);
+			header.colWidth = header.width;
+			this.appendChild(header.ui);
+
+			var col = new Ui.ListViewColBar({ header: header.ui });
+			this.cols.push(col);
+			this.appendChild(col);
+		}
+	},
+
+	getSortColKey: function() {
+		return this.sortColKey;
+	},
+
+	getSortInvert: function() {
+		return this.sortInvert;
+	},
+
+	sortBy: function(key, invert) {
+		this.sortColKey = key;
+		this.sortInvert = invert === true;
+		if(this.sortInvert)
+			this.sortArrow.setTransform(Ui.Matrix.createRotate(180));
+		else
+			this.sortArrow.setTransform();
+		this.invalidateArrange();
+	},
+
+	onHeaderPress: function(header) {
+		var key;
+		for(var col = 0; col < this.headers.length; col++) {
+			var h = this.headers[col];
+			if(h.ui === header) {
+				key = h.key;
+			}
+		}
+		if(key !== undefined) {
+			this.fireEvent('header', this, key);
+
+		}
+	}
+}, {
+	measureCore: function(width, height) {
+		this.rowsHeight = 0;
+		this.headersHeight = 0;
+		var minHeight = 0;
+		var col; var size; var header;
+		// measure headers
+		for(col = 0; col < this.headers.length; col++) {
+			header = this.headers[col];
+			size = header.ui.measure(0, 0);
+			if(size.height > minHeight)
+				minHeight = size.height;
+		}
+		this.headersHeight = minHeight;
+		var minWidth = 0;
+		for(col = 0; col < this.headers.length; col++)
+			minWidth += this.headers[col].ui.getMeasureWidth();
+		
+		this.sortArrow.measure(0, 0);
+
+		// measure col bars
+		for(var i = 0; i < this.cols.length; i++) {
+			col = this.cols[i];
+			col.measure(0, this.headersHeight + this.rowsHeight);
+		}
+
+		return { width: minWidth, height: this.headersHeight };
+	},
+
+	arrangeCore: function(width, height) {
+		var x = 0; var header; var colWidth; var col;
+		var availableWidth = width;
+
+		for(col = 0; col < this.headers.length; col++) {
+			header = this.headers[col];
+			var colbar = this.cols[col];
+			colWidth = header.ui.getMeasureWidth();
+			if(col == this.headers.length - 1)
+				colWidth = Math.max(colWidth, availableWidth);
+			header.ui.arrange(x, 0, colWidth, this.headersHeight);
+
+			colbar.setHeaderHeight(this.headersHeight);
+			colbar.arrange(x+colWidth-colbar.getMeasureWidth(), 0, 
+				colbar.getMeasureWidth(), this.headersHeight);
+
+			if(this.sortColKey === header.key) {
+				this.sortArrow.arrange(x+colWidth-height*0.8,
+					height*0.1,
+					height*0.8, height*0.8);
+			}
+
+			x += colWidth;
+			availableWidth -= colWidth;
+		}
+	}
+});
+
+Ui.Selectionable.extend('Ui.ListViewRow', {
+	headers: undefined,
+	data: undefined,
+	cells: undefined,
+	background: undefined,
+	selectionActions: undefined,
+
+	constructor: function(config) {
+		this.headers = config.headers;
+		delete(config.headers);
+
+		this.data = config.data;
+		delete(config.data);
+
+		this.setDraggableData(this.data);
+
+		this.cells = [];
+
+		this.background = new Ui.Rectangle();
+		this.appendChild(this.background);
+		for(var col = 0; col < this.headers.length; col++) {
+			var key = this.headers[col].key;
+			var cell = new Ui.ListViewCellString({ key: key });
+			cell.setValue(this.data[this.headers[col].key]);
+			this.cells.push(cell);
+			this.appendChild(cell);
+		}
+	},
+
+	getData: function() {
+		return this.data;
+	},
+
+	setSelectionActions: function(value) {
+		this.selectionActions = value;
+	}
+	
+}, {
+
+	onPress: function() {
+		this.setIsSelected(!this.getIsSelected());
+	},
+
+	onSelect: function() {
+		this.select();
+		this.onStyleChange();
+	},
+
+	onUnselect: function() {
+		this.unselect();
+		this.onStyleChange();
+	},
+
+	getSelectionActions: function() {
+		return this.selectionActions;
+	},
+
+	measureCore: function(width, height) {
+		this.background.measure(width, height);
+		var minHeight = 0;
+		for(col = 0; col < this.headers.length; col++) {
+			var child = this.cells[col];
+			var size = child.measure(0, 0);
+			if(size.height > minHeight)
+				minHeight = size.height;
+		}
+		return { width: 0, height: minHeight };
+	},
+
+	arrangeCore: function(width, height) {
+		this.background.arrange(0, 0, width, height);
+		var x = 0;
+		for(col = 0; col < this.headers.length; col++) {
+			var header = this.headers[col];
+			var cell = this.cells[col];
+			colWidth = header.ui.getLayoutWidth();
+			cell.arrange(x, 0, colWidth, height);
+			x += colWidth;
+		}
+	},
+
+	onStyleChange: function() {
+		if(this.getIsSelected())
+			this.background.setFill(this.getStyleProperty('selectColor'));
+		else
+			this.background.setFill(this.getStyleProperty('color'));
+	}
+}, {
+	style: {
+		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99, a: 0.1 }),
+		selectColor: new Ui.Color({ r: 0.88, g: 0.88, b: 0.88 })
+	}
+});
+
+Ui.ListViewRow.extend('Ui.ListViewRowOdd', {}, {}, {
+	style: {
+		color: new Ui.Color({ r: 0.5, g: 0.5, b: 0.5, a: 0.05 }),
+		selectColor: new Ui.Color({ r: 0.88, g: 0.88, b: 0.88 })
+	}
+});
+Ui.ListViewRow.extend('Ui.ListViewRowEven', {}, {}, {
+	style: {
+		color: new Ui.Color({ r: 0.5, g: 0.5, b: 0.5, a: 0.1 }),
+		selectColor: new Ui.Color({ r: 0.88, g: 0.88, b: 0.88 })
+	}
+});
+
+/*
+Ui.Container.extend('Ui.ListView', {
 	data: undefined,
 	headers: undefined,
 	firstRow: undefined,
@@ -45,11 +310,6 @@ Ui.Container.extend('Ui.ListView',
 	sortInvert: false,
 	sortArrow: undefined,
 
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.Container
-	 */
 	constructor: function(config) {
 		this.addEvents('select', 'unselect', 'activate', 'header');
 
@@ -103,9 +363,6 @@ Ui.Container.extend('Ui.ListView',
 		}
 	},
 
-	/**
-	* Show the headers
-	*/
 	showHeaders: function() {
 		if(!this.headersVisible) {
 			this.headersVisible = true;
@@ -117,9 +374,6 @@ Ui.Container.extend('Ui.ListView',
 		}
 	},
 
-	/**
-	* Hide the headers
-	*/
 	hideHeaders: function() {
 		if(this.headersVisible) {
 			this.headersVisible = false;
@@ -195,17 +449,11 @@ Ui.Container.extend('Ui.ListView',
 		}
 	},
 
-	/**
-	* Remove all data
-	*/
 	clearData: function() {
 		while(this.data.length > 0)
 			this.removeDataAt(0);
 	},
 
-	/**
-	* @return the array of data
-	*/
 	getData: function() {
 		return this.data;
 	},
@@ -218,9 +466,6 @@ Ui.Container.extend('Ui.ListView',
 		}
 	},
 
-	/**
-	* Select the given row
-	*/
 	selectRow: function(row) {
 		var col;
 		if((row >= 0) && (row < this.data.length)) {
@@ -273,9 +518,6 @@ Ui.Container.extend('Ui.ListView',
 		this.invalidateArrange();
 	},
 
-	/**#@+ 
-	 * @private 
-	 */
 	findDataRow: function(data) {
 		for(var row = 0; row < this.data.length; row++) {
 			if(data == this.data[row])
@@ -353,10 +595,7 @@ Ui.Container.extend('Ui.ListView',
 			this.sortBy(key, (this.sortColKey === key)?!this.sortInvert:false);
 		}
 	}
-
-	/**#@-*/
 }, 
- /** @lends Ui.ListView#*/
 {
 	measureCoreAuto: function(width, height) {
 		var col; var colWidth; var header; var heightDone;
@@ -591,87 +830,264 @@ Ui.Container.extend('Ui.ListView',
 		else
 			this.arrangeCoreManual(width, height);
 	}
+});*/
+
+Ui.ScrollLoader.extend('Ui.ListViewScrollLoader', {
+	listView: undefined,
+	data: undefined,
+
+	constructor: function(config) {
+		this.listView = config.listView;
+		delete(config.listView);
+
+		this.data = config.data;
+		delete(config.data);
+	},
+
+	signalChange: function() {
+		this.fireEvent('change', this);
+	}
+
+}, {
+	getMin: function() {
+		return 0;
+	},
+
+	getMax: function() {
+		return this.data.length - 1;
+	},
+
+	getElementAt: function(position) {
+		return this.listView.getElementAt(position);
+	}
 });
 
-Ui.Pressable.extend('Ui.ListViewHeader', 
-/** @lends Ui.ListViewHeader#*/
+Ui.VBox.extend('Ui.ListView', 
 {
-	title: undefined,
-	uiTitle: undefined,
-	background: undefined,
+	data: undefined,
+	headers: undefined,
+	headersBar: undefined,
+	firstRow: undefined,
+	firstCol: undefined,
+	cols: undefined,
+	rowsHeight: 0,
+	headersHeight: 0,
+	headersVisible: true,
+	sortColKey: undefined,
+	sortInvert: false,
+	sortArrow: undefined,
+	dataLoader: undefined,
+	scroll: undefined,
+	selectionActions: undefined,
+	scrolled: true,
+	vbox: undefined,
 
-	/**
-	 * @constructs
-	 * @class
-	 * @extends Ui.Pressable
-	 */
 	constructor: function(config) {
-		this.background = new Ui.Rectangle({ verticalAlign: 'bottom', height: 4 });
-		this.append(this.background);
-		this.uiTitle = new Ui.Label({ margin: 8, fontWeight: 'bold' });
-		this.append(this.uiTitle);
+		this.addEvents('select', 'unselect', 'activate', 'header');
 
-		this.connect(this, 'down', this.onListViewHeaderDown);
-		this.connect(this, 'up', this.onListViewHeaderUp);
+		if(config.headers !== undefined) {
+			this.headers = config.headers;
+			delete(config.headers);
+		}
+		else
+			this.headers = [{ width: 100, type: 'string', title: 'Title', key: 'default' }];
+
+		this.selectionActions = {
+			edit: {
+				"default": true,
+				text: 'Edit', icon: 'edit',
+				scope: this, callback: this.onSelectionEdit, multiple: false
+			}
+		};
+
+		this.headersBar = new Ui.ListViewHeadersBar({ headers: this.headers });
+		this.connect(this.headersBar, 'header', this.onHeaderPress);
+		this.append(this.headersBar);
+
+		this.data = [];
+		this.dataLoader = new Ui.ListViewScrollLoader({ data: this.data, listView: this });
+		this.scroll = new Ui.VBoxScrollingArea({ loader: this.dataLoader });
+		this.append(this.scroll, true);
 	},
 
-	getTitle: function() {
-		return this.title;
-	},
-
-	setTitle: function(title) {
-		if(this.title !== title) {
-			this.title = title;
-			this.uiTitle.setText(title);
+	setScrolled: function(scrolled) {
+		if(this.scrolled !== (scrolled === true)) {
+			this.scrolled = scrolled;
+			if(this.scrolled) {
+				this.remove(this.vbox);
+				this.scroll = new Ui.VBoxScrollingArea({ loader: this.dataLoader });
+				this.append(this.scroll, true);
+			}
+			else {
+				this.remove(this.scroll);
+				this.vbox = new Ui.VBox();
+				this.append(this.vbox, true);
+			}
 		}
 	},
 
-	/**#@+ 
-	 * @private 
-	 */
-	getColor: function() {
-		return Ui.Color.create(this.getStyleProperty('color'));
+	showHeaders: function() {
+		if(!this.headersVisible) {
+			this.headersVisible = true;
+			this.headersBar.show();
+		}
 	},
 
-	getColorDown: function() {
-		var yuv = Ui.Color.create(this.getStyleProperty('color')).getYuv();
-		return new Ui.Color({ y: yuv.y + 0.40, u: yuv.u, v: yuv.v });
-	},
-	
-	onListViewHeaderDown: function() {
-		this.background.setFill(this.getColorDown());
+	hideHeaders: function() {
+		if(this.headersVisible) {
+			this.headersVisible = false;
+			this.headersBar.hide(true);
+		}
 	},
 
-	onListViewHeaderUp: function() {
-		this.background.setFill(this.getColor());
+	getSelectionActions: function() {
+		return this.selectionActions;
+	},
+
+	setSelectionActions: function(value) {
+		this.selectionActions = value;
+	},
+
+	getElementAt: function(position) {
+		if((position % 2) === 0)
+			return new Ui.ListViewRowOdd({ headers: this.headers,
+				data: this.data[position], selectionActions: this.selectionActions });
+		else
+			return new Ui.ListViewRowEven({ headers: this.headers,
+				data: this.data[position], selectionActions: this.selectionActions });
+	},
+
+	appendData: function(data) {
+		this.data.push(data);
+		if(this.scrolled)
+			this.dataLoader.signalChange();
+		else
+			this.vbox.append(this.getElementAt(this.data.length-1));
+	},
+
+	updateData: function(data) {
+		if(this.scrolled)
+			this.scroll.reload();
+		else {
+			this.vbox.clear();
+			for(var i = 0; i < this.data.length; i++) {
+				this.vbox.append(this.getElementAt(i));
+			}
+		}
+	},
+
+	removeData: function(data) {
+		var row = this.findDataRow(data);
+		if(row != -1)
+			this.removeDataAt(row);
+	},
+
+	removeDataAt: function(position) {
+		if(position < this.data.length) {
+			this.data.splice(position, 1);
+			if(this.scrolled)
+				this.scroll.reload();
+			else {
+				this.vbox.clear();
+				for(var i = 0; i < this.data.length; i++) {
+					this.vbox.append(this.getElementAt(i));
+				}
+			}
+		}
+	},
+
+	clearData: function() {
+		this.data = [];	
+		this.dataLoader = new Ui.ListViewScrollLoader({ data: this.data, listView: this });
+		if(this.scrolled)
+			this.scroll.setLoader(this.dataLoader);
+		else
+			this.vbox.clear();
+	},
+
+	getData: function() {
+		return this.data;
+	},
+
+	setData: function(data) {
+		if(data !== undefined) {
+			this.data = data;
+			this.dataLoader = new Ui.ListViewScrollLoader({ data: this.data, listView: this });
+			if(this.scrolled)
+				this.scroll.setLoader(this.dataLoader);
+			else {
+				this.vbox.clear();
+				for(var i = 0; i < this.data.length; i++) {
+					this.vbox.append(this.getElementAt(i));
+				}
+			}
+		}
+		else {
+			this.clearData();
+		}
+	},
+
+	sortBy: function(key, invert) {
+		this.sortColKey = key;
+		this.sortInvert = invert === true;
+		this.headersBar.sortBy(this.sortColKey, this.sortInvert);
+		this.data.sort(function(a, b) {
+			var res;
+			if(a[key] < b[key])
+				res = -1;
+			else if(a[key] > b[key])
+				res = 1;
+			else
+				res = 0;
+			return invert ? -res : res;
+		});
+		if(this.scrolled) {
+			this.scroll.reload();
+			this.invalidateArrange();
+		}
+		else {
+			this.vbox.clear();
+			for(var i = 0; i < this.data.length; i++) {
+				this.vbox.append(this.getElementAt(i));
+			}
+		}
+	},
+
+	findDataRow: function(data) {
+		for(var row = 0; row < this.data.length; row++) {
+			if(data == this.data[row])
+				return row;
+		}
+		return -1;
+	},
+
+	onHeaderPress: function(header, key) {
+		this.sortBy(key, (this.sortColKey === key)?!this.sortInvert:false);
+	},
+
+	onSelectionEdit: function(selection) {
+		var data = selection.getElements()[0].getData();
+		this.fireEvent('activate', this, this.findDataRow(data), data);
 	}
-	/**#@-*/
 }, 
-/** @lends Ui.ListViewHeader#*/
 {
-	onStyleChange: function() {
-		this.background.setFill(this.getStyleProperty('color'));
-		var spacing = this.getStyleProperty('spacing');
-		this.uiTitle.setMargin(spacing + 2);
-	}
-}, 
-/** @lends Ui.ListViewHeader*/
-{
-	style: {
-		color: '#444444',
-		spacing: 5
+	onChildInvalidateArrange: function(child) {
+		Ui.ListView.base.onChildInvalidateArrange.apply(this, arguments);
+		if(child === this.headersBar) {
+			if(this.scrolled && (this.scroll !== undefined))
+				this.scroll.getActiveItems().forEach(function(item) { item.invalidateArrange();  });
+			else if(!this.scrolled)
+				this.vbox.getChildren().forEach(function(item) { item.invalidateArrange();  });
+		}
 	}
 });
 
-Ui.Pressable.extend('Ui.ListViewCell',
+Ui.LBox.extend('Ui.ListViewCell',
 /** @lends Ui.ListViewCell#*/
 {
 	value: undefined,
 	ui: undefined,
-	border: undefined,
-	cellDown: false,
 	key: undefined,
-	isSelected: false,
 	
 	/**
 	 * @constructs
@@ -680,15 +1096,8 @@ Ui.Pressable.extend('Ui.ListViewCell',
 	 */
 	constructor: function(config) {
 		this.setClipToBounds(true);
-		this.bg = new Ui.Rectangle();
-		this.append(this.bg);
-		this.border = new Ui.Rectangle({ height: 1, verticalAlign: 'bottom' });
-		this.append(this.border);
-
 		this.ui = new Ui.Label({ margin: 8, horizontalAlign: 'left' });
 		this.append(this.ui);
-
-		this.connect(this, 'press', this.onCellPress);
 	},
 
 	getKey: function() {
@@ -708,90 +1117,16 @@ Ui.Pressable.extend('Ui.ListViewCell',
 			this.value = value;
 			this.ui.setText(value);
 		}
-	},
-
-	getIsSelected: function() {
-		return this.isSelected;
-	},
-
-	select: function() {
-		this.isSelected = true;
-		this.onCellSelect();
-	},
-
-	unselect: function() {
-		this.isSelected = false;
-		this.onCellUnselect();
-	},
-
-	down: function() {
-		this.cellDown = true;
-		if(!this.isSelected)
-			this.bg.setFill(this.getBackgroundDownColor());
-	},
-
-	up: function() {
-		this.cellDown = false;
-		if(!this.isSelected)
-			this.bg.setFill(this.getBackgroundColor());
-	},
-
-	/**#@+ 
-	 * @private 
-	 */
-	getDarkColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-	},
-
-	getBackgroundSelectColor: function() {
-		return this.getStyleProperty('selectColor');
-	},
-
-	getBackgroundColor: function() {
-		return this.getStyleProperty('color');
-	},
-
-	getBackgroundDownColor: function() {
-		var yuv = this.getStyleProperty('color').getYuv();
-		return new Ui.Color({ y: yuv.y - 0.10, u: yuv.u, v: yuv.v });
-	},
-
-	onCellPress: function() {
-		this.isSelected = !this.isSelected;
-		if(this.isSelected)
-			this.onCellSelect();
-		else
-			this.onCellUnselect();
-	},
-
-	onCellSelect: function() {
-		this.bg.setFill(this.getBackgroundSelectColor());
-	},
-
-	onCellUnselect: function() {
-		this.bg.setFill(this.getBackgroundColor());
 	}
-	/**#@-*/
 }, 
-/** @lends Ui.ListViewCell#*/
 {
 	onStyleChange: function() {
-		var color = this.getStyleProperty('color');
-		var yuv = color.getYuv();
-		var darkColor = new Ui.Color({ y: yuv.y - 0.30, u: yuv.u, v: yuv.v });
-		this.bg.setFill(color);
-		this.border.setFill(darkColor);
-
 		var spacing = this.getStyleProperty('spacing');
 		this.ui.setMargin(spacing + 2);
 	}
-}, 
-/** @lends Ui.ListViewCell*/
+},
 {
 	style: {
-		color: new Ui.Color({ r: 0.99, g: 0.99, b: 0.99, a: 0.1 }),
-		selectColor: new Ui.Color({ r: 0.88, g: 0.88, b: 0.88 }),
 		spacing: 5
 	}
 });
