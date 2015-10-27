@@ -30,10 +30,10 @@ Ui.App.extend('Test.App', {
 		var vbox = new Ui.VBox();
 		this.setContent(vbox);
 
-		var toolbar = new Ui.SFlow({ margin: 10, spacing: 10 });
+		var toolbar = new Ui.ToolBar({ margin: 10 });
 		vbox.append(toolbar);
 
-		var checkbox = new Ui.CheckBox({ text: 'show headers', value: true });
+		var checkbox = new Ui.CheckBox({ text: 'show headers', value: true, width: 200 });
 		toolbar.append(checkbox);
 		this.connect(checkbox, 'change', function(checkbox, value) {
 			if(value)
@@ -42,7 +42,7 @@ Ui.App.extend('Test.App', {
 				listview.hideHeaders();
 		});
 
-		var checkbox = new Ui.CheckBox({ text: 'data scrolled (best perf)', value: true });
+		var checkbox = new Ui.CheckBox({ text: 'data scrolled (best perf)', value: true, width: 250 });
 		toolbar.append(checkbox);
 		this.connect(checkbox, 'change', function(checkbox, value) {
 			listview.setScrolled(value);
