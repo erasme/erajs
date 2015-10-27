@@ -26,6 +26,8 @@ Ui.LBox.extend('Ui.App',
 	testFontTask: undefined,
 	bindedUpdate: undefined,
 
+	selection: undefined,
+
 	/**
 	 * @constructs
 	 * @ class Define the App class. A web application always start
@@ -39,7 +41,10 @@ Ui.LBox.extend('Ui.App',
 
 		Ui.App.current = this;
 		this.getDrawing().style.cursor = 'default';
-		
+
+		this.selection = new Ui.Selection();
+		this.connect(this.selection, 'change', this.onSelectionChange);
+
 		// check if arguments are available
 		if((window.location.search !== undefined) && (window.location.search !== '')) {
 			var base64;
@@ -113,6 +118,11 @@ Ui.LBox.extend('Ui.App',
 
 		this.bindedUpdate = this.update.bind(this);
 	},
+
+	// implement a selection handler for Selectionable elements
+	getSelectionHandler: function() {	
+		return this.selection;
+	},
 		
 	forceInvalidateMeasure: function(element) {
 		if(element === undefined)
@@ -178,6 +188,9 @@ Ui.LBox.extend('Ui.App',
 	/**#@+
 	 * @private
 	 */
+
+	onSelectionChange: function(selection) {
+	},
 
 	onWindowLoad: function() {
 		var meta; var style;
