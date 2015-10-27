@@ -30,6 +30,10 @@ Ui.Pressable.extend('Ui.Draggable',
 		this.connect(this, 'ptrdown', this.onDraggablePointerDown);
 	},
 
+	getDraggableData: function() {
+		return this.draggableData;
+	},
+
 	/**
 	 * Set the data that we drag & drop
 	 */
