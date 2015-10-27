@@ -1,6 +1,7 @@
 Ui.Button.extend('Ui.TextFieldButton', {}, {}, {
 	style: {
-		padding: 4,
+		padding: 6,
+		iconSize: 22,
 		background: 'rgba(250,250,250,0)',
 		backgroundBorder: 'rgba(140,140,140,0)'
 	}

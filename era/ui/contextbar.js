@@ -4,7 +4,8 @@ Ui.Button.extend('Ui.ContextBarCloseButton', {}, {}, {
 		textWidth: 5,
 		radius: 0,
 		borderWidth: 0,
-		background: 'rgba(250,250,250,0)'
+		foreground: 'rgba(250,250,250,1)',
+		background: 'rgba(60,60,60,0)'
 	}
 });
 
@@ -57,6 +58,6 @@ Ui.LBox.extend('Ui.ContextBar', {
 	}
 }, {
 	style: {
-		background: 'rgb(79, 201, 245)'
+		background: '#07a0e5'
 	}
 });

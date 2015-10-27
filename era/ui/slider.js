@@ -249,7 +249,7 @@ Ui.Container.extend('Ui.Slider',
 		radius: 0,
 		background: '#e1e1e1',
 		backgroundBorder: '#919191',
-		foreground: '#00b1b1'
+		foreground: '#07a0e5'
 	}
 });
 

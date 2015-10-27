@@ -66,8 +66,8 @@ Ui.Container.extend('Ui.ProgressBar', {
 	}
 }, {
 	style: {
-		background: '#999',
-		foreground: '#0cc',
+		background: '#e1e1e1',
+		foreground: '#07a0e5',
 		color: '#999999',
 		radius: 0
 	}
