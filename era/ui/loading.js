@@ -37,6 +37,8 @@ Ui.CanvasElement.extend('Ui.Loading', {
 
 	updateCanvas: function(ctx) {
 		var p = this.clock.getProgress();
+		if(p === undefined)
+			p = 0;
 		var p2 = (p > 0.8) ? (1 - ((p - 0.8)*5)) : (p / 0.8);
 
 		var w = this.getLayoutWidth();
