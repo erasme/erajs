@@ -295,7 +295,7 @@ Ui.Container.extend('Ui.Locator',
 	style: {
 		background: 'rgba(250,250,250,1)',
 		backgroundBorder: 'rgba(140,140,140,1)',
-		focusBackground: 'rgb(33,211,255)',
+		focusBackground: '#07a0e5',//'rgb(33,211,255)',
 		focusBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
 		focusActiveBackgroundBorder: new Ui.Color({ r: 0.04, g: 0.43, b: 0.5 }),
 		radius: 3,
