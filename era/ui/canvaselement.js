@@ -668,45 +668,45 @@ Core.Object.extend('Core.SVG2DContext', {
 			if(parser.isCmd())
 				parser.next();
 
-			if(cmd == 'm') {
+			if(cmd === 'm') {
 				parser.setCmd('l');
 				x += parser.getCurrent(); parser.next(); 
 				y += parser.getCurrent(); parser.next();
 				this.moveTo(x, y);
 			}
-			else if(cmd == 'M') {
+			else if(cmd === 'M') {
 				parser.setCmd('L');
 				x = parser.getCurrent(); parser.next();
 				y = parser.getCurrent(); parser.next();
 				this.moveTo(x, y);
 			}
-			else if(cmd == 'l') {
+			else if(cmd === 'l') {
 				x += parser.getCurrent(); parser.next();
 				y += parser.getCurrent(); parser.next();
 				this.lineTo(x, y);
 			}
-			else if(cmd == 'L') {
+			else if(cmd === 'L') {
 				x = parser.getCurrent(); parser.next();
 				y = parser.getCurrent(); parser.next();
 				this.lineTo(x, y);
 			}
-			else if(cmd == 'v') {
+			else if(cmd === 'v') {
 				y += parser.getCurrent(); parser.next();
 				this.lineTo(x, y);
 			}
-			else if(cmd == 'V') {
+			else if(cmd === 'V') {
 				y = parser.getCurrent(); parser.next();
 				this.lineTo(x, y);
 			}
-			else if(cmd == 'h') {
+			else if(cmd === 'h') {
 				x += parser.getCurrent(); parser.next();
 				this.lineTo(x, y);
 			}
-			else if(cmd == 'H') {
+			else if(cmd === 'H') {
 				x = parser.getCurrent(); parser.next();
 				this.lineTo(x, y);
 			}
-			else if(cmd == 'c') {
+			else if(cmd === 'c') {
 				x1 = x + parser.getCurrent(); parser.next();
 				y1 = y + parser.getCurrent(); parser.next();
 				x2 = x + parser.getCurrent(); parser.next();
@@ -716,7 +716,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
-			else if(cmd == 'C') {
+			else if(cmd === 'C') {
 				x1 = parser.getCurrent(); parser.next();
 				y1 = parser.getCurrent(); parser.next();
 				x2 = parser.getCurrent(); parser.next();
@@ -726,7 +726,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
-			else if(cmd == 's') {
+			else if(cmd === 's') {
 				x1 = x + parser.getCurrent(); parser.next();
 				y1 = y + parser.getCurrent(); parser.next();
 				x2 = x1;
@@ -737,7 +737,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.lineTo(x3, y3);
 				x = x3; y = y3;
 			}
-			else if(cmd == 'S') {
+			else if(cmd === 'S') {
 				x1 = parser.getCurrent(); parser.next();
 				y1 = parser.getCurrent(); parser.next();
 				x2 = x1;
@@ -747,7 +747,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 				x = x3; y = y3;
 			}
-			else if(cmd == 'q') {
+			else if(cmd === 'q') {
 				x1 = x + parser.getCurrent(); parser.next();
 				y1 = y + parser.getCurrent(); parser.next();
 				x2 = x + parser.getCurrent(); parser.next();
@@ -755,7 +755,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
 			}
-			else if(cmd == 'Q') {
+			else if(cmd === 'Q') {
 				x1 = parser.getCurrent(); parser.next();
 				y1 = parser.getCurrent(); parser.next();
 				x2 = parser.getCurrent(); parser.next();
@@ -763,7 +763,7 @@ Core.Object.extend('Core.SVG2DContext', {
 				this.quadraticCurveTo(x1, y1, x2, y2);
 				x = x2; y = y2;
 			}
-			else if((cmd == 'z') || (cmd == 'Z')) {
+			else if((cmd === 'z') || (cmd === 'Z')) {
 				this.closePath();
 			}
 			else {

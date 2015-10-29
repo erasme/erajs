@@ -26,7 +26,7 @@ Core.Object.extend('Ui.SvgParser', {
 			this.current = '';
 			var c = this.path[this.pos];
 
-			var isCmd = (c != 'e') && ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
+			var isCmd = (c !== 'e') && ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
 			if(isCmd) {
 				this.current = this.path[this.pos++];
 				this.cmd = this.current;
@@ -34,17 +34,18 @@ Core.Object.extend('Ui.SvgParser', {
 			}
 			else {
 				while((this.pos < this.path.length) && (((this.path[this.pos] >= '0') && (this.path[this.pos] <= '9')) ||
-				       ((this.path[this.pos] == '-') && (this.current.length == 0)) || (!eseen && (this.path[this.pos] == 'e')) || (!dotseen && (this.path[this.pos] == '.')))) {
-					if(this.path[this.pos] == '.')
+				       ((this.path[this.pos] === '-') && ((this.current.length == 0) || (this.current[this.current.length-1] === 'e'))) ||
+				       (!eseen && (this.path[this.pos] === 'e')) || (!dotseen && (this.path[this.pos] === '.')))) {
+					if(this.path[this.pos] === '.')
 						dotseen = true;
-					if(this.path[this.pos] == 'e')
+					if(this.path[this.pos] === 'e')
 						eseen = true;
 					this.current += this.path[this.pos++];
 				}
 				this.value = true;
-				if(this.current[0] == '.')
+				if(this.current[0] === '.')
 					this.current = '0'+this.current;
-				if((this.current[0] == '-') && (this.current[1] == '.'))
+				if((this.current[0] === '-') && (this.current[1] === '.'))
 					this.current = '-0'+this.current.substring(1);
 				this.current = parseFloat(this.current);
 				if(isNaN(this.current))
