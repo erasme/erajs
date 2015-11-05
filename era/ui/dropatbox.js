@@ -304,6 +304,10 @@ Ui.DropAtBox.extend('Ui.SFlowDropBox', {
 		this.getContainer().setUniform(uniform);
 	},
 
+	setUniformRatio: function(uniformRatio) {
+		this.getContainer().setUniformRatio(uniformRatio);
+	},
+
 	setItemAlign: function(align) {
 		this.getContainer().setItemAlign(align);
 	},
