@@ -375,6 +375,7 @@ Ui.Container.extend('Ui.SFlow',
 /**@lends Ui.SFlow#*/
 {
 	uniform: false,
+	uniformRatio: undefined,
 	uniformWidth: undefined,
 	uniformHeight: undefined,
 	itemAlign: 'left',
@@ -460,6 +461,18 @@ Ui.Container.extend('Ui.SFlow',
 			this.invalidateMeasure();
 		}
 	},
+
+	getUniformRatio: function() {
+		return this.uniformRatio;
+	},
+
+	setUniformRatio: function(uniformRatio) {
+		if(this.uniformRatio != uniformRatio) {
+			this.uniformRatio = uniformRatio;
+			this.invalidateMeasure();
+		}
+	},
+
 
 	/**
 	 * If itemAlign is stretch, return the maximum
@@ -549,6 +562,21 @@ Ui.Container.extend('Ui.SFlow',
 					this.uniformWidth = childSize.width;
 				if(childSize.height > this.uniformHeight)
 					this.uniformHeight = childSize.height;
+			}
+			if(this.uniformRatio !== undefined) {
+				var aratio = this.uniformWidth/this.uniformHeight;
+				var aw, ah;
+
+				if(this.uniformRatio < aratio) {
+					aw = this.uniformWidth;
+					ah = aw / this.uniformRatio;
+				}
+				else {
+					ah = this.uniformHeight;
+					aw = ah * this.uniformRatio;
+				}
+				this.uniformWidth = aw;
+				this.uniformHeight = ah;
 			}
 //			console.log('UNIFORM SIZE: '+this.uniformWidth+'x'+this.uniformHeight);
 		}
