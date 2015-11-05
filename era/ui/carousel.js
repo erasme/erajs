@@ -122,6 +122,7 @@ Ui.Overable.extend('Ui.Carousel',
 
 	onMouseEnter: function() {
 		this.showArrows();
+		this.carouselable.stopAutoPlay();
 	},
 
 	onMouseOverMove: function() {
@@ -130,15 +131,16 @@ Ui.Overable.extend('Ui.Carousel',
 
 	onMouseLeave: function() {
 		this.hideArrows();
+		this.carouselable.startAutoPlay();
 	},
 
 	showArrows: function() {
-		if(this.hideTimeout !== undefined) {
-			this.hideTimeout.abort();
-			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
-		}
-		else
-			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
+//		if(this.hideTimeout !== undefined) {
+//			this.hideTimeout.abort();
+//			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
+//		}
+//		else
+//			this.hideTimeout = new Core.DelayedTask({ delay: 2, scope: this, callback: this.hideArrows });
 
 		var pos = this.carouselable.getCurrentPosition();
 		var children = this.carouselable.getLogicalChildren();
