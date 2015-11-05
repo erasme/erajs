@@ -11,6 +11,8 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	animNext: undefined,
 	animStart: undefined,
 	bufferingSize: 1,
+	autoPlayDelay: undefined,
+	autoPlayTask: undefined,
 
 	/**
 	 * @constructs
@@ -30,6 +32,37 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		this.connect(this, 'up', this.onCarouselableUp);
 		this.connect(this.getDrawing(), 'keydown', this.onKeyDown);
 		this.connect(this, 'wheel', this.onWheel);
+	},
+
+	setAutoPlay: function(delay) {
+		if(this.autoPlayDelay !== delay) {
+			if(this.autoPlayTask !== undefined)
+				this.autoPlayTask.abort();
+			this.autoPlayTask = undefined;
+			this.autoPlayDelay = delay;
+			this.startAutoPlay();
+		}
+	},
+
+	stopAutoPlay: function() {
+		if(this.autoPlayTask !== undefined) {
+			this.autoPlayTask.abort();
+			this.autoPlayTask = undefined;
+		}
+	},
+
+	startAutoPlay: function() {
+		if(this.autoPlayDelay !== undefined) {
+			this.autoPlayTask = new Core.DelayedTask({ scope: this, delay: this.autoPlayDelay, callback: this.onAutoPlayTimeout });
+		}
+	},
+
+	onAutoPlayTimeout: function() {
+		if(this.getCurrentPosition() >= this.items.length -1)
+			this.setCurrentAt(0);
+		else
+			this.next();
+		this.startAutoPlay();
 	},
 
 	getBufferingSize: function() {
@@ -184,6 +217,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 	},
 
 	onCarouselableDown: function() {
+		this.stopAutoPlay();
 		this.stopAnimation();
 	},
 
@@ -227,6 +261,7 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		}
 		if(speedX !== 0)
 			this.startAnimation(speedX / this.getLayoutWidth());
+		this.startAutoPlay();
 	},
 
 	onChange: function() {
@@ -360,6 +395,11 @@ Ui.MovableBase.extend('Ui.Carouselable',
 		}
 		//console.log('onMove('+x+','+y+') => '+this.pos);
 		this.updateItems();
+	},
+
+	measureCore: function(w, h) {
+		var current = this.getCurrent();
+		return current.measure(w, h);
 	},
 
 	arrangeCore: function(w, h) {
