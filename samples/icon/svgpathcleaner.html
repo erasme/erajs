@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src='../../era/era-debug.js'></script>
+<script>
+
+Ui.App.extend('Test.App', {
+	pathTextField: undefined,
+	cleanedPathTextField: undefined,
+	statusLabel: undefined,
+	sourceIcon: undefined,
+	decimalField: undefined,
+
+	constructor: function(config) {
+
+		var vbox = new Ui.VBox({ padding: 10, spacing: 10 });
+		this.setContent(vbox);
+
+		vbox.append(new Ui.Text({ text: 'Icon SVG path' }));
+
+		var hbox = new Ui.HBox();
+		vbox.append(hbox, true);
+
+		var scroll = new Ui.ScrollingArea();
+		hbox.append(scroll, true);
+
+		this.pathTextField = new Ui.TextAreaField();
+		this.connect(this.pathTextField, 'change', this.onPathTextFieldChanged);
+		scroll.setContent(this.pathTextField);
+
+		this.sourceIcon = new Ui.Shape({ width: 192, height: 192, scale: 4 });
+		hbox.append(this.sourceIcon);
+
+		var hbox = new Ui.HBox();
+		vbox.append(hbox);
+
+		var button = new Ui.Button({ text: 'Clean' });
+		this.connect(button, 'press', this.onCleanPressed);
+		hbox.append(button);
+
+		this.decimalField = new Ui.TextField({ width: 40, value: '2' });
+		hbox.append(this.decimalField);
+
+		var hbox = new Ui.HBox({ spacing: 10 });
+		vbox.append(hbox, true);
+
+		var scroll = new Ui.ScrollingArea();
+		hbox.append(scroll, true);
+
+		this.cleanedPathTextField = new Ui.TextAreaField({ disabled: true });
+		scroll.setContent(this.cleanedPathTextField);
+
+		this.destIcon = new Ui.Shape({ width: 192, height: 192, scale: 4 });
+		hbox.append(this.destIcon);
+
+		this.statusLabel = new Ui.Label();
+		vbox.append(this.statusLabel);
+	},
+
+	testPath: function(path) {
+		var svgDrawing = document.createElementNS(svgNS, 'svg');
+		var ctx = new Core.SVG2DContext({ document: svgDrawing });
+		try {
+			ctx.svgPath(path);
+		}
+		catch(e) {
+			return false;
+		}
+		return true;
+	},
+
+	onPathTextFieldChanged: function() {
+		var path = this.pathTextField.getValue();
+		if(this.testPath(path)) {
+			this.sourceIcon.setFill(undefined);
+			this.sourceIcon.setPath(path);
+		}
+		else {
+			this.sourceIcon.setFill('red');
+			this.sourceIcon.setPath(Ui.Icon.getPath('deny'));
+		}
+	},
+
+	onCleanPressed: function() {
+		var svgParser = new Ui.SvgParser({ path: this.pathTextField.getValue() });
+		var lastIsValue = false;
+		var lastCmd = '';
+		var res = '';
+		svgParser.next();
+		while(!svgParser.isEnd()) {
+			if(svgParser.isCmd()) {
+				if(svgParser.getCmd() !== lastCmd) {
+					res += svgParser.getCmd();
+					lastCmd = svgParser.getCmd();
+					lastIsValue = false;
+				}
+			}
+			else {
+				var roundScale = Math.pow(10, parseInt(this.decimalField.getValue()));
+
+				var val = Math.round(svgParser.getCurrent() * roundScale);
+				val = (val / roundScale).toString();
+
+				if(val.substring(0,2) === '0.')
+					val = '.'+val.substring(2);
+				if(val.substring(0,3) === '-0.')
+					val = '-.'+val.substring(3);
+				if((val[0] !== '-') && (lastIsValue))
+					res += ' ';
+				res += val;
+				lastIsValue = true;
+			}
+			svgParser.next();
+		}
+		this.cleanedPathTextField.setValue(res);
+
+		if(this.testPath(res)) {
+			this.destIcon.setFill(undefined);
+			this.destIcon.setPath(res);
+		}
+		else {
+			this.destIcon.setFill('red');
+			this.destIcon.setPath(Ui.Icon.getPath('deny'));
+		}
+
+		var ratio = res.length / this.pathTextField.getValue().length;
+		this.statusLabel.setText('ratio: '+Math.round(ratio * 100)+'%, saved: '+(100-Math.round(ratio * 100))+'%');
+	}
+});
+
+new Test.App();
+
+</script>
+  </head>
+</html>
