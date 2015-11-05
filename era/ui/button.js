@@ -157,7 +157,7 @@ Ui.Selectionable.extend('Ui.Button',
 
 		this.dropbox.setContent(this.bg);
 
-		this.mainBox = new Ui.HBox();
+		this.mainBox = new Ui.HBox({ horizontalAlign: 'center', verticalAlign: 'center' });
 		this.dropbox.append(this.mainBox);
 
 		this.buttonPartsBox = new Ui.Box();
@@ -177,6 +177,20 @@ Ui.Selectionable.extend('Ui.Button',
 
 	getDropBox: function() {
 		return this.dropbox;
+	},
+
+	getBackground: function() {
+		return this.bg;
+	},
+
+	setBackground: function(bg) {
+		this.dropbox.remove(this.bg);
+		if(bg === undefined)
+			this.bg = new Ui.ButtonBackground();
+		else
+			this.bg = bg;
+		this.dropbox.prepend(this.bg);
+		this.onStyleChange();
 	},
 
 	getTextBox: function() {
@@ -416,8 +430,10 @@ Ui.Selectionable.extend('Ui.Button',
 
 	updateColors: function() {
 		var fg = this.getForeground();
-		this.bg.setBackground(this.getBackground());
-		this.bg.setBorder(this.getBackgroundBorder());
+		if(Ui.ButtonBackground.hasInstance(this.bg)) {
+			this.bg.setBackground(this.getBackground());
+			this.bg.setBorder(this.getBackgroundBorder());
+		}
 		if(Ui.ButtonText.hasInstance(this.text))
 			this.text.setColor(fg);
 		if(Ui.ButtonIcon.hasInstance(this.icon)) {
@@ -440,8 +456,10 @@ Ui.Selectionable.extend('Ui.Button',
 	onStyleChange: function() {
 		this.buttonPartsBox.setSpacing(Math.max(0, this.getStyleProperty('spacing')));
 		this.buttonPartsBox.setMargin(Math.max(0, this.getStyleProperty('padding')));
-		this.bg.setRadius(this.getStyleProperty('radius'));
-		this.bg.setBorderWidth(this.getStyleProperty('borderWidth'));
+		if(Ui.ButtonBackground.hasInstance(this.bg)) {
+			this.bg.setRadius(this.getStyleProperty('radius'));
+			this.bg.setBorderWidth(this.getStyleProperty('borderWidth'));
+		}
 		var iconSize = Math.max(0, this.getStyleProperty('iconSize'));
 		this.iconBox.setWidth(iconSize);
 		this.iconBox.setHeight(iconSize);
