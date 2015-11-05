@@ -657,6 +657,7 @@ Core.Object.extend('Core.SVG2DContext', {
 	svgPath: function(path) {
 		var x = 0; var y = 0;
 		var x1; var y1; var x2; var y2; var x3; var y3;
+		var beginX = 0; var beginY = 0;
 
 		var parser = new Ui.SvgParser({ path: path });
 		parser.next();
@@ -672,12 +673,16 @@ Core.Object.extend('Core.SVG2DContext', {
 				parser.setCmd('l');
 				x += parser.getCurrent(); parser.next(); 
 				y += parser.getCurrent(); parser.next();
+				beginX = x;
+				beginY = y;
 				this.moveTo(x, y);
 			}
 			else if(cmd === 'M') {
 				parser.setCmd('L');
 				x = parser.getCurrent(); parser.next();
 				y = parser.getCurrent(); parser.next();
+				beginX = x;
+				beginY = y;
 				this.moveTo(x, y);
 			}
 			else if(cmd === 'l') {
@@ -764,6 +769,8 @@ Core.Object.extend('Core.SVG2DContext', {
 				x = x2; y = y2;
 			}
 			else if((cmd === 'z') || (cmd === 'Z')) {
+				x = beginX;
+				y = beginY;
 				this.closePath();
 			}
 			else {
