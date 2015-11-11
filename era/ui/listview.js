@@ -88,12 +88,12 @@ Ui.Container.extend('Ui.ListViewHeadersBar', {
 
 		for(i = 0; i < this.headers.length; i++) {
 			var header = this.headers[i];
-			header.ui = new Ui.ListViewHeader({ title: header.title, width: header.width });
-			this.connect(header.ui, 'press', this.onHeaderPress);
+			header['Ui.ListViewHeadersBar.ui'] = new Ui.ListViewHeader({ title: header.title, width: header.width });
+			this.connect(header['Ui.ListViewHeadersBar.ui'], 'press', this.onHeaderPress);
 			header.colWidth = header.width;
-			this.appendChild(header.ui);
+			this.appendChild(header['Ui.ListViewHeadersBar.ui']);
 
-			var col = new Ui.ListViewColBar({ header: header.ui });
+			var col = new Ui.ListViewColBar({ header: header['Ui.ListViewHeadersBar.ui'] });
 			this.cols.push(col);
 			this.appendChild(col);
 		}
@@ -121,7 +121,7 @@ Ui.Container.extend('Ui.ListViewHeadersBar', {
 		var key;
 		for(var col = 0; col < this.headers.length; col++) {
 			var h = this.headers[col];
-			if(h.ui === header) {
+			if(h['Ui.ListViewHeadersBar.ui'] === header) {
 				key = h.key;
 			}
 		}
@@ -139,14 +139,14 @@ Ui.Container.extend('Ui.ListViewHeadersBar', {
 		// measure headers
 		for(col = 0; col < this.headers.length; col++) {
 			header = this.headers[col];
-			size = header.ui.measure(0, 0);
+			size = header['Ui.ListViewHeadersBar.ui'].measure(0, 0);
 			if(size.height > minHeight)
 				minHeight = size.height;
 		}
 		this.headersHeight = minHeight;
 		var minWidth = 0;
 		for(col = 0; col < this.headers.length; col++)
-			minWidth += this.headers[col].ui.getMeasureWidth();
+			minWidth += this.headers[col]['Ui.ListViewHeadersBar.ui'].getMeasureWidth();
 		
 		this.sortArrow.measure(0, 0);
 
@@ -166,10 +166,10 @@ Ui.Container.extend('Ui.ListViewHeadersBar', {
 		for(col = 0; col < this.headers.length; col++) {
 			header = this.headers[col];
 			var colbar = this.cols[col];
-			colWidth = header.ui.getMeasureWidth();
+			colWidth = header['Ui.ListViewHeadersBar.ui'].getMeasureWidth();
 			if(col == this.headers.length - 1)
 				colWidth = Math.max(colWidth, availableWidth);
-			header.ui.arrange(x, 0, colWidth, this.headersHeight);
+			header['Ui.ListViewHeadersBar.ui'].arrange(x, 0, colWidth, this.headersHeight);
 
 			colbar.setHeaderHeight(this.headersHeight);
 			colbar.arrange(x+colWidth-colbar.getMeasureWidth(), 0, 
@@ -209,7 +209,11 @@ Ui.Selectionable.extend('Ui.ListViewRow', {
 		this.appendChild(this.background);
 		for(var col = 0; col < this.headers.length; col++) {
 			var key = this.headers[col].key;
-			var cell = new Ui.ListViewCellString({ key: key });
+			var cell;
+			if(this.headers[col].ui !== undefined)
+				cell = new  this.headers[col].ui({ key: key });
+			else
+				cell = new Ui.ListViewCellString({ key: key });
 			cell.setValue(this.data[this.headers[col].key]);
 			this.cells.push(cell);
 			this.appendChild(cell);
@@ -262,7 +266,7 @@ Ui.Selectionable.extend('Ui.ListViewRow', {
 		for(col = 0; col < this.headers.length; col++) {
 			var header = this.headers[col];
 			var cell = this.cells[col];
-			colWidth = header.ui.getLayoutWidth();
+			colWidth = header['Ui.ListViewHeadersBar.ui'].getLayoutWidth();
 			cell.arrange(x, 0, colWidth, height);
 			x += colWidth;
 		}

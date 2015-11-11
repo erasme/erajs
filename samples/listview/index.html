@@ -6,6 +6,44 @@
     <script src='../../era/era-debug.js'></script>
 <script>
 
+Ui.LBox.extend('Test.ListViewBoolCell',
+{
+	value: undefined,
+	ui: undefined,
+	key: undefined,
+	
+	constructor: function(config) {
+		this.setClipToBounds(true);
+		this.ui = new Ui.Rectangle({
+			margin: 8, width: 16, height: 16,
+			horizontalAlign: 'center', verticalAlign: 'center'
+		});
+		this.append(this.ui);
+	},
+
+	getKey: function() {
+		return this.key;
+	},
+
+	setKey: function(key) {
+		this.key = key;
+	},
+
+	getValue: function() {
+		return this.value;
+	},
+
+	setValue: function(value) {
+		if(this.value !== value) {
+			this.value = value;
+			if(this.value)
+				this.ui.setFill('#60e270');
+			else
+				this.ui.setFill('#E84D4D');
+		}
+	}
+});
+
 Ui.VBox.extend('Test.Logs', {
 	logs: undefined,
 	scrolling: undefined,
@@ -91,6 +129,7 @@ Ui.App.extend('Test.App', {
 			margin: 0,
 			scrolled: true,
 			headers: [
+				{ type: 'string', title: 'Data 0', key: 'data0', width: 40, ui: Test.ListViewBoolCell },
 				{ type: 'string', title: 'Data 1', key: 'data1', width: 200 },
 				{ type: 'string', title: 'Data 2', key: 'data2', width: 200 },
 				{ type: 'string', title: 'Numbers', key: 'data3' },
@@ -105,6 +144,7 @@ Ui.App.extend('Test.App', {
 
 		for(var i = 0; i < 50; i++) {
 			listview.appendData({
+				data0: ((i % 3) === 0),
 				data1: 'hi number '+i,
 				data2: 'col 2 '+i,
 				data3: Math.random()*50
