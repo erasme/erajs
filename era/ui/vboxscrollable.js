@@ -646,7 +646,7 @@ Ui.Transformable.extend('Ui.VBoxScrollableContent', {
 		this.activeItemsY = 0;
 		this.activeItemsHeight = 0;
 		this.estimatedHeightNeeded = true;
-		this.setContentTransform(0, 0, 1, 0);
+		this.onContentTransform();
 	},
 
 	onLoaderChange: function() {
