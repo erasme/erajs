@@ -964,6 +964,7 @@ Ui.VBox.extend('Ui.ListView',
 
 	appendData: function(data) {
 		this.data.push(data);
+		this.sortData();
 		if(this.scrolled)
 			this.dataLoader.signalChange();
 		else
@@ -971,6 +972,7 @@ Ui.VBox.extend('Ui.ListView',
 	},
 
 	updateData: function(data) {
+		this.sortData();
 		if(this.scrolled)
 			this.scroll.reload();
 		else {
@@ -1017,6 +1019,7 @@ Ui.VBox.extend('Ui.ListView',
 	setData: function(data) {
 		if(data !== undefined) {
 			this.data = data;
+			this.sortData();
 			this.dataLoader = new Ui.ListViewScrollLoader({ data: this.data, listView: this });
 			if(this.scrolled)
 				this.scroll.setLoader(this.dataLoader);
@@ -1032,10 +1035,9 @@ Ui.VBox.extend('Ui.ListView',
 		}
 	},
 
-	sortBy: function(key, invert) {
-		this.sortColKey = key;
-		this.sortInvert = invert === true;
-		this.headersBar.sortBy(this.sortColKey, this.sortInvert);
+	sortData: function() {
+		var key = this.sortColKey;
+		var invert = this.sortInvert;
 		this.data.sort(function(a, b) {
 			var res;
 			if(a[key] < b[key])
@@ -1046,6 +1048,13 @@ Ui.VBox.extend('Ui.ListView',
 				res = 0;
 			return invert ? -res : res;
 		});
+	},
+
+	sortBy: function(key, invert) {
+		this.sortColKey = key;
+		this.sortInvert = invert === true;
+		this.headersBar.sortBy(this.sortColKey, this.sortInvert);
+		this.sortData();
 		if(this.scrolled) {
 			this.scroll.reload();
 			this.invalidateArrange();
