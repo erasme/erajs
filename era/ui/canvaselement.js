@@ -479,11 +479,7 @@ Core.Object.extend('Core.SVG2DContext', {
 
 			var path = document.createElementNS(svgNS, 'path');
 			path.setAttributeNS(null, 'pointer-events', 'none');
-			path.pathSegList.appendItem(path.createSVGPathSegMovetoAbs(dx, dy));
-			path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(dx+dw, dy));
-			path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(dx+dw, dy+dh));
-			path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(dx, dy+dh));
-			path.pathSegList.appendItem(path.createSVGPathSegClosePath());
+			path.setAttributeNS(null, 'd', 'M '+dx+' '+dy+' L '+(dx+dw)+' '+dy+' L '+(dx+dw)+' '+(dy+dh)+' L '+dx+' '+(dy+dh)+' Z');
 			path.style.fill = 'url(#'+id+')';
 			if(this.clipId !== undefined)
 				path.setAttributeNS(null, 'clip-path', 'url(#'+this.clipId+')');
