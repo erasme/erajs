@@ -138,34 +138,31 @@ Ui.Container.extend('Ui.CanvasElement',
 });
 
 Core.Object.extend('Core.SVG2DPath', {
-	path: undefined,
-	context: undefined,
+	d: undefined,
 	x: 0,
 	y: 0,
 
 	constructor: function(config) {
-		this.path = document.createElementNS(svgNS, 'path');
-		this.context = config.context;
-		delete(config.context);
+		this.d = '';
 	},
 
 	moveTo: function(x, y) {
-		this.path.pathSegList.appendItem(this.path.createSVGPathSegMovetoAbs(x, y));
+		this.d += ' M '+x+' '+y;
 		this.x = x; this.y = y;
 	},
 
 	lineTo: function(x, y) {
-		this.path.pathSegList.appendItem(this.path.createSVGPathSegLinetoAbs(x, y));
+		this.d += ' L '+x+' '+y;
 		this.x = x; this.y = y;
 	},	
 
 	quadraticCurveTo: function(cpx, cpy, x, y) {
-		this.path.pathSegList.appendItem(this.path.createSVGPathSegCurvetoQuadraticAbs(x, y, cpx, cpy));
+		this.d += ' Q '+cpx+' '+cpy+' '+x+' '+y;
 		this.x = x; this.y = y;
 	},
 
 	bezierCurveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-		this.path.pathSegList.appendItem(this.path.createSVGPathSegCurvetoCubicAbs(x, y, cp1x, cp1y, cp2x, cp2y));
+		this.d += ' C '+cp1x+' '+cp1y+' '+cp2x+' '+cp2y+' '+x+' '+y;
 		this.x = x; this.y = y;
 	},
 
@@ -179,12 +176,13 @@ Core.Object.extend('Core.SVG2DPath', {
 			angle = radiusY;
 			radiusY = radiusX;
 		}
-		this.path.pathSegList.appendItem(this.path.createSVGPathSegArcAbs(x2, y2, radiusX, radiusY, angle*Math.PI/180, 0, (p<0)?1:0));
+		// A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+		this.d += ' A '+radiusX+' '+radiusY+' '+(angle*Math.PI/180)+' 0 '+((p<0)?1:0)+' '+x2+' '+y2;
 		this.x = x2; this.y = y2;
 	},
 	
 	closePath: function() {
-		this.path.pathSegList.appendItem(this.path.createSVGPathSegClosePath());
+		this.d += ' Z';
 	},
 
 	rect: function(x, y, w, h) {
@@ -218,7 +216,8 @@ Core.Object.extend('Core.SVG2DPath', {
 			if(anticlockwise)
 				largeArc = !largeArc;
 
-			this.path.pathSegList.appendItem(this.path.createSVGPathSegArcAbs(endX, endY, radiusX, radiusY, (endAngle-startAngle)*Math.PI/180, largeArc, !anticlockwise));
+			// A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+			this.d += ' A '+radiusX+' '+radiusY+' '+((endAngle-startAngle)*Math.PI/180)+' '+(largeArc?1:0)+' '+(!anticlockwise?1:0)+' '+endX+' '+endY;
 			this.x = endX; this.y = endY;
 		}
 	},
@@ -255,7 +254,9 @@ Core.Object.extend('Core.SVG2DPath', {
 	},
 
 	getSVG: function() {
-		return this.path.cloneNode();
+		var path = document.createElementNS(svgNS, 'path');
+		path.setAttribute('d', this.d);
+		return path;
 	}
 });
 
@@ -330,7 +331,7 @@ Core.Object.extend('Core.SVG2DContext', {
 	},
 
 	beginPath: function() {
-		this.currentPath = new Core.SVG2DPath({ context: this });
+		this.currentPath = new Core.SVG2DPath();
 	},
 
 	moveTo: function(x, y) {
