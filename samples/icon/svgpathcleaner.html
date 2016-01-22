@@ -11,6 +11,7 @@ Ui.App.extend('Test.App', {
 	statusLabel: undefined,
 	sourceIcon: undefined,
 	decimalField: undefined,
+	scaleField: undefined,
 
 	constructor: function(config) {
 
@@ -41,6 +42,9 @@ Ui.App.extend('Test.App', {
 
 		this.decimalField = new Ui.TextField({ width: 40, value: '2' });
 		hbox.append(this.decimalField);
+
+		this.scaleField = new Ui.TextField({ width: 40, value: '1' });
+		hbox.append(this.scaleField);
 
 		var hbox = new Ui.HBox({ spacing: 10 });
 		vbox.append(hbox, true);
@@ -99,7 +103,7 @@ Ui.App.extend('Test.App', {
 			else {
 				var roundScale = Math.pow(10, parseInt(this.decimalField.getValue()));
 
-				var val = Math.round(svgParser.getCurrent() * roundScale);
+				var val = Math.round(svgParser.getCurrent() * this.scaleField.getValue() * roundScale);
 				val = (val / roundScale).toString();
 
 				if(val.substring(0,2) === '0.')
