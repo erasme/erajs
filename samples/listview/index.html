@@ -92,9 +92,11 @@ Ui.App.extend('Test.App', {
 			var data = [];
 			for(var i = 0; i < 1500; i++) {
 				data.push({
+					data0: ((i % 3) === 0),
 					data1: 'hi number '+i,
 					data2: 'col 2 '+i,
-					data3: Math.random()*50
+					data3: Math.random()*50,
+					data4: i
 				});
 			}
 			listview.setData(data);
@@ -109,13 +111,26 @@ Ui.App.extend('Test.App', {
 		var button = new Ui.Button({ text: 'append 70', verticalAlign: 'center' });
 		toolbar.append(button);
 		this.connect(button, 'press', function() {
+			var count = listview.getData().length;
 			for(var i = 0; i < 70; i++) {
 				listview.appendData({
+					data0: ((i % 3) === 0),
 					data1: 'hi number '+i,
 					data2: 'col 2 '+i,
-					data3: Math.random()*50
+					data3: Math.random()*50,
+					data4: count + i
 				});
 			}
+		});
+
+		var button = new Ui.Button({ text: 'update numbers', verticalAlign: 'center' });
+		toolbar.append(button);
+		this.connect(button, 'press', function() {
+			var data = listview.getData();
+			for(var i = 0; i < data.length; i++) {
+				data[i].data3 = Math.random()*50;
+			}
+			listview.updateData();
 		});
 
 
@@ -133,6 +148,7 @@ Ui.App.extend('Test.App', {
 				{ type: 'string', title: 'Data 1', key: 'data1', width: 200 },
 				{ type: 'string', title: 'Data 2', key: 'data2', width: 200 },
 				{ type: 'string', title: 'Numbers', key: 'data3' },
+				{ type: 'string', title: 'Pos', key: 'data4' }
 			]
 		});
 		scroll.setContent(listview);
@@ -147,7 +163,8 @@ Ui.App.extend('Test.App', {
 				data0: ((i % 3) === 0),
 				data1: 'hi number '+i,
 				data2: 'col 2 '+i,
-				data3: Math.random()*50
+				data3: Math.random()*50,
+				data4: i 
 			});
 		}
 
