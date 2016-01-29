@@ -157,7 +157,8 @@ Ui.Selectionable.extend('Ui.Button',
 
 		this.dropbox.setContent(this.bg);
 
-		this.mainBox = new Ui.HBox({ horizontalAlign: 'center', verticalAlign: 'center' });
+		this.mainBox = new Ui.HBox({ verticalAlign: 'center' });
+		//this.mainBox = new Ui.HBox({ horizontalAlign: 'center', verticalAlign: 'center' });
 		this.dropbox.append(this.mainBox);
 
 		this.buttonPartsBox = new Ui.Box();
@@ -392,10 +393,14 @@ Ui.Selectionable.extend('Ui.Button',
 			if(this.textBox.getParent() === undefined)
 				this.buttonPartsBox.append(this.textBox, true);
 			if(Ui.ButtonText.hasInstance(this.text)) {
-				if(this.getIsIconVisible() && (this.getOrientation() === 'horizontal'))
+				if(this.getIsIconVisible() && (this.getOrientation() === 'horizontal')) {
 					this.text.setTextAlign('left');
-				else
+					this.mainBox.setHorizontalAlign(undefined);
+				}
+				else {
 					this.text.setTextAlign('center');
+					this.mainBox.setHorizontalAlign('center');
+				}
 				
 				this.text.setFontFamily(this.getStyleProperty('fontFamily'));
 				this.text.setFontSize(this.getStyleProperty('fontSize'));
