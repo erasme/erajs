@@ -572,6 +572,8 @@ Core.Object.extend('Ui.PointerManager',
 //		event.preventDefault();
 //		event.stopPropagation();
 
+		console.log('onPointerDown type: '+event.pointerType);
+
 		var type;
 		if(event.pointerType === 'pen')
 			type = 'pen';
@@ -589,10 +591,22 @@ Core.Object.extend('Ui.PointerManager',
 	},
 
 	onPointerMove: function(event) {
-		if(this.pointers[event.pointerId] !== undefined) {
-			this.pointers[event.pointerId].setControls(event.altKey, event.ctrlKey, event.shiftKey);
-			this.pointers[event.pointerId].move(event.clientX, event.clientY);
+		if(this.pointers[event.pointerId] === undefined) {
+			var type;
+			if(event.pointerType === 'pen')
+				type = 'pen';
+			else if(event.pointerType === 'mouse')
+				type = 'mouse';
+			else
+				type = 'touch';
+			var pointer = new Ui.Pointer({
+				type: type, id: event.pointerId
+			});
+			this.pointers[event.pointerId] = pointer;
 		}
+
+		this.pointers[event.pointerId].setControls(event.altKey, event.ctrlKey, event.shiftKey);
+		this.pointers[event.pointerId].move(event.clientX, event.clientY);
 	},
 
 	onPointerUp: function(event) {
